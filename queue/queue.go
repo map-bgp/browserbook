@@ -1,9 +1,10 @@
 package queue
 
 import "fmt"
+import "github.com/blueslurpee/browserbook/order"
 
 type node struct{
-  val int
+  order order.Order
   next *node
 }
 
@@ -19,38 +20,50 @@ func InitQueue() *queue{
   return &Q
 }
 
-func (Q *queue) enqueue(val int) {
-  new := node{val: val}
+func (Q *queue) Enqueue(order *order.Order) {
+  new_node := node{order: *order}
 
   if Q.tail == nil {
-    Q.head = &new
-    Q.tail = &new
+    Q.head = &new_node
+    Q.tail = &new_node
   } else {
-    Q.tail.next = &new
-    Q.tail = &new
+    Q.tail.next = &new_node
+    Q.tail = &new_node
   }
 }
 
-func (Q *queue) dequeue() int {
+func (Q *queue) Dequeue() *order.Order {
+  if Q.head == nil {
+    fmt.Println("Queue is empty")
+    return &order.Order{}
+  }
+
   if Q.head == Q.tail {
-    t := Q.head.val
+    t := Q.head.order
     Q.head = nil
     Q.tail = nil
 
-    return t
+    return &t
   }
 
-  t := Q.head.val
+  t := Q.head.order
   Q.head = Q.head.next
 
-  return t
+  return &t
 }
 
-func (Q *queue) printqueue() {
+func (Q *queue) IsEmpty() bool {
+  if Q.head != nil {
+    return false
+  }
+  return true
+}
+
+func (Q *queue) Print() {
   x := Q.head
 
   for x != nil {
-    fmt.Println(x)
+    fmt.Println(x.order)
     x = x.next
   }
 }
