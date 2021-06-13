@@ -1,3 +1,3 @@
-module github.com/blueslurpee/bbook
+module github.com/blueslurpee/browserbook
 
 go 1.16

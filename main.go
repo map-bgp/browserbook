@@ -1,7 +1,7 @@
 package main
 
 import "fmt"
-import "github.com/blueslurpee/bbook/queue"
+import "github.com/blueslurpee/browserbook/queue"
 
 func main() {
   q := queue.InitQueue()
