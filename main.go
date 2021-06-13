@@ -6,17 +6,24 @@ import "github.com/blueslurpee/browserbook/queue"
 import "github.com/blueslurpee/browserbook/order"
 
 func main() {
-  q := queue.InitQueue()
+  bidq := queue.InitBidQueue()
+  askq := queue.InitAskQueue()
 
   for i := 0; i < 10; i++ {
-    order := order.InitOrder(1, 1, rand.Float32() * 100, rand.Float32() * 100)
-    q.Enqueue(order)
+    new_order := order.InitOrder(queue.BID, order.LIMIT, rand.Float32() * 100, rand.Float32() * 100)
+    bidq.Enqueue(new_order)
   }
 
-  for q.IsEmpty() != true {
-    fmt.Println("Dequeueing:", q.Dequeue())
-    fmt.Println(q.GetCap())
+  for i := 0; i < 10; i++ {
+    new_order := order.InitOrder(queue.ASK, order.LIMIT, rand.Float32() * 100, rand.Float32() * 100)
+    askq.Enqueue(new_order)
   }
 
-  fmt.Println(q.IsEmpty())
+  for !bidq.IsEmpty() {
+    fmt.Println(bidq.Dequeue())
+  }
+
+  for !askq.IsEmpty() {
+    fmt.Println(askq.Dequeue())
+  }
 }

@@ -5,8 +5,8 @@ type OrderType int
 
 const (
   _ Action = iota
-  BUY
-  SELL
+  BID
+  ASK
 )
 
 const (
@@ -27,9 +27,9 @@ func InitOrder(action Action, orderType OrderType, price float32, quantity float
 }
 
 func (s Action) String() string {
-  strings := [...]string{"BUY", "SELL"}
+  strings := [...]string{"BID", "ASK"}
 
-  if s < BUY || s > SELL {
+  if s < BID || s > ASK {
     return "UNKNOWN"
   }
 
