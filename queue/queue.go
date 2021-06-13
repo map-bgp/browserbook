@@ -3,67 +3,58 @@ package queue
 import "fmt"
 import "github.com/blueslurpee/browserbook/order"
 
-type node struct{
-  order order.Order
-  next *node
-}
+// type node struct{
+//   order order.Order
+//   next *node
+// }
 
 type queue struct{
   size int
-  head *node
-  tail *node
+  curr int
+  data []*order.Order
 }
 
 func InitQueue() *queue{
   // Variables initialize to null values
-  Q := queue{}
-  return &Q
+  return &queue{size: 0, curr: 0, data: make([]*order.Order, 0)}
+}
+
+func (Q *queue) IsEmpty() bool {
+  if Q.size == 0 {
+    return true
+  }
+
+  return false
 }
 
 func (Q *queue) Enqueue(order *order.Order) {
-  new_node := node{order: *order}
+  Q.data = append(Q.data, order)
 
-  if Q.tail == nil {
-    Q.head = &new_node
-    Q.tail = &new_node
-  } else {
-    Q.tail.next = &new_node
-    Q.tail = &new_node
-  }
+  Q.size++
 }
 
 func (Q *queue) Dequeue() *order.Order {
-  if Q.head == nil {
+  if Q.IsEmpty() {
     fmt.Println("Queue is empty")
     return &order.Order{}
   }
 
-  if Q.head == Q.tail {
-    t := Q.head.order
-    Q.head = nil
-    Q.tail = nil
+  t := Q.data[Q.curr]
 
-    return &t
+  Q.size--
+  Q.curr++
+
+  if(Q.curr > len(Q.data) / 2) {
+    t := make([]*order.Order, len(Q.data) - Q.curr)
+    copy(t, Q.data[Q.curr:])
+
+    Q.data = t
+    Q.curr = 0
   }
 
-  t := Q.head.order
-  Q.head = Q.head.next
-
-  return &t
+  return t
 }
 
-func (Q *queue) IsEmpty() bool {
-  if Q.head != nil {
-    return false
-  }
-  return true
-}
-
-func (Q *queue) Print() {
-  x := Q.head
-
-  for x != nil {
-    fmt.Println(x.order)
-    x = x.next
-  }
+func(Q *queue) GetCap() int {
+  return cap(Q.data)
 }

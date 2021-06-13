@@ -16,9 +16,14 @@ const (
 
 type Order struct{
   Action Action
-  Type OrderType
+  OrderType OrderType
   Price float32
   Quantity float32
+}
+
+func InitOrder(action Action, orderType OrderType, price float32, quantity float32) *Order {
+  newOrder := Order{Action: action, OrderType: orderType, Price: price, Quantity: quantity}
+  return &newOrder
 }
 
 func (s Action) String() string {
