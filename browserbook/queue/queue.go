@@ -9,22 +9,22 @@ const (
   ASK
 )
 
-type queue struct{
+type Queue struct{
   size int
   curr int
   qtype int
   data []*order.Order
 }
 
-func InitBidQueue() *queue {
-  return &queue{size: 0, curr: 0, qtype: BID, data: make([]*order.Order, 0)}
+func InitBidQueue() *Queue {
+  return &Queue{size: 0, curr: 0, qtype: BID, data: make([]*order.Order, 0)}
 }
 
-func InitAskQueue() *queue {
-  return &queue{size: 0, curr: 0, qtype: ASK, data: make([]*order.Order, 0)}
+func InitAskQueue() *Queue {
+  return &Queue{size: 0, curr: 0, qtype: ASK, data: make([]*order.Order, 0)}
 }
 
-func (Q *queue) IsEmpty() bool {
+func (Q *Queue) IsEmpty() bool {
   if Q.size == 0 {
     return true
   }
@@ -32,29 +32,29 @@ func (Q *queue) IsEmpty() bool {
   return false
 }
 
-func (Q *queue) heapify(i int, n int) {
-  p := i
+// func (Q *Queue) heapify(i int, n int) {
+//   p := i
+//
+//   left := (p*2) + 1
+//   right := (p*2)+ 2
+//
+//   if left < n && Q.data[p].Price < Q.data[left].Price {
+//     p = left
+//   }
+//   if right < n && Q.data[p].Price < Q.data[right].Price {
+//     p = right
+//   }
+//
+//   if p != i {
+//     t := Q.data[p]
+//     Q.data[p] = Q.data[i]
+//     Q.data[i] = t
+//
+//     Q.heapify(p, n)
+//   }
+// }
 
-  left := (p*2) + 1
-  right := (p*2)+ 2
-
-  if left < n && Q.data[p].Price < Q.data[left].Price {
-    p = left
-  }
-  if right < n && Q.data[p].Price < Q.data[right].Price {
-    p = right
-  }
-
-  if p != i {
-    t := Q.data[p]
-    Q.data[p] = Q.data[i]
-    Q.data[i] = t
-
-    Q.heapify(p, n)
-  }
-}
-
-func (Q *queue) arrangePriority(i int) {
+func (Q *Queue) arrangePriority(i int) {
   p := (i-1)/2
 
   for i > 0 {
@@ -78,23 +78,20 @@ func (Q *queue) arrangePriority(i int) {
   }
 }
 
-func (Q *queue) Enqueue(order *order.Order) {
-  if Q.qtype == ASK {
-    fmt.Println("Enqueueing", order.Price)
-  }
+func (Q *Queue) Enqueue(order *order.Order) {
   Q.data = append(Q.data, order)
   Q.size++
 
   Q.arrangePriority(Q.size - 1)
 }
 
-func (Q *queue) Dequeue() *order.Order {
+func (Q *Queue) Dequeue() *order.Order {
   if Q.IsEmpty() {
     fmt.Println("Queue is empty")
     return &order.Order{}
   }
 
-  t := Q.data[Q.curr]
+  temp := Q.data[Q.curr]
 
   Q.size--
   Q.curr++
@@ -107,5 +104,5 @@ func (Q *queue) Dequeue() *order.Order {
     Q.curr = 0
   }
 
-  return t
+  return temp
 }
