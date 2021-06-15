@@ -25,41 +25,25 @@ func selectQueue(qType int) (*queue.Queue, error) {
   return q, nil
 }
 
-func enqueueWrapper() js.Func {
-  enqueueFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-    if len(args) != 1 {
-      return "Invalid number of arguments provided"
-    }
-
-    q, err := selectQueue(args[0].Int())
-
-    if err != nil {
-      return "Invalid queue type"
-    }
-
-    q.Enqueue(&order.Order{})
-    return nil
-  })
-
-  return enqueueFunc
-}
-
 func isEmptyWrapper() js.Func {
   isEmptyFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-      if len(args) != 5 {
-        return "Invalid number of arguments provided"
+      if len(args) != 1 {
+        result := map[string] interface{} {
+          "error": "Invalid number of arguments",
+        }
+
+        return result
       }
 
       q, err := selectQueue(args[0].Int())
 
       if err != nil {
-        return "Invalid queue type"
-      }
+        result := map[string] interface{} {
+          "error": "Invalid queue type",
+        }
 
-      action := args[1]
-      oType := args[2]
-      price := args[3]
-      qty := args[4]
+        return result
+      }
 
       return q.IsEmpty()
     })
@@ -67,35 +51,127 @@ func isEmptyWrapper() js.Func {
   return isEmptyFunc
 }
 
+func enqueueWrapper() js.Func {
+  enqueueFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+    if len(args) != 5 {
+      result := map[string] interface{} {
+        "error": "Invalid number of arguments",
+      }
+
+      return result
+    }
+
+    q, err := selectQueue(args[0].Int())
+
+    if err != nil {
+      result := map[string] interface{} {
+        "error": "Invalid queue type",
+      }
+
+      return result
+    }
+
+    action := order.Action(args[1].Int())
+    oType := order.OrderType(args[2].Int())
+    price := args[3].Float()
+    qty := args[4].Float()
+
+    q.Enqueue(&order.Order{action, oType, price, qty})
+
+    result := map[string] interface{} {
+      "action": action.String(),
+      "orderType": oType.String(),
+      "price": price,
+      "qty": qty,
+    }
+
+    return result
+  })
+
+  return enqueueFunc
+}
+
+func dequeueWrapper() js.Func {
+  dequeueFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+    if len(args) != 1 {
+      result := map[string] interface{} {
+        "error": "Invalid number of arguments",
+      }
+
+      return result
+    }
+
+    q, err := selectQueue(args[0].Int())
+
+    if err != nil {
+      result := map[string] interface{} {
+        "error": "Invalid queue type",
+      }
+
+      return result
+    }
+
+    order := q.Dequeue()
+
+    result := map[string] interface{} {
+      "action": order.Action.String(),
+      "orderType": order.OrderType.String(),
+      "price": order.Price,
+      "qty": order.Quantity,
+    }
+
+    return result
+  })
+
+  return dequeueFunc
+}
+
+func getQueueWrapper() js.Func {
+  getQueueWrapper := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+    if len(args) != 1 {
+      result := map[string] interface{} {
+        "error": "Invalid number of arguments",
+      }
+
+      return result
+    }
+
+    q, err := selectQueue(args[0].Int())
+
+    if err != nil {
+      result := map[string] interface{} {
+        "error": "Invalid queue type",
+      }
+
+      return result
+    }
+
+    result := make([]interface{}, 0, 0)
+
+    for !q.IsEmpty() {
+      order := q.Dequeue()
+
+      orderMap := map[string] interface{} {
+        "action": order.Action.String(),
+        "orderType": order.OrderType.String(),
+        "price": order.Price,
+        "qty": order.Quantity,
+      }
+
+      result = append(result, orderMap)
+    }
+
+    return result
+  })
+
+  return getQueueWrapper
+}
+
 func main() {
   fmt.Println("Go Web Assembly")
   js.Global().Set("isEmpty", isEmptyWrapper())
   js.Global().Set("enqueue", enqueueWrapper())
+  js.Global().Set("dequeue", dequeueWrapper())
+  js.Global().Set("getQueue", getQueueWrapper())
   <-make(chan bool)
 }
-  // for i := 0; i < 10; i++ {
-  //   new_order := order.InitOrder(queue.BID, order.LIMIT, rand.Float32() * 100, rand.Float32() * 100)
-  //   bidq.Enqueue(new_order)
-  // }
-  //
-  // for i := 0; i < 10; i++ {
-  //   new_order := order.InitOrder(queue.ASK, order.LIMIT, rand.Float32() * 100, rand.Float32() * 100)
-  //   askq.Enqueue(new_order)
-  // }
-  //
-  // for !bidq.IsEmpty() {
-  //   fmt.Println(bidq.Dequeue())
-  // }
-  //
-  // for !askq.IsEmpty() {
-  //   fmt.Println(askq.Dequeue())
-  // }
-
-  // func enqueueWrapper() js.Func {
-  //   enqueueFunc := js.FuncOf(
-  //     func(this js.Value, args []js.Value) interface{} {
-  //       input := args[0].String()
-  //       fmt.Printf("input %s\n", inputJSON)
-  //       return 1
-  //     })
-  // }

@@ -17,11 +17,11 @@ const (
 type Order struct{
   Action Action
   OrderType OrderType
-  Price float32
-  Quantity float32
+  Price float64
+  Quantity float64
 }
 
-func InitOrder(action Action, orderType OrderType, price float32, quantity float32) *Order {
+func InitOrder(action Action, orderType OrderType, price float64, quantity float64) *Order {
   newOrder := Order{Action: action, OrderType: orderType, Price: price, Quantity: quantity}
   return &newOrder
 }
