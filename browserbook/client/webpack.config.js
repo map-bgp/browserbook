@@ -1,6 +1,8 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
 
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
+
 module.exports = {
   resolve: {
     modules: ['src', 'node_modules']
@@ -32,6 +34,7 @@ module.exports = {
     disableHostCheck: true
   },
   plugins: [
+    new NodePolyfillPlugin(),
     new HtmlWebpackPlugin({
       title: 'GoWasm!',
       template: './src/index.html',
