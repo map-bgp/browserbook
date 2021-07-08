@@ -18,19 +18,19 @@
     <img src="logo.png" alt="Logo" width="80" height="80">
   </a>
 
-<h3 align="center">Browserbook</h3>
+  <h3 align="center">Browserbook</h3>
 
-<p align="center">
-    A Decentralized Peer-to-Peer Exchange Powered by WebAssembly
-    <br />
-    <a href="https://github.com/map-bgp/browserbook"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    ·
-    <a href="https://github.com/map-bgp/browserbook/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/map-bgp/browserbook/issues">Request Feature</a>
-</p>
+  <p align="center">
+      A Decentralized Peer-to-Peer Exchange Powered by WebAssembly
+      <br />
+      <a href="https://github.com/map-bgp/browserbook"><strong>Explore the docs »</strong></a>
+      <br />
+      <br />
+      ·
+      <a href="https://github.com/map-bgp/browserbook/issues">Report Bug</a>
+      ·
+      <a href="https://github.com/map-bgp/browserbook/issues">Request Feature</a>
+  </p>
 
 </p>
 
@@ -49,12 +49,12 @@
       <a href="#getting-started">Getting Started</a>
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
+    <li><a href="#component-hierarchy">Component Hierarchy</a></li>
+    <li><a href="#testing">Testing</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
     <li><a href="#acknowledgements">Acknowledgements</a></li>
@@ -124,164 +124,101 @@ We highly recommend using [NVM](https://github.com/nvm-sh/nvm) to manage your no
 
 You will also need to ensure that [golang](https://github.com/golang/go) is installed. The repository has been tested and works with __golang 1.16__.
 
-[comment]: <> (### Installation)
+## Usage
+1. Clone the repo
 
-[comment]: <> (1. Clone the repo)
+   ```sh
+   git clone https://github.com/map-bgp/browserbook.git
+   ```
 
-[comment]: <> (   ```sh)
+2. Change into browserbook-mesh directory
 
-[comment]: <> (   git clone https://github.com/map-bgp/browserbook.git)
+   ```sh
+   cd browserbook/browserbook/browserbook-mesh
+   ```
 
-[comment]: <> (   ```)
+3. Install go dependencies
 
-[comment]: <> (2. Run build script)
+   ```sh
+   go mod tidy
+   ```
+   
+4. Compile the wasm binary
+   ```sh
+   GOOS=js GOARCH=wasm go build -o ../../server/dist/main.wasm
+   ```
+   
+5. Change back up to project root directory & into the server
 
-[comment]: <> (   ```sh)
+   ```sh
+   cd ../../server
+   ```
+   
+6. Install dependencies and run the Express server
 
-[comment]: <> (   ./gradlew build)
+   ```sh
+   npm install && npm run dev
+   ```
 
-[comment]: <> (   ```)
+7. In a separate shell navigate to the client directory from the project root
 
-[comment]: <> (Please note the appropriate platform prefix based upon your OS:)
+   ```sh
+   cd browserbook/client
+   ```
 
-[comment]: <> (MAC OS X: `./gradlew`)
+8. Install dependencies and start the Webpack dev server
 
-[comment]: <> (Linux: `./gradlew`)
+   ```sh
+   npm install && npm run dev
+   ```
 
-[comment]: <> (Windows: `./gradlew.bat`)
+You should now be able to open a browser and navigate to `http://localhost:8080/`.
 
-[comment]: <> (<!-- USAGE EXAMPLES -->)
+If you open the console, you should see 0x order activity. Note we do not recommend Safari.
 
-[comment]: <> (## Usage)
+## Component Heirarchy
 
-[comment]: <> (Start the server with)
+This section will be completed at a later time
 
-[comment]: <> (```sh)
+## Testing
 
-[comment]: <> (./gradlew bootRun)
+```sh
+TBD
+```
 
-[comment]: <> (```)
+## Roadmap
 
-[comment]: <> (Gradle is also compatible with all mainstream IDE's, with run support baked in natively or via extensions.)
+TBD
 
-[comment]: <> (The team recommends [IntelliJ]&#40;https://www.jetbrains.com/idea/download/#section=mac&#41;.)
+Please see the [open issues](https://github.com/map-bgp/browserbook/issues) for a further list of proposed features (and known issues).
 
-[comment]: <> (Make sure to set the following environment variables or the build will fail:)
+## License
 
-[comment]: <> (* `AWS_ACCESS_KEY`)
+Distributed under the Apache v2 License. See `LICENSE` for more information.
 
-[comment]: <> (* `AWS_SECRET_KEY`)
+## Contact
 
-[comment]: <> (* `DB_URL` of the form `jdbc:postgresql://{hostname}:{port}/{db_name}`. You need to have a database instance running locally or use the provided test database we provide you)
+This implementation is the work of Corey Bothwell, Ankan Gosh, and Saiteja Reddy Pottanigari.
 
-[comment]: <> (* `DB_USERNAME`)
+They can be reached via their respective GitHub accounts.
 
-[comment]: <> (* `DB_PASSWORD`)
+Project Link: [https://github.com/map-bgp/browserbook](https://github.com/map-bgp/browserbook)
 
-[comment]: <> (* `DUMMY_UPLOAD` set to `true` to preserve image upload bandwith during troubleshooting and local development)
+## Acknowledgements
 
-[comment]: <> (* `CLOUDINARY_CLOUD_NAME`)
+* [University of Zurich Institut for Informatik CSG](https://www.csg.uzh.ch/csg/en/)
 
-[comment]: <> (* `CLOUDINARY_ACCESS_KEY`)
+<!-- MARKDOWN LINKS & IMAGES -->
+<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
-[comment]: <> (* `CLOUDINARY_SECRET_KEY`)
+[stars-shield]: https://img.shields.io/github/stars/map-bgp/browserbook.svg?style=plastic
 
-[comment]: <> (* `CLOUDINARY_ACTIVE`)
+[stars-url]: https://github.com/map-bgp/browserbook/stargazers
 
-[comment]: <> (* `DB_INIT_BEHAVIOR` set to `create-drop` for local development or `none` for persistent storage. Do not use any other option besides `none` if you connect to the test database)
+[issues-shield]: https://img.shields.io/github/issues/map-bgp/browserbook.svg?style=plastic
 
-[comment]: <> (You now have a local server process running. To verify your endpoints, see the official Postman.)
+[issues-url]: https://github.com/map-bgp/browserbook/issues
 
-[comment]: <> (### Component Heirarchy)
+[license-shield]: https://img.shields.io/github/license/map-bgp/browserbook.svg?style=plastic
 
-[comment]: <> (The system is comprised of entities and their relationships. HTTP requests flow over the respective controllers which delegate their logical implementations to the service layer. The service layers then interact with the appropriate entities and return an appropriate model back to the controller, where an HTTP response is generated.)
-
-[comment]: <> (Users familiar with Spring should feel comfortable with our repository structure as it follows common idioms.)
-
-[comment]: <> (The application class itself can be reached [here]&#40;https://github.com/sopra-fs21-group-20/closet-server/blob/main/src/main/java/ch/uzh/ifi/hase/soprafs21/Application.java&#41;.)
-
-[comment]: <> (## Testing)
-
-[comment]: <> (```sh)
-
-[comment]: <> (./gradlew test)
-
-[comment]: <> (```)
-
-[comment]: <> (Note to see the test report you need to navigate to `./build/reports/tests/test/index.html`)
-
-[comment]: <> (You should see something like this:)
-
-[comment]: <> (<a href="https://github.com/map-bgp/browserbook">)
-
-[comment]: <> (    <img src="testreport.png" alt="Test Report">)
-
-[comment]: <> (</a>)
-
-[comment]: <> (<!-- _For more examples, please refer to the [Documentation]&#40;https://example.com&#41;_ -->)
-
-[comment]: <> (<!-- ROADMAP -->)
-
-[comment]: <> (## Roadmap)
-
-[comment]: <> (The current highest priority contributions are:)
-
-[comment]: <> (* Further testing and refinement of the core engine)
-
-[comment]: <> (* Integration of a proprietary background removal extension)
-
-[comment]: <> (* Extension of the community features)
-
-[comment]: <> (Please see the [open issues]&#40;https://github.com/map-bgp/browserbook/issues&#41; for a further list of proposed features &#40;and known issues&#41;.)
-
-[comment]: <> (<!-- CONTRIBUTING -->)
-
-[comment]: <> (## Contributing)
-
-[comment]: <> (1. Fork the Project)
-
-[comment]: <> (2. Create your Feature Branch &#40;`git checkout -b feature/AmazingFeature`&#41;)
-
-[comment]: <> (3. Commit your Changes &#40;`git commit -m 'Add some AmazingFeature'`&#41;)
-
-[comment]: <> (4. Push to the Branch &#40;`git push origin feature/AmazingFeature`&#41;)
-
-[comment]: <> (5. Open a Pull Request)
-
-[comment]: <> (<!-- LICENSE -->)
-
-[comment]: <> (## License)
-
-[comment]: <> (Distributed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International Public License. See `LICENSE` for more information.)
-
-[comment]: <> (<!-- CONTACT -->)
-
-[comment]: <> (## Contact)
-
-[comment]: <> (This implementation is the work of the entire MyOutfit team, specifically the backend team Corey Bothwell, Silvan Kübler, and Nicolas Peyer.)
-
-[comment]: <> (They can be reached via their respective GitHub accounts.)
-
-[comment]: <> (Project Link: [https://github.com/map-bgp/browserbook]&#40;https://github.com/map-bgp/browserbook&#41;)
-
-[comment]: <> (<!-- ACKNOWLEDGEMENTS -->)
-
-[comment]: <> (## Acknowledgements)
-
-[comment]: <> (* [University of Zurich Institut for Informatik S.E.A.L.]&#40;https://www.ifi.uzh.ch/en/seal.html&#41;)
-
-[comment]: <> (<!-- MARKDOWN LINKS & IMAGES -->)
-
-[comment]: <> (<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->)
-
-[comment]: <> ([stars-shield]: https://img.shields.io/github/stars/map-bgp/browserbook.svg?style=plastic)
-
-[comment]: <> ([stars-url]: https://github.com/map-bgp/browserbook/stargazers)
-
-[comment]: <> ([issues-shield]: https://img.shields.io/github/issues//map-bgp/browserbook.svg?style=plastic)
-
-[comment]: <> ([issues-url]: https://github.com/map-bgp/browserbook/issues)
-
-[comment]: <> ([license-shield]: https://img.shields.io/github/license/map-bgp/browserbook.svg?style=plastic)
-
-[comment]: <> ([license-url]: https://github.com/map-bgp/browserbook/blob/master/LICENSE.txt)
+[license-url]: https://github.com/map-bgp/browserbook/blob/master/LICENSE.txt
