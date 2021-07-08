@@ -15,7 +15,7 @@
 <p align="center">
 
   <a href="https://github.com/map-bgp/browserbook">
-    <img src="logo.png" alt="Logo" width="80" height="80">
+    <img src="misc/browserbook-logo.png" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">Browserbook</h3>
