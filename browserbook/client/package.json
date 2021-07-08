@@ -14,7 +14,8 @@
   "dependencies": {
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "serve": "^12.0.0"
+    "serve": "^12.0.0",
+    "truffle": "^5.3.14"
   },
   "devDependencies": {
     "@0x/mesh-browser-lite": "^11.0.1",
