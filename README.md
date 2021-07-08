@@ -64,7 +64,7 @@
 
 ## About The Project
 
-Browserbook is a decentralized ethereum exchange powered by the 0x order protocol and WebRTC. Orders discovery is
+Browserbook is a decentralized ethereum exchange powered by the 0x order protocol and WebRTC. Order discovery is
 performed asynchronously and without a centralized order book. Instead, clients, or peers, each maintain a copy of the 
 order book directly, and communicate between each other in order to ensure consistency. 
 Thanks to the power of WebAssembly, clients can be run directly in the browser, providing a seamless user experience 
@@ -172,7 +172,7 @@ You will also need to ensure that [golang](https://github.com/golang/go) is inst
    npm install && npm run dev
    ```
 
-You should now be able to open a browser and navigate to `http://localhost:8080/`.
+You should now be able to open a browser and navigate to `http://localhost:8080/`
 
 If you open the console, you should see 0x order activity. Note we do not recommend Safari.
 
