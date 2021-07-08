@@ -12,10 +12,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/0xProject/0x-mesh/common/types"
-	"github.com/0xProject/0x-mesh/db"
 	"github.com/ethereum/go-ethereum/common"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
+	"github.com/map-bgp/browserbook/browserbook-mesh/common/types"
+	"github.com/map-bgp/browserbook/browserbook-mesh/db"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

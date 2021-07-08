@@ -5,9 +5,9 @@ package signer
 import (
 	"testing"
 
-	"github.com/0xProject/0x-mesh/constants"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/map-bgp/browserbook/browserbook-mesh/constants"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

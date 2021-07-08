@@ -6,14 +6,14 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/0xProject/0x-mesh/common/types"
-	"github.com/0xProject/0x-mesh/constants"
-	"github.com/0xProject/0x-mesh/ethereum/ethrpcclient"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/common/math"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
+	"github.com/map-bgp/browserbook/browserbook-mesh/common/types"
+	"github.com/map-bgp/browserbook/browserbook-mesh/constants"
+	"github.com/map-bgp/browserbook/browserbook-mesh/ethereum/ethrpcclient"
 )
 
 const (

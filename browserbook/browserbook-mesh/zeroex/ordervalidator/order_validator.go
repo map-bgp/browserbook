@@ -10,15 +10,15 @@ import (
 	"sync"
 	"time"
 
-	"github.com/0xProject/0x-mesh/common/types"
-	"github.com/0xProject/0x-mesh/constants"
-	"github.com/0xProject/0x-mesh/ethereum"
-	"github.com/0xProject/0x-mesh/ethereum/wrappers"
-	"github.com/0xProject/0x-mesh/zeroex"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/math"
 	"github.com/jpillora/backoff"
+	"github.com/map-bgp/browserbook/browserbook-mesh/common/types"
+	"github.com/map-bgp/browserbook/browserbook-mesh/constants"
+	"github.com/map-bgp/browserbook/browserbook-mesh/ethereum"
+	"github.com/map-bgp/browserbook/browserbook-mesh/ethereum/wrappers"
+	"github.com/map-bgp/browserbook/browserbook-mesh/zeroex"
 	log "github.com/sirupsen/logrus"
 )
 

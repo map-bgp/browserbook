@@ -11,14 +11,14 @@ import (
 	"syscall/js"
 	"time"
 
-	"github.com/0xProject/0x-mesh/common/types"
-	"github.com/0xProject/0x-mesh/db/dexietypes"
-	"github.com/0xProject/0x-mesh/packages/mesh-browser/go/jsutil"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/gibson042/canonicaljson-go"
 	"github.com/google/uuid"
 	ds "github.com/ipfs/go-datastore"
+	"github.com/map-bgp/browserbook/browserbook-mesh/common/types"
+	"github.com/map-bgp/browserbook/browserbook-mesh/db/dexietypes"
+	"github.com/map-bgp/browserbook/browserbook-mesh/packages/mesh-browser/go/jsutil"
 	"github.com/sirupsen/logrus"
 )
 

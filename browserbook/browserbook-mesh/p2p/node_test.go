@@ -11,11 +11,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/0xProject/0x-mesh/db"
-	"github.com/0xProject/0x-mesh/p2p/banner"
 	p2pcrypto "github.com/libp2p/go-libp2p-core/crypto"
 	p2pnet "github.com/libp2p/go-libp2p-core/network"
 	"github.com/libp2p/go-libp2p-core/peer"
+	"github.com/map-bgp/browserbook/browserbook-mesh/db"
+	"github.com/map-bgp/browserbook/browserbook-mesh/p2p/banner"
 	ma "github.com/multiformats/go-multiaddr"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

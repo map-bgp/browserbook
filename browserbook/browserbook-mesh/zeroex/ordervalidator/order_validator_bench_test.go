@@ -7,13 +7,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/0xProject/0x-mesh/constants"
-	"github.com/0xProject/0x-mesh/ethereum"
-	"github.com/0xProject/0x-mesh/ethereum/ethrpcclient"
-	"github.com/0xProject/0x-mesh/ethereum/ratelimit"
-	"github.com/0xProject/0x-mesh/zeroex"
 	"github.com/ethereum/go-ethereum/common"
 	ethrpc "github.com/ethereum/go-ethereum/rpc"
+	"github.com/map-bgp/browserbook/browserbook-mesh/constants"
+	"github.com/map-bgp/browserbook/browserbook-mesh/ethereum"
+	"github.com/map-bgp/browserbook/browserbook-mesh/ethereum/ethrpcclient"
+	"github.com/map-bgp/browserbook/browserbook-mesh/ethereum/ratelimit"
+	"github.com/map-bgp/browserbook/browserbook-mesh/zeroex"
 )
 
 const (

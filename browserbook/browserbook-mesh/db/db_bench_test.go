@@ -4,9 +4,9 @@ import (
 	"context"
 	"testing"
 
-	"github.com/0xProject/0x-mesh/common/types"
 	"github.com/ethereum/go-ethereum/common"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
+	"github.com/map-bgp/browserbook/browserbook-mesh/common/types"
 	"github.com/stretchr/testify/require"
 )
 

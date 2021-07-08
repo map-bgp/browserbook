@@ -4,8 +4,8 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/0xProject/0x-mesh/graphql/gqltypes"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/map-bgp/browserbook/browserbook-mesh/graphql/gqltypes"
 )
 
 type AcceptedOrderResult struct {

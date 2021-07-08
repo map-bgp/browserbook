@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/0xProject/0x-mesh/ethereum"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/map-bgp/browserbook/browserbook-mesh/ethereum"
 	jsonschema "github.com/xeipuuv/gojsonschema"
 )
 

@@ -3,8 +3,8 @@ package orderopts
 import (
 	"math/big"
 
-	"github.com/0xProject/0x-mesh/zeroex"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/map-bgp/browserbook/browserbook-mesh/zeroex"
 )
 
 type Config struct {

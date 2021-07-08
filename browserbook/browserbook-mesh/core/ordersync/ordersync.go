@@ -14,13 +14,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/0xProject/0x-mesh/p2p"
-	"github.com/0xProject/0x-mesh/zeroex"
 	"github.com/albrow/stringset"
 	"github.com/jpillora/backoff"
 	network "github.com/libp2p/go-libp2p-core/network"
 	peer "github.com/libp2p/go-libp2p-core/peer"
 	protocol "github.com/libp2p/go-libp2p-core/protocol"
+	"github.com/map-bgp/browserbook/browserbook-mesh/p2p"
+	"github.com/map-bgp/browserbook/browserbook-mesh/zeroex"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/time/rate"
 )

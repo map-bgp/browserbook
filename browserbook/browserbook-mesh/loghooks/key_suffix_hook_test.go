@@ -6,7 +6,7 @@ import (
 	"syscall"
 	"testing"
 
-	"github.com/0xProject/0x-mesh/constants"
+	"github.com/map-bgp/browserbook/browserbook-mesh/constants"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"

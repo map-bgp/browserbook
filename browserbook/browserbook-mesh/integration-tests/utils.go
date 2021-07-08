@@ -14,12 +14,12 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/0xProject/0x-mesh/constants"
-	"github.com/0xProject/0x-mesh/ethereum"
 	"github.com/chromedp/cdproto/runtime"
 	"github.com/chromedp/chromedp"
 	ethrpc "github.com/ethereum/go-ethereum/rpc"
 	"github.com/google/uuid"
+	"github.com/map-bgp/browserbook/browserbook-mesh/constants"
+	"github.com/map-bgp/browserbook/browserbook-mesh/ethereum"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

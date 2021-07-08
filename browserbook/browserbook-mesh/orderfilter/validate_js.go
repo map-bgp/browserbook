@@ -5,8 +5,8 @@ package orderfilter
 import (
 	"errors"
 
-	"github.com/0xProject/0x-mesh/packages/mesh-browser/go/jsutil"
-	"github.com/0xProject/0x-mesh/zeroex"
+	"github.com/map-bgp/browserbook/browserbook-mesh/packages/mesh-browser/go/jsutil"
+	"github.com/map-bgp/browserbook/browserbook-mesh/zeroex"
 )
 
 type SchemaValidationError struct {

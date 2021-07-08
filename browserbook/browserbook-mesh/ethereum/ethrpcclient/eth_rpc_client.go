@@ -6,12 +6,12 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/0xProject/0x-mesh/common/types"
-	"github.com/0xProject/0x-mesh/ethereum/ratelimit"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/map-bgp/browserbook/browserbook-mesh/common/types"
+	"github.com/map-bgp/browserbook/browserbook-mesh/ethereum/ratelimit"
 )
 
 // Client defines the methods needed to satisfy the subsdet of ETH JSON-RPC client

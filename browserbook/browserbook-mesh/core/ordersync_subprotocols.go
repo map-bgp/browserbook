@@ -7,10 +7,10 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/0xProject/0x-mesh/core/ordersync"
-	"github.com/0xProject/0x-mesh/orderfilter"
-	"github.com/0xProject/0x-mesh/zeroex"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/map-bgp/browserbook/browserbook-mesh/core/ordersync"
+	"github.com/map-bgp/browserbook/browserbook-mesh/orderfilter"
+	"github.com/map-bgp/browserbook/browserbook-mesh/zeroex"
 	log "github.com/sirupsen/logrus"
 )
 

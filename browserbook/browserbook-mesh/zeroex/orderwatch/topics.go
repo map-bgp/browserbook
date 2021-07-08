@@ -1,9 +1,9 @@
 package orderwatch
 
 import (
-	"github.com/0xProject/0x-mesh/zeroex/orderwatch/decoder"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/map-bgp/browserbook/browserbook-mesh/zeroex/orderwatch/decoder"
 )
 
 // GetRelevantTopics returns the OrderWatcher-relevant topics that should be used when filtering

@@ -6,7 +6,7 @@ import (
 	"context"
 	"path/filepath"
 
-	"github.com/0xProject/0x-mesh/db"
+	"github.com/map-bgp/browserbook/browserbook-mesh/db"
 )
 
 func newDB(ctx context.Context, config Config) (*db.DB, error) {

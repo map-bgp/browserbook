@@ -3,8 +3,8 @@ package ethereum
 import (
 	"fmt"
 
-	"github.com/0xProject/0x-mesh/constants"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/map-bgp/browserbook/browserbook-mesh/constants"
 )
 
 // ContractAddresses maps a contract's name to it's Ethereum address

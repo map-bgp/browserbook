@@ -3,9 +3,9 @@ package client
 import (
 	"time"
 
-	"github.com/0xProject/0x-mesh/graphql/gqltypes"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/math"
+	"github.com/map-bgp/browserbook/browserbook-mesh/graphql/gqltypes"
 )
 
 func addOrdersResultsFromGQLType(results *gqltypes.AddOrdersResults) *AddOrdersResults {

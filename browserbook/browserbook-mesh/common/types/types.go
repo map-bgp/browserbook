@@ -8,11 +8,11 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/0xProject/0x-mesh/zeroex"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/common/math"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/map-bgp/browserbook/browserbook-mesh/zeroex"
 )
 
 // Stats is the return value for core.GetStats. Also used in the browser interface.

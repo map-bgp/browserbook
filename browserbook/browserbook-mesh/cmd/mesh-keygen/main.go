@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/0xProject/0x-mesh/keys"
+	"github.com/map-bgp/browserbook/browserbook-mesh/keys"
 	"github.com/plaid/go-envvar/envvar"
 )
 

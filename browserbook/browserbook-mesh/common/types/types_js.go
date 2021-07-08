@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"syscall/js"
 
-	"github.com/0xProject/0x-mesh/packages/mesh-browser/go/jsutil"
+	"github.com/map-bgp/browserbook/browserbook-mesh/packages/mesh-browser/go/jsutil"
 )
 
 func (r GetOrdersResponse) JSValue() js.Value {

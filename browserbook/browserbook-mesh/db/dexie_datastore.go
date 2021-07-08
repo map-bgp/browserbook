@@ -6,9 +6,9 @@ import (
 	"context"
 	"syscall/js"
 
-	"github.com/0xProject/0x-mesh/packages/mesh-browser/go/jsutil"
 	ds "github.com/ipfs/go-datastore"
 	dsq "github.com/ipfs/go-datastore/query"
+	"github.com/map-bgp/browserbook/browserbook-mesh/packages/mesh-browser/go/jsutil"
 )
 
 // Ensure that we are implementing the ds.Batching interface.

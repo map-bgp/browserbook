@@ -8,14 +8,14 @@ import (
 	"syscall/js"
 	"time"
 
-	"github.com/0xProject/0x-mesh/browserutil"
-	"github.com/0xProject/0x-mesh/core"
-	"github.com/0xProject/0x-mesh/graphql"
-	"github.com/0xProject/0x-mesh/graphql/gqltypes"
-	"github.com/0xProject/0x-mesh/jsutil"
-	"github.com/0xProject/0x-mesh/zeroex"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/event"
+	"github.com/map-bgp/browserbook/browserbook-mesh/browserutil"
+	"github.com/map-bgp/browserbook/browserbook-mesh/core"
+	"github.com/map-bgp/browserbook/browserbook-mesh/graphql"
+	"github.com/map-bgp/browserbook/browserbook-mesh/graphql/gqltypes"
+	"github.com/map-bgp/browserbook/browserbook-mesh/jsutil"
+	"github.com/map-bgp/browserbook/browserbook-mesh/zeroex"
 )
 
 const (

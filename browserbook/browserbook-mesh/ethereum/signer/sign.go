@@ -5,10 +5,10 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/0xProject/0x-mesh/constants"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/map-bgp/browserbook/browserbook-mesh/constants"
 	"golang.org/x/crypto/sha3"
 )
 

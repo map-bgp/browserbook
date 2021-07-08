@@ -13,8 +13,6 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/0xProject/0x-mesh/common/types"
-	"github.com/0xProject/0x-mesh/db/sqltypes"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/gibson042/canonicaljson-go"
 	"github.com/google/uuid"
@@ -22,6 +20,8 @@ import (
 	ds "github.com/ipfs/go-datastore"
 	"github.com/ipfs/go-ds-sql"
 	"github.com/jmoiron/sqlx"
+	"github.com/map-bgp/browserbook/browserbook-mesh/common/types"
+	"github.com/map-bgp/browserbook/browserbook-mesh/db/sqltypes"
 	_ "github.com/mattn/go-sqlite3"
 )
 

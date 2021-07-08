@@ -3,10 +3,10 @@ package client
 import (
 	"context"
 
-	"github.com/0xProject/0x-mesh/graphql/gqltypes"
-	"github.com/0xProject/0x-mesh/zeroex"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/machinebox/graphql"
+	"github.com/map-bgp/browserbook/browserbook-mesh/graphql/gqltypes"
+	"github.com/map-bgp/browserbook/browserbook-mesh/zeroex"
 )
 
 // Client is a client for the 0x Mesh GraphQL API.

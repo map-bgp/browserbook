@@ -10,7 +10,7 @@ import (
 	"os"
 	"sync"
 
-	"github.com/0xProject/0x-mesh/core"
+	"github.com/map-bgp/browserbook/browserbook-mesh/core"
 	"github.com/plaid/go-envvar/envvar"
 	log "github.com/sirupsen/logrus"
 )

@@ -7,9 +7,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/0xProject/0x-mesh/common/types"
-	"github.com/0xProject/0x-mesh/db"
 	"github.com/benbjohnson/clock"
+	"github.com/map-bgp/browserbook/browserbook-mesh/common/types"
+	"github.com/map-bgp/browserbook/browserbook-mesh/db"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/time/rate"
 )

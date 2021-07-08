@@ -6,12 +6,12 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/0xProject/0x-mesh/ethereum"
-	"github.com/0xProject/0x-mesh/zeroex"
 	"github.com/ethereum/go-ethereum/common"
 	canonicaljson "github.com/gibson042/canonicaljson-go"
 	peer "github.com/libp2p/go-libp2p-core/peer"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
+	"github.com/map-bgp/browserbook/browserbook-mesh/ethereum"
+	"github.com/map-bgp/browserbook/browserbook-mesh/zeroex"
 	log "github.com/sirupsen/logrus"
 )
 

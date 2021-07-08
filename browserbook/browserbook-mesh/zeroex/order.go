@@ -8,12 +8,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/0xProject/0x-mesh/ethereum/signer"
-	"github.com/0xProject/0x-mesh/ethereum/wrappers"
-	"github.com/0xProject/0x-mesh/zeroex/orderwatch/decoder"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/math"
 	gethsigner "github.com/ethereum/go-ethereum/signer/core"
+	"github.com/map-bgp/browserbook/browserbook-mesh/ethereum/signer"
+	"github.com/map-bgp/browserbook/browserbook-mesh/ethereum/wrappers"
+	"github.com/map-bgp/browserbook/browserbook-mesh/zeroex/orderwatch/decoder"
 	"golang.org/x/crypto/sha3"
 )
 

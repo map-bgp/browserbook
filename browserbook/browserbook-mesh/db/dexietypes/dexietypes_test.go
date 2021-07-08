@@ -6,10 +6,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/0xProject/0x-mesh/common/types"
 	"github.com/ethereum/go-ethereum/common"
 	ethmath "github.com/ethereum/go-ethereum/common/math"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
+	"github.com/map-bgp/browserbook/browserbook-mesh/common/types"
 	"github.com/stretchr/testify/assert"
 )
 

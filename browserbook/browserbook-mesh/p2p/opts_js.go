@@ -5,12 +5,12 @@ package p2p
 import (
 	"context"
 
-	"github.com/0xProject/0x-mesh/db"
 	libp2p "github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p-core/host"
 	dht "github.com/libp2p/go-libp2p-kad-dht"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	ws "github.com/libp2p/go-ws-transport"
+	"github.com/map-bgp/browserbook/browserbook-mesh/db"
 )
 
 const (

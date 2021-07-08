@@ -7,10 +7,10 @@ import (
 	"math/big"
 	"sync"
 
-	"github.com/0xProject/0x-mesh/common/types"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
+	"github.com/map-bgp/browserbook/browserbook-mesh/common/types"
 )
 
 // fixtureTimestep holds the JSON-RPC data available at every timestep of the simulation.

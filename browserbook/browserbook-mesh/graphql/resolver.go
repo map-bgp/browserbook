@@ -1,6 +1,6 @@
 package graphql
 
-import "github.com/0xProject/0x-mesh/core"
+import "github.com/map-bgp/browserbook/browserbook-mesh/core"
 
 type Resolver struct {
 	app *core.App

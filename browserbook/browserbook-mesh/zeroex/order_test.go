@@ -8,10 +8,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/0xProject/0x-mesh/constants"
-	"github.com/0xProject/0x-mesh/ethereum"
-	"github.com/0xProject/0x-mesh/zeroex/orderwatch/decoder"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/map-bgp/browserbook/browserbook-mesh/constants"
+	"github.com/map-bgp/browserbook/browserbook-mesh/ethereum"
+	"github.com/map-bgp/browserbook/browserbook-mesh/zeroex/orderwatch/decoder"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

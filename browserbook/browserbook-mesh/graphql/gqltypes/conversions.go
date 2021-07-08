@@ -6,12 +6,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/0xProject/0x-mesh/common/types"
-	"github.com/0xProject/0x-mesh/db"
-	"github.com/0xProject/0x-mesh/zeroex"
-	"github.com/0xProject/0x-mesh/zeroex/ordervalidator"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/math"
+	"github.com/map-bgp/browserbook/browserbook-mesh/common/types"
+	"github.com/map-bgp/browserbook/browserbook-mesh/db"
+	"github.com/map-bgp/browserbook/browserbook-mesh/zeroex"
+	"github.com/map-bgp/browserbook/browserbook-mesh/zeroex/ordervalidator"
 )
 
 func StatsFromCommonType(stats *types.Stats) *Stats {

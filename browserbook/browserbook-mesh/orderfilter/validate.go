@@ -3,7 +3,7 @@
 package orderfilter
 
 import (
-	"github.com/0xProject/0x-mesh/zeroex"
+	"github.com/map-bgp/browserbook/browserbook-mesh/zeroex"
 	jsonschema "github.com/xeipuuv/gojsonschema"
 )
 

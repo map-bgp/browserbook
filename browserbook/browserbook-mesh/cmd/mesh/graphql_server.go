@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/0xProject/0x-mesh/core"
-	"github.com/0xProject/0x-mesh/graphql"
-	"github.com/0xProject/0x-mesh/graphql/generated"
+	"github.com/map-bgp/browserbook/browserbook-mesh/core"
+	"github.com/map-bgp/browserbook/browserbook-mesh/graphql"
+	"github.com/map-bgp/browserbook/browserbook-mesh/graphql/generated"
 
 	gqlserver "github.com/99designs/gqlgen/graphql/handler"
 )

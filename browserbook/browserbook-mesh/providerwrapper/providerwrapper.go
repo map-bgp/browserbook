@@ -12,9 +12,9 @@ import (
 	"math/rand"
 	"syscall/js"
 
-	"github.com/0xProject/0x-mesh/jsutil"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/map-bgp/browserbook/browserbook-mesh/jsutil"
 	log "github.com/sirupsen/logrus"
 )
 

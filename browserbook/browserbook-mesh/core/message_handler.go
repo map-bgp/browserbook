@@ -3,12 +3,12 @@ package core
 import (
 	"context"
 
-	"github.com/0xProject/0x-mesh/constants"
-	"github.com/0xProject/0x-mesh/encoding"
-	"github.com/0xProject/0x-mesh/p2p"
-	"github.com/0xProject/0x-mesh/zeroex"
-	"github.com/0xProject/0x-mesh/zeroex/ordervalidator"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/map-bgp/browserbook/browserbook-mesh/constants"
+	"github.com/map-bgp/browserbook/browserbook-mesh/encoding"
+	"github.com/map-bgp/browserbook/browserbook-mesh/p2p"
+	"github.com/map-bgp/browserbook/browserbook-mesh/zeroex"
+	"github.com/map-bgp/browserbook/browserbook-mesh/zeroex/ordervalidator"
 	log "github.com/sirupsen/logrus"
 )
 

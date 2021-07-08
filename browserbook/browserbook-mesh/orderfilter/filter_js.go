@@ -8,9 +8,9 @@ import (
 	"strings"
 	"syscall/js"
 
-	"github.com/0xProject/0x-mesh/ethereum"
-	"github.com/0xProject/0x-mesh/packages/mesh-browser/go/jsutil"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/map-bgp/browserbook/browserbook-mesh/ethereum"
+	"github.com/map-bgp/browserbook/browserbook-mesh/packages/mesh-browser/go/jsutil"
 )
 
 type Filter struct {

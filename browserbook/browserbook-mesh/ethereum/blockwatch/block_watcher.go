@@ -9,14 +9,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/0xProject/0x-mesh/common/types"
-	"github.com/0xProject/0x-mesh/constants"
-	"github.com/0xProject/0x-mesh/db"
-	"github.com/0xProject/0x-mesh/ethereum/simplestack"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/event"
+	"github.com/map-bgp/browserbook/browserbook-mesh/common/types"
+	"github.com/map-bgp/browserbook/browserbook-mesh/constants"
+	"github.com/map-bgp/browserbook/browserbook-mesh/db"
+	"github.com/map-bgp/browserbook/browserbook-mesh/ethereum/simplestack"
 	log "github.com/sirupsen/logrus"
 )
 

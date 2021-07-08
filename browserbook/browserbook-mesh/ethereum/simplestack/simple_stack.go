@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/0xProject/0x-mesh/common/types"
+	"github.com/map-bgp/browserbook/browserbook-mesh/common/types"
 )
 
 // UpdateType is the type of update applied to the in-memory stack.

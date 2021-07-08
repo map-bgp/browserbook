@@ -10,10 +10,10 @@ import (
 	"syscall/js"
 	"time"
 
-	"github.com/0xProject/0x-mesh/core"
-	"github.com/0xProject/0x-mesh/orderfilter"
-	"github.com/0xProject/0x-mesh/packages/mesh-browser/go/jsutil"
-	"github.com/0xProject/0x-mesh/packages/mesh-browser/go/providerwrapper"
+	"github.com/map-bgp/browserbook/browserbook-mesh/core"
+	"github.com/map-bgp/browserbook/browserbook-mesh/orderfilter"
+	"github.com/map-bgp/browserbook/browserbook-mesh/packages/mesh-browser/go/jsutil"
+	"github.com/map-bgp/browserbook/browserbook-mesh/packages/mesh-browser/go/providerwrapper"
 )
 
 // ConvertConfig converts a JavaScript config object into a core.Config. It also

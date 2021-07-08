@@ -15,12 +15,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/0xProject/0x-mesh/constants"
-	gqlclient "github.com/0xProject/0x-mesh/graphql/client"
-	"github.com/0xProject/0x-mesh/scenario"
-	"github.com/0xProject/0x-mesh/scenario/orderopts"
-	"github.com/0xProject/0x-mesh/zeroex"
 	"github.com/chromedp/chromedp"
+	"github.com/map-bgp/browserbook/browserbook-mesh/constants"
+	gqlclient "github.com/map-bgp/browserbook/browserbook-mesh/graphql/client"
+	"github.com/map-bgp/browserbook/browserbook-mesh/scenario"
+	"github.com/map-bgp/browserbook/browserbook-mesh/scenario/orderopts"
+	"github.com/map-bgp/browserbook/browserbook-mesh/zeroex"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

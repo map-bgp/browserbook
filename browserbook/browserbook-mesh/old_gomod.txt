@@ -1,4 +1,4 @@
-module github.com/0xProject/0x-mesh
+module github.com/map-bpg/browserbook/browserbook-mesh
 
 go 1.15
 

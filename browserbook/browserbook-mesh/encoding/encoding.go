@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/0xProject/0x-mesh/zeroex"
+	"github.com/map-bgp/browserbook/browserbook-mesh/zeroex"
 )
 
 type orderMessage struct {
