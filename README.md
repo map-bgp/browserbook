@@ -51,7 +51,12 @@
         <li><a href="#prerequisites">Prerequisites</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
+    <li>
+      <a href="#usage">Usage</a>
+      <ul>
+        <li><a href="#ide-support">IDE Support</a></li>
+      </ul>
+    </li>
     <li><a href="#component-hierarchy">Component Hierarchy</a></li>
     <li><a href="#testing">Testing</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
