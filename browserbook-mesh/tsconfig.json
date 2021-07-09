@@ -1,0 +1,15 @@
+// The root of the project is just a list of references and does not contain
+// any top-level TypeScript code.
+{
+    "extends": "./tsconfig-base",
+    "include": [],
+    "references": [
+        { "path": "./packages/mesh-browser" },
+        { "path": "./packages/mesh-browser-lite" },
+        { "path": "./packages/mesh-webpack-example" },
+        { "path": "./packages/mesh-webpack-example-lite" },
+        { "path": "./packages/mesh-integration-tests" },
+        { "path": "./packages/mesh-browser-shim" },
+        { "path": "./packages/mesh-graphql-client" }
+    ]
+}
