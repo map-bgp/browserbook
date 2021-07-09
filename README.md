@@ -177,6 +177,18 @@ You should now be able to open a browser and navigate to `http://localhost:8080/
 
 If you open the console, you should see 0x order activity. Note we do not recommend Safari.
 
+### IDE Support
+
+If you would like to run the project via a modern IDE, some appropriate configuration needs to be set.
+
+For example, if using Goland, your configuration would need to look like this:
+
+<img src="misc/goland-config.png" alt="Goland IDE Config">
+
+You also need to enable module support if using Goland:
+
+<img src="misc/goland-modules.png" alt="Goland IDE Config">
+
 ## Component Heirarchy
 
 This section will be completed at a later time
