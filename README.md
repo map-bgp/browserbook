@@ -89,17 +89,18 @@ The overall directory hierarchy resembles the following
 
 ```
 -- browserbook
-   |-- browserbook
-       |-- browserbook-mesh
-           |-- go.mod
-           |-- main.go
-           |-- ...
-       |-- client
-           |-- src
-           |-- package.json
-           |-- webpack.config.js
-           |-- ...
-       |-- oms-go
+   |-- browserbook-mesh
+       |-- go.mod
+       |-- main.go
+       |-- ...
+   |-- client
+       |-- src
+       |-- package.json
+       |-- truffle-config.js
+       |-- webpack.config.js
+       |-- ...
+   |-- misc
+   |-- oms-go
    |-- server
        |-- dist
        |-- index.js
@@ -134,7 +135,7 @@ You will also need to ensure that [golang](https://github.com/golang/go) is inst
 2. Change into browserbook-mesh directory
 
    ```sh
-   cd browserbook/browserbook/browserbook-mesh
+   cd browserbook/browserbook-mesh
    ```
 
 3. Install go dependencies
@@ -145,13 +146,13 @@ You will also need to ensure that [golang](https://github.com/golang/go) is inst
    
 4. Compile the wasm binary
    ```sh
-   GOOS=js GOARCH=wasm go build -o ../../server/dist/main.wasm
+   GOOS=js GOARCH=wasm go build -o ../server/dist/main.wasm
    ```
    
 5. Change back up to project root directory & into the server
 
    ```sh
-   cd ../../server
+   cd ../server
    ```
    
 6. Install dependencies and run the Express server
@@ -163,7 +164,7 @@ You will also need to ensure that [golang](https://github.com/golang/go) is inst
 7. In a separate shell navigate to the client directory from the project root
 
    ```sh
-   cd browserbook/client
+   cd client
    ```
 
 8. Install dependencies and start the Webpack dev server
