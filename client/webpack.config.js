@@ -1,6 +1,4 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
-
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 
 module.exports = {
@@ -45,9 +43,5 @@ module.exports = {
         removeRedundantAttributes: true
       }
     }),
-    // Make sure to add these in this order, so the wasm_exec.js gets injected first
-    // yes, it's backwards, I know :/
-    new AddAssetHtmlPlugin({ filepath: require.resolve('./src/init_go.js') }),
-    new AddAssetHtmlPlugin({ filepath: require.resolve('./src/wasm_exec.js') })
   ]
 };

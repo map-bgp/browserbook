@@ -6,7 +6,7 @@ const app = express()
 app.use(cors())
 app.use(compression())
 
-const PORT = 3000
+const PORT = 5000
 
 app.get('/', function (req, res) {
   res.contentType("application/wasm");

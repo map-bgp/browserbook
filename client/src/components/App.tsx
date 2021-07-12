@@ -10,13 +10,6 @@ import {
 } from '@0x/mesh-browser-lite';
 
 export default class App extends React.Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      isLoading: true
-    }
-  }
 
   componentDidMount() {
   	// WebAssembly.instantiateStreaming(fetch("http://localhost:3000"), go.importObject).then(async (result) => {
@@ -25,7 +18,7 @@ export default class App extends React.Component {
 	  // });
 
     (async () => {
-      await loadMeshStreamingWithURLAsync("http://localhost:3000");
+      await loadMeshStreamingWithURLAsync("http://localhost:5000");
 
       // Configure Mesh to use web3.currentProvider (e.g. provided by MetaMask).
       const mesh = new Mesh({
