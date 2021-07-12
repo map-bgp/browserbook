@@ -1,22 +1,25 @@
-import React from 'react'
+import * as React from "react";
 
-import { Mesh } from '@0x/mesh-browser-lite';
+import {
+    BigNumber,
+    loadMeshStreamingWithURLAsync,
+    Mesh,
+    OrderEvent,
+    SignedOrder,
+    SupportedProvider,
+} from '@0x/mesh-browser-lite';
 
 export default class App extends React.Component {
-  constructor(props) {
-    super(props)
 
-    this.state = {
-      isLoading: true
-    }
-  }
   componentDidMount() {
-	WebAssembly.instantiateStreaming(fetch("http://localhost:3000"), go.importObject).then(async (result) => {
-		go.run(result.instance)
-		this.setState({ isLoading: false })
-	});
+  	// WebAssembly.instantiateStreaming(fetch("http://localhost:3000"), go.importObject).then(async (result) => {
+  	// 	go.run(result.instance)
+  	// 	this.setState({ isLoading: false })
+	  // });
 
     (async () => {
+      await loadMeshStreamingWithURLAsync("http://localhost:5000");
+
       // Configure Mesh to use web3.currentProvider (e.g. provided by MetaMask).
       const mesh = new Mesh({
           verbosity: 4,
@@ -26,16 +29,16 @@ export default class App extends React.Component {
       });
 
       // This handler will be called whenever there is a critical error.
-      mesh.onError((err) => {
-          console.error(err);
-      });
+      mesh.onError((err: Error) => {
+        console.error(err);
+    });
 
       // This handler will be called whenever an order is added, expired,
       // cancelled, or filled.
-      mesh.onOrderEvents((events) => {
-          for (const event of events) {
-              console.log(event);
-          }
+      mesh.onOrderEvents((events: OrderEvent[]) => {
+       for (const event of events) {
+           console.log(event);
+       }
       });
 
       // Start Mesh *after* we set up the handlers.
@@ -74,6 +77,6 @@ export default class App extends React.Component {
 
   }
   render() {
-    return this.state.isLoading ? <div>Loading</div> :  <div><button>Click to say Hi in console!</button></div>
+    return <div>Check the console for a stream of 0x Orders</div>
   }
 }

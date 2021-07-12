@@ -2,4 +2,6 @@ node_modules/
 .DS_STORE
 /.idea/
 /server/dist/
+/client/dist/
+/client/package-lock.json
 /browserbook/.idea/workspace.xml

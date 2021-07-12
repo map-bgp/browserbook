@@ -1,16 +1,14 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
-
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 
 module.exports = {
   resolve: {
-    modules: ['src', 'node_modules']
+    extensions: [".ts", ".tsx", ".js", ".jsx"]
   },
   devtool: 'source-map',
   entry: {
-    vendor: ['@babel/polyfill', 'react', 'react-dom'],
-    client:     './src/index.js',
+    vendor: ['react', 'react-dom'],
+    client:  './src/index.js',
   },
   output: {
     path: __dirname + '/dist',
@@ -20,13 +18,8 @@ module.exports = {
   },
   module: {
     rules: [
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: {
-          loader: "babel-loader"
-        }
-      },
+      { test: /\.(t|j)sx?$/, use: { loader: 'ts-loader' }, exclude: /node_modules/ },
+      { enforce: "pre", test: /\.js$/, exclude: /node_modules/, loader: "source-map-loader" }
      ]
   },
   devServer: {
@@ -50,9 +43,5 @@ module.exports = {
         removeRedundantAttributes: true
       }
     }),
-    // Make sure to add these in this order, so the wasm_exec.js gets injected first
-    // yes, it's backwards, I know :/
-    new AddAssetHtmlPlugin({ filepath: require.resolve('./src/init_go.js') }),
-    new AddAssetHtmlPlugin({ filepath: require.resolve('./src/wasm_exec.js') })
   ]
 };
