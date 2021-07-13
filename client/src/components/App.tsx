@@ -1,3 +1,5 @@
+import wasm from '../wasm/main.wasm'
+
 import * as React from "react";
 
 import {
@@ -18,7 +20,7 @@ export default class App extends React.Component {
 	  // });
 
     (async () => {
-      await loadMeshStreamingWithURLAsync("http://localhost:5000");
+      await loadMeshStreamingWithURLAsync(wasm);
 
       // Configure Mesh to use web3.currentProvider (e.g. provided by MetaMask).
       const mesh = new Mesh({
