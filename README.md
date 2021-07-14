@@ -106,11 +106,6 @@ The overall directory hierarchy resembles the following
        |-- ...
    |-- misc
    |-- oms-go
-   |-- server
-       |-- dist
-       |-- index.js
-       |-- package.json
-       |-- ...
 ```
 
 `browserbook-mesh` contains the main golang code that compiles to the wasm binary served to the client
@@ -118,8 +113,6 @@ The overall directory hierarchy resembles the following
 `client` contains the front end application that is bundled and served to the client
 
 `oms-go` is a spike implementation of our more advanced order book features. It is incomplete and will be integrated into `browserbook-mesh` at a later time
-
-`server` is a simple [Express](https://github.com/expressjs/express) application that serves the wasm binary during development. In production this is performed by the IPFS network
 
 ### Prerequisites
 
