@@ -70,16 +70,16 @@
 ## About The Project
 
 Browserbook is a decentralized ethereum exchange powered by the 0x order protocol and WebRTC. Order discovery is
-performed asynchronously and without a centralized order book. Instead, clients, or peers, each maintain a copy of the 
-order book directly, and communicate between each other in order to ensure consistency. 
-Thanks to the power of WebAssembly, clients can be run directly in the browser, providing a seamless user experience 
-without the need for complicated dependencies. The front end application, as well as the ensuing WASM binary, 
+performed asynchronously and without a centralized order book. Instead, clients, or peers, each maintain a copy of the
+order book directly, and communicate between each other in order to ensure consistency.
+Thanks to the power of WebAssembly, clients can be run directly in the browser, providing a seamless user experience
+without the need for complicated dependencies. The front end application, as well as the ensuing WASM binary,
 are loaded from the IPFS network, to ensure true decentralization.
 
 ### Built With
 
-Browserbook depends on a lot other awesome projects. Much of the backend code relies on the work of the discontinued 
-mesh-browser project from 0x labs. 
+Browserbook depends on a lot other awesome projects. Much of the backend code relies on the work of the discontinued
+mesh-browser project from 0x labs.
 
 * [0xProject](https://github.com/0xProject)
 * [Ganache](https://github.com/trufflesuite/ganache)
@@ -123,7 +123,7 @@ The overall directory hierarchy resembles the following
 
 ### Prerequisites
 
-The project depends on certain prerequisites. 
+The project depends on certain prerequisites.
 
 First, ensure that [Node.js](https://github.com/nodejs/node) __v12__ (we use __v12.22.1__) is installed and available to the command line.
 We highly recommend using [NVM](https://github.com/nvm-sh/nvm) to manage your node installations.
@@ -148,31 +148,19 @@ You will also need to ensure that [golang](https://github.com/golang/go) is inst
    ```sh
    go mod tidy
    ```
-   
+
 4. Compile the wasm binary
    ```sh
-   GOOS=js GOARCH=wasm go build -o ../server/dist/main.wasm
-   ```
-   
-5. Change back up to project root directory & into the server
-
-   ```sh
-   cd ../server
-   ```
-   
-6. Install dependencies and run the Express server
-
-   ```sh
-   npm install && npm run dev
+   GOOS=js GOARCH=wasm go build -o ../client/src/wasm/main.wasm
    ```
 
-7. In a separate shell navigate to the client directory from the project root
+5. Back from the project root, navigate to the client directory
 
    ```sh
    cd client
    ```
 
-8. Install dependencies and start the Webpack dev server
+6. Install dependencies and start the Webpack dev server
 
    ```sh
    npm install && npm run dev
