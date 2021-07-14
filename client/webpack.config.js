@@ -20,6 +20,16 @@ module.exports = {
     rules: [
       { test: /\.wasm/, type: 'asset/resource'},
       { test: /\.(t|j)sx?$/, use: { loader: 'ts-loader' }, exclude: [/node_modules/, /\.wasm/] },
+      { test: /\.css$/, use: [
+        'style-loader',
+        {
+          loader: 'css-loader',
+          options: {
+            importLoaders: 1
+          }
+        },
+        'postcss-loader'
+      ]},
       { enforce: "pre", test: /\.js$/, exclude: /node_modules/, loader: "source-map-loader" }
      ]
   },
