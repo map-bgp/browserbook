@@ -30,7 +30,8 @@ module.exports = {
         },
         'postcss-loader'
       ]},
-      { enforce: "pre", test: /\.js$/, exclude: /node_modules/, loader: "source-map-loader" }
+      { enforce: "pre", test: /\.js$/, exclude: /node_modules/, loader: "source-map-loader" },
+      { test: /\.(png|svg|jpg|jpeg|gif)$/i, type: 'asset/resource' }
      ]
   },
   devServer: {
