@@ -6,20 +6,14 @@ import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
 
 import { classNames } from './utils/classNames'
 
-type User = {
-  name: string;
-  email: string;
-  imageUrl: string;
-}
-
 type HeaderProps = {
-  user: User;
+  current: string,
+  setCurrent: React.Dispatch<React.SetStateAction<string>>
 }
 
-// const Header: React.FC<IExample> = ({propsType}) => {
-const Header = ({user}: HeaderProps) => {
+const Header = (props: HeaderProps) => {
 
-  const [current, setCurrent] = useState('Dashboard');
+  // const [current, setCurrent] = useState('Dashboard');
 
   const navigation = [
     { name: 'Dashboard', href: '#'},
@@ -27,9 +21,6 @@ const Header = ({user}: HeaderProps) => {
     { name: 'Portfolio', href: '#'},
     { name: 'Assets', href: '#'},
     { name: 'How it Works', href: '#'},
-  ]
-
-  const userNavigation = [
   ]
 
   return(
@@ -49,14 +40,14 @@ const Header = ({user}: HeaderProps) => {
                     <a
                       key={item.name}
                       href={item.href}
-                      onClick={() => setCurrent(item.name)}
+                      onClick={() => props.setCurrent(item.name)}
                       className={classNames(
-                        current === item.name
-                          ? 'border-red-500 text-gray-900'
+                        props.current === item.name
+                          ? 'border-orange-500 text-gray-900'
                           : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
                         'inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium'
                       )}
-                      aria-current={current === item.name ? 'page' : undefined}
+                      aria-current={props.current === item.name ? 'page' : undefined}
                     >
                       {item.name}
                     </a>
@@ -65,7 +56,7 @@ const Header = ({user}: HeaderProps) => {
               </div>
               <div className="-mr-2 flex items-center sm:hidden">
                 {/* Mobile menu button */}
-                <Disclosure.Button className="bg-white inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                <Disclosure.Button className="bg-white inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
                   <span className="sr-only">Open main menu</span>
                   {open ? (
                     <XIcon className="block h-6 w-6" aria-hidden="true" />
@@ -83,14 +74,14 @@ const Header = ({user}: HeaderProps) => {
                 <a
                   key={item.name}
                   href={item.href}
-                  onClick={() => setCurrent(item.name)}
+                  onClick={() => props.setCurrent(item.name)}
                   className={classNames(
-                    current === item.name
-                      ? 'bg-red-50 border-red-500 text-red-700'
+                    props.current === item.name
+                      ? 'bg-orange-50 border-orange-500 text-orange-700'
                       : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800',
                     'block pl-3 pr-4 py-2 border-l-4 text-base font-medium'
                   )}
-                  aria-current={current === item.name ? 'page' : undefined}
+                  aria-current={props.current === item.name ? 'page' : undefined}
                 >
                   {item.name}
                 </a>
