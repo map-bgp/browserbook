@@ -4,6 +4,6 @@ node_modules/
 /server/dist/
 /client/dist/
 /client/build/
-/client/wasm/
+/client/src/wasm/
 /client/package-lock.json
 /browserbook/.idea/workspace.xml
