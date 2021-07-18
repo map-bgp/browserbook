@@ -19,7 +19,7 @@ import (
 const TestChainID = 1337
 
 // GanacheEndpoint specifies the Ganache test Ethereum node JSON RPC endpoint used in tests
-const GanacheEndpoint = "http://localhost:8545"
+const GanacheEndpoint = "http://localhost:9545"
 
 var (
 	// NullAddress is an Ethereum address with all zeroes.
@@ -30,20 +30,20 @@ var (
 
 var (
 	// GanacheAccount0 is the first account exposed on the Ganache test Ethereum node
-	GanacheAccount0           = common.HexToAddress("0x5409ed021d9299bf6814279a6a1411a7e866a631")
-	ganacheAccount0PrivateKey = common.Hex2Bytes("f2f48ee19680706196e2e339e5da3491186e0c4c5030670656b0e0164837257d")
+	GanacheAccount0           = common.HexToAddress("0x468929A0DAC6D5A1c7BA1ab09c0862195D63b18c")
+	ganacheAccount0PrivateKey = common.Hex2Bytes("12646e8d228ab365b969db1aabe4bceb20a7d865e8c57795528a250d8a7b0080")
 	// GanacheAccount1 is the second account exposed on the Ganache test Ethereum node
-	GanacheAccount1           = common.HexToAddress("0x6ecbe1db9ef729cbe972c83fb886247691fb6beb")
-	ganacheAccount1PrivateKey = common.Hex2Bytes("5d862464fe9303452126c8bc94274b8c5f9874cbd219789b3eb2128075a76f72")
+	GanacheAccount1           = common.HexToAddress("0xBC0782fCCdf14293e6CB20FB28ba4943fBa0F92c")
+	ganacheAccount1PrivateKey = common.Hex2Bytes("6eca3402cfe63ba2538bed62e4f37d6744358063aa8208ba0fabab7cc2d54c3b")
 	// GanacheAccount2 is the third account exposed on the Ganache test Ethereum node
-	GanacheAccount2           = common.HexToAddress("0xe36ea790bc9d7ab70c55260c66d52b1eca985f84")
-	ganacheAccount2PrivateKey = common.Hex2Bytes("df02719c4df8b9b8ac7f551fcb5d9ef48fa27eef7a66453879f4d8fdc6e78fb1")
+	GanacheAccount2           = common.HexToAddress("0xd200C901b33B04a879F17F8D17426B64eAc28d3F")
+	ganacheAccount2PrivateKey = common.Hex2Bytes("65a68a4e665b1ed7e85d32574bf409301538c638dbb5f93924aa4bc8c9b2584e")
 	// GanacheAccount3 is the fourth account exposed on the Ganache test Ethereum node
-	GanacheAccount3           = common.HexToAddress("0xe834ec434daba538cd1b9fe1582052b880bd7e63")
-	ganacheAccount3PrivateKey = common.Hex2Bytes("ff12e391b79415e941a94de3bf3a9aee577aed0731e297d5cfa0b8a1e02fa1d0")
+	GanacheAccount3           = common.HexToAddress("0x36c9465a37251EBAC3Cd8D6b1B35759FcF6b27D0")
+	ganacheAccount3PrivateKey = common.Hex2Bytes("eee6a31583a233d36ad41c69520b7ff379b05f3fd490c738913723eabc340525")
 	// GanacheAccount4 is the fifth account exposed on the Ganache test Ethereum node
-	GanacheAccount4           = common.HexToAddress("0x78dc5d2d739606d31509c31d654056a45185ecb6")
-	ganacheAccount4PrivateKey = common.Hex2Bytes("752dd9cf65e68cfaba7d60225cbdbc1f4729dd5e5507def72815ed0d8abc6249")
+	GanacheAccount4           = common.HexToAddress("0x8f3c223Ab9C5366fbd7128b706158c4c27BFD591")
+	ganacheAccount4PrivateKey = common.Hex2Bytes("8a2b22d446323df766be45fefd2d105371c44236abf173f7b05f423088641ade")
 )
 
 // GanacheAccountToPrivateKey maps Ganache test Ethereum node accounts to their private key
@@ -56,9 +56,11 @@ var GanacheAccountToPrivateKey = map[common.Address][]byte{
 }
 
 // GanacheDummyERC721TokenAddress is the dummy ERC721 token address in the Ganache snapshot
+//#HASTOBECHANGED
 var GanacheDummyERC721TokenAddress = common.HexToAddress("0x07f96aa816c1f244cbc6ef114bb2b023ba54a2eb")
 
 // GanacheDummyERC1155MintableAddress is the dummy ERC1155 token address in the Ganache snapshot
+//#HASTOBECHANGED
 var GanacheDummyERC1155MintableAddress = common.HexToAddress("0x038f9b392fb9a9676dbaddf78ea5fdbf6c7d9710")
 
 // ErrInternal is used whenever we don't wish to expose internal errors to a client
@@ -108,6 +110,7 @@ const ParityFilterUnknownBlock = "One of the blocks specified in filter (fromBlo
 const GethFilterUnknownBlock = "unknown block"
 
 var (
+	//#HASTOBECHANGED
 	ZRXAssetData  = common.Hex2Bytes("f47261b0000000000000000000000000871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c")
 	WETHAssetData = common.Hex2Bytes("f47261b00000000000000000000000000b1ba0af832d7c05fd64161e0db78e85978e8082")
 )
