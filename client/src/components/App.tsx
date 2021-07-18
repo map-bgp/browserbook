@@ -21,8 +21,8 @@ const App = () => {
 
   const mesh = new Mesh({
     verbosity: 4,
-    ethereumChainID: 1,
-    ethereumRPCURL: "https://mainnet.infura.io/v3/806d459aeea74df8ac8bfeec07462d12",
+    ethereumChainID: 1337,
+    ethereumRPCURL: "http://192.41.136.236:9545",
     //web3Provider: (window as any).web3.currentProvider as SupportedProvider,
   })
 
@@ -44,6 +44,8 @@ const App = () => {
     loadWasm().catch(console.error)
     console.log("WASM locked and loaded")
   })
+
+  mesh.startAsync();
 
   return (
     <div className="min-h-screen bg-gray-100">
