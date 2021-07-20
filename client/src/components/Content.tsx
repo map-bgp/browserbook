@@ -11,6 +11,37 @@ type ContentProps = {
   mesh: Mesh
 }
 
+type Queue = {
+  [index: number]: string
+  head: number;
+  tail: number;
+}
+
+function enqueue(q: Queue, s: string) {
+  q[q.head] = s
+  q.head++
+}
+
+function dequeue(q: Queue) {
+  let temp: string = q[q.tail]
+  q.tail++
+
+  return temp
+}
+
+const rows : any[] = [];
+const numrows = 5;
+
+for (var i = 0; i < numrows; i++) {
+    // note: we are adding a key prop here to allow react to uniquely identify each
+    // element in this array. see: https://reactjs.org/docs/lists-and-keys.html
+    rows.push(
+      <tr className="text-center">
+        <td className="width-full" key={i}>Streamed Order {i}</td>
+      </tr>
+    );
+}
+
 const Content = (props: ContentProps) => {
   return(
     <div className="py-10">
@@ -26,10 +57,9 @@ const Content = (props: ContentProps) => {
             <div className="flex items-center justify-center border-4 border-dashed border-gray-200 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-opacity-50">
               This will be a pretty market graph
             </div>
-            <textarea readOnly className="text-center align-text-top bg-gray-100 resize-none row-span-2 flex items-center justify-center
-             border-4 border-dashed border-gray-200 rounded-lg h-96 focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-opacity-50">
-              This will be the order console
-            </textarea>
+            <table className="table-fixed bg-gray-100 row-span-2 border-4 border-dashed border-gray-200 rounded-lg h-96 focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-opacity-50">
+              {rows}
+            </table>
             <div className="flex-col items-center justify-center border-4 border-dashed border-gray-200 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-opacity-50">
               <div className="text-center my-6">This will be the order input</div>
               <button
