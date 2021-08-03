@@ -1,6 +1,8 @@
 import "tailwindcss/tailwind.css"
 
 import React, { useState, Fragment } from 'react'
+import { useHistory, withRouter } from "react-router-dom";
+
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
 
@@ -13,14 +15,16 @@ type HeaderProps = {
 
 const Header = (props: HeaderProps) => {
 
-  // const [current, setCurrent] = useState('Dashboard');
+  const history = useHistory();
+
+  // TODO Fix bug where on reload state is reset to dashboard but browser history remains
 
   const navigation = [
-    { name: 'Dashboard', href: '#'},
-    { name: 'Market', href: '#'},
-    { name: 'Portfolio', href: '#'},
-    { name: 'Assets', href: '#'},
-    { name: 'How it Works', href: '#'},
+    { name: 'Dashboard'},
+    { name: 'Market'},
+    { name: 'Portfolio'},
+    { name: 'Assets'},
+    { name: 'How it Works'},
   ]
 
   return(
@@ -39,8 +43,11 @@ const Header = (props: HeaderProps) => {
                   {navigation.map((item) => (
                     <a
                       key={item.name}
-                      href={item.href}
-                      onClick={() => props.setCurrent(item.name)}
+                      onClick={() => {
+                        console.log(item.name)
+                        props.setCurrent(item.name)
+                        history.push("/".concat(item.name.toLowerCase().split(" ").join("-")));
+                      }}
                       className={classNames(
                         props.current === item.name
                           ? 'border-orange-500 text-gray-900'
@@ -73,8 +80,10 @@ const Header = (props: HeaderProps) => {
               {navigation.map((item) => (
                 <a
                   key={item.name}
-                  href={item.href}
-                  onClick={() => props.setCurrent(item.name)}
+                  onClick={() => {
+                    props.setCurrent(item.name)
+                    history.push("/".concat(item.name.toLowerCase().replace(" ", "-")));
+                  }}
                   className={classNames(
                     props.current === item.name
                       ? 'bg-orange-50 border-orange-500 text-orange-700'
@@ -94,4 +103,4 @@ const Header = (props: HeaderProps) => {
   );
 }
 
-export default Header
+export default withRouter(Header)

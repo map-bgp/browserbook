@@ -4,6 +4,10 @@ import wasm from '../wasm/main.wasm'
 import React, {useEffect, useState} from "react";
 
 import {
+  BrowserRouter as Router,
+} from "react-router-dom";
+
+import {
     BigNumber,
     loadMeshStreamingWithURLAsync,
     Mesh,
@@ -45,12 +49,14 @@ const App = () => {
     console.log("WASM locked and loaded")
   })
 
-  mesh.startAsync();
+  // mesh.startAsync();
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Header current={current} setCurrent={setCurrent} />
-      <Content current={current} setCurrent={setCurrent} mesh={mesh} />
+      <Router>
+        <Header current={current} setCurrent={setCurrent} />
+        <Content current={current} setCurrent={setCurrent} mesh={mesh} />
+      </Router>
     </div>
   );
 }
