@@ -22,7 +22,8 @@ const App = () => {
   const mesh = new Mesh({
     verbosity: 4,
     ethereumChainID: 1337,
-    ethereumRPCURL: "http://192.41.136.236:9545",
+    ethereumRPCURL: "http://35.222.39.6:9545",
+    useBootstrapList: false,
     //web3Provider: (window as any).web3.currentProvider as SupportedProvider,
   })
 

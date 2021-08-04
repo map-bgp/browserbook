@@ -36,7 +36,8 @@ module.exports = {
   },
   devServer: {
     historyApiFallback: true,
-    disableHostCheck: true
+    disableHostCheck: true,
+    injectClient: false,
   },
   plugins: [
     new NodePolyfillPlugin(),
