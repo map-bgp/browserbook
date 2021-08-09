@@ -9,6 +9,7 @@ import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
 import { classNames } from './utils/classNames'
 
 type HeaderProps = {
+  navigation: any[],
   current: string,
   setCurrent: React.Dispatch<React.SetStateAction<string>>
 }
@@ -18,14 +19,6 @@ const Header = (props: HeaderProps) => {
   const history = useHistory();
 
   // TODO Fix bug where on reload state is reset to dashboard but browser history remains
-
-  const navigation = [
-    { name: 'Dashboard'},
-    { name: 'Market'},
-    { name: 'Portfolio'},
-    { name: 'Assets'},
-    { name: 'How it Works'},
-  ]
 
   return(
     <Disclosure as="nav" className="bg-white shadow-sm">
@@ -40,21 +33,20 @@ const Header = (props: HeaderProps) => {
                   </svg>
                 </div>
                 <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
-                  {navigation.map((item) => (
+                  {props.navigation.map((item) => (
                     <a
-                      key={item.name}
+                      key={item.key}
                       onClick={() => {
-                        console.log(item.name)
-                        props.setCurrent(item.name)
-                        history.push("/".concat(item.name.toLowerCase().split(" ").join("-")));
+                        props.setCurrent(item.key)
+                        history.push("/".concat(item.key));
                       }}
                       className={classNames(
-                        props.current === item.name
+                        props.current === item.key
                           ? 'border-orange-500 text-gray-900'
                           : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
-                        'inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium'
+                        'inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium cursor-pointer'
                       )}
-                      aria-current={props.current === item.name ? 'page' : undefined}
+                      aria-current={props.current === item.key ? 'page' : undefined}
                     >
                       {item.name}
                     </a>
@@ -77,20 +69,20 @@ const Header = (props: HeaderProps) => {
 
           <Disclosure.Panel className="sm:hidden">
             <div className="pt-2 pb-3 space-y-1">
-              {navigation.map((item) => (
+              {props.navigation.map((item) => (
                 <a
-                  key={item.name}
+                  key={item.key}
                   onClick={() => {
-                    props.setCurrent(item.name)
+                    props.setCurrent(item.key)
                     history.push("/".concat(item.name.toLowerCase().replace(" ", "-")));
                   }}
                   className={classNames(
-                    props.current === item.name
+                    props.current === item.key
                       ? 'bg-orange-50 border-orange-500 text-orange-700'
                       : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800',
                     'block pl-3 pr-4 py-2 border-l-4 text-base font-medium'
                   )}
-                  aria-current={props.current === item.name ? 'page' : undefined}
+                  aria-current={props.current === item.key ? 'page' : undefined}
                 >
                   {item.name}
                 </a>
