@@ -21,8 +21,19 @@ import Content from './Content'
 
 const App = () => {
 
-  const [current, setCurrent] = useState('Dashboard')
   const location = useLocation()
+  const getCurrent = () => {
+    let path = location.pathname
+    var current
+
+    for(let i=0; i < navigation.length; i++){
+      if (navigation[i].key === path.replace("/", "")) {
+        current = navigation[i].name
+      }
+    }
+
+    return current
+  }
 
   const mesh = new Mesh({
     verbosity: 4,
@@ -49,23 +60,37 @@ const App = () => {
 
     loadWasm().catch(console.error)
     console.log("WASM locked and loaded")
-
-    setCurrent(location.pathname.replace("/", ""))
   })
 
-  const navigation = new Map()
-  navigation.set('dashboard', 'Dashboard')
-  navigation.set('market', 'Market')
-  navigation.set('portfolio', 'Portfolio')
-  navigation.set('assets', 'Assets')
-  navigation.set('how-it-works', 'How It Works')
+  const navigation = [
+    {
+      name: 'Dashboard',
+      key: 'dashboard'
+    },
+    {
+      name: 'Market',
+      key: 'market'
+    },
+    {
+      name: 'Portfolio',
+      key: 'portfolio'
+    },
+    {
+      name: 'Assets',
+      key: 'assets'
+    },
+    {
+      name: 'How it Works',
+      key: 'how-it-works'
+    },
+  ]
 
   // mesh.startAsync();
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Header navigation={navigation} current={current} setCurrent={setCurrent} />
-      <Content title={navigation.get(current)} mesh={mesh} />
+      <Header navigation={navigation} current={getCurrent()} />
+      <Content current={getCurrent()} mesh={mesh} />
     </div>
   );
 }
