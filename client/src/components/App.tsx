@@ -4,7 +4,7 @@ import wasm from '../wasm/main.wasm'
 import React, {useEffect, useState} from "react";
 
 import {
-  BrowserRouter as Router,
+  useLocation
 } from "react-router-dom";
 
 import {
@@ -21,7 +21,19 @@ import Content from './Content'
 
 const App = () => {
 
-  const [current, setCurrent] = useState('Dashboard')
+  const location = useLocation()
+  const getCurrent = () => {
+    let path = location.pathname
+    let current = "Dashboard"
+
+    for(let i=0; i < navigation.length; i++){
+      if (navigation[i].key === path.replace("/", "")) {
+        current = navigation[i].name
+      }
+    }
+
+    return current
+  }
 
   const mesh = new Mesh({
     verbosity: 4,
@@ -50,14 +62,35 @@ const App = () => {
     console.log("WASM locked and loaded")
   })
 
+  const navigation = [
+    {
+      name: 'Dashboard',
+      key: 'dashboard'
+    },
+    {
+      name: 'Market',
+      key: 'market'
+    },
+    {
+      name: 'Portfolio',
+      key: 'portfolio'
+    },
+    {
+      name: 'Assets',
+      key: 'assets'
+    },
+    {
+      name: 'How it Works',
+      key: 'how-it-works'
+    },
+  ]
+
   // mesh.startAsync();
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Router>
-        <Header current={current} setCurrent={setCurrent} />
-        <Content current={current} setCurrent={setCurrent} mesh={mesh} />
-      </Router>
+      <Header navigation={navigation} current={getCurrent()} />
+      <Content current={getCurrent()} mesh={mesh} />
     </div>
   );
 }
