@@ -24,7 +24,7 @@ const App = () => {
   const location = useLocation()
   const getCurrent = () => {
     let path = location.pathname
-    var current
+    let current = "Dashboard"
 
     for(let i=0; i < navigation.length; i++){
       if (navigation[i].key === path.replace("/", "")) {
