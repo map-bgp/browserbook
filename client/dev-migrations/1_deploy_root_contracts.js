@@ -3,7 +3,7 @@
 const bluebird = require('bluebird')
 
 const SafeMath = artifacts.require(
-  'openzeppelin-solidity/contracts/math/SafeMath.sol'
+    'openzeppelin-solidity/contracts/math/SafeMath.sol'
 )
 
 const RLPReader = artifacts.require('solidity-rlp/contracts/RLPReader.sol')
@@ -41,180 +41,180 @@ const StakeManagerTestable = artifacts.require('StakeManagerTestable')
 const StakeManagerTest = artifacts.require('StakeManagerTest')
 
 const libDeps = [
-  {
-    lib: BytesLib,
-    contracts: [WithdrawManager, ERC20Predicate, ERC721Predicate, MintableERC721Predicate]
-  },
-  {
-    lib: Common,
-    contracts: [
-      WithdrawManager,
-      ERC20Predicate,
-      ERC721Predicate,
-      MintableERC721Predicate,
-      MarketplacePredicate,
-      MarketplacePredicateTest,
-      TransferWithSigPredicate
-    ]
-  },
-  {
-    lib: ECVerify,
-    contracts: [
-      StakeManager,
-      SlashingManager,
-      StakeManagerTestable,
-      MarketplacePredicate,
-      MarketplacePredicateTest,
-      TransferWithSigPredicate
-    ]
-  },
-  {
-    lib: Merkle,
-    contracts: [
-      WithdrawManager,
-      ERC20Predicate,
-      ERC721Predicate,
-      MintableERC721Predicate,
-      StakeManager,
-      StakeManagerTestable,
-      StakeManagerTest
-    ]
-  },
-  {
-    lib: MerklePatriciaProof,
-    contracts: [WithdrawManager, ERC20Predicate, ERC721Predicate, MintableERC721Predicate]
-  },
-  {
-    lib: PriorityQueue,
-    contracts: [WithdrawManager]
-  },
-  {
-    lib: RLPEncode,
-    contracts: [
-      WithdrawManager,
-      ERC20Predicate,
-      ERC721Predicate,
-      MintableERC721Predicate,
-      MarketplacePredicate,
-      MarketplacePredicateTest
-    ]
-  },
-  {
-    lib: RLPReader,
-    contracts: [
-      RootChain,
-      StakeManager,
-      ERC20Predicate,
-      ERC721Predicate,
-      MintableERC721Predicate,
-      MarketplacePredicate,
-      MarketplacePredicateTest
-    ]
-  },
-  {
-    lib: SafeMath,
-    contracts: [
-      RootChain,
-      ERC20Predicate,
-      ERC721Predicate,
-      MintableERC721Predicate,
-      MarketplacePredicate,
-      MarketplacePredicateTest,
-      TransferWithSigPredicate,
-      StakeManager,
-      SlashingManager,
-      StakingInfo
-    ]
-  },
-  {
-    lib: SafeMath,
-    contracts: [RootChain, ERC20Predicate]
-  },
-  {
-    lib: TransferWithSigUtils,
-    contracts: [
-      TransferWithSigPredicate,
-      MarketplacePredicate,
-      MarketplacePredicateTest
-    ]
-  }
+    {
+        lib: BytesLib,
+        contracts: [WithdrawManager, ERC20Predicate, ERC721Predicate, MintableERC721Predicate]
+    },
+    {
+        lib: Common,
+        contracts: [
+            WithdrawManager,
+            ERC20Predicate,
+            ERC721Predicate,
+            MintableERC721Predicate,
+            MarketplacePredicate,
+            MarketplacePredicateTest,
+            TransferWithSigPredicate
+        ]
+    },
+    {
+        lib: ECVerify,
+        contracts: [
+            StakeManager,
+            SlashingManager,
+            StakeManagerTestable,
+            MarketplacePredicate,
+            MarketplacePredicateTest,
+            TransferWithSigPredicate
+        ]
+    },
+    {
+        lib: Merkle,
+        contracts: [
+            WithdrawManager,
+            ERC20Predicate,
+            ERC721Predicate,
+            MintableERC721Predicate,
+            StakeManager,
+            StakeManagerTestable,
+            StakeManagerTest
+        ]
+    },
+    {
+        lib: MerklePatriciaProof,
+        contracts: [WithdrawManager, ERC20Predicate, ERC721Predicate, MintableERC721Predicate]
+    },
+    {
+        lib: PriorityQueue,
+        contracts: [WithdrawManager]
+    },
+    {
+        lib: RLPEncode,
+        contracts: [
+            WithdrawManager,
+            ERC20Predicate,
+            ERC721Predicate,
+            MintableERC721Predicate,
+            MarketplacePredicate,
+            MarketplacePredicateTest
+        ]
+    },
+    {
+        lib: RLPReader,
+        contracts: [
+            RootChain,
+            StakeManager,
+            ERC20Predicate,
+            ERC721Predicate,
+            MintableERC721Predicate,
+            MarketplacePredicate,
+            MarketplacePredicateTest
+        ]
+    },
+    {
+        lib: SafeMath,
+        contracts: [
+            RootChain,
+            ERC20Predicate,
+            ERC721Predicate,
+            MintableERC721Predicate,
+            MarketplacePredicate,
+            MarketplacePredicateTest,
+            TransferWithSigPredicate,
+            StakeManager,
+            SlashingManager,
+            StakingInfo
+        ]
+    },
+    {
+        lib: SafeMath,
+        contracts: [RootChain, ERC20Predicate]
+    },
+    {
+        lib: TransferWithSigUtils,
+        contracts: [
+            TransferWithSigPredicate,
+            MarketplacePredicate,
+            MarketplacePredicateTest
+        ]
+    }
 ]
 
-module.exports = async function(deployer, network, accounts) {
-  deployer.then(async() => {
-    console.log('linking libs...')
-    await bluebird.map(libDeps, async e => {
-      await deployer.deploy(e.lib)
-      deployer.link(e.lib, e.contracts)
+module.exports = async function (deployer, network, accounts) {
+    deployer.then(async () => {
+        console.log('linking libs...')
+        await bluebird.map(libDeps, async e => {
+            await deployer.deploy(e.lib)
+            deployer.link(e.lib, e.contracts)
+        })
+
+        console.log('deploying contracts...')
+        await deployer.deploy(Governance)
+        await deployer.deploy(Registry, Governance.address)
+        await deployer.deploy(ValidatorShareFactory)
+        await deployer.deploy(TestToken, 'Matic Test', 'MATICTEST')
+        await deployer.deploy(StakingInfo, Registry.address)
+        await deployer.deploy(StakingNFT, 'Matic Validator', 'MV')
+        await Promise.all([
+            deployer.deploy(RootChain, Registry.address, 'heimdall-P5rXwg'),
+
+            deployer.deploy(WithdrawManager),
+            deployer.deploy(DepositManager)
+        ])
+
+        await deployer.deploy(StakeManagerTestable)
+        await deployer.deploy(StakeManagerTest)
+        const stakeManager = await deployer.deploy(StakeManager)
+        const proxy = await deployer.deploy(StakeManagerProxy, '0x0000000000000000000000000000000000000000')
+        await proxy.updateAndCall(
+            StakeManager.address,
+            stakeManager.contract.methods.initialize(
+                Registry.address,
+                RootChain.address,
+                TestToken.address,
+                StakingNFT.address,
+                StakingInfo.address,
+                ValidatorShareFactory.address,
+                Governance.address,
+                accounts[0]
+            ).encodeABI()
+        )
+
+        await deployer.deploy(SlashingManager, Registry.address, StakingInfo.address, 'heimdall-P5rXwg')
+        let stakingNFT = await StakingNFT.deployed()
+        await stakingNFT.transferOwnership(StakeManagerProxy.address)
+
+        await Promise.all([
+            deployer.deploy(
+                ERC20Predicate,
+                WithdrawManager.address,
+                DepositManager.address,
+                Registry.address
+            ),
+            deployer.deploy(
+                ERC721Predicate,
+                WithdrawManager.address,
+                DepositManager.address
+            ),
+            deployer.deploy(
+                MintableERC721Predicate,
+                WithdrawManager.address,
+                DepositManager.address
+            ),
+            deployer.deploy(Marketplace),
+            deployer.deploy(MarketplacePredicateTest),
+            deployer.deploy(
+                MarketplacePredicate,
+                RootChain.address,
+                WithdrawManager.address,
+                Registry.address
+            ),
+            deployer.deploy(
+                TransferWithSigPredicate,
+                RootChain.address,
+                WithdrawManager.address,
+                Registry.address
+            )
+        ])
     })
-
-    console.log('deploying contracts...')
-    await deployer.deploy(Governance)
-    await deployer.deploy(Registry, Governance.address)
-    await deployer.deploy(ValidatorShareFactory)
-    await deployer.deploy(TestToken, 'Matic Test', 'MATICTEST')
-    await deployer.deploy(StakingInfo, Registry.address)
-    await deployer.deploy(StakingNFT, 'Matic Validator', 'MV')
-    await Promise.all([
-      deployer.deploy(RootChain, Registry.address, 'heimdall-P5rXwg'),
-
-      deployer.deploy(WithdrawManager),
-      deployer.deploy(DepositManager)
-    ])
-
-    await deployer.deploy(StakeManagerTestable)
-    await deployer.deploy(StakeManagerTest)
-    const stakeManager = await deployer.deploy(StakeManager)
-    const proxy = await deployer.deploy(StakeManagerProxy, '0x0000000000000000000000000000000000000000')
-    await proxy.updateAndCall(
-      StakeManager.address,
-      stakeManager.contract.methods.initialize(
-        Registry.address,
-        RootChain.address,
-        TestToken.address,
-        StakingNFT.address,
-        StakingInfo.address,
-        ValidatorShareFactory.address,
-        Governance.address,
-        accounts[0]
-      ).encodeABI()
-    )
-
-    await deployer.deploy(SlashingManager, Registry.address, StakingInfo.address, 'heimdall-P5rXwg')
-    let stakingNFT = await StakingNFT.deployed()
-    await stakingNFT.transferOwnership(StakeManagerProxy.address)
-
-    await Promise.all([
-      deployer.deploy(
-        ERC20Predicate,
-        WithdrawManager.address,
-        DepositManager.address,
-        Registry.address
-      ),
-      deployer.deploy(
-        ERC721Predicate,
-        WithdrawManager.address,
-        DepositManager.address
-      ),
-      deployer.deploy(
-        MintableERC721Predicate,
-        WithdrawManager.address,
-        DepositManager.address
-      ),
-      deployer.deploy(Marketplace),
-      deployer.deploy(MarketplacePredicateTest),
-      deployer.deploy(
-        MarketplacePredicate,
-        RootChain.address,
-        WithdrawManager.address,
-        Registry.address
-      ),
-      deployer.deploy(
-        TransferWithSigPredicate,
-        RootChain.address,
-        WithdrawManager.address,
-        Registry.address
-      )
-    ])
-  })
 }

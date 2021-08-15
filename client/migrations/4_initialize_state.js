@@ -20,125 +20,125 @@ const TransferWithSigPredicate = artifacts.require('TransferWithSigPredicate')
 const MaticWeth = artifacts.require('MaticWETH')
 const TestToken = artifacts.require('TestToken')
 
-module.exports = async function(deployer, network) {
-  deployer.then(async () => {
-    console.log('initializing contract state...')
-    await bluebird
-      .all([
-        TestToken.deployed(),
-        Registry.deployed(),
-        GovernanceProxy.deployed(),
-        DepositManagerProxy.deployed(),
-        StateSender.deployed(),
-        WithdrawManagerProxy.deployed(),
-        StakeManagerProxy.deployed(),
-        SlashingManager.deployed(),
-        ValidatorShare.deployed(),
-        StakingNFT.deployed(),
-        MaticWeth.deployed(),
-        ERC20Predicate.deployed(),
-        ERC721Predicate.deployed(),
-        MarketplacePredicate.deployed(),
-        TransferWithSigPredicate.deployed()
-      ])
-      .spread(async function(
-        testToken,
-        registry,
-        governanceProxy,
-        depositManagerProxy,
-        stateSender,
-        withdrawManagerProxy,
-        stakeManagerProxy,
-        slashingManager,
-        validatorShare,
-        stakingNFT,
-        maticWeth,
-        ERC20Predicate,
-        ERC721Predicate,
-        MarketplacePredicate,
-        TransferWithSigPredicate
-      ) {
-        let governance = await Governance.at(governanceProxy.address)
-        await governance.update(
-          registry.address,
-          registry.contract.methods.updateContractMap(
-            ethUtils.bufferToHex(ethUtils.keccak256('depositManager')),
-            depositManagerProxy.address
-          ).encodeABI()
-        )
-        await governance.update(
-          registry.address,
-          registry.contract.methods.updateContractMap(
-            ethUtils.bufferToHex(ethUtils.keccak256('withdrawManager')),
-            withdrawManagerProxy.address
-          ).encodeABI()
-        )
-        await governance.update(
-          registry.address,
-          registry.contract.methods.updateContractMap(
-            ethUtils.bufferToHex(ethUtils.keccak256('stakeManager')),
-            StakeManagerProxy.address
-          ).encodeABI()
-        )
-        await governance.update(
-          registry.address,
-          registry.contract.methods.updateContractMap(
-            ethUtils.bufferToHex(ethUtils.keccak256('validatorShare')),
-            validatorShare.address
-          ).encodeABI()
-        )
-        await governance.update(
-          registry.address,
-          registry.contract.methods.updateContractMap(
-            ethUtils.bufferToHex(ethUtils.keccak256('slashingManager')),
-            slashingManager.address
-          ).encodeABI()
-        )
-        await governance.update(
-          registry.address,
-          registry.contract.methods.updateContractMap(
-            ethUtils.bufferToHex(ethUtils.keccak256('stateSender')),
-            stateSender.address
-          ).encodeABI()
-        )
-        await governance.update(
-          registry.address,
-          registry.contract.methods.updateContractMap(
-            ethUtils.bufferToHex(ethUtils.keccak256('wethToken')),
-            maticWeth.address
-          ).encodeABI()
-        )
+module.exports = async function (deployer, network) {
+    deployer.then(async () => {
+        console.log('initializing contract state...')
+        await bluebird
+            .all([
+                TestToken.deployed(),
+                Registry.deployed(),
+                GovernanceProxy.deployed(),
+                DepositManagerProxy.deployed(),
+                StateSender.deployed(),
+                WithdrawManagerProxy.deployed(),
+                StakeManagerProxy.deployed(),
+                SlashingManager.deployed(),
+                ValidatorShare.deployed(),
+                StakingNFT.deployed(),
+                MaticWeth.deployed(),
+                ERC20Predicate.deployed(),
+                ERC721Predicate.deployed(),
+                MarketplacePredicate.deployed(),
+                TransferWithSigPredicate.deployed()
+            ])
+            .spread(async function (
+                testToken,
+                registry,
+                governanceProxy,
+                depositManagerProxy,
+                stateSender,
+                withdrawManagerProxy,
+                stakeManagerProxy,
+                slashingManager,
+                validatorShare,
+                stakingNFT,
+                maticWeth,
+                ERC20Predicate,
+                ERC721Predicate,
+                MarketplacePredicate,
+                TransferWithSigPredicate
+            ) {
+                let governance = await Governance.at(governanceProxy.address)
+                await governance.update(
+                    registry.address,
+                    registry.contract.methods.updateContractMap(
+                        ethUtils.bufferToHex(ethUtils.keccak256('depositManager')),
+                        depositManagerProxy.address
+                    ).encodeABI()
+                )
+                await governance.update(
+                    registry.address,
+                    registry.contract.methods.updateContractMap(
+                        ethUtils.bufferToHex(ethUtils.keccak256('withdrawManager')),
+                        withdrawManagerProxy.address
+                    ).encodeABI()
+                )
+                await governance.update(
+                    registry.address,
+                    registry.contract.methods.updateContractMap(
+                        ethUtils.bufferToHex(ethUtils.keccak256('stakeManager')),
+                        StakeManagerProxy.address
+                    ).encodeABI()
+                )
+                await governance.update(
+                    registry.address,
+                    registry.contract.methods.updateContractMap(
+                        ethUtils.bufferToHex(ethUtils.keccak256('validatorShare')),
+                        validatorShare.address
+                    ).encodeABI()
+                )
+                await governance.update(
+                    registry.address,
+                    registry.contract.methods.updateContractMap(
+                        ethUtils.bufferToHex(ethUtils.keccak256('slashingManager')),
+                        slashingManager.address
+                    ).encodeABI()
+                )
+                await governance.update(
+                    registry.address,
+                    registry.contract.methods.updateContractMap(
+                        ethUtils.bufferToHex(ethUtils.keccak256('stateSender')),
+                        stateSender.address
+                    ).encodeABI()
+                )
+                await governance.update(
+                    registry.address,
+                    registry.contract.methods.updateContractMap(
+                        ethUtils.bufferToHex(ethUtils.keccak256('wethToken')),
+                        maticWeth.address
+                    ).encodeABI()
+                )
 
-        await stakingNFT.transferOwnership(StakeManagerProxy.address)
-        await (await StakeManager.at(stakeManagerProxy.address)).setToken(testToken.address)
+                await stakingNFT.transferOwnership(StakeManagerProxy.address)
+                await (await StakeManager.at(stakeManagerProxy.address)).setToken(testToken.address)
 
-        // whitelist predicates
-        await governance.update(
-          registry.address,
-          registry.contract.methods.addErc20Predicate(
-            ERC20Predicate.address
-          ).encodeABI()
-        )
-        await governance.update(
-          registry.address,
-          registry.contract.methods.addErc721Predicate(
-            ERC721Predicate.address
-          ).encodeABI()
-        )
-        await governance.update(
-          registry.address,
-          registry.contract.methods.addPredicate(
-            MarketplacePredicate.address,
-            3 /* Type.Custom */
-          ).encodeABI()
-        )
-        await governance.update(
-          registry.address,
-          registry.contract.methods.addPredicate(
-            TransferWithSigPredicate.address,
-            3 /* Type.Custom */
-          ).encodeABI()
-        )
-      })
-  })
+                // whitelist predicates
+                await governance.update(
+                    registry.address,
+                    registry.contract.methods.addErc20Predicate(
+                        ERC20Predicate.address
+                    ).encodeABI()
+                )
+                await governance.update(
+                    registry.address,
+                    registry.contract.methods.addErc721Predicate(
+                        ERC721Predicate.address
+                    ).encodeABI()
+                )
+                await governance.update(
+                    registry.address,
+                    registry.contract.methods.addPredicate(
+                        MarketplacePredicate.address,
+                        3 /* Type.Custom */
+                    ).encodeABI()
+                )
+                await governance.update(
+                    registry.address,
+                    registry.contract.methods.addPredicate(
+                        TransferWithSigPredicate.address,
+                        3 /* Type.Custom */
+                    ).encodeABI()
+                )
+            })
+    })
 }

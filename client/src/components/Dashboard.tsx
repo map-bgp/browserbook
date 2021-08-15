@@ -1,9 +1,7 @@
 import React from "react";
 import "tailwindcss/tailwind.css"
 
-import {
-  Mesh,
-} from '@0x/mesh-browser-lite';
+import {Mesh,} from '@0x/mesh-browser-lite';
 
 type Queue = {
   [index: number]: string
@@ -23,7 +21,7 @@ function dequeue(q: Queue) {
   return temp
 }
 
-const rows : any[] = [];
+const rows: any[] = [];
 const numrows = 5;
 
 for (var i = 0; i < numrows; i++) {
@@ -41,18 +39,21 @@ type DashboardProps = {
 }
 
 const Dashboard = (props: DashboardProps) => {
-  return(
+  return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
       <div className="px-4 py-8 sm:px-0 grid grid-cols-2 gap-x-8 gap-y-8">
-        <div className="flex items-center justify-center border-4 border-dashed border-gray-200 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-opacity-50">
+        <div
+          className="flex items-center justify-center border-4 border-dashed border-gray-200 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-opacity-50">
           This will be a pretty market graph
         </div>
-        <table className="table-fixed bg-gray-100 row-span-2 border-4 border-dashed border-gray-200 rounded-lg h-96 focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-opacity-50">
+        <table
+          className="table-fixed bg-gray-100 row-span-2 border-4 border-dashed border-gray-200 rounded-lg h-96 focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-opacity-50">
           <tbody key={1}>
-            {rows}
+          {rows}
           </tbody>
         </table>
-        <div className="flex-col items-center justify-center border-4 border-dashed border-gray-200 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-opacity-50">
+        <div
+          className="flex-col items-center justify-center border-4 border-dashed border-gray-200 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-opacity-50">
           <div className="text-center my-6">This will be the order input</div>
           <button
             type="button"

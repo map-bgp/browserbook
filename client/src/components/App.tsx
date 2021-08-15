@@ -1,20 +1,11 @@
 import "tailwindcss/tailwind.css"
 import wasm from '../wasm/main.wasm'
 
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 
-import {
-  useLocation
-} from "react-router-dom";
+import {useLocation} from "react-router-dom";
 
-import {
-    BigNumber,
-    loadMeshStreamingWithURLAsync,
-    Mesh,
-    OrderEvent,
-    SignedOrder,
-    SupportedProvider,
-} from '@0x/mesh-browser-lite';
+import {loadMeshStreamingWithURLAsync, Mesh, OrderEvent,} from '@0x/mesh-browser-lite';
 
 import Header from './Header'
 import Content from './Content'
@@ -26,7 +17,7 @@ const App = () => {
     let path = location.pathname
     let current = "Dashboard"
 
-    for(let i=0; i < navigation.length; i++){
+    for (let i = 0; i < navigation.length; i++) {
       if (navigation[i].key === path.replace("/", "")) {
         current = navigation[i].name
       }
@@ -48,7 +39,7 @@ const App = () => {
   })
 
   mesh.onOrderEvents((events: OrderEvent[]) => {
-    for (const event of events){
+    for (const event of events) {
       console.log(event)
     }
   })
@@ -92,8 +83,8 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Header navigation={navigation} current={getCurrent()} />
-      <Content current={getCurrent()} mesh={mesh} />
+      <Header navigation={navigation} current={getCurrent()}/>
+      <Content current={getCurrent()} mesh={mesh}/>
     </div>
   );
 }
