@@ -36,10 +36,10 @@ const App = () => {
   }
 
   const mesh = new Mesh({
-    verbosity: 4,
+    verbosity: 6,
     ethereumChainID: 1337,
-    ethereumRPCURL: "http://35.222.39.6:9545",
-    useBootstrapList: false,
+    ethereumRPCURL: "http://192.41.136.236:9545",
+    useBootstrapList: true,
     //web3Provider: (window as any).web3.currentProvider as SupportedProvider,
   })
 
@@ -61,6 +61,9 @@ const App = () => {
     loadWasm().catch(console.error)
     console.log("WASM locked and loaded")
   })
+
+  mesh.startAsync();
+  mesh.getStatsAsync();
 
   const navigation = [
     {
