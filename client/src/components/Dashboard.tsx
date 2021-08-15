@@ -30,8 +30,8 @@ for (var i = 0; i < numrows; i++) {
   // note: we are adding a key prop here to allow react to uniquely identify each
   // element in this array. see: https://reactjs.org/docs/lists-and-keys.html
   rows.push(
-    <tr className="text-center">
-      <td className="width-full" key={i}>Streamed Order {i}</td>
+    <tr key={i} className="text-center">
+      <td className="width-full">Streamed Order {i}</td>
     </tr>
   );
 }

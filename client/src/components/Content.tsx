@@ -20,7 +20,6 @@ import HowItWorks from './HowItWorks'
 
 type ContentProps = {
   current: string,
-  setCurrent: React.Dispatch<React.SetStateAction<string>>
   mesh: Mesh
 }
 
