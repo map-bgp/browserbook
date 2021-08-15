@@ -4,7 +4,8 @@ package p2p
 
 import (
 	"context"
-	"crypto/tls"
+	// "crypto/tls"
+	// "os/exec"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -67,16 +68,16 @@ func getHostOptions(ctx context.Context, config Config) ([]libp2p.Option, error)
 		return nil, err
 	}
 
-	// Set up the WebSocket transport to ignore TLS verification. We use secio so
-	// it is not necessary.
-	tlsConfig := &tls.Config{
-		InsecureSkipVerify: true,
-	}
-	newWebsocketTransport := ws.NewWithOptions(ws.TLSClientConfig(tlsConfig))
+	// // Set up the WebSocket transport to ignore TLS verification. We use secio so
+	// // it is not necessary.
+	// tlsConfig := &tls.Config{
+	// 	InsecureSkipVerify: true,
+	// }
+	// newWebsocketTransport := ws.NewWithOptions(ws.TLSClientConfig(tlsConfig))
 
 	return []libp2p.Option{
 		libp2p.Transport(tcp.NewTCPTransport),
-		libp2p.Transport(newWebsocketTransport),
+		libp2p.Transport(ws.New),
 		libp2p.ListenAddrs(tcpBindAddr, wsBindAddr),
 		libp2p.AddrsFactory(newAddrsFactory(advertiseAddrs)),
 		libp2p.Peerstore(pstore),
@@ -110,6 +111,12 @@ func getPublicIP() (string, error) {
 	return string(ipBytes), nil
 }
 
+// func getPublicIP() (string, error) {
+//     cmd := exec.Command("ls", "-l")
+//     stdout, err := cmd.Output()
+
+// 	return string(stdout),err
+// }
 // NewDHT returns a new Kademlia DHT instance configured to work with 0x Mesh
 // in native (pure Go) environments. Standalone nodes use a SQL key value store
 // to persist data and browser nodes use a Dexie key value store.

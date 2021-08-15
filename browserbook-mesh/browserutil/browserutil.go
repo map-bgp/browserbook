@@ -27,8 +27,8 @@ func ConvertConfig(jsConfig js.Value) (core.Config, error) {
 	config := core.Config{
 		Verbosity:                        2,
 		DataDir:                          "0x-mesh",
-		P2PTCPPort:                       0,
-		P2PWebSocketsPort:                0,
+		P2PTCPPort:                       60558,
+		P2PWebSocketsPort:                60559,
 		UseBootstrapList:                 true,
 		BlockPollingInterval:             5 * time.Second,
 		EthereumRPCMaxContentLength:      524288,

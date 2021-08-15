@@ -24,10 +24,10 @@ const App = () => {
   const [current, setCurrent] = useState('Dashboard')
 
   const mesh = new Mesh({
-    verbosity: 4,
+    verbosity: 6,
     ethereumChainID: 1337,
-    ethereumRPCURL: "http://35.222.39.6:9545",
-    useBootstrapList: false,
+    ethereumRPCURL: "http://192.41.136.236:9545",
+    useBootstrapList: true,
     //web3Provider: (window as any).web3.currentProvider as SupportedProvider,
   })
 
@@ -50,7 +50,9 @@ const App = () => {
     console.log("WASM locked and loaded")
   })
 
-  // mesh.startAsync();
+  mesh.startAsync();
+  mesh.getStatsAsync();
+  
 
   return (
     <div className="min-h-screen bg-gray-100">
