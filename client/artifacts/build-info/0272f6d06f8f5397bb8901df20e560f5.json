@@ -1,0 +1,354 @@
+{
+  "id": "0272f6d06f8f5397bb8901df20e560f5",
+  "_format": "hh-sol-build-info-1",
+  "solcVersion": "0.5.17",
+  "solcLongVersion": "0.5.17+commit.d19bba13",
+  "input": {
+    "language": "Solidity",
+    "sources": {
+      "contracts/0x/proxies/interfaces/IShell.sol": {
+        "content": "/*\r\n\r\n  Copyright 2020 ZeroEx Intl.\r\n\r\n  Licensed under the Apache License, Version 2.0 (the \"License\");\r\n  you may not use this file except in compliance with the License.\r\n  You may obtain a copy of the License at\r\n\r\n    http://www.apache.org/licenses/LICENSE-2.0\r\n\r\n  Unless required by applicable law or agreed to in writing, software\r\n  distributed under the License is distributed on an \"AS IS\" BASIS,\r\n  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\r\n  See the License for the specific language governing permissions and\r\n  limitations under the License.\r\n\r\n*/\r\n\r\npragma solidity ^0.5.9;\r\n\r\n\r\ninterface IShell {\r\n\r\n    function originSwap(\r\n        address from,\r\n        address to,\r\n        uint256 fromAmount,\r\n        uint256 minTargetAmount,\r\n        uint256 deadline\r\n    )\r\n        external\r\n        returns (uint256 toAmount);\r\n}\r\n\r\n"
+      }
+    },
+    "settings": {
+      "optimizer": {
+        "enabled": true,
+        "runs": 1000
+      },
+      "outputSelection": {
+        "*": {
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata",
+            "devdoc",
+            "userdoc",
+            "storageLayout",
+            "evm.gasEstimates"
+          ],
+          "": [
+            "ast"
+          ]
+        }
+      },
+      "metadata": {
+        "useLiteralContent": true
+      }
+    }
+  },
+  "output": {
+    "contracts": {
+      "contracts/0x/proxies/interfaces/IShell.sol": {
+        "IShell": {
+          "abi": [
+            {
+              "constant": false,
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "from",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "to",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "fromAmount",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "minTargetAmount",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "deadline",
+                  "type": "uint256"
+                }
+              ],
+              "name": "originSwap",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "toAmount",
+                  "type": "uint256"
+                }
+              ],
+              "payable": false,
+              "stateMutability": "nonpayable",
+              "type": "function"
+            }
+          ],
+          "devdoc": {
+            "methods": {}
+          },
+          "evm": {
+            "bytecode": {
+              "linkReferences": {},
+              "object": "",
+              "opcodes": "",
+              "sourceMap": ""
+            },
+            "deployedBytecode": {
+              "linkReferences": {},
+              "object": "",
+              "opcodes": "",
+              "sourceMap": ""
+            },
+            "gasEstimates": null,
+            "methodIdentifiers": {
+              "originSwap(address,address,uint256,uint256,uint256)": "0b2583c8"
+            }
+          },
+          "metadata": "{\"compiler\":{\"version\":\"0.5.17+commit.d19bba13\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"fromAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"minTargetAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"deadline\",\"type\":\"uint256\"}],\"name\":\"originSwap\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"toAmount\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"contracts/0x/proxies/interfaces/IShell.sol\":\"IShell\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":1000},\"remappings\":[]},\"sources\":{\"contracts/0x/proxies/interfaces/IShell.sol\":{\"content\":\"/*\\r\\n\\r\\n  Copyright 2020 ZeroEx Intl.\\r\\n\\r\\n  Licensed under the Apache License, Version 2.0 (the \\\"License\\\");\\r\\n  you may not use this file except in compliance with the License.\\r\\n  You may obtain a copy of the License at\\r\\n\\r\\n    http://www.apache.org/licenses/LICENSE-2.0\\r\\n\\r\\n  Unless required by applicable law or agreed to in writing, software\\r\\n  distributed under the License is distributed on an \\\"AS IS\\\" BASIS,\\r\\n  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\\r\\n  See the License for the specific language governing permissions and\\r\\n  limitations under the License.\\r\\n\\r\\n*/\\r\\n\\r\\npragma solidity ^0.5.9;\\r\\n\\r\\n\\r\\ninterface IShell {\\r\\n\\r\\n    function originSwap(\\r\\n        address from,\\r\\n        address to,\\r\\n        uint256 fromAmount,\\r\\n        uint256 minTargetAmount,\\r\\n        uint256 deadline\\r\\n    )\\r\\n        external\\r\\n        returns (uint256 toAmount);\\r\\n}\\r\\n\\r\\n\",\"keccak256\":\"0xa89ba5d668e89c58391a2d5e413c191d89ab05d356c7932a5b1da810680dba19\"}},\"version\":1}",
+          "storageLayout": {
+            "storage": [],
+            "types": null
+          },
+          "userdoc": {
+            "methods": {}
+          }
+        }
+      }
+    },
+    "sources": {
+      "contracts/0x/proxies/interfaces/IShell.sol": {
+        "ast": {
+          "absolutePath": "contracts/0x/proxies/interfaces/IShell.sol",
+          "exportedSymbols": {
+            "IShell": [
+              17
+            ]
+          },
+          "id": 18,
+          "nodeType": "SourceUnit",
+          "nodes": [
+            {
+              "id": 1,
+              "literals": [
+                "solidity",
+                "^",
+                "0.5",
+                ".9"
+              ],
+              "nodeType": "PragmaDirective",
+              "src": "598:23:0"
+            },
+            {
+              "baseContracts": [],
+              "contractDependencies": [],
+              "contractKind": "interface",
+              "documentation": null,
+              "fullyImplemented": false,
+              "id": 17,
+              "linearizedBaseContracts": [
+                17
+              ],
+              "name": "IShell",
+              "nodeType": "ContractDefinition",
+              "nodes": [
+                {
+                  "body": null,
+                  "documentation": null,
+                  "id": 16,
+                  "implemented": false,
+                  "kind": "function",
+                  "modifiers": [],
+                  "name": "originSwap",
+                  "nodeType": "FunctionDefinition",
+                  "parameters": {
+                    "id": 12,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 3,
+                        "name": "from",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 16,
+                        "src": "683:12:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        "typeName": {
+                          "id": 2,
+                          "name": "address",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "683:7:0",
+                          "stateMutability": "nonpayable",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 5,
+                        "name": "to",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 16,
+                        "src": "706:10:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        "typeName": {
+                          "id": 4,
+                          "name": "address",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "706:7:0",
+                          "stateMutability": "nonpayable",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 7,
+                        "name": "fromAmount",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 16,
+                        "src": "727:18:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 6,
+                          "name": "uint256",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "727:7:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 9,
+                        "name": "minTargetAmount",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 16,
+                        "src": "756:23:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 8,
+                          "name": "uint256",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "756:7:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 11,
+                        "name": "deadline",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 16,
+                        "src": "790:16:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 10,
+                          "name": "uint256",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "790:7:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "672:141:0"
+                  },
+                  "returnParameters": {
+                    "id": 15,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 14,
+                        "name": "toAmount",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 16,
+                        "src": "850:16:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 13,
+                          "name": "uint256",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "850:7:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "849:18:0"
+                  },
+                  "scope": 17,
+                  "src": "653:215:0",
+                  "stateMutability": "nonpayable",
+                  "superFunction": null,
+                  "visibility": "external"
+                }
+              ],
+              "scope": 18,
+              "src": "627:244:0"
+            }
+          ],
+          "src": "598:277:0"
+        },
+        "id": 0
+      }
+    }
+  }
+}

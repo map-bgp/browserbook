@@ -1,0 +1,1138 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IWrapperFunctions",
+  "sourceName": "contracts/0x/exchange/interfaces/IWrapperFunctions.sol",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "makerAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "takerAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "feeRecipientAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "senderAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "makerAssetAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerAssetAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "makerFee",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerFee",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "expirationTimeSeconds",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "salt",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "makerAssetData",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "takerAssetData",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "makerFeeAssetData",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "takerFeeAssetData",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct LibOrder.Order[]",
+          "name": "orders",
+          "type": "tuple[]"
+        }
+      ],
+      "name": "batchCancelOrders",
+      "outputs": [],
+      "payable": true,
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "makerAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "takerAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "feeRecipientAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "senderAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "makerAssetAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerAssetAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "makerFee",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerFee",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "expirationTimeSeconds",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "salt",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "makerAssetData",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "takerAssetData",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "makerFeeAssetData",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "takerFeeAssetData",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct LibOrder.Order[]",
+          "name": "orders",
+          "type": "tuple[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "takerAssetFillAmounts",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "bytes[]",
+          "name": "signatures",
+          "type": "bytes[]"
+        }
+      ],
+      "name": "batchFillOrKillOrders",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "makerAssetFilledAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerAssetFilledAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "makerFeePaid",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerFeePaid",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "protocolFeePaid",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct LibFillResults.FillResults[]",
+          "name": "fillResults",
+          "type": "tuple[]"
+        }
+      ],
+      "payable": true,
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "makerAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "takerAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "feeRecipientAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "senderAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "makerAssetAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerAssetAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "makerFee",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerFee",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "expirationTimeSeconds",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "salt",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "makerAssetData",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "takerAssetData",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "makerFeeAssetData",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "takerFeeAssetData",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct LibOrder.Order[]",
+          "name": "orders",
+          "type": "tuple[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "takerAssetFillAmounts",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "bytes[]",
+          "name": "signatures",
+          "type": "bytes[]"
+        }
+      ],
+      "name": "batchFillOrders",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "makerAssetFilledAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerAssetFilledAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "makerFeePaid",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerFeePaid",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "protocolFeePaid",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct LibFillResults.FillResults[]",
+          "name": "fillResults",
+          "type": "tuple[]"
+        }
+      ],
+      "payable": true,
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "makerAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "takerAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "feeRecipientAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "senderAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "makerAssetAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerAssetAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "makerFee",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerFee",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "expirationTimeSeconds",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "salt",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "makerAssetData",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "takerAssetData",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "makerFeeAssetData",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "takerFeeAssetData",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct LibOrder.Order[]",
+          "name": "orders",
+          "type": "tuple[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "takerAssetFillAmounts",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "bytes[]",
+          "name": "signatures",
+          "type": "bytes[]"
+        }
+      ],
+      "name": "batchFillOrdersNoThrow",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "makerAssetFilledAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerAssetFilledAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "makerFeePaid",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerFeePaid",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "protocolFeePaid",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct LibFillResults.FillResults[]",
+          "name": "fillResults",
+          "type": "tuple[]"
+        }
+      ],
+      "payable": true,
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "makerAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "takerAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "feeRecipientAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "senderAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "makerAssetAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerAssetAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "makerFee",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerFee",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "expirationTimeSeconds",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "salt",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "makerAssetData",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "takerAssetData",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "makerFeeAssetData",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "takerFeeAssetData",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct LibOrder.Order",
+          "name": "order",
+          "type": "tuple"
+        },
+        {
+          "internalType": "uint256",
+          "name": "takerAssetFillAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "signature",
+          "type": "bytes"
+        }
+      ],
+      "name": "fillOrKillOrder",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "makerAssetFilledAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerAssetFilledAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "makerFeePaid",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerFeePaid",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "protocolFeePaid",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct LibFillResults.FillResults",
+          "name": "fillResults",
+          "type": "tuple"
+        }
+      ],
+      "payable": true,
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "makerAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "takerAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "feeRecipientAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "senderAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "makerAssetAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerAssetAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "makerFee",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerFee",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "expirationTimeSeconds",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "salt",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "makerAssetData",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "takerAssetData",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "makerFeeAssetData",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "takerFeeAssetData",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct LibOrder.Order[]",
+          "name": "orders",
+          "type": "tuple[]"
+        },
+        {
+          "internalType": "uint256",
+          "name": "makerAssetFillAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes[]",
+          "name": "signatures",
+          "type": "bytes[]"
+        }
+      ],
+      "name": "marketBuyOrdersFillOrKill",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "makerAssetFilledAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerAssetFilledAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "makerFeePaid",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerFeePaid",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "protocolFeePaid",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct LibFillResults.FillResults",
+          "name": "fillResults",
+          "type": "tuple"
+        }
+      ],
+      "payable": true,
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "makerAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "takerAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "feeRecipientAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "senderAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "makerAssetAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerAssetAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "makerFee",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerFee",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "expirationTimeSeconds",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "salt",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "makerAssetData",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "takerAssetData",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "makerFeeAssetData",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "takerFeeAssetData",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct LibOrder.Order[]",
+          "name": "orders",
+          "type": "tuple[]"
+        },
+        {
+          "internalType": "uint256",
+          "name": "makerAssetFillAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes[]",
+          "name": "signatures",
+          "type": "bytes[]"
+        }
+      ],
+      "name": "marketBuyOrdersNoThrow",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "makerAssetFilledAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerAssetFilledAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "makerFeePaid",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerFeePaid",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "protocolFeePaid",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct LibFillResults.FillResults",
+          "name": "fillResults",
+          "type": "tuple"
+        }
+      ],
+      "payable": true,
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "makerAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "takerAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "feeRecipientAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "senderAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "makerAssetAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerAssetAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "makerFee",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerFee",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "expirationTimeSeconds",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "salt",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "makerAssetData",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "takerAssetData",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "makerFeeAssetData",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "takerFeeAssetData",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct LibOrder.Order[]",
+          "name": "orders",
+          "type": "tuple[]"
+        },
+        {
+          "internalType": "uint256",
+          "name": "takerAssetFillAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes[]",
+          "name": "signatures",
+          "type": "bytes[]"
+        }
+      ],
+      "name": "marketSellOrdersFillOrKill",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "makerAssetFilledAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerAssetFilledAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "makerFeePaid",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerFeePaid",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "protocolFeePaid",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct LibFillResults.FillResults",
+          "name": "fillResults",
+          "type": "tuple"
+        }
+      ],
+      "payable": true,
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "makerAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "takerAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "feeRecipientAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "senderAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "makerAssetAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerAssetAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "makerFee",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerFee",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "expirationTimeSeconds",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "salt",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "makerAssetData",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "takerAssetData",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "makerFeeAssetData",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "takerFeeAssetData",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct LibOrder.Order[]",
+          "name": "orders",
+          "type": "tuple[]"
+        },
+        {
+          "internalType": "uint256",
+          "name": "takerAssetFillAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes[]",
+          "name": "signatures",
+          "type": "bytes[]"
+        }
+      ],
+      "name": "marketSellOrdersNoThrow",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "makerAssetFilledAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerAssetFilledAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "makerFeePaid",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "takerFeePaid",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "protocolFeePaid",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct LibFillResults.FillResults",
+          "name": "fillResults",
+          "type": "tuple"
+        }
+      ],
+      "payable": true,
+      "stateMutability": "payable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

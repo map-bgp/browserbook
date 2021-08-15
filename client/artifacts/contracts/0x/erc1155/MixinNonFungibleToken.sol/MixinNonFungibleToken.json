@@ -1,0 +1,158 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "MixinNonFungibleToken",
+  "sourceName": "contracts/0x/erc1155/MixinNonFungibleToken.sol",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "getNonFungibleBaseType",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "getNonFungibleIndex",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "isFungible",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "isNonFungible",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "isNonFungibleBaseType",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "isNonFungibleItem",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "ownerOf",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x608060405234801561001057600080fd5b50610308806100206000396000f3fe608060405234801561001057600080fd5b506004361061007d5760003560e01c80637269a3271161005b5780637269a327146100eb5780639cca1c64146100fe578063adebf6f214610111578063e44591f0146101245761007d565b80635e81b958146100825780636352211e146100ab5780636f969c2d146100cb575b600080fd5b610095610090366004610211565b610137565b6040516100a29190610266565b60405180910390f35b6100be6100b9366004610211565b610165565b6040516100a29190610258565b6100de6100d9366004610211565b61018d565b6040516100a29190610274565b6100956100f9366004610211565b6101b2565b6100de61010c366004610211565b6101db565b61009561011f366004610211565b6101f0565b610095610132366004610211565b6101fa565b6000600160ff1b80831614801561015f57506fffffffffffffffffffffffffffffffff821615155b92915050565b60009081526020819052604090205473ffffffffffffffffffffffffffffffffffffffff1690565b7fffffffffffffffffffffffffffffffff000000000000000000000000000000001690565b6000600160ff1b80831614801561015f5750506fffffffffffffffffffffffffffffffff161590565b6fffffffffffffffffffffffffffffffff1690565b600160ff1b161590565b600160ff1b9081161490565b803561015f816102ae565b60006020828403121561022357600080fd5b600061022f8484610206565b949350505050565b61024081610282565b82525050565b6102408161028d565b610240816102ab565b6020810161015f8284610237565b6020810161015f8284610246565b6020810161015f828461024f565b600061015f82610292565b151590565b73ffffffffffffffffffffffffffffffffffffffff1690565b90565b6102b7816102ab565b81146102c257600080fd5b5056fea365627a7a72315820215e8af83130368c4b8550287077b27020943f36adf2f103e370ef6416df54196c6578706572696d656e74616cf564736f6c63430005110040",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b506004361061007d5760003560e01c80637269a3271161005b5780637269a327146100eb5780639cca1c64146100fe578063adebf6f214610111578063e44591f0146101245761007d565b80635e81b958146100825780636352211e146100ab5780636f969c2d146100cb575b600080fd5b610095610090366004610211565b610137565b6040516100a29190610266565b60405180910390f35b6100be6100b9366004610211565b610165565b6040516100a29190610258565b6100de6100d9366004610211565b61018d565b6040516100a29190610274565b6100956100f9366004610211565b6101b2565b6100de61010c366004610211565b6101db565b61009561011f366004610211565b6101f0565b610095610132366004610211565b6101fa565b6000600160ff1b80831614801561015f57506fffffffffffffffffffffffffffffffff821615155b92915050565b60009081526020819052604090205473ffffffffffffffffffffffffffffffffffffffff1690565b7fffffffffffffffffffffffffffffffff000000000000000000000000000000001690565b6000600160ff1b80831614801561015f5750506fffffffffffffffffffffffffffffffff161590565b6fffffffffffffffffffffffffffffffff1690565b600160ff1b161590565b600160ff1b9081161490565b803561015f816102ae565b60006020828403121561022357600080fd5b600061022f8484610206565b949350505050565b61024081610282565b82525050565b6102408161028d565b610240816102ab565b6020810161015f8284610237565b6020810161015f8284610246565b6020810161015f828461024f565b600061015f82610292565b151590565b73ffffffffffffffffffffffffffffffffffffffff1690565b90565b6102b7816102ab565b81146102c257600080fd5b5056fea365627a7a72315820215e8af83130368c4b8550287077b27020943f36adf2f103e370ef6416df54196c6578706572696d656e74616cf564736f6c63430005110040",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

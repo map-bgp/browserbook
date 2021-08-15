@@ -1,0 +1,939 @@
+{
+  "id": "d2e9ac31d69015d9c23de9b776978c37",
+  "_format": "hh-sol-build-info-1",
+  "solcVersion": "0.5.17",
+  "solcLongVersion": "0.5.17+commit.d19bba13",
+  "input": {
+    "language": "Solidity",
+    "sources": {
+      "contracts/0x/proxies/interfaces/IAssetData.sol": {
+        "content": "/*\r\n\r\n  Copyright 2019 ZeroEx Intl.\r\n\r\n  Licensed under the Apache License, Version 2.0 (the \"License\");\r\n  you may not use this file except in compliance with the License.\r\n  You may obtain a copy of the License at\r\n\r\n    http://www.apache.org/licenses/LICENSE-2.0\r\n\r\n  Unless required by applicable law or agreed to in writing, software\r\n  distributed under the License is distributed on an \"AS IS\" BASIS,\r\n  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\r\n  See the License for the specific language governing permissions and\r\n  limitations under the License.\r\n\r\n*/\r\n\r\n// solhint-disable\r\npragma solidity ^0.5.9;\r\npragma experimental ABIEncoderV2;\r\n\r\n\r\n// @dev Interface of the asset proxy's assetData.\r\n// The asset proxies take an ABI encoded `bytes assetData` as argument.\r\n// This argument is ABI encoded as one of the methods of this interface.\r\ninterface IAssetData {\r\n\r\n    /// @dev Function signature for encoding ERC20 assetData.\r\n    /// @param tokenAddress Address of ERC20Token contract.\r\n    function ERC20Token(address tokenAddress)\r\n        external;\r\n\r\n    /// @dev Function signature for encoding ERC721 assetData.\r\n    /// @param tokenAddress Address of ERC721 token contract.\r\n    /// @param tokenId Id of ERC721 token to be transferred.\r\n    function ERC721Token(\r\n        address tokenAddress,\r\n        uint256 tokenId\r\n    )\r\n        external;\r\n\r\n    /// @dev Function signature for encoding ERC1155 assetData.\r\n    /// @param tokenAddress Address of ERC1155 token contract.\r\n    /// @param tokenIds Array of ids of tokens to be transferred.\r\n    /// @param values Array of values that correspond to each token id to be transferred.\r\n    ///        Note that each value will be multiplied by the amount being filled in the order before transferring.\r\n    /// @param callbackData Extra data to be passed to receiver's `onERC1155Received` callback function.\r\n    function ERC1155Assets(\r\n        address tokenAddress,\r\n        uint256[] calldata tokenIds,\r\n        uint256[] calldata values,\r\n        bytes calldata callbackData\r\n    )\r\n        external;\r\n\r\n    /// @dev Function signature for encoding MultiAsset assetData.\r\n    /// @param values Array of amounts that correspond to each asset to be transferred.\r\n    ///        Note that each value will be multiplied by the amount being filled in the order before transferring.\r\n    /// @param nestedAssetData Array of assetData fields that will be be dispatched to their correspnding AssetProxy contract.\r\n    function MultiAsset(\r\n        uint256[] calldata values,\r\n        bytes[] calldata nestedAssetData\r\n    )\r\n        external;\r\n\r\n    /// @dev Function signature for encoding StaticCall assetData.\r\n    /// @param staticCallTargetAddress Address that will execute the staticcall.\r\n    /// @param staticCallData Data that will be executed via staticcall on the staticCallTargetAddress.\r\n    /// @param expectedReturnDataHash Keccak-256 hash of the expected staticcall return data.\r\n    function StaticCall(\r\n        address staticCallTargetAddress,\r\n        bytes calldata staticCallData,\r\n        bytes32 expectedReturnDataHash\r\n    )\r\n        external;\r\n\r\n    /// @dev Function signature for encoding ERC20Bridge assetData.\r\n    /// @param tokenAddress Address of token to transfer.\r\n    /// @param bridgeAddress Address of the bridge contract.\r\n    /// @param bridgeData Arbitrary data to be passed to the bridge contract.\r\n    function ERC20Bridge(\r\n        address tokenAddress,\r\n        address bridgeAddress,\r\n        bytes calldata bridgeData\r\n    )\r\n        external;\r\n}\r\n"
+      }
+    },
+    "settings": {
+      "optimizer": {
+        "enabled": true,
+        "runs": 1000
+      },
+      "outputSelection": {
+        "*": {
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata",
+            "devdoc",
+            "userdoc",
+            "storageLayout",
+            "evm.gasEstimates"
+          ],
+          "": [
+            "ast"
+          ]
+        }
+      },
+      "metadata": {
+        "useLiteralContent": true
+      }
+    }
+  },
+  "output": {
+    "contracts": {
+      "contracts/0x/proxies/interfaces/IAssetData.sol": {
+        "IAssetData": {
+          "abi": [
+            {
+              "constant": false,
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "tokenAddress",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256[]",
+                  "name": "tokenIds",
+                  "type": "uint256[]"
+                },
+                {
+                  "internalType": "uint256[]",
+                  "name": "values",
+                  "type": "uint256[]"
+                },
+                {
+                  "internalType": "bytes",
+                  "name": "callbackData",
+                  "type": "bytes"
+                }
+              ],
+              "name": "ERC1155Assets",
+              "outputs": [],
+              "payable": false,
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "constant": false,
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "tokenAddress",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "bridgeAddress",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bytes",
+                  "name": "bridgeData",
+                  "type": "bytes"
+                }
+              ],
+              "name": "ERC20Bridge",
+              "outputs": [],
+              "payable": false,
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "constant": false,
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "tokenAddress",
+                  "type": "address"
+                }
+              ],
+              "name": "ERC20Token",
+              "outputs": [],
+              "payable": false,
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "constant": false,
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "tokenAddress",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "tokenId",
+                  "type": "uint256"
+                }
+              ],
+              "name": "ERC721Token",
+              "outputs": [],
+              "payable": false,
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "constant": false,
+              "inputs": [
+                {
+                  "internalType": "uint256[]",
+                  "name": "values",
+                  "type": "uint256[]"
+                },
+                {
+                  "internalType": "bytes[]",
+                  "name": "nestedAssetData",
+                  "type": "bytes[]"
+                }
+              ],
+              "name": "MultiAsset",
+              "outputs": [],
+              "payable": false,
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "constant": false,
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "staticCallTargetAddress",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bytes",
+                  "name": "staticCallData",
+                  "type": "bytes"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "expectedReturnDataHash",
+                  "type": "bytes32"
+                }
+              ],
+              "name": "StaticCall",
+              "outputs": [],
+              "payable": false,
+              "stateMutability": "nonpayable",
+              "type": "function"
+            }
+          ],
+          "devdoc": {
+            "methods": {
+              "ERC1155Assets(address,uint256[],uint256[],bytes)": {
+                "details": "Function signature for encoding ERC1155 assetData.",
+                "params": {
+                  "callbackData": "Extra data to be passed to receiver's `onERC1155Received` callback function.",
+                  "tokenAddress": "Address of ERC1155 token contract.",
+                  "tokenIds": "Array of ids of tokens to be transferred.",
+                  "values": "Array of values that correspond to each token id to be transferred.        Note that each value will be multiplied by the amount being filled in the order before transferring."
+                }
+              },
+              "ERC20Bridge(address,address,bytes)": {
+                "details": "Function signature for encoding ERC20Bridge assetData.",
+                "params": {
+                  "bridgeAddress": "Address of the bridge contract.",
+                  "bridgeData": "Arbitrary data to be passed to the bridge contract.",
+                  "tokenAddress": "Address of token to transfer."
+                }
+              },
+              "ERC20Token(address)": {
+                "details": "Function signature for encoding ERC20 assetData.",
+                "params": {
+                  "tokenAddress": "Address of ERC20Token contract."
+                }
+              },
+              "ERC721Token(address,uint256)": {
+                "details": "Function signature for encoding ERC721 assetData.",
+                "params": {
+                  "tokenAddress": "Address of ERC721 token contract.",
+                  "tokenId": "Id of ERC721 token to be transferred."
+                }
+              },
+              "MultiAsset(uint256[],bytes[])": {
+                "details": "Function signature for encoding MultiAsset assetData.",
+                "params": {
+                  "nestedAssetData": "Array of assetData fields that will be be dispatched to their correspnding AssetProxy contract.",
+                  "values": "Array of amounts that correspond to each asset to be transferred.        Note that each value will be multiplied by the amount being filled in the order before transferring."
+                }
+              },
+              "StaticCall(address,bytes,bytes32)": {
+                "details": "Function signature for encoding StaticCall assetData.",
+                "params": {
+                  "expectedReturnDataHash": "Keccak-256 hash of the expected staticcall return data.",
+                  "staticCallData": "Data that will be executed via staticcall on the staticCallTargetAddress.",
+                  "staticCallTargetAddress": "Address that will execute the staticcall."
+                }
+              }
+            }
+          },
+          "evm": {
+            "bytecode": {
+              "linkReferences": {},
+              "object": "",
+              "opcodes": "",
+              "sourceMap": ""
+            },
+            "deployedBytecode": {
+              "linkReferences": {},
+              "object": "",
+              "opcodes": "",
+              "sourceMap": ""
+            },
+            "gasEstimates": null,
+            "methodIdentifiers": {
+              "ERC1155Assets(address,uint256[],uint256[],bytes)": "a7cb5fb7",
+              "ERC20Bridge(address,address,bytes)": "dc1600f3",
+              "ERC20Token(address)": "f47261b0",
+              "ERC721Token(address,uint256)": "02571792",
+              "MultiAsset(uint256[],bytes[])": "94cfcdd7",
+              "StaticCall(address,bytes,bytes32)": "c339d10a"
+            }
+          },
+          "metadata": "{\"compiler\":{\"version\":\"0.5.17+commit.d19bba13\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"tokenAddress\",\"type\":\"address\"},{\"internalType\":\"uint256[]\",\"name\":\"tokenIds\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[]\",\"name\":\"values\",\"type\":\"uint256[]\"},{\"internalType\":\"bytes\",\"name\":\"callbackData\",\"type\":\"bytes\"}],\"name\":\"ERC1155Assets\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"tokenAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"bridgeAddress\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"bridgeData\",\"type\":\"bytes\"}],\"name\":\"ERC20Bridge\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"tokenAddress\",\"type\":\"address\"}],\"name\":\"ERC20Token\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"tokenAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"ERC721Token\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"uint256[]\",\"name\":\"values\",\"type\":\"uint256[]\"},{\"internalType\":\"bytes[]\",\"name\":\"nestedAssetData\",\"type\":\"bytes[]\"}],\"name\":\"MultiAsset\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"staticCallTargetAddress\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"staticCallData\",\"type\":\"bytes\"},{\"internalType\":\"bytes32\",\"name\":\"expectedReturnDataHash\",\"type\":\"bytes32\"}],\"name\":\"StaticCall\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{\"ERC1155Assets(address,uint256[],uint256[],bytes)\":{\"details\":\"Function signature for encoding ERC1155 assetData.\",\"params\":{\"callbackData\":\"Extra data to be passed to receiver's `onERC1155Received` callback function.\",\"tokenAddress\":\"Address of ERC1155 token contract.\",\"tokenIds\":\"Array of ids of tokens to be transferred.\",\"values\":\"Array of values that correspond to each token id to be transferred.        Note that each value will be multiplied by the amount being filled in the order before transferring.\"}},\"ERC20Bridge(address,address,bytes)\":{\"details\":\"Function signature for encoding ERC20Bridge assetData.\",\"params\":{\"bridgeAddress\":\"Address of the bridge contract.\",\"bridgeData\":\"Arbitrary data to be passed to the bridge contract.\",\"tokenAddress\":\"Address of token to transfer.\"}},\"ERC20Token(address)\":{\"details\":\"Function signature for encoding ERC20 assetData.\",\"params\":{\"tokenAddress\":\"Address of ERC20Token contract.\"}},\"ERC721Token(address,uint256)\":{\"details\":\"Function signature for encoding ERC721 assetData.\",\"params\":{\"tokenAddress\":\"Address of ERC721 token contract.\",\"tokenId\":\"Id of ERC721 token to be transferred.\"}},\"MultiAsset(uint256[],bytes[])\":{\"details\":\"Function signature for encoding MultiAsset assetData.\",\"params\":{\"nestedAssetData\":\"Array of assetData fields that will be be dispatched to their correspnding AssetProxy contract.\",\"values\":\"Array of amounts that correspond to each asset to be transferred.        Note that each value will be multiplied by the amount being filled in the order before transferring.\"}},\"StaticCall(address,bytes,bytes32)\":{\"details\":\"Function signature for encoding StaticCall assetData.\",\"params\":{\"expectedReturnDataHash\":\"Keccak-256 hash of the expected staticcall return data.\",\"staticCallData\":\"Data that will be executed via staticcall on the staticCallTargetAddress.\",\"staticCallTargetAddress\":\"Address that will execute the staticcall.\"}}}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"contracts/0x/proxies/interfaces/IAssetData.sol\":\"IAssetData\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":1000},\"remappings\":[]},\"sources\":{\"contracts/0x/proxies/interfaces/IAssetData.sol\":{\"content\":\"/*\\r\\n\\r\\n  Copyright 2019 ZeroEx Intl.\\r\\n\\r\\n  Licensed under the Apache License, Version 2.0 (the \\\"License\\\");\\r\\n  you may not use this file except in compliance with the License.\\r\\n  You may obtain a copy of the License at\\r\\n\\r\\n    http://www.apache.org/licenses/LICENSE-2.0\\r\\n\\r\\n  Unless required by applicable law or agreed to in writing, software\\r\\n  distributed under the License is distributed on an \\\"AS IS\\\" BASIS,\\r\\n  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\\r\\n  See the License for the specific language governing permissions and\\r\\n  limitations under the License.\\r\\n\\r\\n*/\\r\\n\\r\\n// solhint-disable\\r\\npragma solidity ^0.5.9;\\r\\npragma experimental ABIEncoderV2;\\r\\n\\r\\n\\r\\n// @dev Interface of the asset proxy's assetData.\\r\\n// The asset proxies take an ABI encoded `bytes assetData` as argument.\\r\\n// This argument is ABI encoded as one of the methods of this interface.\\r\\ninterface IAssetData {\\r\\n\\r\\n    /// @dev Function signature for encoding ERC20 assetData.\\r\\n    /// @param tokenAddress Address of ERC20Token contract.\\r\\n    function ERC20Token(address tokenAddress)\\r\\n        external;\\r\\n\\r\\n    /// @dev Function signature for encoding ERC721 assetData.\\r\\n    /// @param tokenAddress Address of ERC721 token contract.\\r\\n    /// @param tokenId Id of ERC721 token to be transferred.\\r\\n    function ERC721Token(\\r\\n        address tokenAddress,\\r\\n        uint256 tokenId\\r\\n    )\\r\\n        external;\\r\\n\\r\\n    /// @dev Function signature for encoding ERC1155 assetData.\\r\\n    /// @param tokenAddress Address of ERC1155 token contract.\\r\\n    /// @param tokenIds Array of ids of tokens to be transferred.\\r\\n    /// @param values Array of values that correspond to each token id to be transferred.\\r\\n    ///        Note that each value will be multiplied by the amount being filled in the order before transferring.\\r\\n    /// @param callbackData Extra data to be passed to receiver's `onERC1155Received` callback function.\\r\\n    function ERC1155Assets(\\r\\n        address tokenAddress,\\r\\n        uint256[] calldata tokenIds,\\r\\n        uint256[] calldata values,\\r\\n        bytes calldata callbackData\\r\\n    )\\r\\n        external;\\r\\n\\r\\n    /// @dev Function signature for encoding MultiAsset assetData.\\r\\n    /// @param values Array of amounts that correspond to each asset to be transferred.\\r\\n    ///        Note that each value will be multiplied by the amount being filled in the order before transferring.\\r\\n    /// @param nestedAssetData Array of assetData fields that will be be dispatched to their correspnding AssetProxy contract.\\r\\n    function MultiAsset(\\r\\n        uint256[] calldata values,\\r\\n        bytes[] calldata nestedAssetData\\r\\n    )\\r\\n        external;\\r\\n\\r\\n    /// @dev Function signature for encoding StaticCall assetData.\\r\\n    /// @param staticCallTargetAddress Address that will execute the staticcall.\\r\\n    /// @param staticCallData Data that will be executed via staticcall on the staticCallTargetAddress.\\r\\n    /// @param expectedReturnDataHash Keccak-256 hash of the expected staticcall return data.\\r\\n    function StaticCall(\\r\\n        address staticCallTargetAddress,\\r\\n        bytes calldata staticCallData,\\r\\n        bytes32 expectedReturnDataHash\\r\\n    )\\r\\n        external;\\r\\n\\r\\n    /// @dev Function signature for encoding ERC20Bridge assetData.\\r\\n    /// @param tokenAddress Address of token to transfer.\\r\\n    /// @param bridgeAddress Address of the bridge contract.\\r\\n    /// @param bridgeData Arbitrary data to be passed to the bridge contract.\\r\\n    function ERC20Bridge(\\r\\n        address tokenAddress,\\r\\n        address bridgeAddress,\\r\\n        bytes calldata bridgeData\\r\\n    )\\r\\n        external;\\r\\n}\\r\\n\",\"keccak256\":\"0x00474b006c2bb113cdd42c5c15a1447c7d56eff6579730de0d228aaf967d4077\"}},\"version\":1}",
+          "storageLayout": {
+            "storage": [],
+            "types": null
+          },
+          "userdoc": {
+            "methods": {}
+          }
+        }
+      }
+    },
+    "errors": [
+      {
+        "component": "general",
+        "formattedMessage": "contracts/0x/proxies/interfaces/IAssetData.sol:21:1: Warning: Experimental features are turned on. Do not use experimental features on live deployments.\npragma experimental ABIEncoderV2;\r\n^-------------------------------^\n",
+        "message": "Experimental features are turned on. Do not use experimental features on live deployments.",
+        "severity": "warning",
+        "sourceLocation": {
+          "end": 676,
+          "file": "contracts/0x/proxies/interfaces/IAssetData.sol",
+          "start": 643
+        },
+        "type": "Warning"
+      }
+    ],
+    "sources": {
+      "contracts/0x/proxies/interfaces/IAssetData.sol": {
+        "ast": {
+          "absolutePath": "contracts/0x/proxies/interfaces/IAssetData.sol",
+          "exportedSymbols": {
+            "IAssetData": [
+              55
+            ]
+          },
+          "id": 56,
+          "nodeType": "SourceUnit",
+          "nodes": [
+            {
+              "id": 1,
+              "literals": [
+                "solidity",
+                "^",
+                "0.5",
+                ".9"
+              ],
+              "nodeType": "PragmaDirective",
+              "src": "618:23:0"
+            },
+            {
+              "id": 2,
+              "literals": [
+                "experimental",
+                "ABIEncoderV2"
+              ],
+              "nodeType": "PragmaDirective",
+              "src": "643:33:0"
+            },
+            {
+              "baseContracts": [],
+              "contractDependencies": [],
+              "contractKind": "interface",
+              "documentation": null,
+              "fullyImplemented": false,
+              "id": 55,
+              "linearizedBaseContracts": [
+                55
+              ],
+              "name": "IAssetData",
+              "nodeType": "ContractDefinition",
+              "nodes": [
+                {
+                  "body": null,
+                  "documentation": "@dev Function signature for encoding ERC20 assetData.\n @param tokenAddress Address of ERC20Token contract.",
+                  "id": 7,
+                  "implemented": false,
+                  "kind": "function",
+                  "modifiers": [],
+                  "name": "ERC20Token",
+                  "nodeType": "FunctionDefinition",
+                  "parameters": {
+                    "id": 5,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 4,
+                        "name": "tokenAddress",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 7,
+                        "src": "1054:20:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        "typeName": {
+                          "id": 3,
+                          "name": "address",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1054:7:0",
+                          "stateMutability": "nonpayable",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "1053:22:0"
+                  },
+                  "returnParameters": {
+                    "id": 6,
+                    "nodeType": "ParameterList",
+                    "parameters": [],
+                    "src": "1093:0:0"
+                  },
+                  "scope": 55,
+                  "src": "1034:60:0",
+                  "stateMutability": "nonpayable",
+                  "superFunction": null,
+                  "visibility": "external"
+                },
+                {
+                  "body": null,
+                  "documentation": "@dev Function signature for encoding ERC721 assetData.\n @param tokenAddress Address of ERC721 token contract.\n @param tokenId Id of ERC721 token to be transferred.",
+                  "id": 14,
+                  "implemented": false,
+                  "kind": "function",
+                  "modifiers": [],
+                  "name": "ERC721Token",
+                  "nodeType": "FunctionDefinition",
+                  "parameters": {
+                    "id": 12,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 9,
+                        "name": "tokenAddress",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 14,
+                        "src": "1322:20:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        "typeName": {
+                          "id": 8,
+                          "name": "address",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1322:7:0",
+                          "stateMutability": "nonpayable",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 11,
+                        "name": "tokenId",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 14,
+                        "src": "1353:15:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 10,
+                          "name": "uint256",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1353:7:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "1311:64:0"
+                  },
+                  "returnParameters": {
+                    "id": 13,
+                    "nodeType": "ParameterList",
+                    "parameters": [],
+                    "src": "1393:0:0"
+                  },
+                  "scope": 55,
+                  "src": "1291:103:0",
+                  "stateMutability": "nonpayable",
+                  "superFunction": null,
+                  "visibility": "external"
+                },
+                {
+                  "body": null,
+                  "documentation": "@dev Function signature for encoding ERC1155 assetData.\n @param tokenAddress Address of ERC1155 token contract.\n @param tokenIds Array of ids of tokens to be transferred.\n @param values Array of values that correspond to each token id to be transferred.\n        Note that each value will be multiplied by the amount being filled in the order before transferring.\n @param callbackData Extra data to be passed to receiver's `onERC1155Received` callback function.",
+                  "id": 27,
+                  "implemented": false,
+                  "kind": "function",
+                  "modifiers": [],
+                  "name": "ERC1155Assets",
+                  "nodeType": "FunctionDefinition",
+                  "parameters": {
+                    "id": 25,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 16,
+                        "name": "tokenAddress",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 27,
+                        "src": "1945:20:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        "typeName": {
+                          "id": 15,
+                          "name": "address",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1945:7:0",
+                          "stateMutability": "nonpayable",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 19,
+                        "name": "tokenIds",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 27,
+                        "src": "1976:27:0",
+                        "stateVariable": false,
+                        "storageLocation": "calldata",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                          "typeString": "uint256[]"
+                        },
+                        "typeName": {
+                          "baseType": {
+                            "id": 17,
+                            "name": "uint256",
+                            "nodeType": "ElementaryTypeName",
+                            "src": "1976:7:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          },
+                          "id": 18,
+                          "length": null,
+                          "nodeType": "ArrayTypeName",
+                          "src": "1976:9:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                            "typeString": "uint256[]"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 22,
+                        "name": "values",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 27,
+                        "src": "2014:25:0",
+                        "stateVariable": false,
+                        "storageLocation": "calldata",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                          "typeString": "uint256[]"
+                        },
+                        "typeName": {
+                          "baseType": {
+                            "id": 20,
+                            "name": "uint256",
+                            "nodeType": "ElementaryTypeName",
+                            "src": "2014:7:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          },
+                          "id": 21,
+                          "length": null,
+                          "nodeType": "ArrayTypeName",
+                          "src": "2014:9:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                            "typeString": "uint256[]"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 24,
+                        "name": "callbackData",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 27,
+                        "src": "2050:27:0",
+                        "stateVariable": false,
+                        "storageLocation": "calldata",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes_calldata_ptr",
+                          "typeString": "bytes"
+                        },
+                        "typeName": {
+                          "id": 23,
+                          "name": "bytes",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "2050:5:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bytes_storage_ptr",
+                            "typeString": "bytes"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "1934:150:0"
+                  },
+                  "returnParameters": {
+                    "id": 26,
+                    "nodeType": "ParameterList",
+                    "parameters": [],
+                    "src": "2102:0:0"
+                  },
+                  "scope": 55,
+                  "src": "1912:191:0",
+                  "stateMutability": "nonpayable",
+                  "superFunction": null,
+                  "visibility": "external"
+                },
+                {
+                  "body": null,
+                  "documentation": "@dev Function signature for encoding MultiAsset assetData.\n @param values Array of amounts that correspond to each asset to be transferred.\n        Note that each value will be multiplied by the amount being filled in the order before transferring.\n @param nestedAssetData Array of assetData fields that will be be dispatched to their correspnding AssetProxy contract.",
+                  "id": 36,
+                  "implemented": false,
+                  "kind": "function",
+                  "modifiers": [],
+                  "name": "MultiAsset",
+                  "nodeType": "FunctionDefinition",
+                  "parameters": {
+                    "id": 34,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 30,
+                        "name": "values",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 36,
+                        "src": "2543:25:0",
+                        "stateVariable": false,
+                        "storageLocation": "calldata",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                          "typeString": "uint256[]"
+                        },
+                        "typeName": {
+                          "baseType": {
+                            "id": 28,
+                            "name": "uint256",
+                            "nodeType": "ElementaryTypeName",
+                            "src": "2543:7:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          },
+                          "id": 29,
+                          "length": null,
+                          "nodeType": "ArrayTypeName",
+                          "src": "2543:9:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                            "typeString": "uint256[]"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 33,
+                        "name": "nestedAssetData",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 36,
+                        "src": "2579:32:0",
+                        "stateVariable": false,
+                        "storageLocation": "calldata",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_array$_t_bytes_calldata_$dyn_calldata_ptr",
+                          "typeString": "bytes[]"
+                        },
+                        "typeName": {
+                          "baseType": {
+                            "id": 31,
+                            "name": "bytes",
+                            "nodeType": "ElementaryTypeName",
+                            "src": "2579:5:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_bytes_storage_ptr",
+                              "typeString": "bytes"
+                            }
+                          },
+                          "id": 32,
+                          "length": null,
+                          "nodeType": "ArrayTypeName",
+                          "src": "2579:7:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_array$_t_bytes_storage_$dyn_storage_ptr",
+                            "typeString": "bytes[]"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "2532:86:0"
+                  },
+                  "returnParameters": {
+                    "id": 35,
+                    "nodeType": "ParameterList",
+                    "parameters": [],
+                    "src": "2636:0:0"
+                  },
+                  "scope": 55,
+                  "src": "2513:124:0",
+                  "stateMutability": "nonpayable",
+                  "superFunction": null,
+                  "visibility": "external"
+                },
+                {
+                  "body": null,
+                  "documentation": "@dev Function signature for encoding StaticCall assetData.\n @param staticCallTargetAddress Address that will execute the staticcall.\n @param staticCallData Data that will be executed via staticcall on the staticCallTargetAddress.\n @param expectedReturnDataHash Keccak-256 hash of the expected staticcall return data.",
+                  "id": 45,
+                  "implemented": false,
+                  "kind": "function",
+                  "modifiers": [],
+                  "name": "StaticCall",
+                  "nodeType": "FunctionDefinition",
+                  "parameters": {
+                    "id": 43,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 38,
+                        "name": "staticCallTargetAddress",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 45,
+                        "src": "3025:31:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        "typeName": {
+                          "id": 37,
+                          "name": "address",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "3025:7:0",
+                          "stateMutability": "nonpayable",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 40,
+                        "name": "staticCallData",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 45,
+                        "src": "3067:29:0",
+                        "stateVariable": false,
+                        "storageLocation": "calldata",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes_calldata_ptr",
+                          "typeString": "bytes"
+                        },
+                        "typeName": {
+                          "id": 39,
+                          "name": "bytes",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "3067:5:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bytes_storage_ptr",
+                            "typeString": "bytes"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 42,
+                        "name": "expectedReturnDataHash",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 45,
+                        "src": "3107:30:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes32",
+                          "typeString": "bytes32"
+                        },
+                        "typeName": {
+                          "id": 41,
+                          "name": "bytes32",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "3107:7:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bytes32",
+                            "typeString": "bytes32"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "3014:130:0"
+                  },
+                  "returnParameters": {
+                    "id": 44,
+                    "nodeType": "ParameterList",
+                    "parameters": [],
+                    "src": "3162:0:0"
+                  },
+                  "scope": 55,
+                  "src": "2995:168:0",
+                  "stateMutability": "nonpayable",
+                  "superFunction": null,
+                  "visibility": "external"
+                },
+                {
+                  "body": null,
+                  "documentation": "@dev Function signature for encoding ERC20Bridge assetData.\n @param tokenAddress Address of token to transfer.\n @param bridgeAddress Address of the bridge contract.\n @param bridgeData Arbitrary data to be passed to the bridge contract.",
+                  "id": 54,
+                  "implemented": false,
+                  "kind": "function",
+                  "modifiers": [],
+                  "name": "ERC20Bridge",
+                  "nodeType": "FunctionDefinition",
+                  "parameters": {
+                    "id": 52,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 47,
+                        "name": "tokenAddress",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 54,
+                        "src": "3471:20:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        "typeName": {
+                          "id": 46,
+                          "name": "address",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "3471:7:0",
+                          "stateMutability": "nonpayable",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 49,
+                        "name": "bridgeAddress",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 54,
+                        "src": "3502:21:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        "typeName": {
+                          "id": 48,
+                          "name": "address",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "3502:7:0",
+                          "stateMutability": "nonpayable",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 51,
+                        "name": "bridgeData",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 54,
+                        "src": "3534:25:0",
+                        "stateVariable": false,
+                        "storageLocation": "calldata",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes_calldata_ptr",
+                          "typeString": "bytes"
+                        },
+                        "typeName": {
+                          "id": 50,
+                          "name": "bytes",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "3534:5:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bytes_storage_ptr",
+                            "typeString": "bytes"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "3460:106:0"
+                  },
+                  "returnParameters": {
+                    "id": 53,
+                    "nodeType": "ParameterList",
+                    "parameters": [],
+                    "src": "3584:0:0"
+                  },
+                  "scope": 55,
+                  "src": "3440:145:0",
+                  "stateMutability": "nonpayable",
+                  "superFunction": null,
+                  "visibility": "external"
+                }
+              ],
+              "scope": 56,
+              "src": "880:2708:0"
+            }
+          ],
+          "src": "618:2972:0"
+        },
+        "id": 0
+      }
+    }
+  }
+}

@@ -1,0 +1,397 @@
+{
+  "id": "eebb99214e708ae85c4a70ce14e38f2d",
+  "_format": "hh-sol-build-info-1",
+  "solcVersion": "0.5.17",
+  "solcLongVersion": "0.5.17+commit.d19bba13",
+  "input": {
+    "language": "Solidity",
+    "sources": {
+      "contracts/0x/proxies/interfaces/IBalancerPool.sol": {
+        "content": "/*\r\n\r\n  Copyright 2020 ZeroEx Intl.\r\n\r\n  Licensed under the Apache License, Version 2.0 (the \"License\");\r\n  you may not use this file except in compliance with the License.\r\n  You may obtain a copy of the License at\r\n\r\n    http://www.apache.org/licenses/LICENSE-2.0\r\n\r\n  Unless required by applicable law or agreed to in writing, software\r\n  distributed under the License is distributed on an \"AS IS\" BASIS,\r\n  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\r\n  See the License for the specific language governing permissions and\r\n  limitations under the License.\r\n\r\n*/\r\n\r\npragma solidity ^0.5.9;\r\n\r\n\r\ninterface IBalancerPool {\r\n    /// @dev Sell `tokenAmountIn` of `tokenIn` and receive `tokenOut`.\r\n    /// @param tokenIn The token being sold\r\n    /// @param tokenAmountIn The amount of `tokenIn` to sell.\r\n    /// @param tokenOut The token being bought.\r\n    /// @param minAmountOut The minimum amount of `tokenOut` to buy.\r\n    /// @param maxPrice The maximum value for `spotPriceAfter`.\r\n    /// @return tokenAmountOut The amount of `tokenOut` bought.\r\n    /// @return spotPriceAfter The new marginal spot price of the given\r\n    ///         token pair for this pool.\r\n    function swapExactAmountIn(\r\n        address tokenIn,\r\n        uint tokenAmountIn,\r\n        address tokenOut,\r\n        uint minAmountOut,\r\n        uint maxPrice\r\n    ) external returns (uint tokenAmountOut, uint spotPriceAfter);\r\n}"
+      }
+    },
+    "settings": {
+      "optimizer": {
+        "enabled": true,
+        "runs": 1000
+      },
+      "outputSelection": {
+        "*": {
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata",
+            "devdoc",
+            "userdoc",
+            "storageLayout",
+            "evm.gasEstimates"
+          ],
+          "": [
+            "ast"
+          ]
+        }
+      },
+      "metadata": {
+        "useLiteralContent": true
+      }
+    }
+  },
+  "output": {
+    "contracts": {
+      "contracts/0x/proxies/interfaces/IBalancerPool.sol": {
+        "IBalancerPool": {
+          "abi": [
+            {
+              "constant": false,
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "tokenIn",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "tokenAmountIn",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "address",
+                  "name": "tokenOut",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "minAmountOut",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "maxPrice",
+                  "type": "uint256"
+                }
+              ],
+              "name": "swapExactAmountIn",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "tokenAmountOut",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "spotPriceAfter",
+                  "type": "uint256"
+                }
+              ],
+              "payable": false,
+              "stateMutability": "nonpayable",
+              "type": "function"
+            }
+          ],
+          "devdoc": {
+            "methods": {
+              "swapExactAmountIn(address,uint256,address,uint256,uint256)": {
+                "details": "Sell `tokenAmountIn` of `tokenIn` and receive `tokenOut`.",
+                "params": {
+                  "maxPrice": "The maximum value for `spotPriceAfter`.",
+                  "minAmountOut": "The minimum amount of `tokenOut` to buy.",
+                  "tokenAmountIn": "The amount of `tokenIn` to sell.",
+                  "tokenIn": "The token being sold",
+                  "tokenOut": "The token being bought."
+                },
+                "return": "tokenAmountOut The amount of `tokenOut` bought.spotPriceAfter The new marginal spot price of the given         token pair for this pool."
+              }
+            }
+          },
+          "evm": {
+            "bytecode": {
+              "linkReferences": {},
+              "object": "",
+              "opcodes": "",
+              "sourceMap": ""
+            },
+            "deployedBytecode": {
+              "linkReferences": {},
+              "object": "",
+              "opcodes": "",
+              "sourceMap": ""
+            },
+            "gasEstimates": null,
+            "methodIdentifiers": {
+              "swapExactAmountIn(address,uint256,address,uint256,uint256)": "8201aa3f"
+            }
+          },
+          "metadata": "{\"compiler\":{\"version\":\"0.5.17+commit.d19bba13\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"tokenIn\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenAmountIn\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"tokenOut\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"minAmountOut\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maxPrice\",\"type\":\"uint256\"}],\"name\":\"swapExactAmountIn\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenAmountOut\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"spotPriceAfter\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{\"swapExactAmountIn(address,uint256,address,uint256,uint256)\":{\"details\":\"Sell `tokenAmountIn` of `tokenIn` and receive `tokenOut`.\",\"params\":{\"maxPrice\":\"The maximum value for `spotPriceAfter`.\",\"minAmountOut\":\"The minimum amount of `tokenOut` to buy.\",\"tokenAmountIn\":\"The amount of `tokenIn` to sell.\",\"tokenIn\":\"The token being sold\",\"tokenOut\":\"The token being bought.\"},\"return\":\"tokenAmountOut The amount of `tokenOut` bought.spotPriceAfter The new marginal spot price of the given         token pair for this pool.\"}}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"contracts/0x/proxies/interfaces/IBalancerPool.sol\":\"IBalancerPool\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":1000},\"remappings\":[]},\"sources\":{\"contracts/0x/proxies/interfaces/IBalancerPool.sol\":{\"content\":\"/*\\r\\n\\r\\n  Copyright 2020 ZeroEx Intl.\\r\\n\\r\\n  Licensed under the Apache License, Version 2.0 (the \\\"License\\\");\\r\\n  you may not use this file except in compliance with the License.\\r\\n  You may obtain a copy of the License at\\r\\n\\r\\n    http://www.apache.org/licenses/LICENSE-2.0\\r\\n\\r\\n  Unless required by applicable law or agreed to in writing, software\\r\\n  distributed under the License is distributed on an \\\"AS IS\\\" BASIS,\\r\\n  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\\r\\n  See the License for the specific language governing permissions and\\r\\n  limitations under the License.\\r\\n\\r\\n*/\\r\\n\\r\\npragma solidity ^0.5.9;\\r\\n\\r\\n\\r\\ninterface IBalancerPool {\\r\\n    /// @dev Sell `tokenAmountIn` of `tokenIn` and receive `tokenOut`.\\r\\n    /// @param tokenIn The token being sold\\r\\n    /// @param tokenAmountIn The amount of `tokenIn` to sell.\\r\\n    /// @param tokenOut The token being bought.\\r\\n    /// @param minAmountOut The minimum amount of `tokenOut` to buy.\\r\\n    /// @param maxPrice The maximum value for `spotPriceAfter`.\\r\\n    /// @return tokenAmountOut The amount of `tokenOut` bought.\\r\\n    /// @return spotPriceAfter The new marginal spot price of the given\\r\\n    ///         token pair for this pool.\\r\\n    function swapExactAmountIn(\\r\\n        address tokenIn,\\r\\n        uint tokenAmountIn,\\r\\n        address tokenOut,\\r\\n        uint minAmountOut,\\r\\n        uint maxPrice\\r\\n    ) external returns (uint tokenAmountOut, uint spotPriceAfter);\\r\\n}\",\"keccak256\":\"0x26d29c0795bdb4063df0117c9734712406d48ec44c07817b7aed9f874100f1b7\"}},\"version\":1}",
+          "storageLayout": {
+            "storage": [],
+            "types": null
+          },
+          "userdoc": {
+            "methods": {}
+          }
+        }
+      }
+    },
+    "sources": {
+      "contracts/0x/proxies/interfaces/IBalancerPool.sol": {
+        "ast": {
+          "absolutePath": "contracts/0x/proxies/interfaces/IBalancerPool.sol",
+          "exportedSymbols": {
+            "IBalancerPool": [
+              19
+            ]
+          },
+          "id": 20,
+          "nodeType": "SourceUnit",
+          "nodes": [
+            {
+              "id": 1,
+              "literals": [
+                "solidity",
+                "^",
+                "0.5",
+                ".9"
+              ],
+              "nodeType": "PragmaDirective",
+              "src": "598:23:0"
+            },
+            {
+              "baseContracts": [],
+              "contractDependencies": [],
+              "contractKind": "interface",
+              "documentation": null,
+              "fullyImplemented": false,
+              "id": 19,
+              "linearizedBaseContracts": [
+                19
+              ],
+              "name": "IBalancerPool",
+              "nodeType": "ContractDefinition",
+              "nodes": [
+                {
+                  "body": null,
+                  "documentation": "@dev Sell `tokenAmountIn` of `tokenIn` and receive `tokenOut`.\n @param tokenIn The token being sold\n @param tokenAmountIn The amount of `tokenIn` to sell.\n @param tokenOut The token being bought.\n @param minAmountOut The minimum amount of `tokenOut` to buy.\n @param maxPrice The maximum value for `spotPriceAfter`.\n @return tokenAmountOut The amount of `tokenOut` bought.\n @return spotPriceAfter The new marginal spot price of the given\n         token pair for this pool.",
+                  "id": 18,
+                  "implemented": false,
+                  "kind": "function",
+                  "modifiers": [],
+                  "name": "swapExactAmountIn",
+                  "nodeType": "FunctionDefinition",
+                  "parameters": {
+                    "id": 12,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 3,
+                        "name": "tokenIn",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 18,
+                        "src": "1240:15:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        "typeName": {
+                          "id": 2,
+                          "name": "address",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1240:7:0",
+                          "stateMutability": "nonpayable",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 5,
+                        "name": "tokenAmountIn",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 18,
+                        "src": "1266:18:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 4,
+                          "name": "uint",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1266:4:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 7,
+                        "name": "tokenOut",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 18,
+                        "src": "1295:16:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        "typeName": {
+                          "id": 6,
+                          "name": "address",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1295:7:0",
+                          "stateMutability": "nonpayable",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 9,
+                        "name": "minAmountOut",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 18,
+                        "src": "1322:17:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 8,
+                          "name": "uint",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1322:4:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 11,
+                        "name": "maxPrice",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 18,
+                        "src": "1350:13:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 10,
+                          "name": "uint",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1350:4:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "1229:141:0"
+                  },
+                  "returnParameters": {
+                    "id": 17,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 14,
+                        "name": "tokenAmountOut",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 18,
+                        "src": "1389:19:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 13,
+                          "name": "uint",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1389:4:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 16,
+                        "name": "spotPriceAfter",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 18,
+                        "src": "1410:19:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 15,
+                          "name": "uint",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1410:4:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "1388:42:0"
+                  },
+                  "scope": 19,
+                  "src": "1203:228:0",
+                  "stateMutability": "nonpayable",
+                  "superFunction": null,
+                  "visibility": "external"
+                }
+              ],
+              "scope": 20,
+              "src": "627:807:0"
+            }
+          ],
+          "src": "598:836:0"
+        },
+        "id": 0
+      }
+    }
+  }
+}

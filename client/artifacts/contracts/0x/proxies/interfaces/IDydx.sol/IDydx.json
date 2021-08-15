@@ -1,0 +1,354 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IDydx",
+  "sourceName": "contracts/0x/proxies/interfaces/IDydx.sol",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "number",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct IDydx.AccountInfo",
+          "name": "account",
+          "type": "tuple"
+        }
+      ],
+      "name": "getAdjustedAccountValues",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct IDydx.Value",
+          "name": "supplyValue",
+          "type": "tuple"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct IDydx.Value",
+          "name": "borrowValue",
+          "type": "tuple"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "operator",
+          "type": "address"
+        }
+      ],
+      "name": "getIsLocalOperator",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "isLocalOperator",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "marketId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getMarketMarginPremium",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct IDydx.D256",
+          "name": "premium",
+          "type": "tuple"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "marketId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getMarketPrice",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct IDydx.Price",
+          "name": "price",
+          "type": "tuple"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "marketId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getMarketTokenAddress",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "tokenAddress",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getRiskParams",
+      "outputs": [
+        {
+          "components": [
+            {
+              "components": [
+                {
+                  "internalType": "uint256",
+                  "name": "value",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct IDydx.D256",
+              "name": "marginRatio",
+              "type": "tuple"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "uint256",
+                  "name": "value",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct IDydx.D256",
+              "name": "liquidationSpread",
+              "type": "tuple"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "uint256",
+                  "name": "value",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct IDydx.D256",
+              "name": "earningsRate",
+              "type": "tuple"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "uint256",
+                  "name": "value",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct IDydx.Value",
+              "name": "minBorrowedValue",
+              "type": "tuple"
+            }
+          ],
+          "internalType": "struct IDydx.RiskParams",
+          "name": "riskParams",
+          "type": "tuple"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "number",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct IDydx.AccountInfo[]",
+          "name": "accounts",
+          "type": "tuple[]"
+        },
+        {
+          "components": [
+            {
+              "internalType": "enum IDydx.ActionType",
+              "name": "actionType",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint256",
+              "name": "accountIdx",
+              "type": "uint256"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "bool",
+                  "name": "sign",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "enum IDydx.AssetDenomination",
+                  "name": "denomination",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "enum IDydx.AssetReference",
+                  "name": "ref",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "value",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct IDydx.AssetAmount",
+              "name": "amount",
+              "type": "tuple"
+            },
+            {
+              "internalType": "uint256",
+              "name": "primaryMarketId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "secondaryMarketId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "otherAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "otherAccountIdx",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "data",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct IDydx.ActionArgs[]",
+          "name": "actions",
+          "type": "tuple[]"
+        }
+      ],
+      "name": "operate",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "operator",
+              "type": "address"
+            },
+            {
+              "internalType": "bool",
+              "name": "trusted",
+              "type": "bool"
+            }
+          ],
+          "internalType": "struct IDydx.OperatorArg[]",
+          "name": "args",
+          "type": "tuple[]"
+        }
+      ],
+      "name": "setOperators",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

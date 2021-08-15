@@ -1,0 +1,2053 @@
+{
+  "id": "32e848e641cebcbf063963990f6507b5",
+  "_format": "hh-sol-build-info-1",
+  "solcVersion": "0.5.17",
+  "solcLongVersion": "0.5.17+commit.d19bba13",
+  "input": {
+    "language": "Solidity",
+    "sources": {
+      "contracts/0x/proxies/interfaces/IDydx.sol": {
+        "content": "/*\r\n\r\n  Copyright 2019 ZeroEx Intl.\r\n\r\n  Licensed under the Apache License, Version 2.0 (the \"License\");\r\n  you may not use this file except in compliance with the License.\r\n  You may obtain a copy of the License at\r\n\r\n    http://www.apache.org/licenses/LICENSE-2.0\r\n\r\n  Unless required by applicable law or agreed to in writing, software\r\n  distributed under the License is distributed on an \"AS IS\" BASIS,\r\n  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\r\n  See the License for the specific language governing permissions and\r\n  limitations under the License.\r\n\r\n*/\r\n\r\npragma solidity ^0.5.9;\r\npragma experimental ABIEncoderV2;\r\n\r\n\r\ninterface IDydx {\r\n\r\n    /// @dev Represents the unique key that specifies an account\r\n    struct AccountInfo {\r\n        address owner;  // The address that owns the account\r\n        uint256 number; // A nonce that allows a single address to control many accounts\r\n    }\r\n\r\n    enum ActionType {\r\n        Deposit,   // supply tokens\r\n        Withdraw,  // borrow tokens\r\n        Transfer,  // transfer balance between accounts\r\n        Buy,       // buy an amount of some token (externally)\r\n        Sell,      // sell an amount of some token (externally)\r\n        Trade,     // trade tokens against another account\r\n        Liquidate, // liquidate an undercollateralized or expiring account\r\n        Vaporize,  // use excess tokens to zero-out a completely negative account\r\n        Call       // send arbitrary data to an address\r\n    }\r\n\r\n    /// @dev Arguments that are passed to Solo in an ordered list as part of a single operation.\r\n    /// Each ActionArgs has an actionType which specifies which action struct that this data will be\r\n    /// parsed into before being processed.\r\n    struct ActionArgs {\r\n        ActionType actionType;\r\n        uint256 accountIdx;\r\n        AssetAmount amount;\r\n        uint256 primaryMarketId;\r\n        uint256 secondaryMarketId;\r\n        address otherAddress;\r\n        uint256 otherAccountIdx;\r\n        bytes data;\r\n    }\r\n\r\n    enum AssetDenomination {\r\n        Wei, // the amount is denominated in wei\r\n        Par  // the amount is denominated in par\r\n    }\r\n\r\n    enum AssetReference {\r\n        Delta, // the amount is given as a delta from the current value\r\n        Target // the amount is given as an exact number to end up at\r\n    }\r\n\r\n    struct AssetAmount {\r\n        bool sign; // true if positive\r\n        AssetDenomination denomination;\r\n        AssetReference ref;\r\n        uint256 value;\r\n    }\r\n\r\n    struct D256 {\r\n        uint256 value;\r\n    }\r\n\r\n    struct Value {\r\n        uint256 value;\r\n    }\r\n\r\n    struct Price {\r\n        uint256 value;\r\n    }\r\n\r\n    struct OperatorArg {\r\n        address operator;\r\n        bool trusted;\r\n    }\r\n\r\n    /// @dev The global risk parameters that govern the health and security of the system\r\n    struct RiskParams {\r\n        // Required ratio of over-collateralization\r\n        D256 marginRatio;\r\n        // Percentage penalty incurred by liquidated accounts\r\n        D256 liquidationSpread;\r\n        // Percentage of the borrower's interest fee that gets passed to the suppliers\r\n        D256 earningsRate;\r\n        // The minimum absolute borrow value of an account\r\n        // There must be sufficient incentivize to liquidate undercollateralized accounts\r\n        Value minBorrowedValue;\r\n    }\r\n\r\n    /// @dev The main entry-point to Solo that allows users and contracts to manage accounts.\r\n    ///      Take one or more actions on one or more accounts. The msg.sender must be the owner or\r\n    ///      operator of all accounts except for those being liquidated, vaporized, or traded with.\r\n    ///      One call to operate() is considered a singular \"operation\". Account collateralization is\r\n    ///      ensured only after the completion of the entire operation.\r\n    /// @param  accounts  A list of all accounts that will be used in this operation. Cannot contain\r\n    ///                   duplicates. In each action, the relevant account will be referred-to by its\r\n    ///                   index in the list.\r\n    /// @param  actions   An ordered list of all actions that will be taken in this operation. The\r\n    ///                   actions will be processed in order.\r\n    function operate(\r\n        AccountInfo[] calldata accounts,\r\n        ActionArgs[] calldata actions\r\n    )\r\n        external;\r\n\r\n    // @dev Approves/disapproves any number of operators. An operator is an external address that has the\r\n    //      same permissions to manipulate an account as the owner of the account. Operators are simply\r\n    //      addresses and therefore may either be externally-owned Ethereum accounts OR smart contracts.\r\n    //      Operators are also able to act as AutoTrader contracts on behalf of the account owner if the\r\n    //      operator is a smart contract and implements the IAutoTrader interface.\r\n    // @param args A list of OperatorArgs which have an address and a boolean. The boolean value\r\n    //        denotes whether to approve (true) or revoke approval (false) for that address.\r\n    function setOperators(OperatorArg[] calldata args) external;\r\n\r\n    /// @dev Return true if a particular address is approved as an operator for an owner's accounts.\r\n    ///      Approved operators can act on the accounts of the owner as if it were the operator's own.\r\n    /// @param owner The owner of the accounts\r\n    /// @param operator The possible operator\r\n    /// @return isLocalOperator True if operator is approved for owner's accounts\r\n    function getIsLocalOperator(\r\n        address owner,\r\n        address operator\r\n    )\r\n        external\r\n        view\r\n        returns (bool isLocalOperator);\r\n\r\n    /// @dev Get the ERC20 token address for a market.\r\n    /// @param marketId The market to query\r\n    /// @return tokenAddress The token address\r\n    function getMarketTokenAddress(\r\n        uint256 marketId\r\n    )\r\n        external\r\n        view\r\n        returns (address tokenAddress);\r\n\r\n    /// @dev Get all risk parameters in a single struct.\r\n    /// @return riskParams All global risk parameters\r\n    function getRiskParams()\r\n        external\r\n        view\r\n        returns (RiskParams memory riskParams);\r\n\r\n    /// @dev Get the price of the token for a market.\r\n    /// @param marketId The market to query\r\n    /// @return price The price of each atomic unit of the token\r\n    function getMarketPrice(\r\n        uint256 marketId\r\n    )\r\n        external\r\n        view\r\n        returns (Price memory price);\r\n\r\n    /// @dev Get the margin premium for a market. A margin premium makes it so that any positions that\r\n    ///      include the market require a higher collateralization to avoid being liquidated.\r\n    /// @param  marketId  The market to query\r\n    /// @return premium The market's margin premium\r\n    function getMarketMarginPremium(uint256 marketId)\r\n        external\r\n        view\r\n        returns (D256 memory premium);\r\n\r\n    /// @dev Get the total supplied and total borrowed values of an account adjusted by the marginPremium\r\n    ///      of each market. Supplied values are divided by (1 + marginPremium) for each market and\r\n    ///      borrowed values are multiplied by (1 + marginPremium) for each market. Comparing these\r\n    ///      adjusted values gives the margin-ratio of the account which will be compared to the global\r\n    ///      margin-ratio when determining if the account can be liquidated.\r\n    /// @param account The account to query\r\n    /// @return supplyValue The supplied value of the account (adjusted for marginPremium)\r\n    /// @return borrowValue The borrowed value of the account (adjusted for marginPremium)\r\n    function getAdjustedAccountValues(\r\n        AccountInfo calldata account\r\n    )\r\n        external\r\n        view\r\n        returns (Value memory supplyValue, Value memory borrowValue);\r\n}\r\n"
+      }
+    },
+    "settings": {
+      "optimizer": {
+        "enabled": true,
+        "runs": 1000
+      },
+      "outputSelection": {
+        "*": {
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata",
+            "devdoc",
+            "userdoc",
+            "storageLayout",
+            "evm.gasEstimates"
+          ],
+          "": [
+            "ast"
+          ]
+        }
+      },
+      "metadata": {
+        "useLiteralContent": true
+      }
+    }
+  },
+  "output": {
+    "contracts": {
+      "contracts/0x/proxies/interfaces/IDydx.sol": {
+        "IDydx": {
+          "abi": [
+            {
+              "constant": true,
+              "inputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "address",
+                      "name": "owner",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "number",
+                      "type": "uint256"
+                    }
+                  ],
+                  "internalType": "struct IDydx.AccountInfo",
+                  "name": "account",
+                  "type": "tuple"
+                }
+              ],
+              "name": "getAdjustedAccountValues",
+              "outputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "value",
+                      "type": "uint256"
+                    }
+                  ],
+                  "internalType": "struct IDydx.Value",
+                  "name": "supplyValue",
+                  "type": "tuple"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "value",
+                      "type": "uint256"
+                    }
+                  ],
+                  "internalType": "struct IDydx.Value",
+                  "name": "borrowValue",
+                  "type": "tuple"
+                }
+              ],
+              "payable": false,
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "constant": true,
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "owner",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "operator",
+                  "type": "address"
+                }
+              ],
+              "name": "getIsLocalOperator",
+              "outputs": [
+                {
+                  "internalType": "bool",
+                  "name": "isLocalOperator",
+                  "type": "bool"
+                }
+              ],
+              "payable": false,
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "constant": true,
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "marketId",
+                  "type": "uint256"
+                }
+              ],
+              "name": "getMarketMarginPremium",
+              "outputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "value",
+                      "type": "uint256"
+                    }
+                  ],
+                  "internalType": "struct IDydx.D256",
+                  "name": "premium",
+                  "type": "tuple"
+                }
+              ],
+              "payable": false,
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "constant": true,
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "marketId",
+                  "type": "uint256"
+                }
+              ],
+              "name": "getMarketPrice",
+              "outputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "value",
+                      "type": "uint256"
+                    }
+                  ],
+                  "internalType": "struct IDydx.Price",
+                  "name": "price",
+                  "type": "tuple"
+                }
+              ],
+              "payable": false,
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "constant": true,
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "marketId",
+                  "type": "uint256"
+                }
+              ],
+              "name": "getMarketTokenAddress",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "tokenAddress",
+                  "type": "address"
+                }
+              ],
+              "payable": false,
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "constant": true,
+              "inputs": [],
+              "name": "getRiskParams",
+              "outputs": [
+                {
+                  "components": [
+                    {
+                      "components": [
+                        {
+                          "internalType": "uint256",
+                          "name": "value",
+                          "type": "uint256"
+                        }
+                      ],
+                      "internalType": "struct IDydx.D256",
+                      "name": "marginRatio",
+                      "type": "tuple"
+                    },
+                    {
+                      "components": [
+                        {
+                          "internalType": "uint256",
+                          "name": "value",
+                          "type": "uint256"
+                        }
+                      ],
+                      "internalType": "struct IDydx.D256",
+                      "name": "liquidationSpread",
+                      "type": "tuple"
+                    },
+                    {
+                      "components": [
+                        {
+                          "internalType": "uint256",
+                          "name": "value",
+                          "type": "uint256"
+                        }
+                      ],
+                      "internalType": "struct IDydx.D256",
+                      "name": "earningsRate",
+                      "type": "tuple"
+                    },
+                    {
+                      "components": [
+                        {
+                          "internalType": "uint256",
+                          "name": "value",
+                          "type": "uint256"
+                        }
+                      ],
+                      "internalType": "struct IDydx.Value",
+                      "name": "minBorrowedValue",
+                      "type": "tuple"
+                    }
+                  ],
+                  "internalType": "struct IDydx.RiskParams",
+                  "name": "riskParams",
+                  "type": "tuple"
+                }
+              ],
+              "payable": false,
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "constant": false,
+              "inputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "address",
+                      "name": "owner",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "number",
+                      "type": "uint256"
+                    }
+                  ],
+                  "internalType": "struct IDydx.AccountInfo[]",
+                  "name": "accounts",
+                  "type": "tuple[]"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "enum IDydx.ActionType",
+                      "name": "actionType",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "accountIdx",
+                      "type": "uint256"
+                    },
+                    {
+                      "components": [
+                        {
+                          "internalType": "bool",
+                          "name": "sign",
+                          "type": "bool"
+                        },
+                        {
+                          "internalType": "enum IDydx.AssetDenomination",
+                          "name": "denomination",
+                          "type": "uint8"
+                        },
+                        {
+                          "internalType": "enum IDydx.AssetReference",
+                          "name": "ref",
+                          "type": "uint8"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "value",
+                          "type": "uint256"
+                        }
+                      ],
+                      "internalType": "struct IDydx.AssetAmount",
+                      "name": "amount",
+                      "type": "tuple"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "primaryMarketId",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "secondaryMarketId",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "address",
+                      "name": "otherAddress",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "otherAccountIdx",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "bytes",
+                      "name": "data",
+                      "type": "bytes"
+                    }
+                  ],
+                  "internalType": "struct IDydx.ActionArgs[]",
+                  "name": "actions",
+                  "type": "tuple[]"
+                }
+              ],
+              "name": "operate",
+              "outputs": [],
+              "payable": false,
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "constant": false,
+              "inputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "address",
+                      "name": "operator",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "trusted",
+                      "type": "bool"
+                    }
+                  ],
+                  "internalType": "struct IDydx.OperatorArg[]",
+                  "name": "args",
+                  "type": "tuple[]"
+                }
+              ],
+              "name": "setOperators",
+              "outputs": [],
+              "payable": false,
+              "stateMutability": "nonpayable",
+              "type": "function"
+            }
+          ],
+          "devdoc": {
+            "methods": {
+              "getAdjustedAccountValues((address,uint256))": {
+                "details": "Get the total supplied and total borrowed values of an account adjusted by the marginPremium      of each market. Supplied values are divided by (1 + marginPremium) for each market and      borrowed values are multiplied by (1 + marginPremium) for each market. Comparing these      adjusted values gives the margin-ratio of the account which will be compared to the global      margin-ratio when determining if the account can be liquidated.",
+                "params": {
+                  "account": "The account to query"
+                },
+                "return": "supplyValue The supplied value of the account (adjusted for marginPremium)borrowValue The borrowed value of the account (adjusted for marginPremium)"
+              },
+              "getIsLocalOperator(address,address)": {
+                "details": "Return true if a particular address is approved as an operator for an owner's accounts.      Approved operators can act on the accounts of the owner as if it were the operator's own.",
+                "params": {
+                  "operator": "The possible operator",
+                  "owner": "The owner of the accounts"
+                },
+                "return": "isLocalOperator True if operator is approved for owner's accounts"
+              },
+              "getMarketMarginPremium(uint256)": {
+                "details": "Get the margin premium for a market. A margin premium makes it so that any positions that      include the market require a higher collateralization to avoid being liquidated.",
+                "params": {
+                  "marketId": "The market to query"
+                },
+                "return": "premium The market's margin premium"
+              },
+              "getMarketPrice(uint256)": {
+                "details": "Get the price of the token for a market.",
+                "params": {
+                  "marketId": "The market to query"
+                },
+                "return": "price The price of each atomic unit of the token"
+              },
+              "getMarketTokenAddress(uint256)": {
+                "details": "Get the ERC20 token address for a market.",
+                "params": {
+                  "marketId": "The market to query"
+                },
+                "return": "tokenAddress The token address"
+              },
+              "getRiskParams()": {
+                "details": "Get all risk parameters in a single struct.",
+                "return": "riskParams All global risk parameters"
+              },
+              "operate((address,uint256)[],(uint8,uint256,(bool,uint8,uint8,uint256),uint256,uint256,address,uint256,bytes)[])": {
+                "details": "The main entry-point to Solo that allows users and contracts to manage accounts.      Take one or more actions on one or more accounts. The msg.sender must be the owner or      operator of all accounts except for those being liquidated, vaporized, or traded with.      One call to operate() is considered a singular \"operation\". Account collateralization is      ensured only after the completion of the entire operation.",
+                "params": {
+                  "accounts": "A list of all accounts that will be used in this operation. Cannot contain                   duplicates. In each action, the relevant account will be referred-to by its                   index in the list.",
+                  "actions": "An ordered list of all actions that will be taken in this operation. The                   actions will be processed in order."
+                }
+              }
+            }
+          },
+          "evm": {
+            "bytecode": {
+              "linkReferences": {},
+              "object": "",
+              "opcodes": "",
+              "sourceMap": ""
+            },
+            "deployedBytecode": {
+              "linkReferences": {},
+              "object": "",
+              "opcodes": "",
+              "sourceMap": ""
+            },
+            "gasEstimates": null,
+            "methodIdentifiers": {
+              "getAdjustedAccountValues((address,uint256))": "f9416052",
+              "getIsLocalOperator(address,address)": "3a031bf0",
+              "getMarketMarginPremium(uint256)": "fd04b606",
+              "getMarketPrice(uint256)": "8928378e",
+              "getMarketTokenAddress(uint256)": "062bd3e9",
+              "getRiskParams()": "69794795",
+              "operate((address,uint256)[],(uint8,uint256,(bool,uint8,uint8,uint256),uint256,uint256,address,uint256,bytes)[])": "a67a6a45",
+              "setOperators((address,bool)[])": "85b53fc8"
+            }
+          },
+          "metadata": "{\"compiler\":{\"version\":\"0.5.17+commit.d19bba13\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":true,\"inputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"number\",\"type\":\"uint256\"}],\"internalType\":\"struct IDydx.AccountInfo\",\"name\":\"account\",\"type\":\"tuple\"}],\"name\":\"getAdjustedAccountValues\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"internalType\":\"struct IDydx.Value\",\"name\":\"supplyValue\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"internalType\":\"struct IDydx.Value\",\"name\":\"borrowValue\",\"type\":\"tuple\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"getIsLocalOperator\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"isLocalOperator\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"marketId\",\"type\":\"uint256\"}],\"name\":\"getMarketMarginPremium\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"internalType\":\"struct IDydx.D256\",\"name\":\"premium\",\"type\":\"tuple\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"marketId\",\"type\":\"uint256\"}],\"name\":\"getMarketPrice\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"internalType\":\"struct IDydx.Price\",\"name\":\"price\",\"type\":\"tuple\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"marketId\",\"type\":\"uint256\"}],\"name\":\"getMarketTokenAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"tokenAddress\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getRiskParams\",\"outputs\":[{\"components\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"internalType\":\"struct IDydx.D256\",\"name\":\"marginRatio\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"internalType\":\"struct IDydx.D256\",\"name\":\"liquidationSpread\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"internalType\":\"struct IDydx.D256\",\"name\":\"earningsRate\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"internalType\":\"struct IDydx.Value\",\"name\":\"minBorrowedValue\",\"type\":\"tuple\"}],\"internalType\":\"struct IDydx.RiskParams\",\"name\":\"riskParams\",\"type\":\"tuple\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"number\",\"type\":\"uint256\"}],\"internalType\":\"struct IDydx.AccountInfo[]\",\"name\":\"accounts\",\"type\":\"tuple[]\"},{\"components\":[{\"internalType\":\"enum IDydx.ActionType\",\"name\":\"actionType\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"accountIdx\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"bool\",\"name\":\"sign\",\"type\":\"bool\"},{\"internalType\":\"enum IDydx.AssetDenomination\",\"name\":\"denomination\",\"type\":\"uint8\"},{\"internalType\":\"enum IDydx.AssetReference\",\"name\":\"ref\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"internalType\":\"struct IDydx.AssetAmount\",\"name\":\"amount\",\"type\":\"tuple\"},{\"internalType\":\"uint256\",\"name\":\"primaryMarketId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"secondaryMarketId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"otherAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"otherAccountIdx\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"internalType\":\"struct IDydx.ActionArgs[]\",\"name\":\"actions\",\"type\":\"tuple[]\"}],\"name\":\"operate\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"trusted\",\"type\":\"bool\"}],\"internalType\":\"struct IDydx.OperatorArg[]\",\"name\":\"args\",\"type\":\"tuple[]\"}],\"name\":\"setOperators\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{\"getAdjustedAccountValues((address,uint256))\":{\"details\":\"Get the total supplied and total borrowed values of an account adjusted by the marginPremium      of each market. Supplied values are divided by (1 + marginPremium) for each market and      borrowed values are multiplied by (1 + marginPremium) for each market. Comparing these      adjusted values gives the margin-ratio of the account which will be compared to the global      margin-ratio when determining if the account can be liquidated.\",\"params\":{\"account\":\"The account to query\"},\"return\":\"supplyValue The supplied value of the account (adjusted for marginPremium)borrowValue The borrowed value of the account (adjusted for marginPremium)\"},\"getIsLocalOperator(address,address)\":{\"details\":\"Return true if a particular address is approved as an operator for an owner's accounts.      Approved operators can act on the accounts of the owner as if it were the operator's own.\",\"params\":{\"operator\":\"The possible operator\",\"owner\":\"The owner of the accounts\"},\"return\":\"isLocalOperator True if operator is approved for owner's accounts\"},\"getMarketMarginPremium(uint256)\":{\"details\":\"Get the margin premium for a market. A margin premium makes it so that any positions that      include the market require a higher collateralization to avoid being liquidated.\",\"params\":{\"marketId\":\"The market to query\"},\"return\":\"premium The market's margin premium\"},\"getMarketPrice(uint256)\":{\"details\":\"Get the price of the token for a market.\",\"params\":{\"marketId\":\"The market to query\"},\"return\":\"price The price of each atomic unit of the token\"},\"getMarketTokenAddress(uint256)\":{\"details\":\"Get the ERC20 token address for a market.\",\"params\":{\"marketId\":\"The market to query\"},\"return\":\"tokenAddress The token address\"},\"getRiskParams()\":{\"details\":\"Get all risk parameters in a single struct.\",\"return\":\"riskParams All global risk parameters\"},\"operate((address,uint256)[],(uint8,uint256,(bool,uint8,uint8,uint256),uint256,uint256,address,uint256,bytes)[])\":{\"details\":\"The main entry-point to Solo that allows users and contracts to manage accounts.      Take one or more actions on one or more accounts. The msg.sender must be the owner or      operator of all accounts except for those being liquidated, vaporized, or traded with.      One call to operate() is considered a singular \\\"operation\\\". Account collateralization is      ensured only after the completion of the entire operation.\",\"params\":{\"accounts\":\"A list of all accounts that will be used in this operation. Cannot contain                   duplicates. In each action, the relevant account will be referred-to by its                   index in the list.\",\"actions\":\"An ordered list of all actions that will be taken in this operation. The                   actions will be processed in order.\"}}}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"contracts/0x/proxies/interfaces/IDydx.sol\":\"IDydx\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":1000},\"remappings\":[]},\"sources\":{\"contracts/0x/proxies/interfaces/IDydx.sol\":{\"content\":\"/*\\r\\n\\r\\n  Copyright 2019 ZeroEx Intl.\\r\\n\\r\\n  Licensed under the Apache License, Version 2.0 (the \\\"License\\\");\\r\\n  you may not use this file except in compliance with the License.\\r\\n  You may obtain a copy of the License at\\r\\n\\r\\n    http://www.apache.org/licenses/LICENSE-2.0\\r\\n\\r\\n  Unless required by applicable law or agreed to in writing, software\\r\\n  distributed under the License is distributed on an \\\"AS IS\\\" BASIS,\\r\\n  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\\r\\n  See the License for the specific language governing permissions and\\r\\n  limitations under the License.\\r\\n\\r\\n*/\\r\\n\\r\\npragma solidity ^0.5.9;\\r\\npragma experimental ABIEncoderV2;\\r\\n\\r\\n\\r\\ninterface IDydx {\\r\\n\\r\\n    /// @dev Represents the unique key that specifies an account\\r\\n    struct AccountInfo {\\r\\n        address owner;  // The address that owns the account\\r\\n        uint256 number; // A nonce that allows a single address to control many accounts\\r\\n    }\\r\\n\\r\\n    enum ActionType {\\r\\n        Deposit,   // supply tokens\\r\\n        Withdraw,  // borrow tokens\\r\\n        Transfer,  // transfer balance between accounts\\r\\n        Buy,       // buy an amount of some token (externally)\\r\\n        Sell,      // sell an amount of some token (externally)\\r\\n        Trade,     // trade tokens against another account\\r\\n        Liquidate, // liquidate an undercollateralized or expiring account\\r\\n        Vaporize,  // use excess tokens to zero-out a completely negative account\\r\\n        Call       // send arbitrary data to an address\\r\\n    }\\r\\n\\r\\n    /// @dev Arguments that are passed to Solo in an ordered list as part of a single operation.\\r\\n    /// Each ActionArgs has an actionType which specifies which action struct that this data will be\\r\\n    /// parsed into before being processed.\\r\\n    struct ActionArgs {\\r\\n        ActionType actionType;\\r\\n        uint256 accountIdx;\\r\\n        AssetAmount amount;\\r\\n        uint256 primaryMarketId;\\r\\n        uint256 secondaryMarketId;\\r\\n        address otherAddress;\\r\\n        uint256 otherAccountIdx;\\r\\n        bytes data;\\r\\n    }\\r\\n\\r\\n    enum AssetDenomination {\\r\\n        Wei, // the amount is denominated in wei\\r\\n        Par  // the amount is denominated in par\\r\\n    }\\r\\n\\r\\n    enum AssetReference {\\r\\n        Delta, // the amount is given as a delta from the current value\\r\\n        Target // the amount is given as an exact number to end up at\\r\\n    }\\r\\n\\r\\n    struct AssetAmount {\\r\\n        bool sign; // true if positive\\r\\n        AssetDenomination denomination;\\r\\n        AssetReference ref;\\r\\n        uint256 value;\\r\\n    }\\r\\n\\r\\n    struct D256 {\\r\\n        uint256 value;\\r\\n    }\\r\\n\\r\\n    struct Value {\\r\\n        uint256 value;\\r\\n    }\\r\\n\\r\\n    struct Price {\\r\\n        uint256 value;\\r\\n    }\\r\\n\\r\\n    struct OperatorArg {\\r\\n        address operator;\\r\\n        bool trusted;\\r\\n    }\\r\\n\\r\\n    /// @dev The global risk parameters that govern the health and security of the system\\r\\n    struct RiskParams {\\r\\n        // Required ratio of over-collateralization\\r\\n        D256 marginRatio;\\r\\n        // Percentage penalty incurred by liquidated accounts\\r\\n        D256 liquidationSpread;\\r\\n        // Percentage of the borrower's interest fee that gets passed to the suppliers\\r\\n        D256 earningsRate;\\r\\n        // The minimum absolute borrow value of an account\\r\\n        // There must be sufficient incentivize to liquidate undercollateralized accounts\\r\\n        Value minBorrowedValue;\\r\\n    }\\r\\n\\r\\n    /// @dev The main entry-point to Solo that allows users and contracts to manage accounts.\\r\\n    ///      Take one or more actions on one or more accounts. The msg.sender must be the owner or\\r\\n    ///      operator of all accounts except for those being liquidated, vaporized, or traded with.\\r\\n    ///      One call to operate() is considered a singular \\\"operation\\\". Account collateralization is\\r\\n    ///      ensured only after the completion of the entire operation.\\r\\n    /// @param  accounts  A list of all accounts that will be used in this operation. Cannot contain\\r\\n    ///                   duplicates. In each action, the relevant account will be referred-to by its\\r\\n    ///                   index in the list.\\r\\n    /// @param  actions   An ordered list of all actions that will be taken in this operation. The\\r\\n    ///                   actions will be processed in order.\\r\\n    function operate(\\r\\n        AccountInfo[] calldata accounts,\\r\\n        ActionArgs[] calldata actions\\r\\n    )\\r\\n        external;\\r\\n\\r\\n    // @dev Approves/disapproves any number of operators. An operator is an external address that has the\\r\\n    //      same permissions to manipulate an account as the owner of the account. Operators are simply\\r\\n    //      addresses and therefore may either be externally-owned Ethereum accounts OR smart contracts.\\r\\n    //      Operators are also able to act as AutoTrader contracts on behalf of the account owner if the\\r\\n    //      operator is a smart contract and implements the IAutoTrader interface.\\r\\n    // @param args A list of OperatorArgs which have an address and a boolean. The boolean value\\r\\n    //        denotes whether to approve (true) or revoke approval (false) for that address.\\r\\n    function setOperators(OperatorArg[] calldata args) external;\\r\\n\\r\\n    /// @dev Return true if a particular address is approved as an operator for an owner's accounts.\\r\\n    ///      Approved operators can act on the accounts of the owner as if it were the operator's own.\\r\\n    /// @param owner The owner of the accounts\\r\\n    /// @param operator The possible operator\\r\\n    /// @return isLocalOperator True if operator is approved for owner's accounts\\r\\n    function getIsLocalOperator(\\r\\n        address owner,\\r\\n        address operator\\r\\n    )\\r\\n        external\\r\\n        view\\r\\n        returns (bool isLocalOperator);\\r\\n\\r\\n    /// @dev Get the ERC20 token address for a market.\\r\\n    /// @param marketId The market to query\\r\\n    /// @return tokenAddress The token address\\r\\n    function getMarketTokenAddress(\\r\\n        uint256 marketId\\r\\n    )\\r\\n        external\\r\\n        view\\r\\n        returns (address tokenAddress);\\r\\n\\r\\n    /// @dev Get all risk parameters in a single struct.\\r\\n    /// @return riskParams All global risk parameters\\r\\n    function getRiskParams()\\r\\n        external\\r\\n        view\\r\\n        returns (RiskParams memory riskParams);\\r\\n\\r\\n    /// @dev Get the price of the token for a market.\\r\\n    /// @param marketId The market to query\\r\\n    /// @return price The price of each atomic unit of the token\\r\\n    function getMarketPrice(\\r\\n        uint256 marketId\\r\\n    )\\r\\n        external\\r\\n        view\\r\\n        returns (Price memory price);\\r\\n\\r\\n    /// @dev Get the margin premium for a market. A margin premium makes it so that any positions that\\r\\n    ///      include the market require a higher collateralization to avoid being liquidated.\\r\\n    /// @param  marketId  The market to query\\r\\n    /// @return premium The market's margin premium\\r\\n    function getMarketMarginPremium(uint256 marketId)\\r\\n        external\\r\\n        view\\r\\n        returns (D256 memory premium);\\r\\n\\r\\n    /// @dev Get the total supplied and total borrowed values of an account adjusted by the marginPremium\\r\\n    ///      of each market. Supplied values are divided by (1 + marginPremium) for each market and\\r\\n    ///      borrowed values are multiplied by (1 + marginPremium) for each market. Comparing these\\r\\n    ///      adjusted values gives the margin-ratio of the account which will be compared to the global\\r\\n    ///      margin-ratio when determining if the account can be liquidated.\\r\\n    /// @param account The account to query\\r\\n    /// @return supplyValue The supplied value of the account (adjusted for marginPremium)\\r\\n    /// @return borrowValue The borrowed value of the account (adjusted for marginPremium)\\r\\n    function getAdjustedAccountValues(\\r\\n        AccountInfo calldata account\\r\\n    )\\r\\n        external\\r\\n        view\\r\\n        returns (Value memory supplyValue, Value memory borrowValue);\\r\\n}\\r\\n\",\"keccak256\":\"0xd5af20c07ad4ece38f4ecf59284d24d7f58ab4c2a208f0f2145a0f7112ee6221\"}},\"version\":1}",
+          "storageLayout": {
+            "storage": [],
+            "types": null
+          },
+          "userdoc": {
+            "methods": {}
+          }
+        }
+      }
+    },
+    "errors": [
+      {
+        "component": "general",
+        "formattedMessage": "contracts/0x/proxies/interfaces/IDydx.sol:20:1: Warning: Experimental features are turned on. Do not use experimental features on live deployments.\npragma experimental ABIEncoderV2;\r\n^-------------------------------^\n",
+        "message": "Experimental features are turned on. Do not use experimental features on live deployments.",
+        "severity": "warning",
+        "sourceLocation": {
+          "end": 656,
+          "file": "contracts/0x/proxies/interfaces/IDydx.sol",
+          "start": 623
+        },
+        "type": "Warning"
+      }
+    ],
+    "sources": {
+      "contracts/0x/proxies/interfaces/IDydx.sol": {
+        "ast": {
+          "absolutePath": "contracts/0x/proxies/interfaces/IDydx.sol",
+          "exportedSymbols": {
+            "IDydx": [
+              132
+            ]
+          },
+          "id": 133,
+          "nodeType": "SourceUnit",
+          "nodes": [
+            {
+              "id": 1,
+              "literals": [
+                "solidity",
+                "^",
+                "0.5",
+                ".9"
+              ],
+              "nodeType": "PragmaDirective",
+              "src": "598:23:0"
+            },
+            {
+              "id": 2,
+              "literals": [
+                "experimental",
+                "ABIEncoderV2"
+              ],
+              "nodeType": "PragmaDirective",
+              "src": "623:33:0"
+            },
+            {
+              "baseContracts": [],
+              "contractDependencies": [],
+              "contractKind": "interface",
+              "documentation": null,
+              "fullyImplemented": false,
+              "id": 132,
+              "linearizedBaseContracts": [
+                132
+              ],
+              "name": "IDydx",
+              "nodeType": "ContractDefinition",
+              "nodes": [
+                {
+                  "canonicalName": "IDydx.AccountInfo",
+                  "id": 7,
+                  "members": [
+                    {
+                      "constant": false,
+                      "id": 4,
+                      "name": "owner",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 7,
+                      "src": "783:13:0",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_address",
+                        "typeString": "address"
+                      },
+                      "typeName": {
+                        "id": 3,
+                        "name": "address",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "783:7:0",
+                        "stateMutability": "nonpayable",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    {
+                      "constant": false,
+                      "id": 6,
+                      "name": "number",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 7,
+                      "src": "845:14:0",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "typeName": {
+                        "id": 5,
+                        "name": "uint256",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "845:7:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "name": "AccountInfo",
+                  "nodeType": "StructDefinition",
+                  "scope": 132,
+                  "src": "753:179:0",
+                  "visibility": "public"
+                },
+                {
+                  "canonicalName": "IDydx.ActionType",
+                  "id": 17,
+                  "members": [
+                    {
+                      "id": 8,
+                      "name": "Deposit",
+                      "nodeType": "EnumValue",
+                      "src": "967:7:0"
+                    },
+                    {
+                      "id": 9,
+                      "name": "Withdraw",
+                      "nodeType": "EnumValue",
+                      "src": "1004:8:0"
+                    },
+                    {
+                      "id": 10,
+                      "name": "Transfer",
+                      "nodeType": "EnumValue",
+                      "src": "1041:8:0"
+                    },
+                    {
+                      "id": 11,
+                      "name": "Buy",
+                      "nodeType": "EnumValue",
+                      "src": "1098:3:0"
+                    },
+                    {
+                      "id": 12,
+                      "name": "Sell",
+                      "nodeType": "EnumValue",
+                      "src": "1162:4:0"
+                    },
+                    {
+                      "id": 13,
+                      "name": "Trade",
+                      "nodeType": "EnumValue",
+                      "src": "1227:5:0"
+                    },
+                    {
+                      "id": 14,
+                      "name": "Liquidate",
+                      "nodeType": "EnumValue",
+                      "src": "1287:9:0"
+                    },
+                    {
+                      "id": 15,
+                      "name": "Vaporize",
+                      "nodeType": "EnumValue",
+                      "src": "1363:8:0"
+                    },
+                    {
+                      "id": 16,
+                      "name": "Call",
+                      "nodeType": "EnumValue",
+                      "src": "1446:4:0"
+                    }
+                  ],
+                  "name": "ActionType",
+                  "nodeType": "EnumDefinition",
+                  "src": "940:560:0"
+                },
+                {
+                  "canonicalName": "IDydx.ActionArgs",
+                  "id": 34,
+                  "members": [
+                    {
+                      "constant": false,
+                      "id": 19,
+                      "name": "actionType",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 34,
+                      "src": "1782:21:0",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_enum$_ActionType_$17",
+                        "typeString": "enum IDydx.ActionType"
+                      },
+                      "typeName": {
+                        "contractScope": null,
+                        "id": 18,
+                        "name": "ActionType",
+                        "nodeType": "UserDefinedTypeName",
+                        "referencedDeclaration": 17,
+                        "src": "1782:10:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_enum$_ActionType_$17",
+                          "typeString": "enum IDydx.ActionType"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    {
+                      "constant": false,
+                      "id": 21,
+                      "name": "accountIdx",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 34,
+                      "src": "1814:18:0",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "typeName": {
+                        "id": 20,
+                        "name": "uint256",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "1814:7:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    {
+                      "constant": false,
+                      "id": 23,
+                      "name": "amount",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 34,
+                      "src": "1843:18:0",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_AssetAmount_$49_storage_ptr",
+                        "typeString": "struct IDydx.AssetAmount"
+                      },
+                      "typeName": {
+                        "contractScope": null,
+                        "id": 22,
+                        "name": "AssetAmount",
+                        "nodeType": "UserDefinedTypeName",
+                        "referencedDeclaration": 49,
+                        "src": "1843:11:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_AssetAmount_$49_storage_ptr",
+                          "typeString": "struct IDydx.AssetAmount"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    {
+                      "constant": false,
+                      "id": 25,
+                      "name": "primaryMarketId",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 34,
+                      "src": "1872:23:0",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "typeName": {
+                        "id": 24,
+                        "name": "uint256",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "1872:7:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    {
+                      "constant": false,
+                      "id": 27,
+                      "name": "secondaryMarketId",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 34,
+                      "src": "1906:25:0",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "typeName": {
+                        "id": 26,
+                        "name": "uint256",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "1906:7:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    {
+                      "constant": false,
+                      "id": 29,
+                      "name": "otherAddress",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 34,
+                      "src": "1942:20:0",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_address",
+                        "typeString": "address"
+                      },
+                      "typeName": {
+                        "id": 28,
+                        "name": "address",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "1942:7:0",
+                        "stateMutability": "nonpayable",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    {
+                      "constant": false,
+                      "id": 31,
+                      "name": "otherAccountIdx",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 34,
+                      "src": "1973:23:0",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "typeName": {
+                        "id": 30,
+                        "name": "uint256",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "1973:7:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    {
+                      "constant": false,
+                      "id": 33,
+                      "name": "data",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 34,
+                      "src": "2007:10:0",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bytes_storage_ptr",
+                        "typeString": "bytes"
+                      },
+                      "typeName": {
+                        "id": 32,
+                        "name": "bytes",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "2007:5:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes_storage_ptr",
+                          "typeString": "bytes"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "name": "ActionArgs",
+                  "nodeType": "StructDefinition",
+                  "scope": 132,
+                  "src": "1753:272:0",
+                  "visibility": "public"
+                },
+                {
+                  "canonicalName": "IDydx.AssetDenomination",
+                  "id": 37,
+                  "members": [
+                    {
+                      "id": 35,
+                      "name": "Wei",
+                      "nodeType": "EnumValue",
+                      "src": "2067:3:0"
+                    },
+                    {
+                      "id": 36,
+                      "name": "Par",
+                      "nodeType": "EnumValue",
+                      "src": "2117:3:0"
+                    }
+                  ],
+                  "name": "AssetDenomination",
+                  "nodeType": "EnumDefinition",
+                  "src": "2033:131:0"
+                },
+                {
+                  "canonicalName": "IDydx.AssetReference",
+                  "id": 40,
+                  "members": [
+                    {
+                      "id": 38,
+                      "name": "Delta",
+                      "nodeType": "EnumValue",
+                      "src": "2203:5:0"
+                    },
+                    {
+                      "id": 39,
+                      "name": "Target",
+                      "nodeType": "EnumValue",
+                      "src": "2276:6:0"
+                    }
+                  ],
+                  "name": "AssetReference",
+                  "nodeType": "EnumDefinition",
+                  "src": "2172:172:0"
+                },
+                {
+                  "canonicalName": "IDydx.AssetAmount",
+                  "id": 49,
+                  "members": [
+                    {
+                      "constant": false,
+                      "id": 42,
+                      "name": "sign",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 49,
+                      "src": "2382:9:0",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      },
+                      "typeName": {
+                        "id": 41,
+                        "name": "bool",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "2382:4:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    {
+                      "constant": false,
+                      "id": 44,
+                      "name": "denomination",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 49,
+                      "src": "2422:30:0",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_enum$_AssetDenomination_$37",
+                        "typeString": "enum IDydx.AssetDenomination"
+                      },
+                      "typeName": {
+                        "contractScope": null,
+                        "id": 43,
+                        "name": "AssetDenomination",
+                        "nodeType": "UserDefinedTypeName",
+                        "referencedDeclaration": 37,
+                        "src": "2422:17:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_enum$_AssetDenomination_$37",
+                          "typeString": "enum IDydx.AssetDenomination"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    {
+                      "constant": false,
+                      "id": 46,
+                      "name": "ref",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 49,
+                      "src": "2463:18:0",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_enum$_AssetReference_$40",
+                        "typeString": "enum IDydx.AssetReference"
+                      },
+                      "typeName": {
+                        "contractScope": null,
+                        "id": 45,
+                        "name": "AssetReference",
+                        "nodeType": "UserDefinedTypeName",
+                        "referencedDeclaration": 40,
+                        "src": "2463:14:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_enum$_AssetReference_$40",
+                          "typeString": "enum IDydx.AssetReference"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    {
+                      "constant": false,
+                      "id": 48,
+                      "name": "value",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 49,
+                      "src": "2492:13:0",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "typeName": {
+                        "id": 47,
+                        "name": "uint256",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "2492:7:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "name": "AssetAmount",
+                  "nodeType": "StructDefinition",
+                  "scope": 132,
+                  "src": "2352:161:0",
+                  "visibility": "public"
+                },
+                {
+                  "canonicalName": "IDydx.D256",
+                  "id": 52,
+                  "members": [
+                    {
+                      "constant": false,
+                      "id": 51,
+                      "name": "value",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 52,
+                      "src": "2544:13:0",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "typeName": {
+                        "id": 50,
+                        "name": "uint256",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "2544:7:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "name": "D256",
+                  "nodeType": "StructDefinition",
+                  "scope": 132,
+                  "src": "2521:44:0",
+                  "visibility": "public"
+                },
+                {
+                  "canonicalName": "IDydx.Value",
+                  "id": 55,
+                  "members": [
+                    {
+                      "constant": false,
+                      "id": 54,
+                      "name": "value",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 55,
+                      "src": "2597:13:0",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "typeName": {
+                        "id": 53,
+                        "name": "uint256",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "2597:7:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "name": "Value",
+                  "nodeType": "StructDefinition",
+                  "scope": 132,
+                  "src": "2573:45:0",
+                  "visibility": "public"
+                },
+                {
+                  "canonicalName": "IDydx.Price",
+                  "id": 58,
+                  "members": [
+                    {
+                      "constant": false,
+                      "id": 57,
+                      "name": "value",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 58,
+                      "src": "2650:13:0",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "typeName": {
+                        "id": 56,
+                        "name": "uint256",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "2650:7:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "name": "Price",
+                  "nodeType": "StructDefinition",
+                  "scope": 132,
+                  "src": "2626:45:0",
+                  "visibility": "public"
+                },
+                {
+                  "canonicalName": "IDydx.OperatorArg",
+                  "id": 63,
+                  "members": [
+                    {
+                      "constant": false,
+                      "id": 60,
+                      "name": "operator",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 63,
+                      "src": "2709:16:0",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_address",
+                        "typeString": "address"
+                      },
+                      "typeName": {
+                        "id": 59,
+                        "name": "address",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "2709:7:0",
+                        "stateMutability": "nonpayable",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    {
+                      "constant": false,
+                      "id": 62,
+                      "name": "trusted",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 63,
+                      "src": "2736:12:0",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      },
+                      "typeName": {
+                        "id": 61,
+                        "name": "bool",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "2736:4:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "name": "OperatorArg",
+                  "nodeType": "StructDefinition",
+                  "scope": 132,
+                  "src": "2679:77:0",
+                  "visibility": "public"
+                },
+                {
+                  "canonicalName": "IDydx.RiskParams",
+                  "id": 72,
+                  "members": [
+                    {
+                      "constant": false,
+                      "id": 65,
+                      "name": "marginRatio",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 72,
+                      "src": "2937:16:0",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_D256_$52_storage_ptr",
+                        "typeString": "struct IDydx.D256"
+                      },
+                      "typeName": {
+                        "contractScope": null,
+                        "id": 64,
+                        "name": "D256",
+                        "nodeType": "UserDefinedTypeName",
+                        "referencedDeclaration": 52,
+                        "src": "2937:4:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_D256_$52_storage_ptr",
+                          "typeString": "struct IDydx.D256"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    {
+                      "constant": false,
+                      "id": 67,
+                      "name": "liquidationSpread",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 72,
+                      "src": "3027:22:0",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_D256_$52_storage_ptr",
+                        "typeString": "struct IDydx.D256"
+                      },
+                      "typeName": {
+                        "contractScope": null,
+                        "id": 66,
+                        "name": "D256",
+                        "nodeType": "UserDefinedTypeName",
+                        "referencedDeclaration": 52,
+                        "src": "3027:4:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_D256_$52_storage_ptr",
+                          "typeString": "struct IDydx.D256"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    {
+                      "constant": false,
+                      "id": 69,
+                      "name": "earningsRate",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 72,
+                      "src": "3148:17:0",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_D256_$52_storage_ptr",
+                        "typeString": "struct IDydx.D256"
+                      },
+                      "typeName": {
+                        "contractScope": null,
+                        "id": 68,
+                        "name": "D256",
+                        "nodeType": "UserDefinedTypeName",
+                        "referencedDeclaration": 52,
+                        "src": "3148:4:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_D256_$52_storage_ptr",
+                          "typeString": "struct IDydx.D256"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    {
+                      "constant": false,
+                      "id": 71,
+                      "name": "minBorrowedValue",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 72,
+                      "src": "3327:22:0",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_Value_$55_storage_ptr",
+                        "typeString": "struct IDydx.Value"
+                      },
+                      "typeName": {
+                        "contractScope": null,
+                        "id": 70,
+                        "name": "Value",
+                        "nodeType": "UserDefinedTypeName",
+                        "referencedDeclaration": 55,
+                        "src": "3327:5:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_Value_$55_storage_ptr",
+                          "typeString": "struct IDydx.Value"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "name": "RiskParams",
+                  "nodeType": "StructDefinition",
+                  "scope": 132,
+                  "src": "2855:502:0",
+                  "visibility": "public"
+                },
+                {
+                  "body": null,
+                  "documentation": "@dev The main entry-point to Solo that allows users and contracts to manage accounts.\n      Take one or more actions on one or more accounts. The msg.sender must be the owner or\n      operator of all accounts except for those being liquidated, vaporized, or traded with.\n      One call to operate() is considered a singular \"operation\". Account collateralization is\n      ensured only after the completion of the entire operation.\n @param  accounts  A list of all accounts that will be used in this operation. Cannot contain\n                   duplicates. In each action, the relevant account will be referred-to by its\n                   index in the list.\n @param  actions   An ordered list of all actions that will be taken in this operation. The\n                   actions will be processed in order.",
+                  "id": 81,
+                  "implemented": false,
+                  "kind": "function",
+                  "modifiers": [],
+                  "name": "operate",
+                  "nodeType": "FunctionDefinition",
+                  "parameters": {
+                    "id": 79,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 75,
+                        "name": "accounts",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 81,
+                        "src": "4278:31:0",
+                        "stateVariable": false,
+                        "storageLocation": "calldata",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_array$_t_struct$_AccountInfo_$7_calldata_$dyn_calldata_ptr",
+                          "typeString": "struct IDydx.AccountInfo[]"
+                        },
+                        "typeName": {
+                          "baseType": {
+                            "contractScope": null,
+                            "id": 73,
+                            "name": "AccountInfo",
+                            "nodeType": "UserDefinedTypeName",
+                            "referencedDeclaration": 7,
+                            "src": "4278:11:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_struct$_AccountInfo_$7_storage_ptr",
+                              "typeString": "struct IDydx.AccountInfo"
+                            }
+                          },
+                          "id": 74,
+                          "length": null,
+                          "nodeType": "ArrayTypeName",
+                          "src": "4278:13:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_array$_t_struct$_AccountInfo_$7_storage_$dyn_storage_ptr",
+                            "typeString": "struct IDydx.AccountInfo[]"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 78,
+                        "name": "actions",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 81,
+                        "src": "4320:29:0",
+                        "stateVariable": false,
+                        "storageLocation": "calldata",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_array$_t_struct$_ActionArgs_$34_calldata_$dyn_calldata_ptr",
+                          "typeString": "struct IDydx.ActionArgs[]"
+                        },
+                        "typeName": {
+                          "baseType": {
+                            "contractScope": null,
+                            "id": 76,
+                            "name": "ActionArgs",
+                            "nodeType": "UserDefinedTypeName",
+                            "referencedDeclaration": 34,
+                            "src": "4320:10:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_struct$_ActionArgs_$34_storage_ptr",
+                              "typeString": "struct IDydx.ActionArgs"
+                            }
+                          },
+                          "id": 77,
+                          "length": null,
+                          "nodeType": "ArrayTypeName",
+                          "src": "4320:12:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_array$_t_struct$_ActionArgs_$34_storage_$dyn_storage_ptr",
+                            "typeString": "struct IDydx.ActionArgs[]"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "4267:89:0"
+                  },
+                  "returnParameters": {
+                    "id": 80,
+                    "nodeType": "ParameterList",
+                    "parameters": [],
+                    "src": "4374:0:0"
+                  },
+                  "scope": 132,
+                  "src": "4251:124:0",
+                  "stateMutability": "nonpayable",
+                  "superFunction": null,
+                  "visibility": "external"
+                },
+                {
+                  "body": null,
+                  "documentation": null,
+                  "id": 87,
+                  "implemented": false,
+                  "kind": "function",
+                  "modifiers": [],
+                  "name": "setOperators",
+                  "nodeType": "FunctionDefinition",
+                  "parameters": {
+                    "id": 85,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 84,
+                        "name": "args",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 87,
+                        "src": "5105:27:0",
+                        "stateVariable": false,
+                        "storageLocation": "calldata",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_array$_t_struct$_OperatorArg_$63_calldata_$dyn_calldata_ptr",
+                          "typeString": "struct IDydx.OperatorArg[]"
+                        },
+                        "typeName": {
+                          "baseType": {
+                            "contractScope": null,
+                            "id": 82,
+                            "name": "OperatorArg",
+                            "nodeType": "UserDefinedTypeName",
+                            "referencedDeclaration": 63,
+                            "src": "5105:11:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_struct$_OperatorArg_$63_storage_ptr",
+                              "typeString": "struct IDydx.OperatorArg"
+                            }
+                          },
+                          "id": 83,
+                          "length": null,
+                          "nodeType": "ArrayTypeName",
+                          "src": "5105:13:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_array$_t_struct$_OperatorArg_$63_storage_$dyn_storage_ptr",
+                            "typeString": "struct IDydx.OperatorArg[]"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "5104:29:0"
+                  },
+                  "returnParameters": {
+                    "id": 86,
+                    "nodeType": "ParameterList",
+                    "parameters": [],
+                    "src": "5142:0:0"
+                  },
+                  "scope": 132,
+                  "src": "5083:60:0",
+                  "stateMutability": "nonpayable",
+                  "superFunction": null,
+                  "visibility": "external"
+                },
+                {
+                  "body": null,
+                  "documentation": "@dev Return true if a particular address is approved as an operator for an owner's accounts.\n      Approved operators can act on the accounts of the owner as if it were the operator's own.\n @param owner The owner of the accounts\n @param operator The possible operator\n @return isLocalOperator True if operator is approved for owner's accounts",
+                  "id": 96,
+                  "implemented": false,
+                  "kind": "function",
+                  "modifiers": [],
+                  "name": "getIsLocalOperator",
+                  "nodeType": "FunctionDefinition",
+                  "parameters": {
+                    "id": 92,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 89,
+                        "name": "owner",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 96,
+                        "src": "5573:13:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        "typeName": {
+                          "id": 88,
+                          "name": "address",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "5573:7:0",
+                          "stateMutability": "nonpayable",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 91,
+                        "name": "operator",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 96,
+                        "src": "5597:16:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        "typeName": {
+                          "id": 90,
+                          "name": "address",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "5597:7:0",
+                          "stateMutability": "nonpayable",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "5562:58:0"
+                  },
+                  "returnParameters": {
+                    "id": 95,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 94,
+                        "name": "isLocalOperator",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 96,
+                        "src": "5671:20:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        "typeName": {
+                          "id": 93,
+                          "name": "bool",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "5671:4:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bool",
+                            "typeString": "bool"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "5670:22:0"
+                  },
+                  "scope": 132,
+                  "src": "5535:158:0",
+                  "stateMutability": "view",
+                  "superFunction": null,
+                  "visibility": "external"
+                },
+                {
+                  "body": null,
+                  "documentation": "@dev Get the ERC20 token address for a market.\n @param marketId The market to query\n @return tokenAddress The token address",
+                  "id": 103,
+                  "implemented": false,
+                  "kind": "function",
+                  "modifiers": [],
+                  "name": "getMarketTokenAddress",
+                  "nodeType": "FunctionDefinition",
+                  "parameters": {
+                    "id": 99,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 98,
+                        "name": "marketId",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 103,
+                        "src": "5891:16:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 97,
+                          "name": "uint256",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "5891:7:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "5880:34:0"
+                  },
+                  "returnParameters": {
+                    "id": 102,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 101,
+                        "name": "tokenAddress",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 103,
+                        "src": "5965:20:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        "typeName": {
+                          "id": 100,
+                          "name": "address",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "5965:7:0",
+                          "stateMutability": "nonpayable",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "5964:22:0"
+                  },
+                  "scope": 132,
+                  "src": "5850:137:0",
+                  "stateMutability": "view",
+                  "superFunction": null,
+                  "visibility": "external"
+                },
+                {
+                  "body": null,
+                  "documentation": "@dev Get all risk parameters in a single struct.\n @return riskParams All global risk parameters",
+                  "id": 108,
+                  "implemented": false,
+                  "kind": "function",
+                  "modifiers": [],
+                  "name": "getRiskParams",
+                  "nodeType": "FunctionDefinition",
+                  "parameters": {
+                    "id": 104,
+                    "nodeType": "ParameterList",
+                    "parameters": [],
+                    "src": "6130:2:0"
+                  },
+                  "returnParameters": {
+                    "id": 107,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 106,
+                        "name": "riskParams",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 108,
+                        "src": "6183:28:0",
+                        "stateVariable": false,
+                        "storageLocation": "memory",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_RiskParams_$72_memory_ptr",
+                          "typeString": "struct IDydx.RiskParams"
+                        },
+                        "typeName": {
+                          "contractScope": null,
+                          "id": 105,
+                          "name": "RiskParams",
+                          "nodeType": "UserDefinedTypeName",
+                          "referencedDeclaration": 72,
+                          "src": "6183:10:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_RiskParams_$72_storage_ptr",
+                            "typeString": "struct IDydx.RiskParams"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "6182:30:0"
+                  },
+                  "scope": 132,
+                  "src": "6108:105:0",
+                  "stateMutability": "view",
+                  "superFunction": null,
+                  "visibility": "external"
+                },
+                {
+                  "body": null,
+                  "documentation": "@dev Get the price of the token for a market.\n @param marketId The market to query\n @return price The price of each atomic unit of the token",
+                  "id": 115,
+                  "implemented": false,
+                  "kind": "function",
+                  "modifiers": [],
+                  "name": "getMarketPrice",
+                  "nodeType": "FunctionDefinition",
+                  "parameters": {
+                    "id": 111,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 110,
+                        "name": "marketId",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 115,
+                        "src": "6421:16:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 109,
+                          "name": "uint256",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "6421:7:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "6410:34:0"
+                  },
+                  "returnParameters": {
+                    "id": 114,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 113,
+                        "name": "price",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 115,
+                        "src": "6495:18:0",
+                        "stateVariable": false,
+                        "storageLocation": "memory",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_Price_$58_memory_ptr",
+                          "typeString": "struct IDydx.Price"
+                        },
+                        "typeName": {
+                          "contractScope": null,
+                          "id": 112,
+                          "name": "Price",
+                          "nodeType": "UserDefinedTypeName",
+                          "referencedDeclaration": 58,
+                          "src": "6495:5:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Price_$58_storage_ptr",
+                            "typeString": "struct IDydx.Price"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "6494:20:0"
+                  },
+                  "scope": 132,
+                  "src": "6387:128:0",
+                  "stateMutability": "view",
+                  "superFunction": null,
+                  "visibility": "external"
+                },
+                {
+                  "body": null,
+                  "documentation": "@dev Get the margin premium for a market. A margin premium makes it so that any positions that\n      include the market require a higher collateralization to avoid being liquidated.\n @param  marketId  The market to query\n @return premium The market's margin premium",
+                  "id": 122,
+                  "implemented": false,
+                  "kind": "function",
+                  "modifiers": [],
+                  "name": "getMarketMarginPremium",
+                  "nodeType": "FunctionDefinition",
+                  "parameters": {
+                    "id": 118,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 117,
+                        "name": "marketId",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 122,
+                        "src": "6854:16:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 116,
+                          "name": "uint256",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "6854:7:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "6853:18:0"
+                  },
+                  "returnParameters": {
+                    "id": 121,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 120,
+                        "name": "premium",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 122,
+                        "src": "6922:19:0",
+                        "stateVariable": false,
+                        "storageLocation": "memory",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_D256_$52_memory_ptr",
+                          "typeString": "struct IDydx.D256"
+                        },
+                        "typeName": {
+                          "contractScope": null,
+                          "id": 119,
+                          "name": "D256",
+                          "nodeType": "UserDefinedTypeName",
+                          "referencedDeclaration": 52,
+                          "src": "6922:4:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_D256_$52_storage_ptr",
+                            "typeString": "struct IDydx.D256"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "6921:21:0"
+                  },
+                  "scope": 132,
+                  "src": "6822:121:0",
+                  "stateMutability": "view",
+                  "superFunction": null,
+                  "visibility": "external"
+                },
+                {
+                  "body": null,
+                  "documentation": "@dev Get the total supplied and total borrowed values of an account adjusted by the marginPremium\n      of each market. Supplied values are divided by (1 + marginPremium) for each market and\n      borrowed values are multiplied by (1 + marginPremium) for each market. Comparing these\n      adjusted values gives the margin-ratio of the account which will be compared to the global\n      margin-ratio when determining if the account can be liquidated.\n @param account The account to query\n @return supplyValue The supplied value of the account (adjusted for marginPremium)\n @return borrowValue The borrowed value of the account (adjusted for marginPremium)",
+                  "id": 131,
+                  "implemented": false,
+                  "kind": "function",
+                  "modifiers": [],
+                  "name": "getAdjustedAccountValues",
+                  "nodeType": "FunctionDefinition",
+                  "parameters": {
+                    "id": 125,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 124,
+                        "name": "account",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 131,
+                        "src": "7716:28:0",
+                        "stateVariable": false,
+                        "storageLocation": "calldata",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_AccountInfo_$7_calldata_ptr",
+                          "typeString": "struct IDydx.AccountInfo"
+                        },
+                        "typeName": {
+                          "contractScope": null,
+                          "id": 123,
+                          "name": "AccountInfo",
+                          "nodeType": "UserDefinedTypeName",
+                          "referencedDeclaration": 7,
+                          "src": "7716:11:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_AccountInfo_$7_storage_ptr",
+                            "typeString": "struct IDydx.AccountInfo"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "7705:46:0"
+                  },
+                  "returnParameters": {
+                    "id": 130,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 127,
+                        "name": "supplyValue",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 131,
+                        "src": "7802:24:0",
+                        "stateVariable": false,
+                        "storageLocation": "memory",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_Value_$55_memory_ptr",
+                          "typeString": "struct IDydx.Value"
+                        },
+                        "typeName": {
+                          "contractScope": null,
+                          "id": 126,
+                          "name": "Value",
+                          "nodeType": "UserDefinedTypeName",
+                          "referencedDeclaration": 55,
+                          "src": "7802:5:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Value_$55_storage_ptr",
+                            "typeString": "struct IDydx.Value"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 129,
+                        "name": "borrowValue",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 131,
+                        "src": "7828:24:0",
+                        "stateVariable": false,
+                        "storageLocation": "memory",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_Value_$55_memory_ptr",
+                          "typeString": "struct IDydx.Value"
+                        },
+                        "typeName": {
+                          "contractScope": null,
+                          "id": 128,
+                          "name": "Value",
+                          "nodeType": "UserDefinedTypeName",
+                          "referencedDeclaration": 55,
+                          "src": "7828:5:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Value_$55_storage_ptr",
+                            "typeString": "struct IDydx.Value"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "7801:52:0"
+                  },
+                  "scope": 132,
+                  "src": "7672:182:0",
+                  "stateMutability": "view",
+                  "superFunction": null,
+                  "visibility": "external"
+                }
+              ],
+              "scope": 133,
+              "src": "662:7195:0"
+            }
+          ],
+          "src": "598:7261:0"
+        },
+        "id": 0
+      }
+    }
+  }
+}

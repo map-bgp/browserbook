@@ -39,15 +39,11 @@ contract DevUtils is
     ExternalFunctions
 {
     constructor (
-        address exchange_,
-        address chaiBridge_,
-        address dydxBridge_
+        address exchange_
     )
         public
         Addresses(
-            exchange_,
-            chaiBridge_,
-            dydxBridge_
+            exchange_
         )
         LibEIP712ExchangeDomain(uint256(0), address(0)) // null args because because we only use constants
     {}

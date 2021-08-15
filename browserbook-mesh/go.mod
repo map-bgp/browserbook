@@ -3,8 +3,8 @@ module github.com/map-bgp/browserbook/browserbook-mesh
 go 1.16
 
 replace (
-	// github.com/ethereum/go-ethereum => github.com/0xProject/go-ethereum wasm-support
-	// github.com/ethereum/go-ethereum => github.com/0xProject/go-ethereum v1.8.8-0.20200603225022-cb1f52043425 // Not needed as moved down below
+	github.com/ethereum/go-ethereum => github.com/0xProject/go-ethereum v1.8.8-0.20200603225022-cb1f52043425
+	//github.com/ethereum/go-ethereum => github.com/0xProject/go-ethereum v1.8.8-0.20200603225022-cb1f52043425 // Not needed as moved down below
 	github.com/libp2p/go-flow-metrics => github.com/libp2p/go-flow-metrics v0.0.3
 	github.com/libp2p/go-libp2p-pubsub => github.com/0xProject/go-libp2p-pubsub v0.1.1-0.20200228234556-aaa0317e068a
 	// github.com/libp2p/go-ws-transport => github.com/0xProject/go-ws-transport upgrade-go-1.14
@@ -27,8 +27,8 @@ require (
 	github.com/deckarep/golang-set v1.7.1 // indirect
 	github.com/edsrzf/mmap-go v1.0.0 // indirect
 	github.com/elastic/gosigar v0.10.5 // indirect
-	// github.com/ethereum/go-ethereum v0.0.0-00010101000000-000000000000
-	github.com/0xProject/go-ethereum v1.8.8-0.20200603225022-cb1f52043425 // added manually
+	github.com/ethereum/go-ethereum v0.0.0-00010101000000-000000000000
+	// github.com/0xProject/go-ethereum v1.8.8-0.20200603225022-cb1f52043425 // added manually
 	github.com/fjl/memsize v0.0.0-20190710130421-bcb5799ab5e5 // indirect
 	github.com/gibson042/canonicaljson-go v1.0.3
 	github.com/google/uuid v1.1.1

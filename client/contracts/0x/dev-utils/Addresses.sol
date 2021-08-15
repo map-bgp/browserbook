@@ -33,19 +33,13 @@ contract Addresses is
     address public erc721ProxyAddress;
     address public erc1155ProxyAddress;
     address public staticCallProxyAddress;
-    address public chaiBridgeAddress;
-    address public dydxBridgeAddress;
 
     constructor (
-        address exchange_,
-        address chaiBridge_,
-        address dydxBridge_
+        address exchange_
     )
         public
     {
         exchangeAddress = exchange_;
-        chaiBridgeAddress = chaiBridge_;
-        dydxBridgeAddress = dydxBridge_;
         erc20ProxyAddress = IExchange(exchange_).getAssetProxy(IAssetData(address(0)).ERC20Token.selector);
         erc721ProxyAddress = IExchange(exchange_).getAssetProxy(IAssetData(address(0)).ERC721Token.selector);
         erc1155ProxyAddress = IExchange(exchange_).getAssetProxy(IAssetData(address(0)).ERC1155Assets.selector);

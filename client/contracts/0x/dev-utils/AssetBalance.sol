@@ -120,17 +120,7 @@ contract AssetBalance is
             // Success means that the staticcall can be made an unlimited amount of times
             balance = success ? _MAX_UINT256 : 0;
 
-        } else if (assetProxyId == IAssetData(address(0)).ERC20Bridge.selector) {
-            // Get address of ERC20 token and bridge contract
-            (, address tokenAddress, address bridgeAddress, ) = LibAssetData.decodeERC20BridgeAssetData(assetData);
-            if (tokenAddress == _getDaiAddress() && bridgeAddress == chaiBridgeAddress) {
-                uint256 chaiBalance = LibERC20Token.balanceOf(_getChaiAddress(), ownerAddress);
-                // Calculate Dai balance
-                balance = _convertChaiToDaiAmount(chaiBalance);
-            }
-            // Balance will be 0 if bridge is not supported
-
-        } else if (assetProxyId == IAssetData(address(0)).MultiAsset.selector) {
+        }  else if (assetProxyId == IAssetData(address(0)).MultiAsset.selector) {
             // Get array of values and array of assetDatas
             (, uint256[] memory assetAmounts, bytes[] memory nestedAssetData) = LibAssetData.decodeMultiAssetData(assetData);
 
@@ -267,19 +257,7 @@ contract AssetBalance is
             // The StaticCallProxy does not require any approvals
             allowance = _MAX_UINT256;
 
-        } else if (assetProxyId == IAssetData(address(0)).ERC20Bridge.selector) {
-            // Get address of ERC20 token and bridge contract
-            (, address tokenAddress, address bridgeAddress,) =
-                LibAssetData.decodeERC20BridgeAssetData(assetData);
-            if (tokenAddress == _getDaiAddress() && bridgeAddress == chaiBridgeAddress) {
-                uint256 chaiAllowance = LibERC20Token.allowance(_getChaiAddress(), ownerAddress, chaiBridgeAddress);
-                // Dai allowance is unlimited if Chai allowance is unlimited
-                allowance = chaiAllowance == _MAX_UINT256 ? _MAX_UINT256 : _convertChaiToDaiAmount(chaiAllowance);
-            } else if (bridgeAddress == dydxBridgeAddress) {
-                allowance = LibDydxBalance.getDydxMakerAllowance(ownerAddress, bridgeAddress, _getDydxAddress());
-            }
-            // Allowance will be 0 if bridge is not supported
-        }
+        } 
 
         // Allowance will be 0 if the assetProxyId is unknown
         return allowance;
@@ -370,16 +348,6 @@ contract AssetBalance is
             return (0, 0);
         }
         bytes4 assetProxyId = order.makerAssetData.readBytes4(0);
-        // Handle dydx bridge assets.
-        if (assetProxyId == IAssetData(address(0)).ERC20Bridge.selector) {
-            (, , address bridgeAddress, ) = LibAssetData.decodeERC20BridgeAssetData(order.makerAssetData);
-            if (bridgeAddress == dydxBridgeAddress) {
-                return (
-                    LibDydxBalance.getDydxMakerBalance(order, _getDydxAddress()),
-                    getAssetProxyAllowance(order.makerAddress, order.makerAssetData)
-                );
-            }
-        }
         return (
             getBalance(order.makerAddress, order.makerAssetData),
             getAssetProxyAllowance(order.makerAddress, order.makerAssetData)

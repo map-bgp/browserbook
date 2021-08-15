@@ -1,0 +1,950 @@
+{
+  "id": "c659075428c64870d4c7f64a154dc927",
+  "_format": "hh-sol-build-info-1",
+  "solcVersion": "0.5.17",
+  "solcLongVersion": "0.5.17+commit.d19bba13",
+  "input": {
+    "language": "Solidity",
+    "sources": {
+      "contracts/0x/proxies/interfaces/IUniswapExchange.sol": {
+        "content": "/*\r\n\r\n  Copyright 2019 ZeroEx Intl.\r\n\r\n  Licensed under the Apache License, Version 2.0 (the \"License\");\r\n  you may not use this file except in compliance with the License.\r\n  You may obtain a copy of the License at\r\n\r\n    http://www.apache.org/licenses/LICENSE-2.0\r\n\r\n  Unless required by applicable law or agreed to in writing, software\r\n  distributed under the License is distributed on an \"AS IS\" BASIS,\r\n  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\r\n  See the License for the specific language governing permissions and\r\n  limitations under the License.\r\n\r\n*/\r\n\r\npragma solidity ^0.5.9;\r\n\r\n\r\ninterface IUniswapExchange {\r\n\r\n    /// @dev Buys at least `minTokensBought` tokens with ETH and transfer them\r\n    ///      to `recipient`.\r\n    /// @param minTokensBought The minimum number of tokens to buy.\r\n    /// @param deadline Time when this order expires.\r\n    /// @param recipient Who to transfer the tokens to.\r\n    /// @return tokensBought Amount of tokens bought.\r\n    function ethToTokenTransferInput(\r\n        uint256 minTokensBought,\r\n        uint256 deadline,\r\n        address recipient\r\n    )\r\n        external\r\n        payable\r\n        returns (uint256 tokensBought);\r\n\r\n    /// @dev Buys at least `minEthBought` ETH with tokens.\r\n    /// @param tokensSold Amount of tokens to sell.\r\n    /// @param minEthBought The minimum amount of ETH to buy.\r\n    /// @param deadline Time when this order expires.\r\n    /// @return ethBought Amount of tokens bought.\r\n    function tokenToEthSwapInput(\r\n        uint256 tokensSold,\r\n        uint256 minEthBought,\r\n        uint256 deadline\r\n    )\r\n        external\r\n        returns (uint256 ethBought);\r\n\r\n    /// @dev Buys at least `minTokensBought` tokens with the exchange token\r\n    ///      and transfer them to `recipient`.\r\n    /// @param minTokensBought The minimum number of tokens to buy.\r\n    /// @param minEthBought The minimum amount of intermediate ETH to buy.\r\n    /// @param deadline Time when this order expires.\r\n    /// @param recipient Who to transfer the tokens to.\r\n    /// @param toTokenAddress The token being bought.\r\n    /// @return tokensBought Amount of tokens bought.\r\n    function tokenToTokenTransferInput(\r\n        uint256 tokensSold,\r\n        uint256 minTokensBought,\r\n        uint256 minEthBought,\r\n        uint256 deadline,\r\n        address recipient,\r\n        address toTokenAddress\r\n    )\r\n        external\r\n        returns (uint256 tokensBought);\r\n}\r\n"
+      },
+      "contracts/0x/proxies/interfaces/IUniswapExchangeFactory.sol": {
+        "content": "/*\r\n\r\n  Copyright 2019 ZeroEx Intl.\r\n\r\n  Licensed under the Apache License, Version 2.0 (the \"License\");\r\n  you may not use this file except in compliance with the License.\r\n  You may obtain a copy of the License at\r\n\r\n    http://www.apache.org/licenses/LICENSE-2.0\r\n\r\n  Unless required by applicable law or agreed to in writing, software\r\n  distributed under the License is distributed on an \"AS IS\" BASIS,\r\n  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\r\n  See the License for the specific language governing permissions and\r\n  limitations under the License.\r\n\r\n*/\r\n\r\npragma solidity ^0.5.9;\r\n\r\nimport \"./IUniswapExchange.sol\";\r\n\r\n\r\ninterface IUniswapExchangeFactory {\r\n\r\n    /// @dev Get the exchange for a token.\r\n    /// @param tokenAddress The address of the token contract.\r\n    function getExchange(address tokenAddress)\r\n        external\r\n        view\r\n        returns (address);\r\n}\r\n"
+      }
+    },
+    "settings": {
+      "optimizer": {
+        "enabled": true,
+        "runs": 1000
+      },
+      "outputSelection": {
+        "*": {
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata",
+            "devdoc",
+            "userdoc",
+            "storageLayout",
+            "evm.gasEstimates"
+          ],
+          "": [
+            "ast"
+          ]
+        }
+      },
+      "metadata": {
+        "useLiteralContent": true
+      }
+    }
+  },
+  "output": {
+    "contracts": {
+      "contracts/0x/proxies/interfaces/IUniswapExchange.sol": {
+        "IUniswapExchange": {
+          "abi": [
+            {
+              "constant": false,
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "minTokensBought",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "deadline",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "address",
+                  "name": "recipient",
+                  "type": "address"
+                }
+              ],
+              "name": "ethToTokenTransferInput",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "tokensBought",
+                  "type": "uint256"
+                }
+              ],
+              "payable": true,
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "constant": false,
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "tokensSold",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "minEthBought",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "deadline",
+                  "type": "uint256"
+                }
+              ],
+              "name": "tokenToEthSwapInput",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "ethBought",
+                  "type": "uint256"
+                }
+              ],
+              "payable": false,
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "constant": false,
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "tokensSold",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "minTokensBought",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "minEthBought",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "deadline",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "address",
+                  "name": "recipient",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "toTokenAddress",
+                  "type": "address"
+                }
+              ],
+              "name": "tokenToTokenTransferInput",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "tokensBought",
+                  "type": "uint256"
+                }
+              ],
+              "payable": false,
+              "stateMutability": "nonpayable",
+              "type": "function"
+            }
+          ],
+          "devdoc": {
+            "methods": {
+              "ethToTokenTransferInput(uint256,uint256,address)": {
+                "details": "Buys at least `minTokensBought` tokens with ETH and transfer them      to `recipient`.",
+                "params": {
+                  "deadline": "Time when this order expires.",
+                  "minTokensBought": "The minimum number of tokens to buy.",
+                  "recipient": "Who to transfer the tokens to."
+                },
+                "return": "tokensBought Amount of tokens bought."
+              },
+              "tokenToEthSwapInput(uint256,uint256,uint256)": {
+                "details": "Buys at least `minEthBought` ETH with tokens.",
+                "params": {
+                  "deadline": "Time when this order expires.",
+                  "minEthBought": "The minimum amount of ETH to buy.",
+                  "tokensSold": "Amount of tokens to sell."
+                },
+                "return": "ethBought Amount of tokens bought."
+              },
+              "tokenToTokenTransferInput(uint256,uint256,uint256,uint256,address,address)": {
+                "details": "Buys at least `minTokensBought` tokens with the exchange token      and transfer them to `recipient`.",
+                "params": {
+                  "deadline": "Time when this order expires.",
+                  "minEthBought": "The minimum amount of intermediate ETH to buy.",
+                  "minTokensBought": "The minimum number of tokens to buy.",
+                  "recipient": "Who to transfer the tokens to.",
+                  "toTokenAddress": "The token being bought."
+                },
+                "return": "tokensBought Amount of tokens bought."
+              }
+            }
+          },
+          "evm": {
+            "bytecode": {
+              "linkReferences": {},
+              "object": "",
+              "opcodes": "",
+              "sourceMap": ""
+            },
+            "deployedBytecode": {
+              "linkReferences": {},
+              "object": "",
+              "opcodes": "",
+              "sourceMap": ""
+            },
+            "gasEstimates": null,
+            "methodIdentifiers": {
+              "ethToTokenTransferInput(uint256,uint256,address)": "ad65d76d",
+              "tokenToEthSwapInput(uint256,uint256,uint256)": "95e3c50b",
+              "tokenToTokenTransferInput(uint256,uint256,uint256,uint256,address,address)": "f552d91b"
+            }
+          },
+          "metadata": "{\"compiler\":{\"version\":\"0.5.17+commit.d19bba13\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":false,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"minTokensBought\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"deadline\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"}],\"name\":\"ethToTokenTransferInput\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"tokensBought\",\"type\":\"uint256\"}],\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokensSold\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"minEthBought\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"deadline\",\"type\":\"uint256\"}],\"name\":\"tokenToEthSwapInput\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"ethBought\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokensSold\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"minTokensBought\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"minEthBought\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"deadline\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"toTokenAddress\",\"type\":\"address\"}],\"name\":\"tokenToTokenTransferInput\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"tokensBought\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{\"ethToTokenTransferInput(uint256,uint256,address)\":{\"details\":\"Buys at least `minTokensBought` tokens with ETH and transfer them      to `recipient`.\",\"params\":{\"deadline\":\"Time when this order expires.\",\"minTokensBought\":\"The minimum number of tokens to buy.\",\"recipient\":\"Who to transfer the tokens to.\"},\"return\":\"tokensBought Amount of tokens bought.\"},\"tokenToEthSwapInput(uint256,uint256,uint256)\":{\"details\":\"Buys at least `minEthBought` ETH with tokens.\",\"params\":{\"deadline\":\"Time when this order expires.\",\"minEthBought\":\"The minimum amount of ETH to buy.\",\"tokensSold\":\"Amount of tokens to sell.\"},\"return\":\"ethBought Amount of tokens bought.\"},\"tokenToTokenTransferInput(uint256,uint256,uint256,uint256,address,address)\":{\"details\":\"Buys at least `minTokensBought` tokens with the exchange token      and transfer them to `recipient`.\",\"params\":{\"deadline\":\"Time when this order expires.\",\"minEthBought\":\"The minimum amount of intermediate ETH to buy.\",\"minTokensBought\":\"The minimum number of tokens to buy.\",\"recipient\":\"Who to transfer the tokens to.\",\"toTokenAddress\":\"The token being bought.\"},\"return\":\"tokensBought Amount of tokens bought.\"}}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"contracts/0x/proxies/interfaces/IUniswapExchange.sol\":\"IUniswapExchange\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":1000},\"remappings\":[]},\"sources\":{\"contracts/0x/proxies/interfaces/IUniswapExchange.sol\":{\"content\":\"/*\\r\\n\\r\\n  Copyright 2019 ZeroEx Intl.\\r\\n\\r\\n  Licensed under the Apache License, Version 2.0 (the \\\"License\\\");\\r\\n  you may not use this file except in compliance with the License.\\r\\n  You may obtain a copy of the License at\\r\\n\\r\\n    http://www.apache.org/licenses/LICENSE-2.0\\r\\n\\r\\n  Unless required by applicable law or agreed to in writing, software\\r\\n  distributed under the License is distributed on an \\\"AS IS\\\" BASIS,\\r\\n  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\\r\\n  See the License for the specific language governing permissions and\\r\\n  limitations under the License.\\r\\n\\r\\n*/\\r\\n\\r\\npragma solidity ^0.5.9;\\r\\n\\r\\n\\r\\ninterface IUniswapExchange {\\r\\n\\r\\n    /// @dev Buys at least `minTokensBought` tokens with ETH and transfer them\\r\\n    ///      to `recipient`.\\r\\n    /// @param minTokensBought The minimum number of tokens to buy.\\r\\n    /// @param deadline Time when this order expires.\\r\\n    /// @param recipient Who to transfer the tokens to.\\r\\n    /// @return tokensBought Amount of tokens bought.\\r\\n    function ethToTokenTransferInput(\\r\\n        uint256 minTokensBought,\\r\\n        uint256 deadline,\\r\\n        address recipient\\r\\n    )\\r\\n        external\\r\\n        payable\\r\\n        returns (uint256 tokensBought);\\r\\n\\r\\n    /// @dev Buys at least `minEthBought` ETH with tokens.\\r\\n    /// @param tokensSold Amount of tokens to sell.\\r\\n    /// @param minEthBought The minimum amount of ETH to buy.\\r\\n    /// @param deadline Time when this order expires.\\r\\n    /// @return ethBought Amount of tokens bought.\\r\\n    function tokenToEthSwapInput(\\r\\n        uint256 tokensSold,\\r\\n        uint256 minEthBought,\\r\\n        uint256 deadline\\r\\n    )\\r\\n        external\\r\\n        returns (uint256 ethBought);\\r\\n\\r\\n    /// @dev Buys at least `minTokensBought` tokens with the exchange token\\r\\n    ///      and transfer them to `recipient`.\\r\\n    /// @param minTokensBought The minimum number of tokens to buy.\\r\\n    /// @param minEthBought The minimum amount of intermediate ETH to buy.\\r\\n    /// @param deadline Time when this order expires.\\r\\n    /// @param recipient Who to transfer the tokens to.\\r\\n    /// @param toTokenAddress The token being bought.\\r\\n    /// @return tokensBought Amount of tokens bought.\\r\\n    function tokenToTokenTransferInput(\\r\\n        uint256 tokensSold,\\r\\n        uint256 minTokensBought,\\r\\n        uint256 minEthBought,\\r\\n        uint256 deadline,\\r\\n        address recipient,\\r\\n        address toTokenAddress\\r\\n    )\\r\\n        external\\r\\n        returns (uint256 tokensBought);\\r\\n}\\r\\n\",\"keccak256\":\"0xe724fb5b93899a61ab03d0b6ad88a133e302d98a46c04a9fd5727314257edbfa\"}},\"version\":1}",
+          "storageLayout": {
+            "storage": [],
+            "types": null
+          },
+          "userdoc": {
+            "methods": {}
+          }
+        }
+      },
+      "contracts/0x/proxies/interfaces/IUniswapExchangeFactory.sol": {
+        "IUniswapExchangeFactory": {
+          "abi": [
+            {
+              "constant": true,
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "tokenAddress",
+                  "type": "address"
+                }
+              ],
+              "name": "getExchange",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "payable": false,
+              "stateMutability": "view",
+              "type": "function"
+            }
+          ],
+          "devdoc": {
+            "methods": {
+              "getExchange(address)": {
+                "details": "Get the exchange for a token.",
+                "params": {
+                  "tokenAddress": "The address of the token contract."
+                }
+              }
+            }
+          },
+          "evm": {
+            "bytecode": {
+              "linkReferences": {},
+              "object": "",
+              "opcodes": "",
+              "sourceMap": ""
+            },
+            "deployedBytecode": {
+              "linkReferences": {},
+              "object": "",
+              "opcodes": "",
+              "sourceMap": ""
+            },
+            "gasEstimates": null,
+            "methodIdentifiers": {
+              "getExchange(address)": "06f2bf62"
+            }
+          },
+          "metadata": "{\"compiler\":{\"version\":\"0.5.17+commit.d19bba13\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"tokenAddress\",\"type\":\"address\"}],\"name\":\"getExchange\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{\"getExchange(address)\":{\"details\":\"Get the exchange for a token.\",\"params\":{\"tokenAddress\":\"The address of the token contract.\"}}}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"contracts/0x/proxies/interfaces/IUniswapExchangeFactory.sol\":\"IUniswapExchangeFactory\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":1000},\"remappings\":[]},\"sources\":{\"contracts/0x/proxies/interfaces/IUniswapExchange.sol\":{\"content\":\"/*\\r\\n\\r\\n  Copyright 2019 ZeroEx Intl.\\r\\n\\r\\n  Licensed under the Apache License, Version 2.0 (the \\\"License\\\");\\r\\n  you may not use this file except in compliance with the License.\\r\\n  You may obtain a copy of the License at\\r\\n\\r\\n    http://www.apache.org/licenses/LICENSE-2.0\\r\\n\\r\\n  Unless required by applicable law or agreed to in writing, software\\r\\n  distributed under the License is distributed on an \\\"AS IS\\\" BASIS,\\r\\n  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\\r\\n  See the License for the specific language governing permissions and\\r\\n  limitations under the License.\\r\\n\\r\\n*/\\r\\n\\r\\npragma solidity ^0.5.9;\\r\\n\\r\\n\\r\\ninterface IUniswapExchange {\\r\\n\\r\\n    /// @dev Buys at least `minTokensBought` tokens with ETH and transfer them\\r\\n    ///      to `recipient`.\\r\\n    /// @param minTokensBought The minimum number of tokens to buy.\\r\\n    /// @param deadline Time when this order expires.\\r\\n    /// @param recipient Who to transfer the tokens to.\\r\\n    /// @return tokensBought Amount of tokens bought.\\r\\n    function ethToTokenTransferInput(\\r\\n        uint256 minTokensBought,\\r\\n        uint256 deadline,\\r\\n        address recipient\\r\\n    )\\r\\n        external\\r\\n        payable\\r\\n        returns (uint256 tokensBought);\\r\\n\\r\\n    /// @dev Buys at least `minEthBought` ETH with tokens.\\r\\n    /// @param tokensSold Amount of tokens to sell.\\r\\n    /// @param minEthBought The minimum amount of ETH to buy.\\r\\n    /// @param deadline Time when this order expires.\\r\\n    /// @return ethBought Amount of tokens bought.\\r\\n    function tokenToEthSwapInput(\\r\\n        uint256 tokensSold,\\r\\n        uint256 minEthBought,\\r\\n        uint256 deadline\\r\\n    )\\r\\n        external\\r\\n        returns (uint256 ethBought);\\r\\n\\r\\n    /// @dev Buys at least `minTokensBought` tokens with the exchange token\\r\\n    ///      and transfer them to `recipient`.\\r\\n    /// @param minTokensBought The minimum number of tokens to buy.\\r\\n    /// @param minEthBought The minimum amount of intermediate ETH to buy.\\r\\n    /// @param deadline Time when this order expires.\\r\\n    /// @param recipient Who to transfer the tokens to.\\r\\n    /// @param toTokenAddress The token being bought.\\r\\n    /// @return tokensBought Amount of tokens bought.\\r\\n    function tokenToTokenTransferInput(\\r\\n        uint256 tokensSold,\\r\\n        uint256 minTokensBought,\\r\\n        uint256 minEthBought,\\r\\n        uint256 deadline,\\r\\n        address recipient,\\r\\n        address toTokenAddress\\r\\n    )\\r\\n        external\\r\\n        returns (uint256 tokensBought);\\r\\n}\\r\\n\",\"keccak256\":\"0xe724fb5b93899a61ab03d0b6ad88a133e302d98a46c04a9fd5727314257edbfa\"},\"contracts/0x/proxies/interfaces/IUniswapExchangeFactory.sol\":{\"content\":\"/*\\r\\n\\r\\n  Copyright 2019 ZeroEx Intl.\\r\\n\\r\\n  Licensed under the Apache License, Version 2.0 (the \\\"License\\\");\\r\\n  you may not use this file except in compliance with the License.\\r\\n  You may obtain a copy of the License at\\r\\n\\r\\n    http://www.apache.org/licenses/LICENSE-2.0\\r\\n\\r\\n  Unless required by applicable law or agreed to in writing, software\\r\\n  distributed under the License is distributed on an \\\"AS IS\\\" BASIS,\\r\\n  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\\r\\n  See the License for the specific language governing permissions and\\r\\n  limitations under the License.\\r\\n\\r\\n*/\\r\\n\\r\\npragma solidity ^0.5.9;\\r\\n\\r\\nimport \\\"./IUniswapExchange.sol\\\";\\r\\n\\r\\n\\r\\ninterface IUniswapExchangeFactory {\\r\\n\\r\\n    /// @dev Get the exchange for a token.\\r\\n    /// @param tokenAddress The address of the token contract.\\r\\n    function getExchange(address tokenAddress)\\r\\n        external\\r\\n        view\\r\\n        returns (address);\\r\\n}\\r\\n\",\"keccak256\":\"0x8b05014346ccb26d798754df9e31b5059cdc54672ce9c5cc8c18cf4fef48c90e\"}},\"version\":1}",
+          "storageLayout": {
+            "storage": [],
+            "types": null
+          },
+          "userdoc": {
+            "methods": {}
+          }
+        }
+      }
+    },
+    "sources": {
+      "contracts/0x/proxies/interfaces/IUniswapExchange.sol": {
+        "ast": {
+          "absolutePath": "contracts/0x/proxies/interfaces/IUniswapExchange.sol",
+          "exportedSymbols": {
+            "IUniswapExchange": [
+              41
+            ]
+          },
+          "id": 42,
+          "nodeType": "SourceUnit",
+          "nodes": [
+            {
+              "id": 1,
+              "literals": [
+                "solidity",
+                "^",
+                "0.5",
+                ".9"
+              ],
+              "nodeType": "PragmaDirective",
+              "src": "598:23:0"
+            },
+            {
+              "baseContracts": [],
+              "contractDependencies": [],
+              "contractKind": "interface",
+              "documentation": null,
+              "fullyImplemented": false,
+              "id": 41,
+              "linearizedBaseContracts": [
+                41
+              ],
+              "name": "IUniswapExchange",
+              "nodeType": "ContractDefinition",
+              "nodes": [
+                {
+                  "body": null,
+                  "documentation": "@dev Buys at least `minTokensBought` tokens with ETH and transfer them\n      to `recipient`.\n @param minTokensBought The minimum number of tokens to buy.\n @param deadline Time when this order expires.\n @param recipient Who to transfer the tokens to.\n @return tokensBought Amount of tokens bought.",
+                  "id": 12,
+                  "implemented": false,
+                  "kind": "function",
+                  "modifiers": [],
+                  "name": "ethToTokenTransferInput",
+                  "nodeType": "FunctionDefinition",
+                  "parameters": {
+                    "id": 8,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 3,
+                        "name": "minTokensBought",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 12,
+                        "src": "1052:23:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 2,
+                          "name": "uint256",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1052:7:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 5,
+                        "name": "deadline",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 12,
+                        "src": "1086:16:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 4,
+                          "name": "uint256",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1086:7:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 7,
+                        "name": "recipient",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 12,
+                        "src": "1113:17:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        "typeName": {
+                          "id": 6,
+                          "name": "address",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1113:7:0",
+                          "stateMutability": "nonpayable",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "1041:96:0"
+                  },
+                  "returnParameters": {
+                    "id": 11,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 10,
+                        "name": "tokensBought",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 12,
+                        "src": "1191:20:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 9,
+                          "name": "uint256",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1191:7:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "1190:22:0"
+                  },
+                  "scope": 41,
+                  "src": "1009:204:0",
+                  "stateMutability": "payable",
+                  "superFunction": null,
+                  "visibility": "external"
+                },
+                {
+                  "body": null,
+                  "documentation": "@dev Buys at least `minEthBought` ETH with tokens.\n @param tokensSold Amount of tokens to sell.\n @param minEthBought The minimum amount of ETH to buy.\n @param deadline Time when this order expires.\n @return ethBought Amount of tokens bought.",
+                  "id": 23,
+                  "implemented": false,
+                  "kind": "function",
+                  "modifiers": [],
+                  "name": "tokenToEthSwapInput",
+                  "nodeType": "FunctionDefinition",
+                  "parameters": {
+                    "id": 19,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 14,
+                        "name": "tokensSold",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 23,
+                        "src": "1543:18:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 13,
+                          "name": "uint256",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1543:7:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 16,
+                        "name": "minEthBought",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 23,
+                        "src": "1572:20:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 15,
+                          "name": "uint256",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1572:7:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 18,
+                        "name": "deadline",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 23,
+                        "src": "1603:16:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 17,
+                          "name": "uint256",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1603:7:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "1532:94:0"
+                  },
+                  "returnParameters": {
+                    "id": 22,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 21,
+                        "name": "ethBought",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 23,
+                        "src": "1663:17:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 20,
+                          "name": "uint256",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1663:7:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "1662:19:0"
+                  },
+                  "scope": 41,
+                  "src": "1504:178:0",
+                  "stateMutability": "nonpayable",
+                  "superFunction": null,
+                  "visibility": "external"
+                },
+                {
+                  "body": null,
+                  "documentation": "@dev Buys at least `minTokensBought` tokens with the exchange token\n      and transfer them to `recipient`.\n @param minTokensBought The minimum number of tokens to buy.\n @param minEthBought The minimum amount of intermediate ETH to buy.\n @param deadline Time when this order expires.\n @param recipient Who to transfer the tokens to.\n @param toTokenAddress The token being bought.\n @return tokensBought Amount of tokens bought.",
+                  "id": 40,
+                  "implemented": false,
+                  "kind": "function",
+                  "modifiers": [],
+                  "name": "tokenToTokenTransferInput",
+                  "nodeType": "FunctionDefinition",
+                  "parameters": {
+                    "id": 36,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 25,
+                        "name": "tokensSold",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 40,
+                        "src": "2227:18:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 24,
+                          "name": "uint256",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "2227:7:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 27,
+                        "name": "minTokensBought",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 40,
+                        "src": "2256:23:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 26,
+                          "name": "uint256",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "2256:7:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 29,
+                        "name": "minEthBought",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 40,
+                        "src": "2290:20:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 28,
+                          "name": "uint256",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "2290:7:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 31,
+                        "name": "deadline",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 40,
+                        "src": "2321:16:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 30,
+                          "name": "uint256",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "2321:7:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 33,
+                        "name": "recipient",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 40,
+                        "src": "2348:17:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        "typeName": {
+                          "id": 32,
+                          "name": "address",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "2348:7:0",
+                          "stateMutability": "nonpayable",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 35,
+                        "name": "toTokenAddress",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 40,
+                        "src": "2376:22:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        "typeName": {
+                          "id": 34,
+                          "name": "address",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "2376:7:0",
+                          "stateMutability": "nonpayable",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "2216:189:0"
+                  },
+                  "returnParameters": {
+                    "id": 39,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 38,
+                        "name": "tokensBought",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 40,
+                        "src": "2442:20:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 37,
+                          "name": "uint256",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "2442:7:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "2441:22:0"
+                  },
+                  "scope": 41,
+                  "src": "2182:282:0",
+                  "stateMutability": "nonpayable",
+                  "superFunction": null,
+                  "visibility": "external"
+                }
+              ],
+              "scope": 42,
+              "src": "627:1840:0"
+            }
+          ],
+          "src": "598:1871:0"
+        },
+        "id": 0
+      },
+      "contracts/0x/proxies/interfaces/IUniswapExchangeFactory.sol": {
+        "ast": {
+          "absolutePath": "contracts/0x/proxies/interfaces/IUniswapExchangeFactory.sol",
+          "exportedSymbols": {
+            "IUniswapExchangeFactory": [
+              52
+            ]
+          },
+          "id": 53,
+          "nodeType": "SourceUnit",
+          "nodes": [
+            {
+              "id": 43,
+              "literals": [
+                "solidity",
+                "^",
+                "0.5",
+                ".9"
+              ],
+              "nodeType": "PragmaDirective",
+              "src": "598:23:1"
+            },
+            {
+              "absolutePath": "contracts/0x/proxies/interfaces/IUniswapExchange.sol",
+              "file": "./IUniswapExchange.sol",
+              "id": 44,
+              "nodeType": "ImportDirective",
+              "scope": 53,
+              "sourceUnit": 42,
+              "src": "625:32:1",
+              "symbolAliases": [],
+              "unitAlias": ""
+            },
+            {
+              "baseContracts": [],
+              "contractDependencies": [],
+              "contractKind": "interface",
+              "documentation": null,
+              "fullyImplemented": false,
+              "id": 52,
+              "linearizedBaseContracts": [
+                52
+              ],
+              "name": "IUniswapExchangeFactory",
+              "nodeType": "ContractDefinition",
+              "nodes": [
+                {
+                  "body": null,
+                  "documentation": "@dev Get the exchange for a token.\n @param tokenAddress The address of the token contract.",
+                  "id": 51,
+                  "implemented": false,
+                  "kind": "function",
+                  "modifiers": [],
+                  "name": "getExchange",
+                  "nodeType": "FunctionDefinition",
+                  "parameters": {
+                    "id": 47,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 46,
+                        "name": "tokenAddress",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 51,
+                        "src": "835:20:1",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        "typeName": {
+                          "id": 45,
+                          "name": "address",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "835:7:1",
+                          "stateMutability": "nonpayable",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "834:22:1"
+                  },
+                  "returnParameters": {
+                    "id": 50,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 49,
+                        "name": "",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 51,
+                        "src": "907:7:1",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        "typeName": {
+                          "id": 48,
+                          "name": "address",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "907:7:1",
+                          "stateMutability": "nonpayable",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "906:9:1"
+                  },
+                  "scope": 52,
+                  "src": "814:102:1",
+                  "stateMutability": "view",
+                  "superFunction": null,
+                  "visibility": "external"
+                }
+              ],
+              "scope": 53,
+              "src": "663:256:1"
+            }
+          ],
+          "src": "598:323:1"
+        },
+        "id": 1
+      }
+    }
+  }
+}

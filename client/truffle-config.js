@@ -32,34 +32,19 @@ module.exports = {
     // tab if you use this network and you must also set the `host`, `port` and `network_id`
     // options below to some value.
     //
-    development: {
-      provider:new HDWalletProvider({ mnemonic: process.env.GANACHE_MNEMONIC, providerOrUrl: process.env.MAIN_RPC_URL }),
-      network_id: "4447",       // Any network (default: none)
-      gasPrice: 50000000,
-    },
-    bor: {
+    development:{
       provider: () =>
-        new HDWalletProvider(
-          MNEMONIC,
-          `http://localhost:8545`
-        ),
-      network_id: '4447', // match any network
-      gasPrice: 50000000,
-    },
-    matic: {
-      provider: () =>
-        new HDWalletProvider(
-          MNEMONIC,
-          `https://rpc-mainnet.matic.network`
-        ),
-      network_id: '137',
-      gasPrice: '90000000000'
+      new HDWalletProvider(
+        "illegal eagle tide focus pigeon wrestle nurse cost place orange danger rapid",
+        "http://localhost:8545"
+      ),
+    network_id: '*',
     },
     mumbai: {
       provider: () =>
         new HDWalletProvider(
-          MNEMONIC,
-          `https://rpc-mumbai.matic.today`
+          process.env.MUMBAI_MNEMONIC,
+          process.env.MUMBAI_RPC_URL
         ),
       network_id: '80001',
     },
@@ -105,8 +90,7 @@ module.exports = {
       settings: {          // See the solidity docs for advice about optimization and evmVersion
         optimizer: {
           enabled: true,
-          runs: 200,
-          details: { yul: true, deduplicate: true, cse: true, constantOptimizer: true },
+          runs: 200
         },
         //evmVersion: "byzantium"  // needed only when you have to fork // matic prefer evmVersion: 'constantinople'
       }

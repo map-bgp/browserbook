@@ -1,0 +1,334 @@
+{
+  "id": "a340c9ff11b94e0399135b685711d53f",
+  "_format": "hh-sol-build-info-1",
+  "solcVersion": "0.5.17",
+  "solcLongVersion": "0.5.17+commit.d19bba13",
+  "input": {
+    "language": "Solidity",
+    "sources": {
+      "contracts/0x/proxies/interfaces/IEth2Dai.sol": {
+        "content": "/*\r\n\r\n  Copyright 2019 ZeroEx Intl.\r\n\r\n  Licensed under the Apache License, Version 2.0 (the \"License\");\r\n  you may not use this file except in compliance with the License.\r\n  You may obtain a copy of the License at\r\n\r\n    http://www.apache.org/licenses/LICENSE-2.0\r\n\r\n  Unless required by applicable law or agreed to in writing, software\r\n  distributed under the License is distributed on an \"AS IS\" BASIS,\r\n  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\r\n  See the License for the specific language governing permissions and\r\n  limitations under the License.\r\n\r\n*/\r\n\r\npragma solidity ^0.5.9;\r\n\r\n\r\ninterface IEth2Dai {\r\n\r\n    /// @dev Sell `sellAmount` of `fromToken` token and receive `toToken` token.\r\n    /// @param fromToken The token being sold.\r\n    /// @param sellAmount The amount of `fromToken` token being sold.\r\n    /// @param toToken The token being bought.\r\n    /// @param minFillAmount Minimum amount of `toToken` token to buy.\r\n    /// @return fillAmount Amount of `toToken` bought.\r\n    function sellAllAmount(\r\n        address fromToken,\r\n        uint256 sellAmount,\r\n        address toToken,\r\n        uint256 minFillAmount\r\n    )\r\n        external\r\n        returns (uint256 fillAmount);\r\n}\r\n"
+      }
+    },
+    "settings": {
+      "optimizer": {
+        "enabled": true,
+        "runs": 1000
+      },
+      "outputSelection": {
+        "*": {
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata",
+            "devdoc",
+            "userdoc",
+            "storageLayout",
+            "evm.gasEstimates"
+          ],
+          "": [
+            "ast"
+          ]
+        }
+      },
+      "metadata": {
+        "useLiteralContent": true
+      }
+    }
+  },
+  "output": {
+    "contracts": {
+      "contracts/0x/proxies/interfaces/IEth2Dai.sol": {
+        "IEth2Dai": {
+          "abi": [
+            {
+              "constant": false,
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "fromToken",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "sellAmount",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "address",
+                  "name": "toToken",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "minFillAmount",
+                  "type": "uint256"
+                }
+              ],
+              "name": "sellAllAmount",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "fillAmount",
+                  "type": "uint256"
+                }
+              ],
+              "payable": false,
+              "stateMutability": "nonpayable",
+              "type": "function"
+            }
+          ],
+          "devdoc": {
+            "methods": {
+              "sellAllAmount(address,uint256,address,uint256)": {
+                "details": "Sell `sellAmount` of `fromToken` token and receive `toToken` token.",
+                "params": {
+                  "fromToken": "The token being sold.",
+                  "minFillAmount": "Minimum amount of `toToken` token to buy.",
+                  "sellAmount": "The amount of `fromToken` token being sold.",
+                  "toToken": "The token being bought."
+                },
+                "return": "fillAmount Amount of `toToken` bought."
+              }
+            }
+          },
+          "evm": {
+            "bytecode": {
+              "linkReferences": {},
+              "object": "",
+              "opcodes": "",
+              "sourceMap": ""
+            },
+            "deployedBytecode": {
+              "linkReferences": {},
+              "object": "",
+              "opcodes": "",
+              "sourceMap": ""
+            },
+            "gasEstimates": null,
+            "methodIdentifiers": {
+              "sellAllAmount(address,uint256,address,uint256)": "0621b4f6"
+            }
+          },
+          "metadata": "{\"compiler\":{\"version\":\"0.5.17+commit.d19bba13\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"fromToken\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"sellAmount\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"toToken\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"minFillAmount\",\"type\":\"uint256\"}],\"name\":\"sellAllAmount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"fillAmount\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{\"sellAllAmount(address,uint256,address,uint256)\":{\"details\":\"Sell `sellAmount` of `fromToken` token and receive `toToken` token.\",\"params\":{\"fromToken\":\"The token being sold.\",\"minFillAmount\":\"Minimum amount of `toToken` token to buy.\",\"sellAmount\":\"The amount of `fromToken` token being sold.\",\"toToken\":\"The token being bought.\"},\"return\":\"fillAmount Amount of `toToken` bought.\"}}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"contracts/0x/proxies/interfaces/IEth2Dai.sol\":\"IEth2Dai\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":1000},\"remappings\":[]},\"sources\":{\"contracts/0x/proxies/interfaces/IEth2Dai.sol\":{\"content\":\"/*\\r\\n\\r\\n  Copyright 2019 ZeroEx Intl.\\r\\n\\r\\n  Licensed under the Apache License, Version 2.0 (the \\\"License\\\");\\r\\n  you may not use this file except in compliance with the License.\\r\\n  You may obtain a copy of the License at\\r\\n\\r\\n    http://www.apache.org/licenses/LICENSE-2.0\\r\\n\\r\\n  Unless required by applicable law or agreed to in writing, software\\r\\n  distributed under the License is distributed on an \\\"AS IS\\\" BASIS,\\r\\n  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\\r\\n  See the License for the specific language governing permissions and\\r\\n  limitations under the License.\\r\\n\\r\\n*/\\r\\n\\r\\npragma solidity ^0.5.9;\\r\\n\\r\\n\\r\\ninterface IEth2Dai {\\r\\n\\r\\n    /// @dev Sell `sellAmount` of `fromToken` token and receive `toToken` token.\\r\\n    /// @param fromToken The token being sold.\\r\\n    /// @param sellAmount The amount of `fromToken` token being sold.\\r\\n    /// @param toToken The token being bought.\\r\\n    /// @param minFillAmount Minimum amount of `toToken` token to buy.\\r\\n    /// @return fillAmount Amount of `toToken` bought.\\r\\n    function sellAllAmount(\\r\\n        address fromToken,\\r\\n        uint256 sellAmount,\\r\\n        address toToken,\\r\\n        uint256 minFillAmount\\r\\n    )\\r\\n        external\\r\\n        returns (uint256 fillAmount);\\r\\n}\\r\\n\",\"keccak256\":\"0xd3cb4b335787c6da5e67b36aae228ae07acf7c512094e13e8a4b53018439f6f3\"}},\"version\":1}",
+          "storageLayout": {
+            "storage": [],
+            "types": null
+          },
+          "userdoc": {
+            "methods": {}
+          }
+        }
+      }
+    },
+    "sources": {
+      "contracts/0x/proxies/interfaces/IEth2Dai.sol": {
+        "ast": {
+          "absolutePath": "contracts/0x/proxies/interfaces/IEth2Dai.sol",
+          "exportedSymbols": {
+            "IEth2Dai": [
+              15
+            ]
+          },
+          "id": 16,
+          "nodeType": "SourceUnit",
+          "nodes": [
+            {
+              "id": 1,
+              "literals": [
+                "solidity",
+                "^",
+                "0.5",
+                ".9"
+              ],
+              "nodeType": "PragmaDirective",
+              "src": "598:23:0"
+            },
+            {
+              "baseContracts": [],
+              "contractDependencies": [],
+              "contractKind": "interface",
+              "documentation": null,
+              "fullyImplemented": false,
+              "id": 15,
+              "linearizedBaseContracts": [
+                15
+              ],
+              "name": "IEth2Dai",
+              "nodeType": "ContractDefinition",
+              "nodes": [
+                {
+                  "body": null,
+                  "documentation": "@dev Sell `sellAmount` of `fromToken` token and receive `toToken` token.\n @param fromToken The token being sold.\n @param sellAmount The amount of `fromToken` token being sold.\n @param toToken The token being bought.\n @param minFillAmount Minimum amount of `toToken` token to buy.\n @return fillAmount Amount of `toToken` bought.",
+                  "id": 14,
+                  "implemented": false,
+                  "kind": "function",
+                  "modifiers": [],
+                  "name": "sellAllAmount",
+                  "nodeType": "FunctionDefinition",
+                  "parameters": {
+                    "id": 10,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 3,
+                        "name": "fromToken",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 14,
+                        "src": "1065:17:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        "typeName": {
+                          "id": 2,
+                          "name": "address",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1065:7:0",
+                          "stateMutability": "nonpayable",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 5,
+                        "name": "sellAmount",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 14,
+                        "src": "1093:18:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 4,
+                          "name": "uint256",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1093:7:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 7,
+                        "name": "toToken",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 14,
+                        "src": "1122:15:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        "typeName": {
+                          "id": 6,
+                          "name": "address",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1122:7:0",
+                          "stateMutability": "nonpayable",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 9,
+                        "name": "minFillAmount",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 14,
+                        "src": "1148:21:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 8,
+                          "name": "uint256",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1148:7:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "1054:122:0"
+                  },
+                  "returnParameters": {
+                    "id": 13,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 12,
+                        "name": "fillAmount",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 14,
+                        "src": "1213:18:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 11,
+                          "name": "uint256",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1213:7:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "1212:20:0"
+                  },
+                  "scope": 15,
+                  "src": "1032:201:0",
+                  "stateMutability": "nonpayable",
+                  "superFunction": null,
+                  "visibility": "external"
+                }
+              ],
+              "scope": 16,
+              "src": "627:609:0"
+            }
+          ],
+          "src": "598:640:0"
+        },
+        "id": 0
+      }
+    }
+  }
+}

@@ -1,0 +1,652 @@
+{
+  "id": "fee5dfe33ef6e3c1583988568ddbcaba",
+  "_format": "hh-sol-build-info-1",
+  "solcVersion": "0.5.17",
+  "solcLongVersion": "0.5.17+commit.d19bba13",
+  "input": {
+    "language": "Solidity",
+    "sources": {
+      "contracts/0x/MaximumGasPrice.sol": {
+        "content": "/*\n  Copyright 2019 ZeroEx Intl.\n  Licensed under the Apache License, Version 2.0 (the \"License\");\n  you may not use this file except in compliance with the License.\n  You may obtain a copy of the License at\n    http://www.apache.org/licenses/LICENSE-2.0\n  Unless required by applicable law or agreed to in writing, software\n  distributed under the License is distributed on an \"AS IS\" BASIS,\n  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n  See the License for the specific language governing permissions and\n  limitations under the License.\n*/\n\npragma solidity ^0.5.16;\n\n\ncontract MaximumGasPrice {\n    // 20 Gwei\n    uint256 constant private DEFAULT_MAX_GAS_PRICE = 20 * (10 ** 9);\n\n    /// @dev Checks that the current transaction's gas price is less than\n    ///      the default maximum value of 20 Gwei.\n    function checkGasPrice()\n        external\n        view\n    {\n        require(\n            tx.gasprice <= DEFAULT_MAX_GAS_PRICE,\n            \"MaximumGasPrice/GAS_PRICE_EXCEEDS_20_GWEI\"\n        );\n    }\n\n    /// @dev Checks that the current transaction's gas price is less than\n    ///      the specified maximum value.\n    /// @param maxGasPrice The maximum gas price allowed for the current transaction.\n    function checkGasPrice(uint256 maxGasPrice)\n        external\n        view\n    {\n        require(\n            tx.gasprice <= maxGasPrice,\n            \"MaximumGasPrice/GAS_PRICE_EXCEEDS_MAXIMUM\"\n        );\n    }\n}"
+      }
+    },
+    "settings": {
+      "optimizer": {
+        "enabled": true,
+        "runs": 1000
+      },
+      "outputSelection": {
+        "*": {
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata",
+            "devdoc",
+            "userdoc",
+            "storageLayout",
+            "evm.gasEstimates"
+          ],
+          "": [
+            "ast"
+          ]
+        }
+      },
+      "metadata": {
+        "useLiteralContent": true
+      }
+    }
+  },
+  "output": {
+    "contracts": {
+      "contracts/0x/MaximumGasPrice.sol": {
+        "MaximumGasPrice": {
+          "abi": [
+            {
+              "constant": true,
+              "inputs": [],
+              "name": "checkGasPrice",
+              "outputs": [],
+              "payable": false,
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "constant": true,
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "maxGasPrice",
+                  "type": "uint256"
+                }
+              ],
+              "name": "checkGasPrice",
+              "outputs": [],
+              "payable": false,
+              "stateMutability": "view",
+              "type": "function"
+            }
+          ],
+          "devdoc": {
+            "methods": {
+              "checkGasPrice()": {
+                "details": "Checks that the current transaction's gas price is less than      the default maximum value of 20 Gwei."
+              },
+              "checkGasPrice(uint256)": {
+                "details": "Checks that the current transaction's gas price is less than      the specified maximum value.",
+                "params": {
+                  "maxGasPrice": "The maximum gas price allowed for the current transaction."
+                }
+              }
+            }
+          },
+          "evm": {
+            "bytecode": {
+              "linkReferences": {},
+              "object": "608060405234801561001057600080fd5b50610171806100206000396000f3fe608060405234801561001057600080fd5b50600436106100365760003560e01c8063d728f5b71461003b578063da5b166a14610045575b600080fd5b610043610062565b005b6100436004803603602081101561005b57600080fd5b50356100a8565b6404a817c8003a11156100a65760405162461bcd60e51b81526004018080602001828103825260298152602001806101146029913960400191505060405180910390fd5b565b803a11156100e75760405162461bcd60e51b81526004018080602001828103825260298152602001806100eb6029913960400191505060405180910390fd5b5056fe4d6178696d756d47617350726963652f4741535f50524943455f455843454544535f4d4158494d554d4d6178696d756d47617350726963652f4741535f50524943455f455843454544535f32305f47574549a265627a7a72315820aae87c3146c047a8b4b9d50a69cbec6a2016d8e1d48026e9a4a98676a9e1c8cf64736f6c63430005110032",
+              "opcodes": "PUSH1 0x80 PUSH1 0x40 MSTORE CALLVALUE DUP1 ISZERO PUSH2 0x10 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH2 0x171 DUP1 PUSH2 0x20 PUSH1 0x0 CODECOPY PUSH1 0x0 RETURN INVALID PUSH1 0x80 PUSH1 0x40 MSTORE CALLVALUE DUP1 ISZERO PUSH2 0x10 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH1 0x4 CALLDATASIZE LT PUSH2 0x36 JUMPI PUSH1 0x0 CALLDATALOAD PUSH1 0xE0 SHR DUP1 PUSH4 0xD728F5B7 EQ PUSH2 0x3B JUMPI DUP1 PUSH4 0xDA5B166A EQ PUSH2 0x45 JUMPI JUMPDEST PUSH1 0x0 DUP1 REVERT JUMPDEST PUSH2 0x43 PUSH2 0x62 JUMP JUMPDEST STOP JUMPDEST PUSH2 0x43 PUSH1 0x4 DUP1 CALLDATASIZE SUB PUSH1 0x20 DUP2 LT ISZERO PUSH2 0x5B JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP CALLDATALOAD PUSH2 0xA8 JUMP JUMPDEST PUSH5 0x4A817C800 GASPRICE GT ISZERO PUSH2 0xA6 JUMPI PUSH1 0x40 MLOAD PUSH3 0x461BCD PUSH1 0xE5 SHL DUP2 MSTORE PUSH1 0x4 ADD DUP1 DUP1 PUSH1 0x20 ADD DUP3 DUP2 SUB DUP3 MSTORE PUSH1 0x29 DUP2 MSTORE PUSH1 0x20 ADD DUP1 PUSH2 0x114 PUSH1 0x29 SWAP2 CODECOPY PUSH1 0x40 ADD SWAP2 POP POP PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 REVERT JUMPDEST JUMP JUMPDEST DUP1 GASPRICE GT ISZERO PUSH2 0xE7 JUMPI PUSH1 0x40 MLOAD PUSH3 0x461BCD PUSH1 0xE5 SHL DUP2 MSTORE PUSH1 0x4 ADD DUP1 DUP1 PUSH1 0x20 ADD DUP3 DUP2 SUB DUP3 MSTORE PUSH1 0x29 DUP2 MSTORE PUSH1 0x20 ADD DUP1 PUSH2 0xEB PUSH1 0x29 SWAP2 CODECOPY PUSH1 0x40 ADD SWAP2 POP POP PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 REVERT JUMPDEST POP JUMP INVALID 0x4D PUSH2 0x7869 PUSH14 0x756D47617350726963652F474153 0x5F POP MSTORE 0x49 NUMBER GASLIMIT 0x5F GASLIMIT PC NUMBER GASLIMIT GASLIMIT DIFFICULTY MSTORE8 0x5F 0x4D COINBASE PC 0x49 0x4D SSTORE 0x4D 0x4D PUSH2 0x7869 PUSH14 0x756D47617350726963652F474153 0x5F POP MSTORE 0x49 NUMBER GASLIMIT 0x5F GASLIMIT PC NUMBER GASLIMIT GASLIMIT DIFFICULTY MSTORE8 0x5F ORIGIN ADDRESS 0x5F SELFBALANCE JUMPI GASLIMIT 0x49 LOG2 PUSH6 0x627A7A723158 KECCAK256 0xAA 0xE8 PUSH29 0x3146C047A8B4B9D50A69CBEC6A2016D8E1D48026E9A4A98676A9E1C8CF PUSH5 0x736F6C6343 STOP SDIV GT STOP ORIGIN ",
+              "sourceMap": "602:860:0:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;602:860:0;;;;;;;"
+            },
+            "deployedBytecode": {
+              "linkReferences": {},
+              "object": "608060405234801561001057600080fd5b50600436106100365760003560e01c8063d728f5b71461003b578063da5b166a14610045575b600080fd5b610043610062565b005b6100436004803603602081101561005b57600080fd5b50356100a8565b6404a817c8003a11156100a65760405162461bcd60e51b81526004018080602001828103825260298152602001806101146029913960400191505060405180910390fd5b565b803a11156100e75760405162461bcd60e51b81526004018080602001828103825260298152602001806100eb6029913960400191505060405180910390fd5b5056fe4d6178696d756d47617350726963652f4741535f50524943455f455843454544535f4d4158494d554d4d6178696d756d47617350726963652f4741535f50524943455f455843454544535f32305f47574549a265627a7a72315820aae87c3146c047a8b4b9d50a69cbec6a2016d8e1d48026e9a4a98676a9e1c8cf64736f6c63430005110032",
+              "opcodes": "PUSH1 0x80 PUSH1 0x40 MSTORE CALLVALUE DUP1 ISZERO PUSH2 0x10 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH1 0x4 CALLDATASIZE LT PUSH2 0x36 JUMPI PUSH1 0x0 CALLDATALOAD PUSH1 0xE0 SHR DUP1 PUSH4 0xD728F5B7 EQ PUSH2 0x3B JUMPI DUP1 PUSH4 0xDA5B166A EQ PUSH2 0x45 JUMPI JUMPDEST PUSH1 0x0 DUP1 REVERT JUMPDEST PUSH2 0x43 PUSH2 0x62 JUMP JUMPDEST STOP JUMPDEST PUSH2 0x43 PUSH1 0x4 DUP1 CALLDATASIZE SUB PUSH1 0x20 DUP2 LT ISZERO PUSH2 0x5B JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP CALLDATALOAD PUSH2 0xA8 JUMP JUMPDEST PUSH5 0x4A817C800 GASPRICE GT ISZERO PUSH2 0xA6 JUMPI PUSH1 0x40 MLOAD PUSH3 0x461BCD PUSH1 0xE5 SHL DUP2 MSTORE PUSH1 0x4 ADD DUP1 DUP1 PUSH1 0x20 ADD DUP3 DUP2 SUB DUP3 MSTORE PUSH1 0x29 DUP2 MSTORE PUSH1 0x20 ADD DUP1 PUSH2 0x114 PUSH1 0x29 SWAP2 CODECOPY PUSH1 0x40 ADD SWAP2 POP POP PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 REVERT JUMPDEST JUMP JUMPDEST DUP1 GASPRICE GT ISZERO PUSH2 0xE7 JUMPI PUSH1 0x40 MLOAD PUSH3 0x461BCD PUSH1 0xE5 SHL DUP2 MSTORE PUSH1 0x4 ADD DUP1 DUP1 PUSH1 0x20 ADD DUP3 DUP2 SUB DUP3 MSTORE PUSH1 0x29 DUP2 MSTORE PUSH1 0x20 ADD DUP1 PUSH2 0xEB PUSH1 0x29 SWAP2 CODECOPY PUSH1 0x40 ADD SWAP2 POP POP PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 REVERT JUMPDEST POP JUMP INVALID 0x4D PUSH2 0x7869 PUSH14 0x756D47617350726963652F474153 0x5F POP MSTORE 0x49 NUMBER GASLIMIT 0x5F GASLIMIT PC NUMBER GASLIMIT GASLIMIT DIFFICULTY MSTORE8 0x5F 0x4D COINBASE PC 0x49 0x4D SSTORE 0x4D 0x4D PUSH2 0x7869 PUSH14 0x756D47617350726963652F474153 0x5F POP MSTORE 0x49 NUMBER GASLIMIT 0x5F GASLIMIT PC NUMBER GASLIMIT GASLIMIT DIFFICULTY MSTORE8 0x5F ORIGIN ADDRESS 0x5F SELFBALANCE JUMPI GASLIMIT 0x49 LOG2 PUSH6 0x627A7A723158 KECCAK256 0xAA 0xE8 PUSH29 0x3146C047A8B4B9D50A69CBEC6A2016D8E1D48026E9A4A98676A9E1C8CF PUSH5 0x736F6C6343 STOP SDIV GT STOP ORIGIN ",
+              "sourceMap": "602:860:0:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;602:860:0;;;;;;;;;;;;;;;;;;;;;;;;843:200;;;:::i;:::-;;1251:209;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;1251:209:0;;:::i;843:200::-;697:14;933:11;:36;;912:124;;;;-1:-1:-1;;;912:124:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;843:200::o;1251:209::-;1375:11;1360;:26;;1339:114;;;;-1:-1:-1;;;1339:114:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1251:209;:::o"
+            },
+            "gasEstimates": {
+              "creation": {
+                "codeDepositCost": "73800",
+                "executionCost": "123",
+                "totalCost": "73923"
+              },
+              "external": {
+                "checkGasPrice()": "infinite",
+                "checkGasPrice(uint256)": "infinite"
+              }
+            },
+            "methodIdentifiers": {
+              "checkGasPrice()": "d728f5b7",
+              "checkGasPrice(uint256)": "da5b166a"
+            }
+          },
+          "metadata": "{\"compiler\":{\"version\":\"0.5.17+commit.d19bba13\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":true,\"inputs\":[],\"name\":\"checkGasPrice\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"maxGasPrice\",\"type\":\"uint256\"}],\"name\":\"checkGasPrice\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{\"checkGasPrice()\":{\"details\":\"Checks that the current transaction's gas price is less than      the default maximum value of 20 Gwei.\"},\"checkGasPrice(uint256)\":{\"details\":\"Checks that the current transaction's gas price is less than      the specified maximum value.\",\"params\":{\"maxGasPrice\":\"The maximum gas price allowed for the current transaction.\"}}}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"contracts/0x/MaximumGasPrice.sol\":\"MaximumGasPrice\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":1000},\"remappings\":[]},\"sources\":{\"contracts/0x/MaximumGasPrice.sol\":{\"content\":\"/*\\n  Copyright 2019 ZeroEx Intl.\\n  Licensed under the Apache License, Version 2.0 (the \\\"License\\\");\\n  you may not use this file except in compliance with the License.\\n  You may obtain a copy of the License at\\n    http://www.apache.org/licenses/LICENSE-2.0\\n  Unless required by applicable law or agreed to in writing, software\\n  distributed under the License is distributed on an \\\"AS IS\\\" BASIS,\\n  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\\n  See the License for the specific language governing permissions and\\n  limitations under the License.\\n*/\\n\\npragma solidity ^0.5.16;\\n\\n\\ncontract MaximumGasPrice {\\n    // 20 Gwei\\n    uint256 constant private DEFAULT_MAX_GAS_PRICE = 20 * (10 ** 9);\\n\\n    /// @dev Checks that the current transaction's gas price is less than\\n    ///      the default maximum value of 20 Gwei.\\n    function checkGasPrice()\\n        external\\n        view\\n    {\\n        require(\\n            tx.gasprice <= DEFAULT_MAX_GAS_PRICE,\\n            \\\"MaximumGasPrice/GAS_PRICE_EXCEEDS_20_GWEI\\\"\\n        );\\n    }\\n\\n    /// @dev Checks that the current transaction's gas price is less than\\n    ///      the specified maximum value.\\n    /// @param maxGasPrice The maximum gas price allowed for the current transaction.\\n    function checkGasPrice(uint256 maxGasPrice)\\n        external\\n        view\\n    {\\n        require(\\n            tx.gasprice <= maxGasPrice,\\n            \\\"MaximumGasPrice/GAS_PRICE_EXCEEDS_MAXIMUM\\\"\\n        );\\n    }\\n}\",\"keccak256\":\"0xf6aaec8ceae8720a11f82766bfe2a0ebf9f107eeed2f6d52cc4ac4b51ce576c1\"}},\"version\":1}",
+          "storageLayout": {
+            "storage": [],
+            "types": null
+          },
+          "userdoc": {
+            "methods": {}
+          }
+        }
+      }
+    },
+    "sources": {
+      "contracts/0x/MaximumGasPrice.sol": {
+        "ast": {
+          "absolutePath": "contracts/0x/MaximumGasPrice.sol",
+          "exportedSymbols": {
+            "MaximumGasPrice": [
+              36
+            ]
+          },
+          "id": 37,
+          "nodeType": "SourceUnit",
+          "nodes": [
+            {
+              "id": 1,
+              "literals": [
+                "solidity",
+                "^",
+                "0.5",
+                ".16"
+              ],
+              "nodeType": "PragmaDirective",
+              "src": "575:24:0"
+            },
+            {
+              "baseContracts": [],
+              "contractDependencies": [],
+              "contractKind": "contract",
+              "documentation": null,
+              "fullyImplemented": true,
+              "id": 36,
+              "linearizedBaseContracts": [
+                36
+              ],
+              "name": "MaximumGasPrice",
+              "nodeType": "ContractDefinition",
+              "nodes": [
+                {
+                  "constant": true,
+                  "id": 9,
+                  "name": "DEFAULT_MAX_GAS_PRICE",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 36,
+                  "src": "648:63:0",
+                  "stateVariable": true,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 2,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "648:7:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": {
+                    "argumentTypes": null,
+                    "commonType": {
+                      "typeIdentifier": "t_rational_20000000000_by_1",
+                      "typeString": "int_const 20000000000"
+                    },
+                    "id": 8,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": true,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "argumentTypes": null,
+                      "hexValue": "3230",
+                      "id": 3,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "number",
+                      "lValueRequested": false,
+                      "nodeType": "Literal",
+                      "src": "697:2:0",
+                      "subdenomination": null,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_rational_20_by_1",
+                        "typeString": "int_const 20"
+                      },
+                      "value": "20"
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "*",
+                    "rightExpression": {
+                      "argumentTypes": null,
+                      "components": [
+                        {
+                          "argumentTypes": null,
+                          "commonType": {
+                            "typeIdentifier": "t_rational_1000000000_by_1",
+                            "typeString": "int_const 1000000000"
+                          },
+                          "id": 6,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "lValueRequested": false,
+                          "leftExpression": {
+                            "argumentTypes": null,
+                            "hexValue": "3130",
+                            "id": 4,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": true,
+                            "kind": "number",
+                            "lValueRequested": false,
+                            "nodeType": "Literal",
+                            "src": "703:2:0",
+                            "subdenomination": null,
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_rational_10_by_1",
+                              "typeString": "int_const 10"
+                            },
+                            "value": "10"
+                          },
+                          "nodeType": "BinaryOperation",
+                          "operator": "**",
+                          "rightExpression": {
+                            "argumentTypes": null,
+                            "hexValue": "39",
+                            "id": 5,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": true,
+                            "kind": "number",
+                            "lValueRequested": false,
+                            "nodeType": "Literal",
+                            "src": "709:1:0",
+                            "subdenomination": null,
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_rational_9_by_1",
+                              "typeString": "int_const 9"
+                            },
+                            "value": "9"
+                          },
+                          "src": "703:7:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_rational_1000000000_by_1",
+                            "typeString": "int_const 1000000000"
+                          }
+                        }
+                      ],
+                      "id": 7,
+                      "isConstant": false,
+                      "isInlineArray": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "lValueRequested": false,
+                      "nodeType": "TupleExpression",
+                      "src": "702:9:0",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_rational_1000000000_by_1",
+                        "typeString": "int_const 1000000000"
+                      }
+                    },
+                    "src": "697:14:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_rational_20000000000_by_1",
+                      "typeString": "int_const 20000000000"
+                    }
+                  },
+                  "visibility": "private"
+                },
+                {
+                  "body": {
+                    "id": 20,
+                    "nodeType": "Block",
+                    "src": "902:141:0",
+                    "statements": [
+                      {
+                        "expression": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "commonType": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              },
+                              "id": 16,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "leftExpression": {
+                                "argumentTypes": null,
+                                "expression": {
+                                  "argumentTypes": null,
+                                  "id": 13,
+                                  "name": "tx",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": [],
+                                  "referencedDeclaration": 63,
+                                  "src": "933:2:0",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_magic_transaction",
+                                    "typeString": "tx"
+                                  }
+                                },
+                                "id": 14,
+                                "isConstant": false,
+                                "isLValue": false,
+                                "isPure": false,
+                                "lValueRequested": false,
+                                "memberName": "gasprice",
+                                "nodeType": "MemberAccess",
+                                "referencedDeclaration": null,
+                                "src": "933:11:0",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_uint256",
+                                  "typeString": "uint256"
+                                }
+                              },
+                              "nodeType": "BinaryOperation",
+                              "operator": "<=",
+                              "rightExpression": {
+                                "argumentTypes": null,
+                                "id": 15,
+                                "name": "DEFAULT_MAX_GAS_PRICE",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 9,
+                                "src": "948:21:0",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_uint256",
+                                  "typeString": "uint256"
+                                }
+                              },
+                              "src": "933:36:0",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_bool",
+                                "typeString": "bool"
+                              }
+                            },
+                            {
+                              "argumentTypes": null,
+                              "hexValue": "4d6178696d756d47617350726963652f4741535f50524943455f455843454544535f32305f47574549",
+                              "id": 17,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "string",
+                              "lValueRequested": false,
+                              "nodeType": "Literal",
+                              "src": "983:43:0",
+                              "subdenomination": null,
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_stringliteral_71123f17fd98d6eaa54457aa51e6084b669a96b48f296c0295e30e18cc55007b",
+                                "typeString": "literal_string \"MaximumGasPrice/GAS_PRICE_EXCEEDS_20_GWEI\""
+                              },
+                              "value": "MaximumGasPrice/GAS_PRICE_EXCEEDS_20_GWEI"
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_bool",
+                                "typeString": "bool"
+                              },
+                              {
+                                "typeIdentifier": "t_stringliteral_71123f17fd98d6eaa54457aa51e6084b669a96b48f296c0295e30e18cc55007b",
+                                "typeString": "literal_string \"MaximumGasPrice/GAS_PRICE_EXCEEDS_20_GWEI\""
+                              }
+                            ],
+                            "id": 12,
+                            "name": "require",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [
+                              54,
+                              55
+                            ],
+                            "referencedDeclaration": 55,
+                            "src": "912:7:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                              "typeString": "function (bool,string memory) pure"
+                            }
+                          },
+                          "id": 18,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "912:124:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_tuple$__$",
+                            "typeString": "tuple()"
+                          }
+                        },
+                        "id": 19,
+                        "nodeType": "ExpressionStatement",
+                        "src": "912:124:0"
+                      }
+                    ]
+                  },
+                  "documentation": "@dev Checks that the current transaction's gas price is less than\n      the default maximum value of 20 Gwei.",
+                  "id": 21,
+                  "implemented": true,
+                  "kind": "function",
+                  "modifiers": [],
+                  "name": "checkGasPrice",
+                  "nodeType": "FunctionDefinition",
+                  "parameters": {
+                    "id": 10,
+                    "nodeType": "ParameterList",
+                    "parameters": [],
+                    "src": "865:2:0"
+                  },
+                  "returnParameters": {
+                    "id": 11,
+                    "nodeType": "ParameterList",
+                    "parameters": [],
+                    "src": "902:0:0"
+                  },
+                  "scope": 36,
+                  "src": "843:200:0",
+                  "stateMutability": "view",
+                  "superFunction": null,
+                  "visibility": "external"
+                },
+                {
+                  "body": {
+                    "id": 34,
+                    "nodeType": "Block",
+                    "src": "1329:131:0",
+                    "statements": [
+                      {
+                        "expression": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "commonType": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              },
+                              "id": 30,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "leftExpression": {
+                                "argumentTypes": null,
+                                "expression": {
+                                  "argumentTypes": null,
+                                  "id": 27,
+                                  "name": "tx",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": [],
+                                  "referencedDeclaration": 63,
+                                  "src": "1360:2:0",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_magic_transaction",
+                                    "typeString": "tx"
+                                  }
+                                },
+                                "id": 28,
+                                "isConstant": false,
+                                "isLValue": false,
+                                "isPure": false,
+                                "lValueRequested": false,
+                                "memberName": "gasprice",
+                                "nodeType": "MemberAccess",
+                                "referencedDeclaration": null,
+                                "src": "1360:11:0",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_uint256",
+                                  "typeString": "uint256"
+                                }
+                              },
+                              "nodeType": "BinaryOperation",
+                              "operator": "<=",
+                              "rightExpression": {
+                                "argumentTypes": null,
+                                "id": 29,
+                                "name": "maxGasPrice",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 23,
+                                "src": "1375:11:0",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_uint256",
+                                  "typeString": "uint256"
+                                }
+                              },
+                              "src": "1360:26:0",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_bool",
+                                "typeString": "bool"
+                              }
+                            },
+                            {
+                              "argumentTypes": null,
+                              "hexValue": "4d6178696d756d47617350726963652f4741535f50524943455f455843454544535f4d4158494d554d",
+                              "id": 31,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "string",
+                              "lValueRequested": false,
+                              "nodeType": "Literal",
+                              "src": "1400:43:0",
+                              "subdenomination": null,
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_stringliteral_51f2fef00e142742ed4e21678dda4b66c80f6f2d262ff2e91098850e49b72a19",
+                                "typeString": "literal_string \"MaximumGasPrice/GAS_PRICE_EXCEEDS_MAXIMUM\""
+                              },
+                              "value": "MaximumGasPrice/GAS_PRICE_EXCEEDS_MAXIMUM"
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_bool",
+                                "typeString": "bool"
+                              },
+                              {
+                                "typeIdentifier": "t_stringliteral_51f2fef00e142742ed4e21678dda4b66c80f6f2d262ff2e91098850e49b72a19",
+                                "typeString": "literal_string \"MaximumGasPrice/GAS_PRICE_EXCEEDS_MAXIMUM\""
+                              }
+                            ],
+                            "id": 26,
+                            "name": "require",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [
+                              54,
+                              55
+                            ],
+                            "referencedDeclaration": 55,
+                            "src": "1339:7:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                              "typeString": "function (bool,string memory) pure"
+                            }
+                          },
+                          "id": 32,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1339:114:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_tuple$__$",
+                            "typeString": "tuple()"
+                          }
+                        },
+                        "id": 33,
+                        "nodeType": "ExpressionStatement",
+                        "src": "1339:114:0"
+                      }
+                    ]
+                  },
+                  "documentation": "@dev Checks that the current transaction's gas price is less than\n      the specified maximum value.\n @param maxGasPrice The maximum gas price allowed for the current transaction.",
+                  "id": 35,
+                  "implemented": true,
+                  "kind": "function",
+                  "modifiers": [],
+                  "name": "checkGasPrice",
+                  "nodeType": "FunctionDefinition",
+                  "parameters": {
+                    "id": 24,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 23,
+                        "name": "maxGasPrice",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 35,
+                        "src": "1274:19:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 22,
+                          "name": "uint256",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1274:7:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "1273:21:0"
+                  },
+                  "returnParameters": {
+                    "id": 25,
+                    "nodeType": "ParameterList",
+                    "parameters": [],
+                    "src": "1329:0:0"
+                  },
+                  "scope": 36,
+                  "src": "1251:209:0",
+                  "stateMutability": "view",
+                  "superFunction": null,
+                  "visibility": "external"
+                }
+              ],
+              "scope": 37,
+              "src": "602:860:0"
+            }
+          ],
+          "src": "575:887:0"
+        },
+        "id": 0
+      }
+    }
+  }
+}

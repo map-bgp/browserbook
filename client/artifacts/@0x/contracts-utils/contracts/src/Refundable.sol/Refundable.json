@@ -1,0 +1,10 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "Refundable",
+  "sourceName": "@0x/contracts-utils/contracts/src/Refundable.sol",
+  "abi": [],
+  "bytecode": "0x60806040526000805460ff19169055348015601957600080fd5b50603e8060276000396000f3fe6080604052600080fdfea265627a7a723158201ef972d095684813b022ca7070e82968a548df32d7d41f3c5100950a466bee7964736f6c63430005110032",
+  "deployedBytecode": "0x6080604052600080fdfea265627a7a723158201ef972d095684813b022ca7070e82968a548df32d7d41f3c5100950a466bee7964736f6c63430005110032",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
