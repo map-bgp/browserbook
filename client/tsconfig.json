@@ -1,24 +1,36 @@
 {
-    "compilerOptions": {
-        "outDir": "./dist/",        // path to output directory
-        "sourceMap": true,          // allow sourcemap support
-        "strictNullChecks": true,   // enable strict null checks as a best practice
-        "module": "es6",            // specify module code generation
-        "moduleResolution": "node",
-        "jsx": "react",             // use typescript to transpile jsx to js
-        "target": "es5",            // specify ECMAScript target version
-        "allowJs": true,            // allow a partial TypeScript and JavaScript codebase
-        "pretty": true,
-        "typeRoots": ["node_modules/@types"],
-        "experimentalDecorators": true,
-        "allowSyntheticDefaultImports": true,
-        "esModuleInterop": true,
-        "lib": [
-          "dom", "es2015"
-        ],
-    },
-    "include": [
-        "./src/"
+  "compilerOptions": {
+    "outDir": "./dist/",
+    // path to output directory
+    "sourceMap": true,
+    // allow sourcemap support
+    "strictNullChecks": true,
+    // enable strict null checks as a best practice
+    "module": "es6",
+    // specify module code generation
+    "moduleResolution": "node",
+    "jsx": "react",
+    // use typescript to transpile jsx to js
+    "target": "es5",
+    // specify ECMAScript target version
+    "allowJs": true,
+    // allow a partial TypeScript and JavaScript codebase
+    "pretty": true,
+    "typeRoots": [
+      "node_modules/@types"
     ],
-    "exclude": ["./src/wasm"]
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "lib": [
+      "dom",
+      "es2015"
+    ]
+  },
+  "include": [
+    "./src/"
+  ],
+  "exclude": [
+    "./src/wasm"
+  ]
 }
