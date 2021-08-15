@@ -2,10 +2,11 @@ import "tailwindcss/tailwind.css"
 import wasm from '../wasm/main.wasm'
 
 import React, {useEffect} from "react";
+import { useLocation } from "react-router-dom";
 
-import {useLocation} from "react-router-dom";
+import { ethers } from "ethers";
 
-import {loadMeshStreamingWithURLAsync, Mesh, OrderEvent,} from '@0x/mesh-browser-lite';
+import {loadMeshStreamingWithURLAsync, Mesh, OrderEvent, SupportedProvider,} from '@0x/mesh-browser-lite';
 
 import Header from './Header'
 import Content from './Content'
@@ -26,12 +27,17 @@ const App = () => {
     return current
   }
 
+  const provider = new ethers.providers.Web3Provider((window as any).ethereum)
+  
+  console.log(provider)
+  console.log(provider.getSigner(0).getAddress())
+
   const mesh = new Mesh({
     verbosity: 6,
     ethereumChainID: 1337,
     ethereumRPCURL: "http://192.41.136.236:9545",
     useBootstrapList: true,
-    //web3Provider: (window as any).web3.currentProvider as SupportedProvider,
+    web3Provider: (window as any).ethereum as SupportedProvider,
   })
 
   mesh.onError((err: Error) => {
@@ -52,9 +58,6 @@ const App = () => {
     loadWasm().catch(console.error)
     console.log("WASM locked and loaded")
   })
-
-  mesh.startAsync();
-  mesh.getStatsAsync();
 
   const navigation = [
     {
@@ -80,6 +83,7 @@ const App = () => {
   ]
 
   // mesh.startAsync();
+  // mesh.getStatsAsync();
 
   return (
     <div className="min-h-screen bg-gray-100">
