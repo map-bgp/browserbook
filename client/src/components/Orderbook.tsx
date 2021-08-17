@@ -3,9 +3,6 @@ import "tailwindcss/tailwind.css"
 
 import { useAppSelector, useAppDispatch } from '../app/hooks'
 
-import { addOrder } from '../features/orderbookSlice'
-import {Order} from "./types/Order";
-
 function Orderbook() {
   // The `state` arg is correctly typed as `RootState` already
   const bidQueue = useAppSelector(state => state.orderbook.bidQueue)
