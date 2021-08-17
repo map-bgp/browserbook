@@ -57,7 +57,7 @@ func NewContractAddressesForChainID(chainID int) (ContractAddresses, error) {
 			ChaiToken:                common.HexToAddress("0x0000000000000000000000000000000000000000"),
 			MaximumGasPrice:          common.HexToAddress("0x407b4128e9ecad8769b2332312a9f655cb9f5f3a"),
 		}, nil
-	case 4:
+	case 80001:
 		return ContractAddresses{
 			ERC20Proxy:               common.HexToAddress("0x2f5ae4f6106e89b4147651688a92256885c5f410"),
 			ERC721Proxy:              common.HexToAddress("0x7656d773e11ff7383a14dcf09a9c50990481cd10"),
