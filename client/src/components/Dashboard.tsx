@@ -3,8 +3,8 @@ import "tailwindcss/tailwind.css"
 
 import {Mesh,} from '@0x/mesh-browser-lite';
 
-import Orderbook from './orderbook'
-import Orderform from './orderform'
+import Orderbook from './Orderbook'
+import Orderform from './Orderform'
 import Info from "./elements/Info";
 
 // const rows: any[] = [];

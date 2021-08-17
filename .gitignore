@@ -7,3 +7,5 @@ node_modules/
 /client/src/wasm/
 /client/package-lock.json
 /browserbook/.idea/workspace.xml
+/client/artifacts/
+/client/cache/
