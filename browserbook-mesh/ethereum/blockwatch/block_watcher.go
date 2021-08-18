@@ -155,7 +155,7 @@ func (w *Watcher) FastSyncToLatestBlock() (blocksElapsed int, err error) {
 	blocksElapsed = int(latestBlock.Number.Int64()) - latestBlockProcessedNumber
 	if blocksElapsed == 0 {
 		return blocksElapsed, nil
-	} else if blocksElapsed < constants.MaxBlocksStoredInNonArchiveNode {
+	} else if blocksElapsed > constants.MaxBlocksStoredInNonArchiveNode {
 		log.WithField("blocksElapsed", blocksElapsed).Info("Some blocks have elapsed since last boot. Backfilling block events (this can take a while)...")
 		events, err := w.getMissedEventsToBackfill(blocksElapsed, latestBlockProcessedNumber)
 		if err != nil {

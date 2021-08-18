@@ -881,7 +881,7 @@ func (app *App) AddOrders(ctx context.Context, signedOrders []*zeroex.SignedOrde
 // AddOrdersRaw is like AddOrders but accepts raw JSON messages.
 func (app *App) AddOrdersRaw(ctx context.Context, signedOrdersRaw []*json.RawMessage, pinned bool) (*ordervalidator.ValidationResults, error) {
 	<-app.started
-
+	log.Info("entered Add Orders Raw")
 	allValidationResults := &ordervalidator.ValidationResults{
 		Accepted: []*ordervalidator.AcceptedOrderInfo{},
 		Rejected: []*ordervalidator.RejectedOrderInfo{},
@@ -932,6 +932,7 @@ func (app *App) AddOrdersRaw(ctx context.Context, signedOrdersRaw []*json.RawMes
 			return nil, err
 		}
 
+		log.Info("Order Hash Computed")
 		orderHash, err := signedOrder.ComputeOrderHash()
 		if err != nil {
 			return nil, err

@@ -16,6 +16,7 @@ import (
 	"github.com/map-bgp/browserbook/browserbook-mesh/graphql/gqltypes"
 	"github.com/map-bgp/browserbook/browserbook-mesh/jsutil"
 	"github.com/map-bgp/browserbook/browserbook-mesh/zeroex"
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -146,10 +147,12 @@ func (cw *MeshWrapper) Start() error {
 // core.App.AddOrders, converts the result into basic JavaScript types (string,
 // int, etc.) and returns it.
 func (cw *MeshWrapper) AddOrders(rawOrders js.Value, pinned bool) (js.Value, error) {
+	log.Info("entered the main go atleast")
 	var rawMessages []*json.RawMessage
 	if err := jsutil.InefficientlyConvertFromJS(rawOrders, &rawMessages); err != nil {
 		return js.Undefined(), err
 	}
+	log.Info("Called Core.go")
 	results, err := cw.app.AddOrdersRaw(cw.ctx, rawMessages, pinned)
 	if err != nil {
 		return js.Undefined(), err
