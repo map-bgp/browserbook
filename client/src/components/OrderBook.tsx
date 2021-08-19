@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React from 'react'
 import "tailwindcss/tailwind.css"
 
-import { useAppSelector, useAppDispatch } from '../app/hooks'
+import { useAppSelector } from '../app/hooks'
 
-function Orderbook() {
+function OrderBook() {
   // The `state` arg is correctly typed as `RootState` already
   const bidQueue = useAppSelector(state => state.orderbook.bidQueue)
   const askQueue = useAppSelector(state => state.orderbook.askQueue)
@@ -20,4 +20,4 @@ function Orderbook() {
   )
 }
 
-export default Orderbook
+export default OrderBook

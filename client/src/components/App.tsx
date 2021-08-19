@@ -4,7 +4,8 @@ import wasm from '../wasm/main.wasm'
 import React, {useEffect} from "react";
 import {useLocation} from "react-router-dom";
 
-import {loadMeshStreamingWithURLAsync, Mesh, OrderEvent, SupportedProvider,} from '@0x/mesh-browser-lite';
+import { loadMeshStreamingWithURLAsync, Mesh, OrderEvent, SupportedProvider, } from '@0x/mesh-browser-lite';
+import {ChainId, Config, DAppProvider} from "@usedapp/core";
 
 import Header from './Header'
 import { navigation } from "./Navigation";
@@ -13,8 +14,14 @@ import { getCurrent } from "./utils/getCurrent";
 import Content from './Content'
 
 
-
 declare const window: any;
+
+const config: Config = {
+  readOnlyChainId: ChainId.Mumbai,
+  readOnlyUrls: {
+    [ChainId.Mumbai]: "https://polygon-mumbai.infura.io/v3/e8c847c8a43a4f9b95ac3182349c0932"
+  }
+}
 
 const App = () => {
   const location = useLocation()
@@ -59,8 +66,10 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Header navigation={navigation} current={getCurrent(location, navigation)}/>
-      <Content current={getCurrent(location, navigation)} mesh={mesh}/>
+      <DAppProvider config={config}>
+        <Header navigation={navigation} current={getCurrent(location, navigation)}/>
+        <Content current={getCurrent(location, navigation)} mesh={mesh}/>
+      </DAppProvider>
     </div>
   );
 }

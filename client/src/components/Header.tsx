@@ -1,12 +1,13 @@
 import "tailwindcss/tailwind.css"
 
 import React from 'react'
-import {Link, useHistory, withRouter} from "react-router-dom";
+import {Link, withRouter} from "react-router-dom";
 
 import {Disclosure} from '@headlessui/react'
 import {MenuIcon, XIcon} from '@heroicons/react/outline'
 
 import {classNames} from './utils/classNames'
+import {useEthers} from "@usedapp/core";
 
 type HeaderProps = {
   navigation: any[],
@@ -15,7 +16,7 @@ type HeaderProps = {
 
 const Header = (props: HeaderProps) => {
 
-  const history = useHistory();
+  const { activateBrowserWallet, account } = useEthers()
 
   return (
     <Disclosure as="nav" className="bg-white shadow-sm">
@@ -49,6 +50,13 @@ const Header = (props: HeaderProps) => {
                   ))}
                 </div>
               </div>
+              {!account && <button
+                type="button"
+                className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                onClick={() => activateBrowserWallet()}
+              >
+                Connect
+              </button>}
               <div className="-mr-2 flex items-center sm:hidden">
                 {/* Mobile menu button */}
                 <Disclosure.Button
