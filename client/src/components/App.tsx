@@ -2,33 +2,42 @@ import "tailwindcss/tailwind.css"
 import wasm from '../wasm/main.wasm'
 
 import React, {useEffect} from "react";
-import { useLocation } from "react-router-dom";
+import {useLocation} from "react-router-dom";
 
+import { loadMeshStreamingWithURLAsync, Mesh, OrderEvent, SupportedProvider, } from '@0x/mesh-browser-lite';
+import {ChainId, Config, DAppProvider} from "@usedapp/core";
 import { ethers } from "ethers";
 
 import {loadMeshStreamingWithURLAsync, Mesh, OrderEvent, SupportedProvider,BigNumber , SignedOrder} from '@0x/mesh-browser-lite';
 
 import Header from './Header'
+import { navigation } from "./Navigation";
+import { getCurrent } from "./utils/getCurrent";
+
 import Content from './Content'
 
-const App = () => {
 
-  const location = useLocation()
-  const getCurrent = () => {
-    let path = location.pathname
-    let current = "Dashboard"
+declare const window: any;
 
-    for (let i = 0; i < navigation.length; i++) {
-      if (navigation[i].key === path.replace("/", "")) {
-        current = navigation[i].name
-      }
-    }
-
-    return current
+const config: Config = {
+  readOnlyChainId: ChainId.Mumbai,
+  readOnlyUrls: {
+    [ChainId.Mumbai]: "https://polygon-mumbai.infura.io/v3/e8c847c8a43a4f9b95ac3182349c0932"
   }
+}
+
+const App = () => {
+  const location = useLocation()
+
+  // let provider;
+  // window.ethereum.enable().then(provider = new ethers.providers.Web3Provider(window.ethereum));
+  // const signer = provider.getSigner();
 
   // const provider = new ethers.providers.Web3Provider((window as any).ethereum)
-  
+
+  // console.log(provider)
+  // console.log(signer)
+  // console.log(signer.getAddress())
   // console.log(provider)
   // console.log(provider.getSigner(0).getAddress())
   const order: SignedOrder = {
@@ -87,37 +96,15 @@ const App = () => {
     console.log("WASM locked and loaded")
   })
 
-  const navigation = [
-    {
-      name: 'Dashboard',
-      key: 'dashboard'
-    },
-    {
-      name: 'Market',
-      key: 'market'
-    },
-    {
-      name: 'Portfolio',
-      key: 'portfolio'
-    },
-    {
-      name: 'Assets',
-      key: 'assets'
-    },
-    {
-      name: 'How it Works',
-      key: 'how-it-works'
-    },
-  ]
-
-
+  // mesh.startAsync();
   // mesh.getStatsAsync();
-
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Header navigation={navigation} current={getCurrent()}/>
-      <Content current={getCurrent()} mesh={mesh}/>
+      <DAppProvider config={config}>
+        <Header navigation={navigation} current={getCurrent(location, navigation)}/>
+        <Content current={getCurrent(location, navigation)} mesh={mesh}/>
+      </DAppProvider>
     </div>
   );
 }
