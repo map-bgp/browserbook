@@ -1,7 +1,7 @@
+import React from 'react'
 import "tailwindcss/tailwind.css"
 
-import React from 'react'
-import {Link, withRouter} from "react-router-dom";
+import {Link, useHistory, withRouter} from "react-router-dom";
 
 import {Disclosure} from '@headlessui/react'
 import {MenuIcon, XIcon} from '@heroicons/react/outline'
@@ -16,6 +16,7 @@ type HeaderProps = {
 
 const Header = (props: HeaderProps) => {
 
+  const history = useHistory();
   const { activateBrowserWallet, account } = useEthers()
 
   return (
@@ -97,4 +98,4 @@ const Header = (props: HeaderProps) => {
   );
 }
 
-export default withRouter(Header)
+export default Header

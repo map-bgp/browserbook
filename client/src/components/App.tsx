@@ -4,18 +4,16 @@ import wasm from '../wasm/main.wasm'
 import React, {useEffect} from "react";
 import {useLocation} from "react-router-dom";
 
-import { loadMeshStreamingWithURLAsync, Mesh, OrderEvent, SupportedProvider, } from '@0x/mesh-browser-lite';
 import {ChainId, Config, DAppProvider} from "@usedapp/core";
 import { ethers } from "ethers";
 
-import {loadMeshStreamingWithURLAsync, Mesh, OrderEvent, SupportedProvider,BigNumber , SignedOrder} from '@0x/mesh-browser-lite';
+import {loadMeshStreamingWithURLAsync, Mesh, OrderEvent, BigNumber , SignedOrder} from '@0x/mesh-browser-lite';
 
 import Header from './Header'
 import { navigation } from "./Navigation";
 import { getCurrent } from "./utils/getCurrent";
 
 import Content from './Content'
-
 
 declare const window: any;
 
