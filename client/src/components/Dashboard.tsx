@@ -7,21 +7,7 @@ import Orderbook from './orderbook'
 import Orderform from './orderform'
 import Info from "./elements/Info";
 
-// const rows: any[] = [];
-// const numrows = 5;
-//
-// for (var i = 0; i < numrows; i++) {
-//   // note: we are adding a key prop here to allow react to uniquely identify each
-//   // element in this array. see: https://reactjs.org/docs/lists-and-keys.html
-//   rows.push(
-//     <tr key={i} className="text-center">
-//       <td className="width-full">Streamed Order {i}</td>
-//     </tr>
-//   );
-// }
-
 type DashboardProps = {
-  provider: any
   mesh: Mesh
 }
 
@@ -29,7 +15,7 @@ const Dashboard = (props: DashboardProps) => {
 
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-      <Info message={props.provider.getSigner().getAddress().value} />
+      <Info message="Here is a message" />
       <div className="h-screen px-4 py-16 sm:px-0 grid grid-cols-2 gap-x-8 gap-y-8">
         <div
           className="flex items-center justify-center border-4 border-dashed border-gray-200 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-opacity-50">

@@ -2,41 +2,30 @@ import "tailwindcss/tailwind.css"
 import wasm from '../wasm/main.wasm'
 
 import React, {useEffect} from "react";
-import { useLocation } from "react-router-dom";
+import {useLocation} from "react-router-dom";
 
-import { useAppDispatch } from "../app/hooks";
-
-import { ethers } from "ethers";
-import { loadMeshStreamingWithURLAsync, Mesh, OrderEvent, SupportedProvider, } from '@0x/mesh-browser-lite';
+import {loadMeshStreamingWithURLAsync, Mesh, OrderEvent, SupportedProvider,} from '@0x/mesh-browser-lite';
 
 import Header from './Header'
+import { navigation } from "./Navigation";
+import { getCurrent } from "./utils/getCurrent";
+
 import Content from './Content'
+
 
 
 declare const window: any;
 
 const App = () => {
   const location = useLocation()
-  const getCurrent = () => {
-    let path = location.pathname
-    let current = "Dashboard"
 
-    for (let i = 0; i < navigation.length; i++) {
-      if (navigation[i].key === path.replace("/", "")) {
-        current = navigation[i].name
-      }
-    }
-
-    return current
-  }
-
-  let provider;
-  window.ethereum.enable().then(provider = new ethers.providers.Web3Provider(window.ethereum));
-  const signer = provider.getSigner();
+  // let provider;
+  // window.ethereum.enable().then(provider = new ethers.providers.Web3Provider(window.ethereum));
+  // const signer = provider.getSigner();
   
   // console.log(provider)
   // console.log(signer)
-  console.log(signer.getAddress())
+  // console.log(signer.getAddress())
 
   const mesh = new Mesh({
     verbosity: 6,
@@ -65,36 +54,13 @@ const App = () => {
     console.log("WASM locked and loaded")
   })
 
-  const navigation = [
-    {
-      name: 'Dashboard',
-      key: 'dashboard'
-    },
-    {
-      name: 'Market',
-      key: 'market'
-    },
-    {
-      name: 'Portfolio',
-      key: 'portfolio'
-    },
-    {
-      name: 'Assets',
-      key: 'assets'
-    },
-    {
-      name: 'How it Works',
-      key: 'how-it-works'
-    },
-  ]
-
   // mesh.startAsync();
   // mesh.getStatsAsync();
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Header navigation={navigation} current={getCurrent()}/>
-      <Content provider={provider} current={getCurrent()} mesh={mesh}/>
+      <Header navigation={navigation} current={getCurrent(location, navigation)}/>
+      <Content current={getCurrent(location, navigation)} mesh={mesh}/>
     </div>
   );
 }

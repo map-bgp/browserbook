@@ -12,7 +12,6 @@ import Assets from './Assets'
 import HowItWorks from './HowItWorks'
 
 type ContentProps = {
-  provider: any
   current: string,
   mesh: Mesh
 }
@@ -28,7 +27,7 @@ const Content = (props: ContentProps) => {
       <main>
         <Switch>
           <Route exact path={["", "/", "/dashboard"]}>
-            <Dashboard provider={props.provider} mesh={props.mesh}/>
+            <Dashboard mesh={props.mesh}/>
           </Route>
           <Route path="/market">
             <Market/>
