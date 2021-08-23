@@ -8,6 +8,7 @@ import {MenuIcon, XIcon} from '@heroicons/react/outline'
 
 import {classNames} from './utils/classNames'
 import {useEthers} from "@usedapp/core";
+import PriceTicker from "./elements/Ticker";
 
 type HeaderProps = {
   navigation: any[],
@@ -20,7 +21,8 @@ const Header = (props: HeaderProps) => {
   const { activateBrowserWallet, account } = useEthers()
 
   return (
-    <Disclosure as="nav" className="bg-white shadow-sm">
+    <>
+      <Disclosure as="nav" className="bg-white shadow-sm">
       {({open}) => (
         <>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -95,6 +97,8 @@ const Header = (props: HeaderProps) => {
         </>
       )}
     </Disclosure>
+      <PriceTicker />
+    </>
   );
 }
 
