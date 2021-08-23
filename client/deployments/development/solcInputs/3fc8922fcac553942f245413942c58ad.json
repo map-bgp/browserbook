@@ -1,0 +1,35 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/0x/MaximumGasPrice.sol": {
+      "content": "/*\n  Copyright 2019 ZeroEx Intl.\n  Licensed under the Apache License, Version 2.0 (the \"License\");\n  you may not use this file except in compliance with the License.\n  You may obtain a copy of the License at\n    http://www.apache.org/licenses/LICENSE-2.0\n  Unless required by applicable law or agreed to in writing, software\n  distributed under the License is distributed on an \"AS IS\" BASIS,\n  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n  See the License for the specific language governing permissions and\n  limitations under the License.\n*/\n\npragma solidity ^0.5.16;\n\n\ncontract MaximumGasPrice {\n    // 20 Gwei\n    uint256 constant private DEFAULT_MAX_GAS_PRICE = 20 * (10 ** 9);\n\n    /// @dev Checks that the current transaction's gas price is less than\n    ///      the default maximum value of 20 Gwei.\n    function checkGasPrice()\n        external\n        view\n    {\n        require(\n            tx.gasprice <= DEFAULT_MAX_GAS_PRICE,\n            \"MaximumGasPrice/GAS_PRICE_EXCEEDS_20_GWEI\"\n        );\n    }\n\n    /// @dev Checks that the current transaction's gas price is less than\n    ///      the specified maximum value.\n    /// @param maxGasPrice The maximum gas price allowed for the current transaction.\n    function checkGasPrice(uint256 maxGasPrice)\n        external\n        view\n    {\n        require(\n            tx.gasprice <= maxGasPrice,\n            \"MaximumGasPrice/GAS_PRICE_EXCEEDS_MAXIMUM\"\n        );\n    }\n}"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 1000
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}

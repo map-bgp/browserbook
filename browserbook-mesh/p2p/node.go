@@ -495,6 +495,10 @@ func (n *Node) SetStreamHandler(pid protocol.ID, handler network.StreamHandler) 
 }
 
 func (n *Node) NewStream(ctx context.Context, p peer.ID, pids ...protocol.ID) (network.Stream, error) {
+	log.WithFields(log.Fields{
+		"peer.ID":     p,
+		"protocol ID": pids,
+	}).Info("stream creation started here")
 	return n.host.NewStream(ctx, p, pids...)
 }
 

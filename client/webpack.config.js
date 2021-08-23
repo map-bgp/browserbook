@@ -3,7 +3,8 @@ const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 
 module.exports = {
     resolve: {
-        extensions: [".ts", ".tsx", ".js", ".jsx"]
+        extensions: [".ts", ".tsx", ".js", ".jsx"],
+        fallback:{"fs":false}
     },
     devtool: 'source-map',
     entry: {

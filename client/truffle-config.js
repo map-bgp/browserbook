@@ -36,7 +36,7 @@ module.exports = {
       provider: () =>
       new HDWalletProvider(
         "illegal eagle tide focus pigeon wrestle nurse cost place orange danger rapid",
-        "http://localhost:8545"
+        "http://localhost:9545"
       ),
     network_id: '*',
     },

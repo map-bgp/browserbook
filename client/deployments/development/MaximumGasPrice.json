@@ -1,0 +1,70 @@
+{
+  "address": "0xB0E5e4a72CDFd792D4a9395c0772378950B7Ec13",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "checkGasPrice",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "maxGasPrice",
+          "type": "uint256"
+        }
+      ],
+      "name": "checkGasPrice",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xcd6bb33b5e87e84a0e62e3e7ab4814140f0cb25c35ccbe223a2e3acbbe4f58d8",
+  "receipt": {
+    "to": null,
+    "from": "0x468929A0DAC6D5A1c7BA1ab09c0862195D63b18c",
+    "contractAddress": "0xB0E5e4a72CDFd792D4a9395c0772378950B7Ec13",
+    "transactionIndex": 0,
+    "gasUsed": "133039",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x7f9c1dac026fe6b2f7f2fb7f2a4a51a715bdab693a55ab4d46155318dbe4d4d8",
+    "transactionHash": "0xcd6bb33b5e87e84a0e62e3e7ab4814140f0cb25c35ccbe223a2e3acbbe4f58d8",
+    "logs": [],
+    "blockNumber": 4,
+    "cumulativeGasUsed": "133039",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "solcInputHash": "3fc8922fcac553942f245413942c58ad",
+  "metadata": "{\"compiler\":{\"version\":\"0.5.17+commit.d19bba13\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":true,\"inputs\":[],\"name\":\"checkGasPrice\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"maxGasPrice\",\"type\":\"uint256\"}],\"name\":\"checkGasPrice\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{\"checkGasPrice()\":{\"details\":\"Checks that the current transaction's gas price is less than      the default maximum value of 20 Gwei.\"},\"checkGasPrice(uint256)\":{\"details\":\"Checks that the current transaction's gas price is less than      the specified maximum value.\",\"params\":{\"maxGasPrice\":\"The maximum gas price allowed for the current transaction.\"}}}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"contracts/0x/MaximumGasPrice.sol\":\"MaximumGasPrice\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":1000},\"remappings\":[]},\"sources\":{\"contracts/0x/MaximumGasPrice.sol\":{\"content\":\"/*\\n  Copyright 2019 ZeroEx Intl.\\n  Licensed under the Apache License, Version 2.0 (the \\\"License\\\");\\n  you may not use this file except in compliance with the License.\\n  You may obtain a copy of the License at\\n    http://www.apache.org/licenses/LICENSE-2.0\\n  Unless required by applicable law or agreed to in writing, software\\n  distributed under the License is distributed on an \\\"AS IS\\\" BASIS,\\n  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\\n  See the License for the specific language governing permissions and\\n  limitations under the License.\\n*/\\n\\npragma solidity ^0.5.16;\\n\\n\\ncontract MaximumGasPrice {\\n    // 20 Gwei\\n    uint256 constant private DEFAULT_MAX_GAS_PRICE = 20 * (10 ** 9);\\n\\n    /// @dev Checks that the current transaction's gas price is less than\\n    ///      the default maximum value of 20 Gwei.\\n    function checkGasPrice()\\n        external\\n        view\\n    {\\n        require(\\n            tx.gasprice <= DEFAULT_MAX_GAS_PRICE,\\n            \\\"MaximumGasPrice/GAS_PRICE_EXCEEDS_20_GWEI\\\"\\n        );\\n    }\\n\\n    /// @dev Checks that the current transaction's gas price is less than\\n    ///      the specified maximum value.\\n    /// @param maxGasPrice The maximum gas price allowed for the current transaction.\\n    function checkGasPrice(uint256 maxGasPrice)\\n        external\\n        view\\n    {\\n        require(\\n            tx.gasprice <= maxGasPrice,\\n            \\\"MaximumGasPrice/GAS_PRICE_EXCEEDS_MAXIMUM\\\"\\n        );\\n    }\\n}\",\"keccak256\":\"0xf6aaec8ceae8720a11f82766bfe2a0ebf9f107eeed2f6d52cc4ac4b51ce576c1\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b50610171806100206000396000f3fe608060405234801561001057600080fd5b50600436106100365760003560e01c8063d728f5b71461003b578063da5b166a14610045575b600080fd5b610043610062565b005b6100436004803603602081101561005b57600080fd5b50356100a8565b6404a817c8003a11156100a65760405162461bcd60e51b81526004018080602001828103825260298152602001806101146029913960400191505060405180910390fd5b565b803a11156100e75760405162461bcd60e51b81526004018080602001828103825260298152602001806100eb6029913960400191505060405180910390fd5b5056fe4d6178696d756d47617350726963652f4741535f50524943455f455843454544535f4d4158494d554d4d6178696d756d47617350726963652f4741535f50524943455f455843454544535f32305f47574549a265627a7a72315820aae87c3146c047a8b4b9d50a69cbec6a2016d8e1d48026e9a4a98676a9e1c8cf64736f6c63430005110032",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100365760003560e01c8063d728f5b71461003b578063da5b166a14610045575b600080fd5b610043610062565b005b6100436004803603602081101561005b57600080fd5b50356100a8565b6404a817c8003a11156100a65760405162461bcd60e51b81526004018080602001828103825260298152602001806101146029913960400191505060405180910390fd5b565b803a11156100e75760405162461bcd60e51b81526004018080602001828103825260298152602001806100eb6029913960400191505060405180910390fd5b5056fe4d6178696d756d47617350726963652f4741535f50524943455f455843454544535f4d4158494d554d4d6178696d756d47617350726963652f4741535f50524943455f455843454544535f32305f47574549a265627a7a72315820aae87c3146c047a8b4b9d50a69cbec6a2016d8e1d48026e9a4a98676a9e1c8cf64736f6c63430005110032",
+  "devdoc": {
+    "methods": {
+      "checkGasPrice()": {
+        "details": "Checks that the current transaction's gas price is less than      the default maximum value of 20 Gwei."
+      },
+      "checkGasPrice(uint256)": {
+        "details": "Checks that the current transaction's gas price is less than      the specified maximum value.",
+        "params": {
+          "maxGasPrice": "The maximum gas price allowed for the current transaction."
+        }
+      }
+    }
+  },
+  "userdoc": {
+    "methods": {}
+  },
+  "storageLayout": {
+    "storage": [],
+    "types": null
+  }
+}

@@ -161,7 +161,10 @@ func New(ctx context.Context, node *p2p.Node, subprotocols []Subprotocol) *Servi
 	for _, subp := range subprotocols {
 		sids = append(sids, subp.Name())
 		supportedSubprotocols[subp.Name()] = subp
+		log.Info(subp)
+		log.Info(subp.Name())
 	}
+
 	// TODO(jalextowle): We should ensure that there were no duplicates -- there
 	// is no reason to support this.
 	s := &Service{
@@ -171,6 +174,7 @@ func New(ctx context.Context, node *p2p.Node, subprotocols []Subprotocol) *Servi
 		preferredSubprotocols: sids,
 		requestRateLimiter:    rate.NewLimiter(maxRequestsPerSecond, requestsBurst),
 	}
+	
 	s.node.SetStreamHandler(ID, s.HandleStream)
 	return s
 }
@@ -250,6 +254,8 @@ func (s *Service) HandleStream(stream network.Stream) {
 func (s *Service) GetOrders(ctx context.Context, minPeers int) error {
 	successfullySyncedPeers := stringset.New()
 
+	log.Info(minPeers)
+
 	// retryBackoff defines how long to wait before trying again if we didn't get
 	// orders from enough peers during the ordersync process.
 	retryBackoff := &backoff.Backoff{
@@ -264,6 +270,7 @@ func (s *Service) GetOrders(ctx context.Context, minPeers int) error {
 	// from the beginning of the peer's database.
 	nextRequestForPeer := map[peer.ID]*rawRequest{}
 	for len(successfullySyncedPeers) < minPeers {
+		log.Info("Trying to fetch Order from individual peers")
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
@@ -282,6 +289,7 @@ func (s *Service) GetOrders(ctx context.Context, minPeers int) error {
 		semaphore := make(chan struct{}, minPeers)
 
 		currentNeighbors := s.node.Neighbors()
+		log.Info(currentNeighbors)
 		shufflePeers(currentNeighbors)
 		innerCtx, cancel := context.WithCancel(ctx)
 		defer cancel()
@@ -290,6 +298,7 @@ func (s *Service) GetOrders(ctx context.Context, minPeers int) error {
 			// added to the semaphore. This ensures that no more than
 			// minPeers goroutines will be active at a given time
 			// because the channel only has a capacity of minPeers.
+			log.Info("existing peers are identified in the getOrders")
 			select {
 			case <-innerCtx.Done():
 				break
@@ -300,6 +309,10 @@ func (s *Service) GetOrders(ctx context.Context, minPeers int) error {
 			successfullySyncedPeerLength := len(successfullySyncedPeers)
 			successfullySynced := successfullySyncedPeers.Contains(peerID.Pretty())
 			nextRequest := nextRequestForPeer[peerID]
+			log.WithFields(log.Fields{
+				"successfullySyncedPeers": successfullySyncedPeers,
+				"successfullySynced":      successfullySynced,
+			}).Info("Justifying the peer details is not successfully synced")
 			m.RUnlock()
 			if successfullySyncedPeerLength >= minPeers {
 				return nil
@@ -307,7 +320,7 @@ func (s *Service) GetOrders(ctx context.Context, minPeers int) error {
 			if successfullySynced {
 				continue
 			}
-
+			log.Info("Did I reach here")
 			log.WithFields(log.Fields{
 				"provider": peerID.Pretty(),
 			}).Trace("requesting orders from neighbor via ordersync")
@@ -319,6 +332,7 @@ func (s *Service) GetOrders(ctx context.Context, minPeers int) error {
 					<-semaphore
 				}()
 				if nextFirstRequest, err := s.getOrdersFromPeer(innerCtx, id, nextRequest); err != nil {
+					log.Info(id)
 					log.WithFields(log.Fields{
 						"error":    err.Error(),
 						"provider": id.Pretty(),
@@ -512,8 +526,10 @@ func (s *Service) createFirstRequestForAllSubprotocols() (*rawRequest, error) {
 }
 
 func (s *Service) getOrdersFromPeer(ctx context.Context, providerID peer.ID, firstRequest *rawRequest) (*rawRequest, error) {
+	log.Info(providerID)
 	stream, err := s.node.NewStream(ctx, providerID, ID)
 	if err != nil {
+		log.Info("stream creation failed")
 		s.handlePeerScoreEvent(providerID, psUnexpectedDisconnect)
 		return nil, err
 	}

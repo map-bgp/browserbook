@@ -4,35 +4,31 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 
     // We get the contract to deploy
 
-    await deploy("ERC20Proxy", { from: deployer, gasLimit: 4000000, log: true });
-
-    await deploy("ERC721Proxy", { from: deployer, gasLimit: 4000000, log: true });
-
-    await deploy("ERC1155Proxy", { from: deployer, gasLimit: 4000000, log: true });
-
-    await deploy("MaximumGasPrice", { from: deployer, gasLimit: 4000000, log: true });
-
-    const exchange = await deploy("Exchange", { from: deployer, gasLimit: 40000000, args: ["80001"], log: true });
-
-    console.log(exchange.address)
-
-    const LibAssetData = await deploy("LibAssetData", { from: deployer, gasLimit: 40000000, log: true });
-    const LibTransactionDecoder = await deploy("LibTransactionDecoder", { from: deployer, gasLimit: 40000000, log: true });
-    const LibOrderTransferSimulation = await deploy("LibOrderTransferSimulation", { from: deployer, gasLimit: 40000000, log: true });
-
-    console.table({
-        "LibAssetData": LibAssetData.address,
-        "LibTransactionDecoder": LibTransactionDecoder.address,
-        "LibOrderTransferSimulation": LibOrderTransferSimulation.address
-    });
-
-
-    await deploy("DevUtils", { from: deployer, gasLimit: 40000000, args: [exchange.address] , libraries:{
+    const ERC20Proxy = await deploy("ERC20Proxy", { from: deployer, gasLimit: 4000000, log: true });
+    const ERC721Proxy = await deploy("ERC721Proxy", { from: deployer, gasLimit: 4000000, log: true });
+    const ERC1155Proxy = await deploy("ERC1155Proxy", { from: deployer, gasLimit: 4000000, log: true });
+    const MaximumGasPrice = await deploy("MaximumGasPrice", { from: deployer, gasLimit: 4000000, log: true });
+    const Exchange = await deploy("Exchange", { from: deployer, gasLimit: 6721975, args: ["80001"], log: true });
+    const LibAssetData = await deploy("LibAssetData", { from: deployer, gasLimit: 6721975, log: true });
+    const LibTransactionDecoder = await deploy("LibTransactionDecoder", { from: deployer, gasLimit: 6721975, log: true });
+    const LibOrderTransferSimulation = await deploy("LibOrderTransferSimulation", { from: deployer, gasLimit: 6721975, log: true });
+    const DevUtils = await deploy("DevUtils", { from: deployer, gasLimit: 6721975, args: [Exchange.address] , libraries:{
         "LibAssetData": LibAssetData.address,
         "LibTransactionDecoder": LibTransactionDecoder.address,
         "LibOrderTransferSimulation": LibOrderTransferSimulation.address
     }});
 
+    console.table({
+        "ERC20Proxy": ERC20Proxy.address,
+        "ERC721Proxy": ERC721Proxy.address,
+        "ERC1155Proxy": ERC1155Proxy.address,
+        "MaximumGasPrice": MaximumGasPrice.address,    
+        "Exchange": Exchange.address,
+        "LibAssetData": LibAssetData.address,
+        "LibTransactionDecoder": LibTransactionDecoder.address,
+        "LibOrderTransferSimulation": LibOrderTransferSimulation.address,
+        "DevUtils": DevUtils.address
+    });
 }
 
 

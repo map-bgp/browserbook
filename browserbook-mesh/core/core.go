@@ -59,7 +59,7 @@ const (
 	version          = "10.0.0"
 	// ordersyncMinPeers is the minimum amount of peers to receive orders from
 	// before considering the ordersync process finished.
-	ordersyncMinPeers = 5
+	ordersyncMinPeers = 2
 	// ordersyncApproxDelay is the approximate amount of time to wait between each
 	// run of the ordersync protocol (as a requester). We always request orders
 	// immediately on startup. This delay only applies to subsequent runs.
@@ -636,6 +636,8 @@ func (app *App) Start() error {
 	for _, subprotocolFactory := range app.privateConfig.paginationSubprotocols {
 		ordersyncSubprotocols = append(ordersyncSubprotocols, subprotocolFactory(app, app.privateConfig.paginationSubprotocolPerPage))
 	}
+
+	log.Info(ordersyncSubprotocols)
 	app.ordersyncService = ordersync.New(innerCtx, app.node, ordersyncSubprotocols)
 	orderSyncErrChan := make(chan error, 1)
 	wg.Add(1)
@@ -650,6 +652,8 @@ func (app *App) Start() error {
 			"subprotocols": []string{"FilteredPaginationSubProtocol"},
 		}).Info("starting ordersync service")
 
+		log.Info(ordersyncMinPeers)
+		log.Info(ordersyncApproxDelay)
 		if err := app.ordersyncService.PeriodicallyGetOrders(innerCtx, ordersyncMinPeers, ordersyncApproxDelay); err != nil {
 			orderSyncErrChan <- err
 		}

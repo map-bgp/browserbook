@@ -118,16 +118,16 @@ func ValidateContractAddressesForChainID(chainID int, addresses ContractAddresse
 // function allows these addresses to only be defined in one place.
 func ganacheAddresses() ContractAddresses {
 	return ContractAddresses{
-		ERC20Proxy:               common.HexToAddress("0x1dc4c1cefef38a777b15aa20260a54e584b16c48"),
-		ERC721Proxy:              common.HexToAddress("0x1d7022f5b17d2f8b695918fb48fa1089c9f85401"),
-		ERC1155Proxy:             common.HexToAddress("0x6a4a62e5a7ed13c361b176a5f62c2ee620ac0df8"),
-		Exchange:                 common.HexToAddress("0x48bacb9266a570d521063ef5dd96e61686dbe788"),
+		ERC20Proxy:               common.HexToAddress("0x9F2d7AA3884360a309A5f7D875E14cD9413FF794"),
+		ERC721Proxy:              common.HexToAddress("0xb1A88C62aD7E7983555c3ad7598FEAe0184A341F"),
+		ERC1155Proxy:             common.HexToAddress("0xa17e1B749fa4C802195173712671b1F407c0D3B4"),
+		Exchange:                 common.HexToAddress("0x0DE191A5885cC120D78075C1FC14142ef3B91E54"),
 		ExchangeProxyFlashWallet: common.HexToAddress("0x22f9dcf4647084d6c31b2765f6910cd85c178c18"),
-		DevUtils:                 common.HexToAddress("0xb23672f74749bf7916ba6827c64111a4d6de7f11"),
+		DevUtils:                 common.HexToAddress("0x107c43484bCDDc07c3d92B619AD1105FB3c39122"),
 		WETH9:                    common.HexToAddress("0x0b1ba0af832d7c05fd64161e0db78e85978e8082"),
 		ZRXToken:                 common.HexToAddress("0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c"),
 		ChaiBridge:               common.HexToAddress("0x0000000000000000000000000000000000000000"),
 		ChaiToken:                common.HexToAddress("0x0000000000000000000000000000000000000000"),
-		MaximumGasPrice:          common.HexToAddress("0x2c530e4ecc573f11bd72cf5fdf580d134d25f15f"),
+		MaximumGasPrice:          common.HexToAddress("0xB0E5e4a72CDFd792D4a9395c0772378950B7Ec13"),
 	}
 }

@@ -15,6 +15,10 @@ module.exports = {
             allowUnlimitedContractSize: true,
             blockGasLimit: 0x1fffffffffff
         },
+        development: {
+            url: "http://192.41.136.236:9545",
+            accounts:{mnemonic:"hawk myth suggest very kitten fine ketchup message pulse fuel field muscle"}
+        },
         mumbai: {
             url: process.env.MUMBAI_RPC_URL,
             accounts: { mnemonic: process.env.MUMBAI_MNEMONIC }
