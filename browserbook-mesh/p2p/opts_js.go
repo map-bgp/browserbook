@@ -1,4 +1,4 @@
-// +build js,wasm
+// +build !js
 
 package p2p
 
@@ -9,6 +9,7 @@ import (
 	"github.com/libp2p/go-libp2p-core/host"
 	dht "github.com/libp2p/go-libp2p-kad-dht"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
+	tcp "github.com/libp2p/go-tcp-transport"
 	ws "github.com/libp2p/go-ws-transport"
 	"github.com/map-bgp/browserbook/browserbook-mesh/db"
 )
@@ -28,6 +29,7 @@ const (
 
 func getHostOptions(ctx context.Context, config Config) ([]libp2p.Option, error) {
 	return []libp2p.Option{
+		libp2p.Transport(tcp.NewTCPTransport),
 		libp2p.Transport(ws.New),
 		// Don't listen on any addresses by default. We can't accept incoming
 		// connections in the browser.

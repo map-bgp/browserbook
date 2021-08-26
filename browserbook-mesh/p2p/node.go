@@ -24,7 +24,8 @@ import (
 	discovery "github.com/libp2p/go-libp2p-discovery"
 	dht "github.com/libp2p/go-libp2p-kad-dht"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
-	"github.com/libp2p/go-libp2p-secio"
+
+	secio "github.com/libp2p/go-libp2p-secio"
 	swarm "github.com/libp2p/go-libp2p-swarm"
 	filter "github.com/libp2p/go-maddr-filter"
 	"github.com/map-bgp/browserbook/browserbook-mesh/constants"
@@ -224,6 +225,8 @@ func New(ctx context.Context, config Config) (*Node, error) {
 		libp2p.EnableAutoRelay(),
 		libp2p.EnableRelay(),
 		libp2p.BandwidthReporter(bandwidthCounter),
+		//libp2p.NATPortMap(),
+		libp2p.EnableNATService(),
 		// TODO(jalextowle): This should be replaced with libp2p.ConnectionGater
 		// after v10 is released
 		libp2p.Filters(filters), //nolint:staticcheck

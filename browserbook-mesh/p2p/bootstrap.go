@@ -18,7 +18,7 @@ const DHTProtocolID = protocol.ID("/0x-mesh-dht/version/1")
 // bootstrapping the DHT.
 var DefaultBootstrapList = []string{
 	// bootstrap nodes
-	"/ip4/34.136.24.16/tcp/4002/ws/p2p/16Uiu2HAkvpWh13i35i45rWBYfsKKyRb2R9mWquwXP3fQJmJfhnQd",
+	"/ip4/34.136.24.16/tcp/4002/ws/p2p/16Uiu2HAmFxhJFSefdVYzDwDcGLj5RvH6ZaMnmZx7dXFFprVUz7fP",
 	//"/ip4/192.41.136.236/tcp/4002/ws/p2p/16Uiu2HAmHXUhNrUZ7aywg3x8os6D7XiLaVSDszou9UiHBZHjsqtN",
 	// "/ip4/3.214.190.67/tcp/60559/ws/ipfs/16Uiu2HAmGx8Z6gdq5T5AQE54GMtqDhDFhizywTy1o28NJbAMMumF",
 	// "/dns4/bootstrap-0.mesh.0x.org/tcp/60558/ipfs/16Uiu2HAmGx8Z6gdq5T5AQE54GMtqDhDFhizywTy1o28NJbAMMumF",

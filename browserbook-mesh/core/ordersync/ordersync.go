@@ -161,10 +161,8 @@ func New(ctx context.Context, node *p2p.Node, subprotocols []Subprotocol) *Servi
 	for _, subp := range subprotocols {
 		sids = append(sids, subp.Name())
 		supportedSubprotocols[subp.Name()] = subp
-		log.Info(subp)
-		log.Info(subp.Name())
 	}
-
+	log.Info("I am in ordersync new but check below")
 	// TODO(jalextowle): We should ensure that there were no duplicates -- there
 	// is no reason to support this.
 	s := &Service{
@@ -174,8 +172,12 @@ func New(ctx context.Context, node *p2p.Node, subprotocols []Subprotocol) *Servi
 		preferredSubprotocols: sids,
 		requestRateLimiter:    rate.NewLimiter(maxRequestsPerSecond, requestsBurst),
 	}
-	
+
+	log.WithFields(log.Fields{
+		"ID": ID,
+	}).Info("set Stream handler working below")
 	s.node.SetStreamHandler(ID, s.HandleStream)
+
 	return s
 }
 
@@ -198,17 +200,18 @@ func (s *Service) GetMatchingSubprotocol(rawReq *rawRequest) (Subprotocol, int, 
 
 // HandleStream is a stream handler that is used to handle incoming ordersync requests.
 func (s *Service) HandleStream(stream network.Stream) {
+	log.Info("Got a new stream!")
 	if !s.requestRateLimiter.Allow() {
 		// Pre-emptively close the stream if we can't accept anymore requests.
 		log.WithFields(log.Fields{
 			"requester": stream.Conn().RemotePeer().Pretty(),
-		}).Warn("closing ordersync stream because rate limiter is backed up")
+		}).Info("closing ordersync stream because rate limiter is backed up")
 		_ = stream.Reset()
 		return
 	}
 	log.WithFields(log.Fields{
 		"requester": stream.Conn().RemotePeer().Pretty(),
-	}).Trace("handling ordersync stream")
+	}).Info("handling ordersync stream")
 	defer func() {
 		_ = stream.Close()
 	}()
@@ -218,7 +221,7 @@ func (s *Service) HandleStream(stream network.Stream) {
 		if err := s.requestRateLimiter.Wait(s.ctx); err != nil {
 			log.WithFields(log.Fields{
 				"requester": stream.Conn().RemotePeer().Pretty(),
-			}).Warn("ordersync rate limiter returned error")
+			}).Info("ordersync rate limiter returned error")
 			return
 		}
 		rawReq, err := waitForRequest(s.ctx, stream)
@@ -228,7 +231,7 @@ func (s *Service) HandleStream(stream network.Stream) {
 		}
 		log.WithFields(log.Fields{
 			"requester": stream.Conn().RemotePeer().Pretty(),
-		}).Trace("received ordersync request")
+		}).Info("received ordersync request")
 		rawRes := s.handleRawRequest(rawReq, requesterID)
 		if rawRes == nil {
 			return
@@ -237,7 +240,7 @@ func (s *Service) HandleStream(stream network.Stream) {
 			log.WithFields(log.Fields{
 				"error":     err.Error(),
 				"requester": requesterID.Pretty(),
-			}).Warn("could not encode ordersync response")
+			}).Info("could not encode ordersync response")
 			s.handlePeerScoreEvent(requesterID, psUnexpectedDisconnect)
 			return
 		}
@@ -526,7 +529,7 @@ func (s *Service) createFirstRequestForAllSubprotocols() (*rawRequest, error) {
 }
 
 func (s *Service) getOrdersFromPeer(ctx context.Context, providerID peer.ID, firstRequest *rawRequest) (*rawRequest, error) {
-	log.Info(providerID)
+	log.WithFields(log.Fields{"providerID": providerID, "ID": ID}).Info("I am searching this peer at this protocols")
 	stream, err := s.node.NewStream(ctx, providerID, ID)
 	if err != nil {
 		log.Info("stream creation failed")

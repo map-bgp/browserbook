@@ -1,11 +1,10 @@
-// +build !js
+// +build js,wasm
 
 package p2p
 
 import (
 	"context"
-	// "crypto/tls"
-	// "os/exec"
+	//"os/exec"
 	"fmt"
 	"io/ioutil"
 	"net/http"
