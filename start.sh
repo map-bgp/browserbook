@@ -42,4 +42,4 @@ echo "Wasm Created"
 
 cd ../client
 
-npm run dev -- --host=$HOST --port=$PORT
+npm run dev
