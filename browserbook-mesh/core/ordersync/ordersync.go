@@ -302,6 +302,7 @@ func (s *Service) GetOrders(ctx context.Context, minPeers int) error {
 			// minPeers goroutines will be active at a given time
 			// because the channel only has a capacity of minPeers.
 			log.Info("existing peers are identified in the getOrders")
+			log.Info(peerID)
 			select {
 			case <-innerCtx.Done():
 				break
