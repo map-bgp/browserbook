@@ -1,3 +1,5 @@
+#!/bin/bash
+
 cd ./browserbook-mesh
 
 go mod tidy

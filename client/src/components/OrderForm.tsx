@@ -1,6 +1,4 @@
 import React, { Fragment, useState } from 'react'
-import { Mesh } from '@0x/mesh-browser-lite'
-import React, { useState } from 'react'
 import "tailwindcss/tailwind.css"
 
 import { Listbox, Transition } from '@headlessui/react'
@@ -9,8 +7,6 @@ import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
 import { useAppDispatch } from '../app/hooks'
 
 import { addOrder } from '../features/orderbookSlice'
-import  {addNewOrder} from '../features/OrderCreation'
-import {Order} from "./types/Order";
 
 import { classNames} from "./utils/classNames";
 
@@ -110,14 +106,6 @@ function OrderForm() {
           className="mx-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
         >
           Add Order to Queue
-        </button>
-
-        <button
-            type="button"
-            className="mx-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-            onClick={() => addNewOrder()}
-        >
-          Create Order
         </button>
       </div>
     </form>

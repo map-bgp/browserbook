@@ -30,6 +30,7 @@
     "@truffle/hdwallet-provider": "^1.4.2",
     "@types/react": "^17.0.14",
     "@types/react-dom": "^17.0.9",
+    "@usedapp/core": "^0.4.4",
     "@web3-react/core": "^6.1.9",
     "babel-cli": "^6.26.0",
     "babel-eslint": "10.0.1",
@@ -50,6 +51,7 @@
     "react-dom": "^17.0.2",
     "react-redux": "^7.2.4",
     "react-router-dom": "^5.2.0",
+    "react-ticker": "^1.2.2",
     "serve": "^12.0.0",
     "solidity-rlp": "^2.0.0",
     "truffle": "^5.3.14",
@@ -66,6 +68,8 @@
     "@0x/subproviders":"6.5.4"
   },
   "devDependencies": {
+    "@tailwindcss/forms": "^0.3.3",
+    "@types/react-router-dom": "^5.1.8",
     "add-asset-html-webpack-plugin": "^3.2.0",
     "autoprefixer": "^10.3.1",
     "css-loader": "^5.2.7",

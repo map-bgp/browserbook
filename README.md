@@ -34,7 +34,6 @@
 
 </p>
 
-
 <!-- TABLE OF CONTENTS -->
 <details open="open">
   <summary><h2 style="display: inline-block">Table of Contents</h2></summary>
@@ -66,7 +65,6 @@
   </ol>
 </details>
 
-
 ## About The Project
 
 Browserbook is a decentralized ethereum exchange powered by the 0x order protocol and WebRTC. Order discovery is
@@ -81,10 +79,10 @@ are loaded from the IPFS network, to ensure true decentralization.
 Browserbook depends on a lot other awesome projects. Much of the backend code relies on the work of the discontinued
 mesh-browser project from 0x labs.
 
-* [0xProject](https://github.com/0xProject)
-* [Ganache](https://github.com/trufflesuite/ganache)
-* [Truffle](https://github.com/trufflesuite/truffle)
-* [IPFS](https://github.com/ipfs)
+- [0xProject](https://github.com/0xProject)
+- [Ganache](https://github.com/trufflesuite/ganache)
+- [Truffle](https://github.com/trufflesuite/truffle)
+- [IPFS](https://github.com/ipfs)
 
 ## Getting Started
 
@@ -118,48 +116,32 @@ The overall directory hierarchy resembles the following
 
 The project depends on certain prerequisites.
 
-First, ensure that [Node.js](https://github.com/nodejs/node) __v12__ (we use __v12.22.1__) is installed and available to the command line.
+First, ensure that [Node.js](https://github.com/nodejs/node) **v12** (we use **v12.22.1**) is installed and available to the command line.
 We highly recommend using [NVM](https://github.com/nvm-sh/nvm) to manage your node installations.
 
-You will also need to ensure that [golang](https://github.com/golang/go) is installed. The repository has been tested and works with __golang 1.16__.
+You will also need to ensure that [golang](https://github.com/golang/go) is installed. The repository has been tested and works with **golang 1.16**.
 
 ## Usage
+
 1. Clone the repo
 
    ```sh
    git clone https://github.com/map-bgp/browserbook.git
    ```
 
-2. Change into browserbook-mesh directory
+2. For installation of the dependencies and other packages
 
-   ```sh
-   cd browserbook/browserbook-mesh
+  ```sh
+  make install
+  ```
+
+3. To Compile the wasm binary and start the Webpack server 
+
+  ```sh
+  make start
    ```
 
-3. Install go dependencies
-
-   ```sh
-   go mod tidy
-   ```
-
-4. Compile the wasm binary
-   ```sh
-   GOOS=js GOARCH=wasm go build -o ../client/src/wasm/main.wasm
-   ```
-
-5. Back from the project root, navigate to the client directory
-
-   ```sh
-   cd client
-   ```
-
-6. Install dependencies and start the Webpack dev server
-
-   ```sh
-   npm install && npm run dev
-   ```
-
-You should now be able to open a browser and navigate to `http://localhost:8080/`
+You should now be able to open a browser and navigate to `http://localhost:5500/`
 
 If you open the console, you should see 0x order activity. Note we do not recommend Safari.
 
@@ -205,19 +187,14 @@ Project Link: [https://github.com/map-bgp/browserbook](https://github.com/map-bg
 
 ## Acknowledgements
 
-* [University of Zurich Institut for Informatik CSG](https://www.csg.uzh.ch/csg/en/)
+- [University of Zurich Institut for Informatik CSG](https://www.csg.uzh.ch/csg/en/)
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
 [stars-shield]: https://img.shields.io/github/stars/map-bgp/browserbook.svg?style=plastic
-
 [stars-url]: https://github.com/map-bgp/browserbook/stargazers
-
 [issues-shield]: https://img.shields.io/github/issues/map-bgp/browserbook.svg?style=plastic
-
 [issues-url]: https://github.com/map-bgp/browserbook/issues
-
 [license-shield]: https://img.shields.io/github/license/map-bgp/browserbook.svg?style=plastic
-
 [license-url]: https://github.com/map-bgp/browserbook/blob/master/LICENSE.txt
