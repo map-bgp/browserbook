@@ -26,33 +26,33 @@ const config: Config = {
   }
 }
 
-const App = () => {
 export const mesh = new Mesh({
   verbosity: 5,
   ethereumChainID: 1337,
   ethereumRPCURL: "http://192.41.136.236:9545",
   useBootstrapList: true,
   customOrderFilter: {
-    properties: { makerAddress: { const: '0x468929A0DAC6D5A1c7BA1ab09c0862195D63b18c' } },
-},
+    properties: {makerAddress: {const: '0x468929A0DAC6D5A1c7BA1ab09c0862195D63b18c'}},
+  },
   //web3Provider: (window as any).ethereum as SupportedProvider,
+})
+
+mesh.onError((err: Error) => {
+  console.error(err)
+})
+
+mesh.onOrderEvents((events: OrderEvent[]) => {
+  for (const event of events) {
+    console.log(event)
+  }
 })
 
 export const App = () => {
 
   const location = useLocation()
 
-    for (let i = 0; i < navigation.length; i++) {
-      if (navigation[i].key === path.replace("/", "")) {
-        current = navigation[i].name
-      }
-    }
-
-    return current
-  }
-
   //const provider = new ethers.providers.Web3Provider((window as any).ethereum)
-  
+
   // console.log(provider)
   // console.log(provider.getSigner(0).getAddress())
 
@@ -75,26 +75,15 @@ export const App = () => {
     makerFeeAssetData: '0x',
     chainId: 1,
     takerFeeAssetData: '0x',
-};
+  };
 
-  const mesh = new Mesh({
-    verbosity: 4,
-    ethereumChainID: 80001,
-    ethereumRPCURL: "https://polygon-mumbai.infura.io/v3/e8c847c8a43a4f9b95ac3182349c0932",
-    useBootstrapList: true,
-    //web3Provider: (window as any).ethereum as SupportedProvider,
-  })
-
-  mesh.onError((err: Error) => {
-    console.error(err)
-  })
-
-  mesh.onOrderEvents((events: OrderEvent[]) => {
-    for (const event of events) {
-      console.log(event)
-    }
-  })
-
+  // const mesh = new Mesh({
+  //   verbosity: 4,
+  //   ethereumChainID: 80001,
+  //   ethereumRPCURL: "https://polygon-mumbai.infura.io/v3/e8c847c8a43a4f9b95ac3182349c0932",
+  //   useBootstrapList: true,
+  //   //web3Provider: (window as any).ethereum as SupportedProvider,
+  // })
 
 
 //   // Set up a Web3 Provider that uses the RPC endpoint
@@ -124,7 +113,6 @@ export const App = () => {
 //   salt: new BigNumber(expirationTime),
 //   chainId: 1337,
 // };
-
 
 
   useEffect(() => {
@@ -171,17 +159,14 @@ export const App = () => {
     },
   ]
 
-
   // mesh.getStatsAsync();
-
-
   return (
-    <div className="min-h-screen bg-gray-100">
-      <DAppProvider config={config}>
-        <Header navigation={navigation} current={getCurrent(location, navigation)}/>
-        <Content current={getCurrent(location, navigation)} mesh={mesh}/>
-      </DAppProvider>
-    </div>
+      <div className="min-h-screen bg-gray-100">
+        <DAppProvider config={config}>
+          <Header navigation={navigation} current={getCurrent(location, navigation)}/>
+          <Content current={getCurrent(location, navigation)} mesh={mesh}/>
+        </DAppProvider>
+      </div>
   );
 }
 
