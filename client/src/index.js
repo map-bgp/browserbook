@@ -7,14 +7,15 @@ import { store } from './app/store'
 import { Provider } from 'react-redux'
 
 import App from './components/App'
+import {StateProvider} from "./components/store/Store";
 
 ReactDom.render(
     <React.StrictMode>
         <Provider store={store}>
             <Router>
-                {/*<DAppProvider config={config} >*/}
+                <StateProvider>
                     <App/>
-                {/*</DAppProvider>*/}
+                </StateProvider>
             </Router>
         </Provider>
     </React.StrictMode>,

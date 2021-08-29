@@ -9,7 +9,6 @@ import Info from "./elements/Info";
 import { useEthers } from "@usedapp/core";
 
 type DashboardProps = {
-  mesh: Mesh
 }
 
 const Dashboard = (props: DashboardProps) => {

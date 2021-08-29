@@ -33,7 +33,7 @@ func getHostOptions(ctx context.Context, config Config) ([]libp2p.Option, error)
 		libp2p.Transport(ws.New),
 		// Don't listen on any addresses by default. We can't accept incoming
 		// connections in the browser.
-		libp2p.ListenAddrs(),
+		// libp2p.ListenAddrs(),
 	}, nil
 }
 

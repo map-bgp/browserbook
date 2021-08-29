@@ -533,7 +533,9 @@ func (s *Service) getOrdersFromPeer(ctx context.Context, providerID peer.ID, fir
 	log.WithFields(log.Fields{"providerID": providerID, "ID": ID}).Info("I am searching this peer at this protocols")
 	stream, err := s.node.NewStream(ctx, providerID, ID)
 	if err != nil {
-		log.Info("stream creation failed")
+		log.WithFields(log.Fields{
+			"error":     err,
+		}).Info("stream creation failed")
 		s.handlePeerScoreEvent(providerID, psUnexpectedDisconnect)
 		return nil, err
 	}
