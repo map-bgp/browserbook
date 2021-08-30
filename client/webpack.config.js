@@ -41,6 +41,7 @@ module.exports = {
         historyApiFallback: true,
         disableHostCheck: true,
         injectClient: false,
+        https: true,
     },
     plugins: [
         new NodePolyfillPlugin(),
