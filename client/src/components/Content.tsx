@@ -1,17 +1,13 @@
-import React, {useContext} from "react";
+import React from "react";
 import "tailwindcss/tailwind.css"
 
 import {Route, Switch} from "react-router-dom";
-
-import {Mesh,} from '@0x/mesh-browser-lite';
 
 import Dashboard from './Dashboard'
 import Market from './Market'
 import Portfolio from './Portfolio'
 import Assets from './Assets'
 import HowItWorks from './HowItWorks'
-import {useAppContext} from "./context/Store";
-import {useAppSelector} from "../store/Hooks";
 
 type ContentProps = {
   current: string,

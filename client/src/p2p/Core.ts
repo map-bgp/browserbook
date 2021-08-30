@@ -3,12 +3,12 @@ import Libp2p from 'libp2p'
 
 import Websockets from 'libp2p-websockets'
 import WebRTCStar from 'libp2p-webrtc-star'
-import { NOISE } from '@chainsafe/libp2p-noise'
+import {NOISE} from '@chainsafe/libp2p-noise'
 
 import Mplex from 'libp2p-mplex'
 import Bootstrap from 'libp2p-bootstrap'
 import {store} from "../store/Store"
-import {decrementPeers, incrementPeers, setPeerID} from "../store/slices/PeerSlice";
+import {decrementPeers, incrementPeers} from "../store/slices/PeerSlice";
 
 export const initNode = async () => {
   const dispatch = store.dispatch

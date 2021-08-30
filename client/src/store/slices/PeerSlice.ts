@@ -1,6 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import type { RootState } from '../Store'
-import {Order} from "../../components/types/Order";
+import {createSlice, PayloadAction} from '@reduxjs/toolkit'
+import type {RootState} from '../Store'
 
 // Define a type for the slice state
 interface PeerState {

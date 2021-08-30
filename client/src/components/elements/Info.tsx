@@ -1,10 +1,9 @@
 import React from "react";
+import {InformationCircleIcon} from '@heroicons/react/solid'
 
 type InfoProps = {
   message: string,
 }
-
-import { InformationCircleIcon } from '@heroicons/react/solid'
 
 const Info = (props: InfoProps) => {
 

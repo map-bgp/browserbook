@@ -1,16 +1,14 @@
-import React, { Fragment, useState } from 'react'
-import { Mesh } from '@0x/mesh-browser-lite'
+import React, {Fragment, useState} from 'react'
 import "tailwindcss/tailwind.css"
 
-import { Listbox, Transition } from '@headlessui/react'
-import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
+import {Listbox, Transition} from '@headlessui/react'
+import {CheckIcon, SelectorIcon} from '@heroicons/react/solid'
 
-import { useAppDispatch } from '../store/Hooks'
+import {useAppDispatch} from '../store/Hooks'
 
-import { addOrder } from '../store/slices/OrderbookSlice'
-import {Order} from "./types/Order";
+import {addOrder} from '../store/slices/OrderbookSlice'
 
-import { classNames} from "./utils/classNames";
+import {classNames} from "./utils/classNames";
 
 function OrderForm() {
     const dispatch = useAppDispatch()

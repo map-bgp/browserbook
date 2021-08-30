@@ -1,7 +1,7 @@
 import React from 'react'
 import "tailwindcss/tailwind.css"
 
-import {Link, useHistory, withRouter} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 
 import {Disclosure} from '@headlessui/react'
 import {MenuIcon, XIcon} from '@heroicons/react/outline'

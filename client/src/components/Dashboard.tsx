@@ -1,12 +1,10 @@
 import React from "react";
 import "tailwindcss/tailwind.css"
 
-import {Mesh,} from '@0x/mesh-browser-lite';
-
 import OrderBook from './OrderBook'
 import OrderForm from './OrderForm'
 import Info from "./elements/Info";
-import { useEthers } from "@usedapp/core";
+import {useEthers} from "@usedapp/core";
 import {useAppSelector} from "../store/Hooks";
 
 type DashboardProps = {
