@@ -1,4 +1,4 @@
-import {StateContext} from './store'
+import {StateContext} from './Store'
 
 export enum ActionType {
   SET_NODE = 'SET_NODE',
