@@ -18,15 +18,15 @@ const Dashboard = (props: DashboardProps) => {
     return useAppSelector(state => state.peer.peerID)
   }
 
-  const getNumPeers = () => {
-    return useAppSelector(state => state.peer.numPeers)
-  }
+  let accountAddress = account !== null ? account : "pending"
 
-  let message = `Your peer ID is: ${getPeerID()}`
+  let accountAddressMessage = `Your wallet address is: ${accountAddress}`
+  let peerIDMessage = `Your peer ID is: ${getPeerID()}`
 
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-      <Info message={message} />
+      <Info message={accountAddressMessage} />
+      <Info message={peerIDMessage} />
       <div className="h-screen px-4 py-16 sm:px-0 grid grid-cols-2 gap-x-8 gap-y-8">
         <div>
           Here goes a graph

@@ -8,7 +8,7 @@ import {NOISE} from '@chainsafe/libp2p-noise'
 import Mplex from 'libp2p-mplex'
 import Bootstrap from 'libp2p-bootstrap'
 import {store} from "../store/Store"
-import {decrementPeers, incrementPeers} from "../store/slices/PeerSlice";
+import {decrementPeers, incrementPeers, setPeerID} from "../store/slices/PeerSlice";
 
 export const initNode = async () => {
   const dispatch = store.dispatch
@@ -66,7 +66,9 @@ export const initNode = async () => {
   })
 
   console.info(`libp2p id is ${libp2p.peerId.toB58String()}`)
-  await libp2p.start()
+  dispatch(setPeerID(libp2p.peerId.toB58String()))
+
+  // await libp2p.start()
 
   return libp2p
 }

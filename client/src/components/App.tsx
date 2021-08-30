@@ -11,8 +11,6 @@ import {getCurrent} from "./utils/getCurrent";
 import Content from './Content'
 import {useAppContext} from "./context/Store";
 import {ActionType} from "./context/Reducer";
-import {useAppDispatch} from "../store/Hooks";
-import {setPeerID} from "../store/slices/PeerSlice";
 
 declare const window: any;
 
@@ -27,13 +25,8 @@ export const App = () => {
   const location = useLocation()
   const { state, setContext } = useAppContext()
 
-  const dispatch = useAppDispatch()
-
   const loadNode = async() => {
     await initNode().then(node => {
-
-      dispatch(setPeerID(node.peerId.toB58String()))
-
       if (setContext) {
         setContext({
           type: ActionType.SET_NODE,
