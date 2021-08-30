@@ -5,9 +5,9 @@ import "tailwindcss/tailwind.css"
 import { Listbox, Transition } from '@headlessui/react'
 import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
 
-import { useAppDispatch } from '../app/hooks'
+import { useAppDispatch } from '../store/Hooks'
 
-import { addOrder } from '../features/orderbookSlice'
+import { addOrder } from '../store/slices/OrderbookSlice'
 import {Order} from "./types/Order";
 
 import { classNames} from "./utils/classNames";

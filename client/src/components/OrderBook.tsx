@@ -1,7 +1,7 @@
 import React from 'react'
 import "tailwindcss/tailwind.css"
 
-import { useAppSelector } from '../app/hooks'
+import { useAppSelector } from '../store/Hooks'
 
 function OrderBook() {
   // The `state` arg is correctly typed as `RootState` already

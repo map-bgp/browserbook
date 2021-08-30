@@ -7,6 +7,7 @@ import OrderBook from './OrderBook'
 import OrderForm from './OrderForm'
 import Info from "./elements/Info";
 import { useEthers } from "@usedapp/core";
+import {useAppSelector} from "../store/Hooks";
 
 type DashboardProps = {
 }
@@ -15,7 +16,15 @@ const Dashboard = (props: DashboardProps) => {
   const { activateBrowserWallet, account } = useEthers()
   // const etherBalance = useEtherBalance(account)
 
-  let message = account ? account : "Connect Metamask to see account details"
+  const getPeerID = () => {
+    return useAppSelector(state => state.peer.peerID)
+  }
+
+  const getNumPeers = () => {
+    return useAppSelector(state => state.peer.numPeers)
+  }
+
+  let message = `Your peer ID is: ${getPeerID()}`
 
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">

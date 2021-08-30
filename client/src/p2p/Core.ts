@@ -7,8 +7,12 @@ import { NOISE } from '@chainsafe/libp2p-noise'
 
 import Mplex from 'libp2p-mplex'
 import Bootstrap from 'libp2p-bootstrap'
+import {store} from "../store/Store"
+import {decrementPeers, incrementPeers, setPeerID} from "../store/slices/PeerSlice";
 
 export const initNode = async () => {
+  const dispatch = store.dispatch
+
   // Create our libp2p node
   const libp2p: Libp2p = await Libp2p.create({
     addresses: {
@@ -51,15 +55,19 @@ export const initNode = async () => {
 
   // Listen for new connections to peers
   libp2p.connectionManager.on('peer:connect', (connection) => {
+    dispatch(incrementPeers())
     console.info(`Connected to ${connection.remotePeer.toB58String()}`)
   })
 
   // Listen for peers disconnecting
   libp2p.connectionManager.on('peer:disconnect', (connection) => {
+    dispatch(decrementPeers())
     console.info(`Disconnected from ${connection.remotePeer.toB58String()}`)
   })
 
   console.info(`libp2p id is ${libp2p.peerId.toB58String()}`)
+  await libp2p.start()
+
   return libp2p
 }
 

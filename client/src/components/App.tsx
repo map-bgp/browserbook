@@ -9,8 +9,10 @@ import Header from './Header'
 
 import {getCurrent} from "./utils/getCurrent";
 import Content from './Content'
-import {useAppContext} from "./store/Store";
-import {ActionType} from "./store/Reducer";
+import {useAppContext} from "./context/Store";
+import {ActionType} from "./context/Reducer";
+import {useAppDispatch} from "../store/Hooks";
+import {setPeerID} from "../store/slices/PeerSlice";
 
 declare const window: any;
 
@@ -22,21 +24,20 @@ const config: Config = {
 }
 
 export const App = () => {
-
   const location = useLocation()
-  const { state, dispatch } = useAppContext()
+  const { state, setContext } = useAppContext()
+
+  const dispatch = useAppDispatch()
 
   const loadNode = async() => {
     await initNode().then(node => {
-      if (dispatch) {
-        dispatch({
+
+      dispatch(setPeerID(node.peerId.toB58String()))
+
+      if (setContext) {
+        setContext({
           type: ActionType.SET_NODE,
           payload: node
-        })
-
-        dispatch({
-          type: ActionType.SET_PEER_ID,
-          payload: node.peerId.toB58String()
         })
       }
     })

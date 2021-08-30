@@ -126,7 +126,7 @@ WebAssembly.instantiateStreaming(fetch('conversion_test.wasm'), go.importObject)
 // These printed strings are received by the test's entry-point, which can then verify
 // that the print statement corresponds to a registered "test case" in the entry-point.
 // The entry-point verifies that all registered tests have passed, and it also has
-// features that will cause the test to fail if (1) unexpected logs are received or (2)
+// slices that will cause the test to fail if (1) unexpected logs are received or (2)
 // if some test cases were not tested.
 (async () => {
     // Wait for the Wasm module to finish initializing.

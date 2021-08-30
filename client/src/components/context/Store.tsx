@@ -8,7 +8,7 @@ export interface StateContext {
 
 export interface Store {
   state: StateContext;
-  dispatch?: React.Dispatch<Action>;
+  setContext?: React.Dispatch<Action>;
 }
 
 const defaultState: StateContext = { node: null }
@@ -18,6 +18,6 @@ export const useAppContext = () => useContext(AppContext)
 
 export const StateProvider = ({ children }) => {
   // @ts-ignore
-  const [state, dispatch] = useReducer(Reducer, defaultState)
-  return <AppContext.Provider value={{ state, dispatch }} children={children} />
+  const [state, setContext] = useReducer(Reducer, defaultState)
+  return <AppContext.Provider value={{ state, setContext }} children={children} />
 }

@@ -1,10 +1,10 @@
 import {configureStore} from '@reduxjs/toolkit'
-import counterReducer from '../features/demo/counterSlice'
-import orderbookReducer from '../features/orderbookSlice'
+import peerReducer from './slices/PeerSlice'
+import orderbookReducer from './slices/OrderbookSlice'
 
 export const store = configureStore({
   reducer: {
-    counter: counterReducer,
+    peer: peerReducer,
     orderbook: orderbookReducer,
   }
 })
