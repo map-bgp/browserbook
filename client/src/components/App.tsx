@@ -4,7 +4,7 @@ import React, {useEffect} from "react";
 import {useLocation} from "react-router-dom";
 
 import {ChainId, Config, DAppProvider} from "@usedapp/core";
-import {initNode} from "../p2p/core"
+import {initNode} from "../p2p/Core"
 import Header from './Header'
 
 import {getCurrent} from "./utils/getCurrent";

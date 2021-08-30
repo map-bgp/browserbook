@@ -1,5 +1,5 @@
 import React, {useContext, useReducer} from 'react'
-import {Action, Reducer} from './reducer'
+import {Action, Reducer} from './Reducer'
 
 export interface StateContext {
   node?: any,
