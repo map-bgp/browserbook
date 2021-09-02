@@ -29,11 +29,8 @@ const config: Config = {
 export const mesh = new Mesh({
   verbosity: 5,
   ethereumChainID: 1337,
-  ethereumRPCURL: "http://192.41.136.236:9545",
+  ethereumRPCURL: "http://127.0.0.1:8545",
   useBootstrapList: true,
-  customOrderFilter: {
-    properties: {makerAddress: {const: '0x468929A0DAC6D5A1c7BA1ab09c0862195D63b18c'}},
-  },
   //web3Provider: (window as any).ethereum as SupportedProvider,
 })
 

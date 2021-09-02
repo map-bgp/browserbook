@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack serve --mode development --env development --host 192.41.136.236 --port 5500",
+    "dev": "webpack serve --mode development --env development --port 5500",
     "dev-client": "webpack serve --mode development --env development",
     "build": "webpack --mode production",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -64,8 +64,8 @@
     "hardhat-deploy-ethers": "^0.3.0-beta.10",
     "web3": "^1.5.2",
     "ethers": "^5.4.4",
-    "@0x/order-utils":"10.4.28",
-    "@0x/subproviders":"6.5.4"
+    "@0x/order-utils": "10.4.28",
+    "@0x/subproviders": "6.5.4"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.3.3",

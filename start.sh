@@ -30,9 +30,9 @@ else
     echo "$PORT is configured"
 fi
 
-ganache-cli -h $HOST -p 9545 -m "hawk myth suggest very kitten fine ketchup message pulse fuel field muscle" -e 500  --networkId 4447 &
+# ganache-cli -h $HOST -p 9545 -m "hawk myth suggest very kitten fine ketchup message pulse fuel field muscle" -e 500  --networkId 4447 &
 
-cd ./browserbook-mesh
+cd ./0x-mesh/
 
 GOOS=js GOARCH=wasm go build -o ../client/src/wasm/main.wasm
 
@@ -40,6 +40,6 @@ sleep 3
 
 echo "Wasm Created"
 
-cd ../client
+cd ../client/
 
 npm run dev
