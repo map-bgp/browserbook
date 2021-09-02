@@ -1,0 +1,53 @@
+version: 2
+jobs:
+  build:
+    environment:
+      BASH_ENV: ~/.nvm/nvm.sh
+    docker:
+      - image: circleci/golang:1.15-browsers
+      - image: 0xorg/ganache-cli:istanbul
+        environment:
+            VERSION: 6.2.4
+            SNAPSHOT_NAME: 0x_ganache_snapshot
+    resource_class: large
+    steps:
+      - checkout
+      - run:
+          name: Install nvm
+          command: curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
+      - run:
+          name: Configure nvm
+          command: export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+      - run:
+          name: Install Node v11
+          command: nvm install 11
+      - run: node --version
+      - run:
+          name: Install yarn
+          command: npm i -g yarn@1.17
+      - run:
+          name: Install dependencies
+          command: make deps-no-lockfile
+      - run:
+          name: Install Go linter
+          command: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.27.0
+      - run:
+          # NOTE(jalextowle): We previously vendored our dependencies to avoid
+          # this issue: https://github.com/golangci/golangci-lint/issues/825.
+          # Vendoring caused an issue where the output on CI was not the same as
+          # that locally, so it has been removed. This should be reevaluated if
+          # the issue reappears.
+          name: Run linters
+          command: make lint
+      - run:
+          name: Build the TypeScript monorepo
+          command: yarn build
+      - run:
+          name: Run all tests
+          command: make test-all 
+      - run:
+          name: Test installing Mesh without CGO
+          command: CGO_ENABLED=0 go install ./...
+      - run:
+          name: Run cut-release script to test it still works
+          command: VERSION=100.0.0 make cut-release
