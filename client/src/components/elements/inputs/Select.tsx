@@ -1,6 +1,6 @@
-import React, { useState, Fragment } from 'react'
+import React, {Fragment, useState} from 'react'
 import {Listbox, Transition} from '@headlessui/react'
-import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
+import {CheckIcon, SelectorIcon} from '@heroicons/react/solid'
 
 const actions = [
   { id: 1, name: 'Market Order' },

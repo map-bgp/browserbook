@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { RadioGroup } from '@headlessui/react'
+import React, {useState} from 'react'
+import {RadioGroup} from '@headlessui/react'
 import {classNames} from "../../utils/classNames";
 
 export const Radio = () => {

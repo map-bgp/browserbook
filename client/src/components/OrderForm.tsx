@@ -1,15 +1,10 @@
-import React, {Fragment, useState} from 'react'
+import React, {useState} from 'react'
 import "tailwindcss/tailwind.css"
-
-import {Listbox, Transition} from '@headlessui/react'
-import {CheckIcon, SelectorIcon} from '@heroicons/react/solid'
-import { Radio } from './elements/inputs/Radio'
+import {Radio} from './elements/inputs/Radio'
 import {Select} from "./elements/inputs/Select";
 
 import {useAppDispatch} from '../store/Hooks'
 import {addOrder} from '../store/slices/OrderbookSlice'
-
-import {classNames} from "./utils/classNames";
 
 function OrderForm() {
     const dispatch = useAppDispatch()

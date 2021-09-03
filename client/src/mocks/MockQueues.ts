@@ -1,4 +1,4 @@
-import { Order } from "../types/Order"
+import {Order} from "../types/Order"
 
 export const mockBidQueue: Order[] = [
   {
