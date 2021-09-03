@@ -3,9 +3,10 @@ import "tailwindcss/tailwind.css"
 
 import {Listbox, Transition} from '@headlessui/react'
 import {CheckIcon, SelectorIcon} from '@heroicons/react/solid'
+import { Radio } from './elements/inputs/Radio'
+import {Select} from "./elements/inputs/Select";
 
 import {useAppDispatch} from '../store/Hooks'
-
 import {addOrder} from '../store/slices/OrderbookSlice'
 
 import {classNames} from "./utils/classNames";
@@ -21,94 +22,64 @@ function OrderForm() {
 
     const handleSubmit = (evt) => {
         evt.preventDefault()
-        dispatch(addOrder({'price': price, 'type': orderType}))
+        dispatch(addOrder({'price': price, 'type': orderType, 'quantity': 1.00}))
     }
 
     return (
-        <form onSubmit={handleSubmit}>
-            <div>
-                <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                        Price
-                    </label>
-                    <div className="mt-1 border-b border-gray-300 focus-within:border-orange-600">
-                        <input
-                            type="number"
-                            name="Price"
-                            id="price"
-                            className="block w-full border-0 border-b border-transparent bg-gray-50 focus:border-orange-600 focus:ring-0 sm:text-sm"
-                            placeholder="0.00"
-                            onChange={e => setPrice(e.target.valueAsNumber)}
-                        />
-                    </div>
-                </div>
-                <Listbox value={orderType} onChange={setOrderType}>
-                    {({ open }) => (
-                        <>
-                            <Listbox.Label className="block text-sm font-medium text-gray-700">Order Type</Listbox.Label>
-                            <div className="mt-1 relative">
-                                <Listbox.Button className="bg-white relative w-full border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 sm:text-sm">
-                                    <span className="block truncate">{orderType}</span>
-                                    <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                <SelectorIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-              </span>
-                                </Listbox.Button>
-
-                                <Transition
-                                    show={open}
-                                    as={Fragment}
-                                    leave="transition ease-in duration-100"
-                                    leaveFrom="opacity-100"
-                                    leaveTo="opacity-0"
-                                >
-                                    <Listbox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
-                                        {orderTypes.map((item) => (
-                                            <Listbox.Option
-                                                key={item}
-                                                className={({ active }) =>
-                                                    classNames(
-                                                        active ? 'text-white bg-orange-600' : 'text-gray-900',
-                                                        'cursor-default select-none relative py-2 pl-3 pr-9'
-                                                    )
-                                                }
-                                                value={item}
-                                            >
-                                                {({ active }) => (
-                                                    <>
-                        <span className={classNames(orderType ? 'font-semibold' : 'font-normal', 'block truncate')}>
-                          {item}
-                        </span>
-
-                                                        {orderType ? (
-                                                            <span
-                                                                className={classNames(
-                                                                    active ? 'text-white' : 'text-orange-600',
-                                                                    'absolute inset-y-0 right-0 flex items-center pr-4'
-                                                                )}
-                                                            >
-                            <CheckIcon className="h-5 w-5" aria-hidden="true" />
-                          </span>
-                                                        ) : null}
-                                                    </>
-                                                )}
-                                            </Listbox.Option>
-                                        ))}
-                                    </Listbox.Options>
-                                </Transition>
-                            </div>
-                        </>
-                    )}
-                </Listbox>
+      <div className="w-full bg-white border-gray-200 rounded px-4 py-2">
+        <form className="h-full" onSubmit={handleSubmit}>
+            <div className="mt-2 flex items-center justify-between">
+                <Radio />
             </div>
-            <div>
+            <div className="mt-2 flex items-center justify-between">
+                <Select />
+            </div>
+            <div className="w-full mt-2 flex items-center justify-between">
+                <label htmlFor="name" className="block ml-2 text-sm font-medium text-gray-700">
+                    Price
+                </label>
+                <div className="w-1/2 mt-1 ml-4 border-b border-gray-300 focus-within:border-orange-600">
+                    <input
+                      type="number"
+                      name="price"
+                      id="price"
+                      className="block w-full border-0 border-b border-transparent bg-gray-50 focus:border-orange-600 focus:ring-0 sm:text-sm"
+                      placeholder="0.00"
+                    />
+                </div>
+            </div>
+            <div className="w-full mt-2 flex items-center justify-between">
+                <label htmlFor="name" className="block ml-2 text-sm font-medium text-gray-700">
+                    Quantity
+                </label>
+                <div className="w-1/2 mt-1 ml-4 border-b border-gray-300 focus-within:border-orange-600">
+                    <input
+                      type="number"
+                      name="quantity"
+                      id="quantity"
+                      className="block w-full border-0 border-b border-transparent bg-gray-50 focus:border-orange-600 focus:ring-0 sm:text-sm"
+                      placeholder="0.00"
+                    />
+                </div>
+            </div>
+            <div className="w-full mt-2 flex items-center justify-between mt-10">
+                <span className="block ml-2 text-sm font-medium text-gray-700">
+                    Total
+                </span>
+                <div className="w-1/2 mt-1 ml-4 text-right">
+                    <span className="block w-full sm:text-sm">Total</span>
+                </div>
+            </div>
+            <div className="mt-20">
                 <button
                     type="submit"
-                    className="mx-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                    className="ml-auto mr-0 block flex items-end px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 active:bg-orange-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
                 >
-                    Add Order to Queue
+                    Submit Order
                 </button>
             </div>
         </form>
+      </div>
     )
 }
 

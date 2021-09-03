@@ -1,4 +1,5 @@
 export type Order = {
-  price: number
-  type: string
+  type: string;
+  price: number;
+  quantity: number;
 }
