@@ -23,11 +23,11 @@ export const orderbookSlice = createSlice({
       // We want the lowest ask at the bottom
       const sortAsk = key => (a, b) => a[key] < b[key] ? 1 : -1
 
-      if (action.payload.type === 'bid') {
+      if (action.payload.type === 'BID') {
         state.bidQueue.push(action.payload)
         state.bidQueue = state.bidQueue.slice().sort(sortBid('price'))
       }
-      else if (action.payload.type === 'ask') {
+      else if (action.payload.type === 'ASK') {
         state.askQueue.push(action.payload)
         state.askQueue = state.askQueue.slice().sort(sortAsk('price'))
       }

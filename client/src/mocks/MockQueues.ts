@@ -51,9 +51,24 @@ export const mockBidQueue: Order[] = [
     price: 1.00,
     quantity: 1.00
   },
+  {
+    type: "BID",
+    price: 0.50,
+    quantity: 1.00
+  },
+  {
+    type: "BID",
+    price: 0.50,
+    quantity: 1.00
+  },
 ]
 
 export const mockAskQueue: Order[] = [
+  {
+    type: "ASK",
+    price: 7.99,
+    quantity: 1.00
+  },
   {
     type: "ASK",
     price: 7.87,
@@ -97,6 +112,11 @@ export const mockAskQueue: Order[] = [
   {
     type: "ASK",
     price: 5.67,
+    quantity: 1.00
+  },
+  {
+    type: "ASK",
+    price: 5.65,
     quantity: 1.00
   },
   {
