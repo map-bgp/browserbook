@@ -8,12 +8,14 @@ import Market from './Market'
 import Portfolio from './Portfolio'
 import Assets from './Assets'
 import HowItWorks from './HowItWorks'
+import OrderSub from './OrderSubscription'
 
 type ContentProps = {
   current: string,
 }
 
 const Content = (props: ContentProps) => {
+
   return (
     <div className="py-10">
       <header>
@@ -34,6 +36,9 @@ const Content = (props: ContentProps) => {
           </Route>
           <Route path="/assets">
             <Assets/>
+          </Route>
+          <Route path="/order-subscription">
+            <OrderSub/>
           </Route>
           <Route path={"/how-it-works"}>
             <HowItWorks/>

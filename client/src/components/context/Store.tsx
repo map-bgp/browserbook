@@ -1,10 +1,5 @@
 import React, {useContext, useReducer} from 'react'
-import {Action, Reducer} from './Reducer'
-
-export interface StateContext {
-  node?: any,
-  peerId?: string,
-}
+import {Action, Reducer, StateContext} from './Reducer'
 
 export interface Store {
   state: StateContext;

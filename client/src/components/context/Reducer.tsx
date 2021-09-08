@@ -1,4 +1,7 @@
-import {StateContext} from './Store'
+export interface StateContext {
+  node?: any,
+  peerId?: string,
+}
 
 export enum ActionType {
   SET_NODE = 'SET_NODE',

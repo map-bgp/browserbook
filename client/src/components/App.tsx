@@ -1,76 +1,85 @@
-import "tailwindcss/tailwind.css"
+import "tailwindcss/tailwind.css";
 
-import React, {useEffect} from "react";
-import {useLocation} from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { ChainId, Config, DAppProvider } from "@usedapp/core";
+import { initNode } from "../p2p/p2pnode";
 
-import {ChainId, Config, DAppProvider} from "@usedapp/core";
-import {initNode} from "../p2p/Core"
-import Header from './Header'
+import Header from "./Header";
 
-import {getCurrent} from "./utils/getCurrent";
-import Content from './Content'
-import {useAppContext} from "./context/Store";
-import {ActionType} from "./context/Reducer";
+import { getCurrent } from "./utils/getCurrent";
+import Content from "./Content";
+import { useAppContext } from "./context/Store";
+import { ActionType } from "./context/Reducer";
+
 
 declare const window: any;
 
 const config: Config = {
   readOnlyChainId: ChainId.Mumbai,
   readOnlyUrls: {
-    [ChainId.Mumbai]: "https://polygon-mumbai.infura.io/v3/e8c847c8a43a4f9b95ac3182349c0932"
-  }
-}
+    [ChainId.Mumbai]:
+      "https://polygon-mumbai.infura.io/v3/e8c847c8a43a4f9b95ac3182349c0932",
+  },
+};
 
 export const App = () => {
-  const location = useLocation()
-  const { state, setContext } = useAppContext()
+  const location = useLocation();
+  const { state, setContext } = useAppContext();
 
-  const loadNode = async() => {
-    await initNode().then(node => {
+  const loadNode = async () => {
+    await initNode().then((node) => {
       if (setContext) {
         setContext({
           type: ActionType.SET_NODE,
-          payload: node
-        })
+          payload: node,
+        });
       }
-    })
-  }
+    });
+  };
 
   useEffect(() => {
-    loadNode().catch(error => console.log(error))
-  }, []);
+    loadNode().catch((error) => console.log(error));
+  },[]);
 
   const navigation = [
     {
-      name: 'Dashboard',
-      key: 'dashboard'
+      name: "Dashboard",
+      key: "dashboard",
     },
     {
-      name: 'Market',
-      key: 'market'
+      name: "Market",
+      key: "market",
     },
     {
-      name: 'Portfolio',
-      key: 'portfolio'
+      name: "Portfolio",
+      key: "portfolio",
     },
     {
-      name: 'Assets',
-      key: 'assets'
+      name: "Assets",
+      key: "assets",
     },
     {
-      name: 'How it Works',
-      key: 'how-it-works'
+      name: "How it Works",
+      key: "how-it-works",
     },
-  ]
+    {
+      name: "order subscription",
+      key: "order-subscription",
+    },
+  ];
 
   return (
-      <div className="min-h-screen bg-gray-100">
-        <DAppProvider config={config}>
-          <Header navigation={navigation} current={getCurrent(location, navigation)}/>
-          <Content current={getCurrent(location, navigation)} />
-        </DAppProvider>
-      </div>
+    <div className="min-h-screen AppContextbg-gray-100">
+      <DAppProvider config={config}>
+        <Header
+          navigation={navigation}
+          current={getCurrent(location, navigation)}
+        />
+        <Content current={getCurrent(location, navigation)} />
+      </DAppProvider>
+    </div>
   );
-}
+};
 
-export default App
+export default App;
