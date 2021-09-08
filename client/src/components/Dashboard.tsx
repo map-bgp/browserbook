@@ -34,9 +34,6 @@ const Dashboard = (props: DashboardProps) => {
         <div className="flex justify-around h-[30rem] col-span-4">
           <OrderForm />
         </div>
-        <div>
-          <OrderSub/>
-        </div>
       </div>
     </div>
   );

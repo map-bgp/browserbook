@@ -52,18 +52,19 @@ export const OrderSub = (props: OrderSubProps) => {
       messageHandler.on("message", (message) => {
         if (message.from === state.node.peerId.toB58String()) {
           message.isMine = true;
+          console.log("Got a message from Mine");
         }
+        console.log("Gotta");
         setMessages((messages) => [...messages, message]);
-      });
-
+      })
       // Listen for peer updates
       messageHandler.on("peer:update", ({ id, name }) => {
         setPeers((peers) => {
           const newPeers = { ...peers };
           newPeers[id] = { name };
           return newPeers;
-        });
-      });
+        })
+      })
 
       // Forward stats events to the eventBus
       messageHandler.on("stats", (stats) => eventBus.emit("stats", stats));

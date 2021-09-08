@@ -34,8 +34,8 @@ export const initNode = async () => {
     },
     modules: {
       transport: [Websockets, WebRTCStar],
-      connEncryption: [NOISE, Secio],
       streamMuxer: [Mplex],
+      connEncryption: [NOISE, Secio],
       peerDiscovery: [Bootstrap],
       dht: KadDHT,
       pubsub: Gossipsub,
