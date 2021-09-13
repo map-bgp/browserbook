@@ -3,7 +3,11 @@ import "tailwindcss/tailwind.css";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { ChainId, Config, DAppProvider } from "@usedapp/core";
-import { initNode } from "../p2p/p2pnode";
+//import { createLibp2p } from "../p2p/p2pnode";
+import EventEmitter from 'events'
+import PeerID from "peer-id";
+import PubsubChat from "../p2p/messagehandler";
+import { getOrCreatePeerId } from '../p2p/peer-id'
 
 import Header from "./Header";
 
@@ -12,8 +16,8 @@ import Content from "./Content";
 import { useAppContext } from "./context/Store";
 import { ActionType } from "./context/Reducer";
 
-
-declare const window: any;
+const TOPIC = '/libp2p/example/chat/1.0.0'
+//declare const window: any;
 
 const config: Config = {
   readOnlyChainId: ChainId.Mumbai,
@@ -23,24 +27,37 @@ const config: Config = {
   },
 };
 
-export const App = () => {
+
+
+export const App = ({ createLibp2p}) => {
   const location = useLocation();
   const { state, setContext } = useAppContext();
 
-  const loadNode = async () => {
-    await initNode().then((node) => {
-      if (setContext) {
-        setContext({
-          type: ActionType.SET_NODE,
-          payload: node,
-        });
-      }
-    });
-  };
+  const [peerId, setPeerId] = useState<PeerID>()
+  const [libp2p, setLibp2p] = useState(null)
+  const [started, setStarted] = useState(false)
+  const eventBus = new EventEmitter()
 
   useEffect(() => {
-    loadNode().catch((error) => console.log(error));
-  },[]);
+    if (!peerId) {
+      console.info('Getting our PeerId')
+      getOrCreatePeerId().then((node) => {
+        setPeerId(node);
+      })
+      //getOrCreatePeerId().then(setPeerId)
+      return
+    }
+
+    // If the libp2p instance is not created, create it with our PeerId instance
+    if (!libp2p) {
+      ;(async () => {
+        console.info('Creating our Libp2p instance')
+        const node = await createLibp2p(peerId)
+        setLibp2p(node)
+        setStarted(true)
+      })()
+    }
+  })
 
   const navigation = [
     {
@@ -76,7 +93,7 @@ export const App = () => {
           navigation={navigation}
           current={getCurrent(location, navigation)}
         />
-        <Content current={getCurrent(location, navigation)} />
+        <Content current={getCurrent(location, navigation)} libp2p={libp2p}  eventbus={eventBus} />
       </DAppProvider>
     </div>
   );

@@ -2,6 +2,7 @@ import React from "react";
 import "tailwindcss/tailwind.css"
 
 import {Route, Switch} from "react-router-dom";
+import EventEmitter from 'events'
 
 import Dashboard from './Dashboard'
 import Market from './Market'
@@ -9,9 +10,12 @@ import Portfolio from './Portfolio'
 import Assets from './Assets'
 import HowItWorks from './HowItWorks'
 import OrderSub from './OrderSubscription'
+import { Libp2p } from "libp2p-interfaces/src/pubsub";
 
 type ContentProps = {
   current: string,
+  libp2p: Libp2p,
+  eventbus: EventEmitter
 }
 
 const Content = (props: ContentProps) => {
@@ -38,7 +42,7 @@ const Content = (props: ContentProps) => {
             <Assets/>
           </Route>
           <Route path="/order-subscription">
-            <OrderSub/>
+            <OrderSub libp2p={props.libp2p} eventBus={props.eventbus}/>
           </Route>
           <Route path={"/how-it-works"}>
             <HowItWorks/>

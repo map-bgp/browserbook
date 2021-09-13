@@ -1,37 +1,30 @@
 import protons from "protons";
 import EventEmitter from "events";
+import uint8arrayFromString from "uint8arrays/from-string";
+import uint8arrayToString from "uint8arrays/to-string";
+import { TOPIC } from "../constants";
 
 const { Request, Stats } = protons(`
 message Request {
   enum Type {
     SEND_MESSAGE = 0;
-    UPDATE_PEER = 1;
-    STATS = 2;
+    STATS = 1;
   }
-
   required Type type = 1;
   optional SendMessage sendMessage = 2;
-  optional UpdatePeer updatePeer = 3;
-  optional Stats stats = 4;
+  optional Stats stats = 3;
 }
-
 message SendMessage {
   required bytes data = 1;
   required int64 created = 2;
   required bytes id = 3;
 }
-
-message UpdatePeer {
-  optional bytes userHandle = 1;
-}
-
 message Stats {
   enum NodeType {
     GO = 0;
     NODEJS = 1;
     BROWSER = 2;
   }
-
   repeated bytes connectedPeers = 1;
   optional NodeType nodeType = 2;
 }
@@ -39,17 +32,15 @@ message Stats {
 
 class MessageHandler extends EventEmitter {
   libp2p: any;
-  topic: string;
+  topic: string; 
   connectedPeers: any;
   stats: any;
-
+  
   constructor(libp2p: any, topic: string) {
     super();
 
     this.libp2p = libp2p;
     this.topic = topic;
-
-    console.log(this.topic);
 
     this.connectedPeers = new Set();
     this.stats = new Map();
@@ -68,114 +59,85 @@ class MessageHandler extends EventEmitter {
       }
     });
 
+    this._onMessage = this._onMessage.bind(this)
+
     if (this.libp2p.isStarted()) {
       this.join();
     }
-
-    const msg = {
-        id: (~~(Math.random() * 1e9)).toString(36) + Date.now(),
-        data: Buffer.from("Something to test"),
-        created: Date.now(),
-    }
-
-    setInterval(()=>{
-      this.emit("message",{from:this.libp2p.peerId.toB58String(),
-        ...msg})}, 1000)
    }
 
-  join() {
-    console.log("joining the subscribption");
-    this.libp2p.pubsub.subscribe(this.topic, (message) => {
-      try {
-        const request = Request.decode(message.data);
-        console.log(`Checking the message before event :${request.sendMessage.id}`);
-        switch (request.type) {
-          case Request.Type.UPDATE_PEER:
-            this.emit('peer:update', {
-              id: message.from,
-              name: request.updatePeer.userHandle.toString()
-            })
-            break
-          case Request.Type.STATS:
-            this.stats.set(message.from, request.stats)
-            console.log('Incoming Stats:', message.from, request.stats)
-            this.emit('stats', this.stats)
-            break
-          default:
-            this.emit('message', {
-              from: message.from,
-              ...request.sendMessage
-            })
+    /**
+   * Subscribes to `Chat.topic`. All messages will be
+   * forwarded to `messageHandler`
+   * @private
+   */
+  join () {
+    this.libp2p.pubsub.on(this.topic, this._onMessage)
+    this.libp2p.pubsub.subscribe(this.topic)
+  }
+
+  leave () {
+    this.libp2p.pubsub.removeListener(this.topic, this._onMessage)
+    this.libp2p.pubsub.unsubscribe(this.topic)
+  }
+
+  _onMessage (message) {
+    try {
+      const request = Request.decode(message.data)
+      switch (request.type) {
+        case Request.Type.STATS:
+          this.stats.set(message.from, request.stats)
+          console.log('Incoming Stats:', message.from, request.stats)
+          this.emit('stats', this.stats)
+          break
+        default:
+          this.emit('message', {
+            from: message.from,
+            data: uint8arrayToString(request.sendMessage.data),
+            created: request.sendMessage.created,
+            id: uint8arrayToString(request.sendMessage.id)
+          })
+      }
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+   /**
+   * Sends the updated stats to the pubsub network
+   * @param {Array<string>} connectedPeers
+   */
+    async sendStats (connectedPeers) {
+      const msg = Request.encode({
+        type: Request.Type.STATS,
+        stats: {
+          connectedPeers: connectedPeers.map(id => uint8arrayFromString(id)),
+          nodeType: Stats.NodeType.BROWSER
         }
+      })
+  
+      try {
+        await this.libp2p.pubsub.publish(this.topic, msg)
       } catch (err) {
-        console.error(err);
-      }
-    })
-  }
-
-
-  leave() {
-    this.libp2p.pubsub.unsubscribe(this.topic);
-  }
-
-  checkCommand(input) {
-    const str = input.toString();
-    if (str.startsWith("/")) {
-      const args = str.slice(1).split(" ");
-      switch (args[0]) {
-        case "name":
-          this.updatePeer(args[1]);
-          return true;
+        console.error('Could not publish stats update')
       }
     }
-    return false;
-  }
-
-  async updatePeer(name) {
-    const msg = Request.encode({
-      type: Request.Type.UPDATE_PEER,
-      updatePeer: {
-        userHandle: Buffer.from(name),
-      },
-    });
-
-    try {
-      await this.libp2p.pubsub.publish(this.topic, msg);
-    } catch (err) {
-      console.error("Could not publish name change");
-    }
-  }
-
-  async sendStats(connectedPeers) {
-    const msg = Request.encode({
-      type: Request.Type.STATS,
-      stats: {
-        connectedPeers,
-        nodeType: Stats.NodeType.BROWSER,
-      },
-    });
-
-    try {
-      await this.libp2p.pubsub.publish(this.topic, msg);
-    } catch (err) {
-      console.error("Could not publish stats update");
-    }
-  }
 
   async send(message) {
     console.log(`Send message function :${message}`)
     const msg = Request.encode({
       type: Request.Type.SEND_MESSAGE,
       sendMessage: {
-        id: (~~(Math.random() * 1e9)).toString(36) + Date.now(),
-        data: Buffer.from(message),
-        created: Date.now(),
-      },
+        id: uint8arrayFromString((~~(Math.random() * 1e9)).toString(36) + Date.now()),
+        data: uint8arrayFromString(message),
+        created: Date.now()
+      }
     });
 
       //console.log(`Topic at send function ${this.topic} and ${msg}`);   
       await this.libp2p.pubsub.publish(this.topic, msg);
   }
 }
+
 
 export default MessageHandler;

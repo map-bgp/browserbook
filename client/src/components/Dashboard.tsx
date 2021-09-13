@@ -3,7 +3,6 @@ import "tailwindcss/tailwind.css";
 
 import OrderBook from "./OrderBook";
 import OrderForm from "./OrderForm";
-import OrderSub from "./OrderSubscription";
 import Info from "./elements/Info";
 import Chart from "./elements/Chart";
 import { useEthers } from "@usedapp/core";

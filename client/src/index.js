@@ -8,13 +8,14 @@ import {Provider} from 'react-redux'
 
 import App from './components/App'
 import {StateProvider} from "./components/context/Store";
+import createLibp2p from './p2p/p2pnode'
 
 ReactDom.render(
     <React.StrictMode>
         <Provider store={store}>
             <Router>
                 <StateProvider>
-                    <App/>
+                    <App createLibp2p={createLibp2p} />
                 </StateProvider>
             </Router>
         </Provider>
