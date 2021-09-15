@@ -37,6 +37,7 @@ export const App = ({ createLibp2p}) => {
   const [libp2p, setLibp2p] = useState(null)
   const [started, setStarted] = useState(false)
   const eventBus = new EventEmitter()
+  
 
   useEffect(() => {
     if (!peerId) {

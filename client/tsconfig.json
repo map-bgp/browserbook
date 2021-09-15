@@ -29,7 +29,7 @@
   },
   "include": [
     "./src/"
-  ],
+, "jest.config.js"  ],
   "exclude": [
     "./src/wasm"
   ]

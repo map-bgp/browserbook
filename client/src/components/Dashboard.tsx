@@ -9,7 +9,8 @@ import { useEthers } from "@usedapp/core";
 import { useAppSelector } from "../store/Hooks";
 import { Libp2p } from "libp2p-interfaces/src/pubsub";
 import EventEmitter from 'events'
-import {db, IPeers } from "../db";
+import { Ethers } from "../blockchain";
+import {peerDB } from "../db";
 
 const Dashboard = () => {
   const { activateBrowserWallet, account } = useEthers();
@@ -19,7 +20,19 @@ const Dashboard = () => {
     return useAppSelector((state) => state.peer.peerID);
   };
 
-  const indexDB = new db();
+  
+  const ethers = new Ethers();
+  const provider = ethers.getSigner();
+  console.log(provider);
+  
+
+  //Index DB storage for the peer ID 
+  const indexDB = new peerDB();
+  const peerID = getPeerID();
+  indexDB.transaction('rw', indexDB.peers, async() =>{
+    const id = await indexDB.peers.add({peerId: peerID, joinedTime: Date.now().toString()});
+    console.log(`Peer ID is stored in ${id}`)
+  }).catch(e => { console.log(e.stack || e);});
 
   let peerIDMessage = `Your peer ID is: ${getPeerID()}`;
 

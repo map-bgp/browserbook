@@ -14,6 +14,7 @@ import {classNames} from "./utils/classNames";
 import {XCircleIcon} from "@heroicons/react/solid";
 import PubsubChat from "../p2p/messagehandler";
 import { useAppContext } from "./context/Store";
+import {peerDB } from "../db";
 
 
 function OrderCreate({libp2p,eventBus}) {
@@ -91,6 +92,13 @@ function OrderCreate({libp2p,eventBus}) {
             }
             setMessages((messages) => [...messages, message])
             //console.log(`On listen message ${message.tokenA}`)
+            //Adding the received orders from the peers
+            // const indexDB = new db();
+            // indexDB.transaction('rw', indexDB.peers, async() =>{
+            // const id = await indexDB.peers.add({peerId: peerID, joinedTime: Date.now().toString()});
+            // console.log(`Peer ID is stored in ${id}`)
+            // }).catch(e => { console.log(e.stack || e);});
+
           })
           
           // Forward stats events to the eventBus
