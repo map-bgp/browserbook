@@ -5,7 +5,6 @@ import OrderBook from "./OrderBook";
 import OrderForm from "./OrderForm";
 import Info from "./elements/Info";
 import Chart from "./elements/Chart";
-import { useEthers } from "@usedapp/core";
 import { useAppSelector } from "../store/Hooks";
 import { Libp2p } from "libp2p-interfaces/src/pubsub";
 import EventEmitter from 'events'
@@ -13,7 +12,6 @@ import { Ethers } from "../blockchain";
 import {peerDB } from "../db";
 
 const Dashboard = () => {
-  const { activateBrowserWallet, account } = useEthers();
   // const etherBalance = useEtherBalance(account)
 
   const getPeerID = () => {

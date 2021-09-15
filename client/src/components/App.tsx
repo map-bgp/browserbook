@@ -2,7 +2,6 @@ import "tailwindcss/tailwind.css";
 
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { ChainId, Config, DAppProvider } from "@usedapp/core";
 //import { createLibp2p } from "../p2p/p2pnode";
 import EventEmitter from 'events'
 import PeerID from "peer-id";
@@ -16,16 +15,7 @@ import Content from "./Content";
 import { useAppContext } from "./context/Store";
 import { ActionType } from "./context/Reducer";
 
-const TOPIC = '/libp2p/example/chat/1.0.0'
-//declare const window: any;
 
-const config: Config = {
-  readOnlyChainId: ChainId.Mumbai,
-  readOnlyUrls: {
-    [ChainId.Mumbai]:
-      "https://polygon-mumbai.infura.io/v3/e8c847c8a43a4f9b95ac3182349c0932",
-  },
-};
 
 
 
@@ -93,13 +83,11 @@ export const App = ({ createLibp2p}) => {
 
   return (
     <div className="min-h-screen AppContextbg-gray-100">
-      <DAppProvider config={config}>
         <Header
           navigation={navigation}
           current={getCurrent(location, navigation)}
         />
         <Content current={getCurrent(location, navigation)} libp2p={libp2p}  eventbus={eventBus} />
-      </DAppProvider>
     </div>
   );
 };

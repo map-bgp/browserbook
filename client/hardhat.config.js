@@ -16,27 +16,36 @@ module.exports = {
             blockGasLimit: 0x1fffffffffff
         },
         development: {
-            url: "http://192.41.136.236:9545",
+            url: "http://localhost:9545",
             accounts:{mnemonic:"hawk myth suggest very kitten fine ketchup message pulse fuel field muscle"}
+        },
+        goerli:{
+            url: process.env.GOERLI_RPC_URL,
+            accounts: { mnemonic: process.env.GOERLI_MNEMONIC },
+            gasPrice: 10000000000,
+            network_id: 5,
         },
         mumbai: {
             url: process.env.MUMBAI_RPC_URL,
-            accounts: { mnemonic: process.env.MUMBAI_MNEMONIC }
+            accounts: { mnemonic: process.env.MUMBAI_MNEMONIC },
+            gasPrice: 10000000000,
+            network_id: 80001,
         }
     },
 
     namedAccounts: {
         deployer: 0
     },
-
-
+    etherscan:{
+        apiKey: "N2X6D6SRJQA8HTD12G798IDTIT4DBR61QG"
+    },
 
     solidity: {
-        version: "0.5.17",
+        version: "0.8.0",
         settings: {
             optimizer: {
                 enabled: true,
-                runs: 1000,
+                runs: 200,
             },
         },
     },
