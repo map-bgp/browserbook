@@ -10,6 +10,7 @@ import Portfolio from './Portfolio'
 import Assets from './Assets'
 import HowItWorks from './HowItWorks'
 import OrderSub from './OrderSubscription'
+import OrderCreate from "./OrderCreate";
 import { Libp2p } from "libp2p-interfaces/src/pubsub";
 
 type ContentProps = {
@@ -30,7 +31,7 @@ const Content = (props: ContentProps) => {
       <main>
         <Switch>
           <Route exact path={["", "/", "/dashboard"]}>
-            <Dashboard />
+            <Dashboard/>
           </Route>
           <Route path="/market">
             <Market/>
@@ -41,8 +42,11 @@ const Content = (props: ContentProps) => {
           <Route path="/assets">
             <Assets/>
           </Route>
+          <Route path="/order-creation">
+            <OrderCreate libp2p={props.libp2p} eventBus={props.eventbus}/>
+          </Route>
           <Route path="/order-subscription">
-            <OrderSub libp2p={props.libp2p} eventBus={props.eventbus}/>
+            <OrderSub libp2p={props.libp2p} eventBus={props.eventbus}/>  
           </Route>
           <Route path={"/how-it-works"}>
             <HowItWorks/>

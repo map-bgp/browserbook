@@ -23,7 +23,6 @@ export default function OrderSub ({libp2p,eventBus}) {
       if (!message) return
   
       //if (chatClient.checkCommand(message)) return
-  
       try {
         await chatClient.send(message)
         console.info('Publish done')

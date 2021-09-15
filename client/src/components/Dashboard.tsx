@@ -7,16 +7,19 @@ import Info from "./elements/Info";
 import Chart from "./elements/Chart";
 import { useEthers } from "@usedapp/core";
 import { useAppSelector } from "../store/Hooks";
+import { Libp2p } from "libp2p-interfaces/src/pubsub";
+import EventEmitter from 'events'
+import {db, IPeers } from "../db";
 
-type DashboardProps = {};
-
-const Dashboard = (props: DashboardProps) => {
+const Dashboard = () => {
   const { activateBrowserWallet, account } = useEthers();
   // const etherBalance = useEtherBalance(account)
 
   const getPeerID = () => {
     return useAppSelector((state) => state.peer.peerID);
   };
+
+  const indexDB = new db();
 
   let peerIDMessage = `Your peer ID is: ${getPeerID()}`;
 
@@ -31,7 +34,7 @@ const Dashboard = (props: DashboardProps) => {
           <OrderBook />
         </div>
         <div className="flex justify-around h-[30rem] col-span-4">
-          <OrderForm />
+          <OrderForm/>
         </div>
       </div>
     </div>

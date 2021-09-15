@@ -22,5 +22,9 @@ export const navigation = [
   {
     name: "order subscription",
     key: "order-subscription",
+  },
+  {
+    name: "order creation",
+    key: "order-creation",
   }
 ];

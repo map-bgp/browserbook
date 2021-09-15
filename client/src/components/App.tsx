@@ -50,7 +50,7 @@ export const App = ({ createLibp2p}) => {
 
     // If the libp2p instance is not created, create it with our PeerId instance
     if (!libp2p) {
-      ;(async () => {
+      (async () => {
         console.info('Creating our Libp2p instance')
         const node = await createLibp2p(peerId)
         setLibp2p(node)
@@ -83,6 +83,10 @@ export const App = ({ createLibp2p}) => {
     {
       name: "order subscription",
       key: "order-subscription",
+    },
+    {
+      name: "order creation",
+      key: "order-creation",
     },
   ];
 

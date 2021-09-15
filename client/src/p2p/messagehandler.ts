@@ -15,9 +15,14 @@ message Request {
   optional Stats stats = 3;
 }
 message SendMessage {
-  required bytes data = 1;
-  required int64 created = 2;
-  required bytes id = 3;
+  required bytes tokenA = 1;
+  required bytes tokenB = 2;
+  required bytes orderType = 3;
+  required bytes actionType = 4;
+  required bytes price = 5;
+  required bytes quantity = 6;
+  required int64 created = 7;
+  required bytes id = 8;
 }
 message Stats {
   enum NodeType {
@@ -37,8 +42,8 @@ class MessageHandler extends EventEmitter {
   stats: any;
   
   constructor(libp2p: any, topic: string) {
-    super();
 
+    super();
     this.libp2p = libp2p;
     this.topic = topic;
 
@@ -60,6 +65,7 @@ class MessageHandler extends EventEmitter {
     });
 
     this._onMessage = this._onMessage.bind(this)
+    //this._onOrder = this._onOrder.bind(this)
 
     if (this.libp2p.isStarted()) {
       this.join();
@@ -84,6 +90,8 @@ class MessageHandler extends EventEmitter {
   _onMessage (message) {
     try {
       const request = Request.decode(message.data)
+      //console.log(`Send message function :${request.sendMessage.tokenA} : ${request.sendMessage.tokenB} : ${request.sendMessage.orderType} : ${request.sendMessage.actionType} : ${request.sendMessage.price} : ${request.sendMessage.quantity}`)
+      //console.log(`OnOrder function reached ${request.sendMessage.tokenA}`)
       switch (request.type) {
         case Request.Type.STATS:
           this.stats.set(message.from, request.stats)
@@ -93,7 +101,12 @@ class MessageHandler extends EventEmitter {
         default:
           this.emit('message', {
             from: message.from,
-            data: uint8arrayToString(request.sendMessage.data),
+            tokenA: uint8arrayToString(request.sendMessage.tokenA),
+            tokenB: uint8arrayToString(request.sendMessage.tokenB),
+            orderType: uint8arrayToString(request.sendMessage.orderType),
+            actionType: uint8arrayToString(request.sendMessage.actionType),
+            price: uint8arrayToString(request.sendMessage.price),
+            quantity: uint8arrayToString(request.sendMessage.quantity),
             created: request.sendMessage.created,
             id: uint8arrayToString(request.sendMessage.id)
           })
@@ -102,6 +115,28 @@ class MessageHandler extends EventEmitter {
       console.error(err)
     }
   }
+
+  // _onMessage (message) {
+  //   try {
+  //     const request = Request.decode(message.data)
+  //     switch (request.type) {
+  //       case Request.Type.STATS:
+  //         this.stats.set(message.from, request.stats)
+  //         console.log('Incoming Stats:', message.from, request.stats)
+  //         this.emit('stats', this.stats)
+  //         break
+  //       default:
+  //         this.emit('message', {
+  //           from: message.from,
+  //           data: uint8arrayToString(request.sendMessage.data),
+  //           created: request.sendMessage.created,
+  //           id: uint8arrayToString(request.sendMessage.id)
+  //         })
+  //     }
+  //   } catch (err) {
+  //     console.error(err)
+  //   }
+  // }
 
    /**
    * Sends the updated stats to the pubsub network
@@ -137,6 +172,27 @@ class MessageHandler extends EventEmitter {
       //console.log(`Topic at send function ${this.topic} and ${msg}`);   
       await this.libp2p.pubsub.publish(this.topic, msg);
   }
+
+  async sendOrder(tokenA, tokenB, orderType, actionType, price, quantity) {
+    //console.log(`Send message function :${tokenA.name} : ${tokenB.name} : ${orderType.value} : ${actionType.name} : ${price} : ${quantity}`)
+    const msg = Request.encode({
+      type: Request.Type.SEND_MESSAGE,
+      sendMessage: {
+        id: uint8arrayFromString((~~(Math.random() * 1e9)).toString(36) + Date.now()),
+        tokenA: uint8arrayFromString(tokenA.name),
+        tokenB: uint8arrayFromString(tokenB.name),
+        orderType: uint8arrayFromString(orderType.value),
+        actionType: uint8arrayFromString(actionType.name),
+        price: uint8arrayFromString(price),
+        quantity: uint8arrayFromString(quantity),
+        created: Date.now()
+      }
+    });
+
+      //console.log(`Topic at send function ${this.topic} and ${uint8arrayToString(msg.token1)}`);   
+      await this.libp2p.pubsub.publish(this.topic, msg);
+  }
+
 }
 
 
