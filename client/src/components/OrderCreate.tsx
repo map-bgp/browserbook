@@ -14,7 +14,7 @@ import {classNames} from "./utils/classNames";
 import {XCircleIcon} from "@heroicons/react/solid";
 import PubsubChat from "../p2p/messagehandler";
 import { useAppContext } from "./context/Store";
-import {peerDB } from "../db";
+import {orderDB } from "../db";
 
 
 function OrderCreate({libp2p,eventBus}) {
@@ -91,13 +91,24 @@ function OrderCreate({libp2p,eventBus}) {
               message.isMine = true
             }
             setMessages((messages) => [...messages, message])
-            //console.log(`On listen message ${message.tokenA}`)
+            //console.log(`On listen message from: ${message.from} , created: ${message.created} , id: ${message.id}`)
             //Adding the received orders from the peers
-            // const indexDB = new db();
-            // indexDB.transaction('rw', indexDB.peers, async() =>{
-            // const id = await indexDB.peers.add({peerId: peerID, joinedTime: Date.now().toString()});
-            // console.log(`Peer ID is stored in ${id}`)
-            // }).catch(e => { console.log(e.stack || e);});
+
+            const indexDB = new orderDB();
+            indexDB.transaction('rw', indexDB.orders, async() =>{
+            const id = await indexDB.orders.add({
+                id: message.id,
+                tokenA: message.tokenA, 
+                tokenB: message.tokenB, 
+                ordertype: message.ordertype, 
+                actionType: message.actionType,
+                price: message.price,
+                quantity: message.quantity,
+                from: message.from,
+                created: message.created
+            });
+            console.log(`Order ID is stored in ${id}`)
+            }).catch(e => { console.log(e.stack || e);});
 
           })
           

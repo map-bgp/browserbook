@@ -22,7 +22,7 @@ export class orderDB extends Dexie {
         super("browserbook");
 
         this.version(1).stores(
-            {orders: '++id,tokenA,tokenB,ordertype,actionAction,price,quantity'}
+            {orders: 'id,tokenA,tokenB,ordertype,actionType,price,quantity,from,created'}
         )
         
         this.orders = this.table('orders');
