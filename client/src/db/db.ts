@@ -1,8 +1,9 @@
 import Dexie from 'dexie';
 import {IPeers,Orders} from "./dto";
 
-export class peerDB extends Dexie {
+export class P2PDB extends Dexie {
     peers: Dexie.Table<IPeers,number>
+    orders: Dexie.Table<Orders,number>
 
     constructor() {
         super("browserbook");
@@ -12,16 +13,8 @@ export class peerDB extends Dexie {
         )
         
         this.peers = this.table('peers');
-    }
-}
 
-export class orderDB extends Dexie {
-    orders: Dexie.Table<Orders,number>
-
-    constructor() {
-        super("browserbook");
-
-        this.version(1).stores(
+        this.version(2).stores(
             {orders: 'id,tokenA,tokenB,ordertype,actionType,price,quantity,from,created'}
         )
         

@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import "tailwindcss/tailwind.css"
 
 import {Radio, RadioObject} from './elements/inputs/Radio'
@@ -11,10 +11,383 @@ import { addOrder } from '../store/slices/OrderbookSlice'
 import { Tokens } from "../types/Token";
 import {classNames} from "./utils/classNames";
 import {XCircleIcon} from "@heroicons/react/solid";
+import Info from "./elements/Info";
+import {BigNumber, ethers, providers,utils} from "ethers";
+import { EXCHANGE,TOKENTWO,TOKENONE } from "../constants";
+import {useAppContext} from "./context/Store";
+import { EtherStore, fetchJSONFile} from '../blockchain';
+import { useWeb3React } from "@web3-react/core";
 
-
+const abi = [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "operator",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "approved",
+          "type": "bool"
+        }
+      ],
+      "name": "ApprovalForAll",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "operator",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256[]",
+          "name": "ids",
+          "type": "uint256[]"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256[]",
+          "name": "values",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "TransferBatch",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "operator",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "TransferSingle",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "value",
+          "type": "string"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "URI",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "balanceOf",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address[]",
+          "name": "accounts",
+          "type": "address[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "ids",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "balanceOfBatch",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "operator",
+          "type": "address"
+        }
+      ],
+      "name": "isApprovedForAll",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "ids",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "amounts",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "bytes",
+          "name": "data",
+          "type": "bytes"
+        }
+      ],
+      "name": "safeBatchTransferFrom",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "data",
+          "type": "bytes"
+        }
+      ],
+      "name": "safeTransferFrom",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "operator",
+          "type": "address"
+        },
+        {
+          "internalType": "bool",
+          "name": "approved",
+          "type": "bool"
+        }
+      ],
+      "name": "setApprovalForAll",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes4",
+          "name": "interfaceId",
+          "type": "bytes4"
+        }
+      ],
+      "name": "supportsInterface",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "uri",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "data",
+          "type": "bytes"
+        }
+      ],
+      "name": "mint",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "burn",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ]
 function OrderForm() {
     const dispatch = useAppDispatch()
+    const { state, setContext } = useAppContext()
+    const { account, library } = useWeb3React<providers.Web3Provider>()
+    
 
     const [tokenA, setTokenA] = useState(Tokens[0])
     const [tokenB, setTokenB] = useState(Tokens[1])
@@ -24,6 +397,54 @@ function OrderForm() {
 
     const [price, setPrice] = useState<number>(0.00);
     const [quantity, setQuantity] = useState<number>(0.00)
+    const [balance, setBalance] = useState<number>(0);
+
+    const tx = {
+    gasPrice: utils.hexValue( utils.parseUnits("1",'gwei')),
+    gasLimit: utils.hexValue( utils.parseUnits("21",'gwei')),
+    to: '0x5d11ec064836D356833A3193814ad89Ab3D25832',
+    value: utils.hexValue( utils.parseUnits("1200",'gwei')),
+    data: '0x7f7465737432000000000000000000000000000000000000000000000000000000600057',
+    }
+
+    const getBalance = async (): Promise<number> => {
+        // @ts-ignore
+        return await library?.getBalance();
+    }
+
+    const signTransaction = async(): Promise<providers.TransactionResponse> => {
+        // @ts-ignore
+        const signer = library.getSigner();
+        return await signer.sendTransaction(tx);
+    }
+
+    const useContractFunction = async()=> {
+        // @ts-ignore
+        const signer = library.getSigner();
+        const address = await signer.getAddress();
+        // let abi;
+        // fetchJSONFile('BBookToken',(data) => {
+        //     abi = data?.abi
+        // })
+        const contractInstance = new ethers.Contract(TOKENONE,abi,signer);
+        const tokenBalance = await contractInstance.balanceOf(address,1);
+        console.log(tokenBalance.toString());
+    }
+
+    const useSendContractFunction = async()=> {
+        // @ts-ignore
+        const signer = library.getSigner();
+        const address = await signer.getAddress();
+        // let abi;
+        // fetchJSONFile('BBookToken',(data) => {
+        //     abi = data?.abi
+        // })
+        const contractInstance = new ethers.Contract(TOKENONE,abi,signer);
+        await contractInstance.setApprovalForAll(EXCHANGE,true);
+        const contractBool = await contractInstance.isApprovedForAll(address,EXCHANGE);
+        console.log(contractBool.toString());
+    }
+
 
     const getTotal = (): number => {
         return (price * quantity)
@@ -42,8 +463,19 @@ function OrderForm() {
         dispatch(addOrder({'type': orderType.value, 'price': price, 'quantity': quantity}))
     }
 
+    useEffect(()=> {
+        if(!balance){
+        getBalance().then((value)=>{
+            setBalance(value)
+        })
+    }
+    },[]);
+
+    const message = `Connected Address:${account}`
+
     return (
       <div className="w-full bg-white border-gray-200 rounded px-4 py-2">
+        <Info message={message} />
         <form className="h-full" onSubmit={handleSubmit}>
             <div className="mt-2 flex items-center justify-between">
                 <Select label="I Have" range={Tokens} selected={tokenA as SelectObject} setSelected={setTokenA as React.Dispatch<React.SetStateAction<SelectObject>>} />
@@ -120,8 +552,28 @@ function OrderForm() {
                 >
                     Submit Order
                 </button>
+
             </div>
         </form>
+        <div>
+            <button type="button"
+                className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                onClick={() => signTransaction()}>
+                blankTransaction
+            </button>
+        </div>
+        <div>
+            <button type="button"
+                className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                onClick={() => useContractFunction()}>
+                blankTokenExchange
+            </button>
+            <button type="button"
+                className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                onClick={() => useSendContractFunction()}>
+                sendTokenExchange
+            </button>
+        </div>
       </div>
     )
 }

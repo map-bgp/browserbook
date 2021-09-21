@@ -3,24 +3,30 @@ import { fetchABI } from "./abiFetcher";
 
 declare const window: any;
 
-export class Ethers{
-    public provider: ethers.providers.Web3Provider;
+export class EtherStore{
+    provider: ethers.providers.Web3Provider;
 
-    constructor() {
-        if(window.ethereum) {
+    async Start(){
+        if(typeof window.ethereum !== 'undefined') {
+            await window.ethereum.enable()
             this.provider = new ethers.providers.Web3Provider(window.ethereum);
         }
         else {
-            window.ethereum.enable();
-            this.provider = new ethers.providers.Web3Provider(window.ethereum);
+            console.log("Install MetaMask")
+            throw new Error("Please install the Metamask extension or Retry")
         }
     }
 
-    getSigner(){
-    return this.provider.getSigner();
+    async isConnected() {
+        const accounts = await this.provider.listAccounts();
+        return accounts.length > 0;
     }
 
-    getContract(address, contractName:string){
+    getSigner(){
+        return this.provider.getSigner();
+    }
+
+    getContract(address:string, contractName:string){
         const contractAbi = fetchABI(contractName);
         return new ethers.Contract(address,contractAbi);
     }

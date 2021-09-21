@@ -20,10 +20,6 @@ export const navigation = [
     key: "how-it-works",
   },
   {
-    name: "order subscription",
-    key: "order-subscription",
-  },
-  {
     name: "order creation",
     key: "order-creation",
   }

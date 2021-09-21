@@ -2,6 +2,8 @@ import React from 'react'
 import "tailwindcss/tailwind.css"
 
 import {Link, useHistory} from "react-router-dom";
+import { providers } from "ethers";
+import { useWeb3React } from "@web3-react/core";
 
 import {Disclosure} from '@headlessui/react'
 import {MenuIcon, XIcon} from '@heroicons/react/outline'
@@ -10,6 +12,7 @@ import {classNames} from './utils/classNames'
 import PriceTicker from "./elements/Ticker";
 import {useAppSelector} from "../store/Hooks";
 import {useAppContext} from "./context/Store";
+import { injected } from '../blockchain';
 
 type HeaderProps = {
   navigation: any[],
@@ -17,7 +20,7 @@ type HeaderProps = {
 }
 
 const Header = (props: HeaderProps) => {
-
+  const { account, activate, deactivate, active, error } = useWeb3React<providers.Web3Provider>()
   const history = useHistory();
 
   const { state, setContext } = useAppContext()
@@ -72,7 +75,29 @@ const Header = (props: HeaderProps) => {
                 >
                   Find Peers
                 </button>}
+
+
               </div>
+
+              
+              {!account && <button
+                type="button"
+                className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                onClick={() => activate(injected)}
+              >
+                Connect
+              </button>}
+
+              {account && <button
+                type="button"
+                className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                onClick={() => deactivate()}
+              >
+                Disconnect
+              </button>}
+
+
+
               <div className="-mr-2 flex items-center sm:hidden">
                 {/* Mobile menu button */}
                 <Disclosure.Button

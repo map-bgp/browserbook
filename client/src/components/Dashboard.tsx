@@ -1,34 +1,22 @@
 import React from "react";
 import "tailwindcss/tailwind.css";
-
 import OrderBook from "./OrderBook";
 import OrderForm from "./OrderForm";
 import Info from "./elements/Info";
 import Chart from "./elements/Chart";
-import { useAppSelector } from "../store/Hooks";
-import { Libp2p } from "libp2p-interfaces/src/pubsub";
-import EventEmitter from 'events'
-import { Ethers } from "../blockchain";
-import {peerDB } from "../db";
+import { useAppContext } from "./context/Store";
 
 const Dashboard = () => {
-  // const etherBalance = useEtherBalance(account)
+  const { state, setContext } = useAppContext()
 
   const getPeerID = () => {
-    return useAppSelector((state) => state.peer.peerID);
+    return state.peerId;
   };
 
-  
-  const ethers = new Ethers();
-  const provider = ethers.getSigner();
-  console.log(provider);
-  
-
   //Index DB storage for the peer ID 
-  const indexDB = new peerDB();
   const peerID = getPeerID();
-  indexDB.transaction('rw', indexDB.peers, async() =>{
-    const id = await indexDB.peers.add({peerId: peerID, joinedTime: Date.now().toString()});
+  state.p2pDb.transaction('rw', state.p2pDb.peers, async() =>{
+    const id = await state.p2pDb.peers.add({peerId: peerID, joinedTime: Date.now().toString()});
     console.log(`Peer ID is stored in ${id}`)
   }).catch(e => { console.log(e.stack || e);});
 

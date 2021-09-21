@@ -17,8 +17,9 @@ import { useAppContext } from "./context/Store";
 import {orderDB } from "../db";
 
 
-function OrderCreate({libp2p,eventBus}) {
+function OrderCreate() {
     const dispatch = useAppDispatch()
+    const { state, setContext } = useAppContext()
     console.log(`reached OrderCreation`)
 
     const [tokenA, setTokenA] = useState(Tokens[0])
@@ -77,26 +78,25 @@ function OrderCreate({libp2p,eventBus}) {
    */
      useEffect(() => {
         // Wait for libp2p
-        if (!libp2p) return
+        if (!state.node) return
 
         //console.log(`Reached useEffect in OrderFrom`)
     
         // Create the pubsub chatClient
         if (!chatClient) {
-          const pubsubChat = new PubsubChat(libp2p, TOPIC)
+          const pubsubChat = new PubsubChat(state.node, TOPIC)
     
           // Listen for messages
           pubsubChat.on('message', (message) => {
-            if (message.from === libp2p.peerId.toB58String()) {
+            if (message.from === state.node.peerId.toB58String()) {
               message.isMine = true
             }
             setMessages((messages) => [...messages, message])
             //console.log(`On listen message from: ${message.from} , created: ${message.created} , id: ${message.id}`)
             //Adding the received orders from the peers
 
-            const indexDB = new orderDB();
-            indexDB.transaction('rw', indexDB.orders, async() =>{
-            const id = await indexDB.orders.add({
+            state.p2pDb.transaction('rw', state.p2pDb.orders, async() =>{
+            const id = await state.p2pDb.orders.add({
                 id: message.id,
                 tokenA: message.tokenA, 
                 tokenB: message.tokenB, 
@@ -113,7 +113,7 @@ function OrderCreate({libp2p,eventBus}) {
           })
           
           // Forward stats events to the eventBus
-          pubsubChat.on('stats', (stats) => eventBus.emit('stats', stats))
+          pubsubChat.on('stats', (stats) => state.eventBus.emit('stats', stats))
     
           setChatClient(pubsubChat)
         }
