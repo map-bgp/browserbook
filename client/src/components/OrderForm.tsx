@@ -426,7 +426,9 @@ function OrderForm() {
         // fetchJSONFile('BBookToken',(data) => {
         //     abi = data?.abi
         // })
+        // contractInstance creation
         const contractInstance = new ethers.Contract(TOKENONE,abi,signer);
+        //read fucntion
         const tokenBalance = await contractInstance.balanceOf(address,1);
         console.log(tokenBalance.toString());
     }
@@ -440,6 +442,7 @@ function OrderForm() {
         //     abi = data?.abi
         // })
         const contractInstance = new ethers.Contract(TOKENONE,abi,signer);
+        //write 
         await contractInstance.setApprovalForAll(EXCHANGE,true);
         const contractBool = await contractInstance.isApprovedForAll(address,EXCHANGE);
         console.log(contractBool.toString());
