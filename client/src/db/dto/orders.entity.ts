@@ -6,6 +6,7 @@ export interface Orders{
     actionType: string,
     price: number,
     quantity: number,
+    orderFrm: number,
     from: string,
     created: string,
 }

@@ -21,8 +21,9 @@ message SendMessage {
   required bytes actionType = 4;
   required bytes price = 5;
   required bytes quantity = 6;
-  required int64 created = 7;
-  required bytes id = 8;
+  required bytes orderFrm = 7;
+  required int64 created = 8;
+  required bytes id = 9;
 }
 message Stats {
   enum NodeType {
@@ -91,7 +92,7 @@ class MessageHandler extends EventEmitter {
     try {
       const request = Request.decode(message.data)
       //console.log(`Send message function :${request.sendMessage.tokenA} : ${request.sendMessage.tokenB} : ${request.sendMessage.orderType} : ${request.sendMessage.actionType} : ${request.sendMessage.price} : ${request.sendMessage.quantity}`)
-      //console.log(`OnOrder function reached ${request.sendMessage.tokenA}`)
+      console.log(`OnOrder emit function reached ${request.sendMessage.orderFrm}`)
       switch (request.type) {
         case Request.Type.STATS:
           this.stats.set(message.from, request.stats)
@@ -107,6 +108,7 @@ class MessageHandler extends EventEmitter {
             actionType: uint8arrayToString(request.sendMessage.actionType),
             price: uint8arrayToString(request.sendMessage.price),
             quantity: uint8arrayToString(request.sendMessage.quantity),
+            orderFrm: uint8arrayToString(request.sendMessage.orderFrm),
             created: request.sendMessage.created,
             id: uint8arrayToString(request.sendMessage.id)
           })
@@ -115,28 +117,6 @@ class MessageHandler extends EventEmitter {
       console.error(err)
     }
   }
-
-  // _onMessage (message) {
-  //   try {
-  //     const request = Request.decode(message.data)
-  //     switch (request.type) {
-  //       case Request.Type.STATS:
-  //         this.stats.set(message.from, request.stats)
-  //         console.log('Incoming Stats:', message.from, request.stats)
-  //         this.emit('stats', this.stats)
-  //         break
-  //       default:
-  //         this.emit('message', {
-  //           from: message.from,
-  //           data: uint8arrayToString(request.sendMessage.data),
-  //           created: request.sendMessage.created,
-  //           id: uint8arrayToString(request.sendMessage.id)
-  //         })
-  //     }
-  //   } catch (err) {
-  //     console.error(err)
-  //   }
-  // }
 
    /**
    * Sends the updated stats to the pubsub network
@@ -173,8 +153,8 @@ class MessageHandler extends EventEmitter {
       await this.libp2p.pubsub.publish(this.topic, msg);
   }
 
-  async sendOrder(tokenA, tokenB, orderType, actionType, price, quantity) {
-    //console.log(`Send message function :${tokenA.name} : ${tokenB.name} : ${orderType.value} : ${actionType.name} : ${price} : ${quantity}`)
+  async sendOrder(tokenA, tokenB, orderType, actionType, price, quantity, account) {
+    //console.log(`Send message function :${tokenA.name} : ${tokenB.name} : ${orderType.value} : ${actionType.name} : ${price} : ${quantity} : ${account}`)
     const msg = Request.encode({
       type: Request.Type.SEND_MESSAGE,
       sendMessage: {
@@ -185,15 +165,15 @@ class MessageHandler extends EventEmitter {
         actionType: uint8arrayFromString(actionType.name),
         price: uint8arrayFromString(price),
         quantity: uint8arrayFromString(quantity),
+        orderFrm: uint8arrayFromString(account),
         created: Date.now()
       }
     });
 
-      //console.log(`Topic at send function ${this.topic} and ${uint8arrayToString(msg.token1)}`);   
+      //console.log(`Topic at send function ${msg.tokenA} : ${msg.orderFrm}`);   
       await this.libp2p.pubsub.publish(this.topic, msg);
   }
 
 }
-
 
 export default MessageHandler;

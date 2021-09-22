@@ -15,6 +15,7 @@ import {XCircleIcon} from "@heroicons/react/solid";
 import PubsubChat from "../p2p/messagehandler";
 import { useAppContext } from "./context/Store";
 import {orderDB } from "../db";
+import { useWeb3React } from "@web3-react/core";
 
 
 function OrderCreate() {
@@ -36,6 +37,7 @@ function OrderCreate() {
     const TOPIC = '/libp2p/bbook/chat/1.0.0'
     const [message, setMessage] = useState('')
     const [messages, setMessages] = useState([])
+    const { account, library } = useWeb3React<providers.Web3Provider>()
 
     //const [orderObject, setOrderObject]= useState({TokenA: Tokens[0], TokenB: Tokens[1], OrderType: OrderTypes[0], ActionType: OrderActions[0], Price: '', Quantity: ''})
 
@@ -65,7 +67,7 @@ function OrderCreate() {
         //setOrderObject(...orderObject,{TokenA: tokenA, TokenB: tokenB, OrderType: orderType, ActionType: actionType, Price: price, Quantity: quantity})
 
         try {
-          await chatClient.sendOrder(tokenA, tokenB, orderType, actionType, price, quantity)
+          await chatClient.sendOrder(tokenA, tokenB, orderType, actionType, price, quantity, account)
           console.info('Publish done')
         } catch (err) {
           console.error('Could not send message', err)
@@ -104,8 +106,10 @@ function OrderCreate() {
                 actionType: message.actionType,
                 price: message.price,
                 quantity: message.quantity,
+                orderFrm: message.orderFrm,
                 from: message.from,
                 created: message.created
+                
             });
             console.log(`Order ID is stored in ${id}`)
             }).catch(e => { console.log(e.stack || e);});
