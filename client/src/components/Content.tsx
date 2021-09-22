@@ -8,6 +8,7 @@ import Portfolio from './Portfolio'
 import Assets from './Assets'
 import HowItWorks from './HowItWorks'
 import OrderCreate from "./OrderCreate";
+import OrderMatch from "./OrderMatching";
 
 
 type ContentProps = {
@@ -39,6 +40,9 @@ const Content = (props: ContentProps) => {
           </Route>
           <Route path="/order-creation">
             <OrderCreate/>
+          </Route>
+          <Route path="/order-matching">
+            <OrderMatch/>
           </Route>
           <Route path={"/how-it-works"}>
             <HowItWorks/>
