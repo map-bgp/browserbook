@@ -1,7 +1,7 @@
-export interface Orders{
+export interface IOrders{
     id?: string,
-    tokenA: string,
-    tokenB: string,
+    tokenFrom: string,
+    tokenTo: string,
     ordertype: string,
     actionType: string,
     price: number,

@@ -15,7 +15,7 @@ import Info from "./elements/Info";
 import {BigNumber, ethers, providers,utils} from "ethers";
 import { EXCHANGE,TOKENTWO,TOKENONE } from "../constants";
 import {useAppContext} from "./context/Store";
-import { EtherStore, fetchJSONFile} from '../blockchain';
+import { EtherStore} from '../blockchain';
 import { useWeb3React } from "@web3-react/core";
 
 const abi = [

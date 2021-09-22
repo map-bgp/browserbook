@@ -100,8 +100,8 @@ function OrderCreate() {
             state.p2pDb.transaction('rw', state.p2pDb.orders, async() =>{
             const id = await state.p2pDb.orders.add({
                 id: message.id,
-                tokenA: message.tokenA, 
-                tokenB: message.tokenB, 
+                tokenFrom: message.tokenA, 
+                tokenTo: message.tokenB, 
                 ordertype: message.ordertype, 
                 actionType: message.actionType,
                 price: message.price,
