@@ -92,7 +92,7 @@ class MessageHandler extends EventEmitter {
     try {
       const request = Request.decode(message.data)
       //console.log(`Send message function :${request.sendMessage.tokenA} : ${request.sendMessage.tokenB} : ${request.sendMessage.orderType} : ${request.sendMessage.actionType} : ${request.sendMessage.price} : ${request.sendMessage.quantity}`)
-      console.log(`OnOrder emit function reached ${request.sendMessage.orderFrm}`)
+      //console.log(`OnOrder emit function reached ${request.sendMessage.orderType}`)
       switch (request.type) {
         case Request.Type.STATS:
           this.stats.set(message.from, request.stats)
@@ -154,7 +154,7 @@ class MessageHandler extends EventEmitter {
   }
 
   async sendOrder(tokenA, tokenB, orderType, actionType, price, quantity, account) {
-    //console.log(`Send message function :${tokenA.name} : ${tokenB.name} : ${orderType.value} : ${actionType.name} : ${price} : ${quantity} : ${account}`)
+   //console.log(`Send message function :${tokenA.name} : ${tokenB.name} : ${orderType.value} : ${actionType.name} : ${price} : ${quantity} : ${account}`)
     const msg = Request.encode({
       type: Request.Type.SEND_MESSAGE,
       sendMessage: {

@@ -102,7 +102,7 @@ function OrderCreate() {
                 id: message.id,
                 tokenA: message.tokenA, 
                 tokenB: message.tokenB, 
-                ordertype: message.ordertype, 
+                orderType: message.orderType, 
                 actionType: message.actionType,
                 price: message.price,
                 quantity: message.quantity,
