@@ -77,19 +77,11 @@ const loadInitialState = async () => {
       key: "assets",
     },
     {
-      name: "How it Works",
-      key: "how-it-works",
-    },
-    {
-      name: "order subscription",
-      key: "order-subscription",
-    },
-    {
-      name: "order creation",
+      name: "Order Creation",
       key: "order-creation",
     },
     {
-      name: "order matching",
+      name: "Order Matching",
       key: "order-matching",
     }
   ];

@@ -6,7 +6,6 @@ import Dashboard from './Dashboard'
 import Market from './Market'
 import Portfolio from './Portfolio'
 import Assets from './Assets'
-import HowItWorks from './HowItWorks'
 import OrderCreate from "./OrderCreate";
 import OrderMatch from "./OrderMatching";
 
@@ -43,9 +42,6 @@ const Content = (props: ContentProps) => {
           </Route>
           <Route path="/order-matching">
             <OrderMatch/>
-          </Route>
-          <Route path={"/how-it-works"}>
-            <HowItWorks/>
           </Route>
         </Switch>
       </main>

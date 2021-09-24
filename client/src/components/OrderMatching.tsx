@@ -127,6 +127,7 @@ function OrderMatch() {
 }
 
   return (
+    <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
     <div className="w-full bg-white border-gray-200 rounded px-4 py-2">
       <Info message={`${account}`} />
       <div>
@@ -181,10 +182,11 @@ function OrderMatch() {
             className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
             onClick={() => approval()}
           >
-            Aprroval
+            Approval
           </button>
         </div>
       </div>
+    </div>
     </div>
   );
 }

@@ -125,6 +125,7 @@ function OrderCreate() {
 
 
     return (
+    <div className="max-w-6xl mx-auto sm:px-6 lg:px-8">
       <div className="w-full bg-white border-gray-200 rounded px-4 py-2">
         <form className="h-full" onSubmit={handleSubmit}>
             <div className="mt-2 flex items-center justify-between">
@@ -205,6 +206,7 @@ function OrderCreate() {
             </div>
         </form>
       </div>
+    </div>
     )
 }
 
