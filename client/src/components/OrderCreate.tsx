@@ -16,6 +16,7 @@ import PubsubChat from "../p2p/messagehandler";
 import { useAppContext } from "./context/Store";
 import {orderDB } from "../db";
 import { useWeb3React } from "@web3-react/core";
+//import uint8arrayToString from "uint8arrays/to-string";
 
 
 function OrderCreate() {
@@ -63,11 +64,28 @@ function OrderCreate() {
    * Sends the current message in the chat field
    */
      const sendOrderMessage = async () => {
-        //console.log(`Reached Send OrderMessage`)
-        //setOrderObject(...orderObject,{TokenA: tokenA, TokenB: tokenB, OrderType: orderType, ActionType: actionType, Price: price, Quantity: quantity})
-
         try {
-          await chatClient.sendOrder(tokenA, tokenB, orderType, actionType, price, quantity, account)
+          const id = (~~(Math.random() * 1e9)).toString(36) + Date.now();  
+          const created = Date.now();
+          //console.log(`Send message function ${id} :${tokenA.name} : ${tokenB.name} : ${orderType.value} : ${actionType.name} : ${price} : ${quantity} : ${account} : ${created}`)
+          await chatClient.sendOrder(id ,tokenA, tokenB, orderType, actionType, price, quantity, account, created)
+
+          state.p2pDb.transaction('rw', state.p2pDb.orders, async() =>{
+            const order_id = await state.p2pDb.orders.add({
+                id: id,
+                tokenFrom: tokenA.name, 
+                tokenTo: tokenB.name, 
+                orderType: orderType.value, 
+                actionType: actionType.name,
+                price: price,
+                quantity: quantity,
+                orderFrm: account,
+                created: created
+                
+            });
+            console.log(`Order ID is stored in ${order_id}`)
+            }).catch(e => { console.log(e.stack || e);});
+
           console.info('Publish done')
         } catch (err) {
           console.error('Could not send message', err)
@@ -102,12 +120,12 @@ function OrderCreate() {
                 id: message.id,
                 tokenFrom: message.tokenA, 
                 tokenTo: message.tokenB, 
-                ordertype: message.ordertype, 
+                orderType: message.orderType, 
                 actionType: message.actionType,
                 price: message.price,
                 quantity: message.quantity,
                 orderFrm: message.orderFrm,
-                from: message.from,
+                //from: message.from,
                 created: message.created
                 
             });

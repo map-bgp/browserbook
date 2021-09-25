@@ -153,12 +153,12 @@ class MessageHandler extends EventEmitter {
       await this.libp2p.pubsub.publish(this.topic, msg);
   }
 
-  async sendOrder(tokenA, tokenB, orderType, actionType, price, quantity, account) {
+  async sendOrder(id, tokenA, tokenB, orderType, actionType, price, quantity, account, created) {
    //console.log(`Send message function :${tokenA.name} : ${tokenB.name} : ${orderType.value} : ${actionType.name} : ${price} : ${quantity} : ${account}`)
     const msg = Request.encode({
       type: Request.Type.SEND_MESSAGE,
       sendMessage: {
-        id: uint8arrayFromString((~~(Math.random() * 1e9)).toString(36) + Date.now()),
+        id: uint8arrayFromString(id),
         tokenA: uint8arrayFromString(tokenA.name),
         tokenB: uint8arrayFromString(tokenB.name),
         orderType: uint8arrayFromString(orderType.value),
@@ -166,7 +166,7 @@ class MessageHandler extends EventEmitter {
         price: uint8arrayFromString(price),
         quantity: uint8arrayFromString(quantity),
         orderFrm: uint8arrayFromString(account),
-        created: Date.now()
+        created: created
       }
     });
 
