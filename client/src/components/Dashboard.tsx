@@ -1,7 +1,7 @@
 import React from "react";
 import "tailwindcss/tailwind.css";
 import OrderBook from "./OrderBook";
-import OrderForm from "./OrderForm";
+import OrderTable from "./OrderTable";
 import Info from "./elements/Info";
 import Chart from "./elements/Chart";
 import { useAppContext } from "./context/Store";
@@ -32,9 +32,9 @@ const Dashboard = () => {
         <div className="flex justify-around h-[30rem] col-span-2 md:col-span-1">
           <OrderBook />
         </div>
-        <div className="flex justify-around h-[30rem] col-span-4">
-          <OrderForm/>
-        </div>
+      </div>
+      <div className="flex justify-around h-[30rem] col-span-4">
+          <OrderTable/>
       </div>
     </div>
   );

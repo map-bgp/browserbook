@@ -1,7 +1,6 @@
 export interface StateContext {
   node?: any;
   peerId?: any;
-  etherStore: any;
   p2pDb: any;
   eventBus: any;
 }
@@ -9,7 +8,6 @@ export interface StateContext {
 export enum ActionType {
   SET_NODE = "SET_NODE",
   SET_PEER_ID = "SET_PEER_ID",
-  SET_ETHERSTORE = "ETHERSTORE",
   SET_DB = "SET_DB",
   SET_EVENTEMITTER = "SET_EVENTEMITTER",
 }
@@ -21,10 +19,6 @@ export type Action =
     }
   | {
       type: ActionType.SET_PEER_ID;
-      payload: any;
-    }
-  | {
-      type: ActionType.SET_ETHERSTORE;
       payload: any;
     }
   | {
@@ -42,8 +36,6 @@ export const Reducer = (state: StateContext, action: Action) => {
       return { ...state, node: action.payload };
     case ActionType.SET_PEER_ID:
       return { ...state, peerId: action.payload };
-    case ActionType.SET_ETHERSTORE:
-      return { ...state, etherStore: action.payload };
     case ActionType.SET_DB:
       return { ...state, p2pDb: action.payload };
     case ActionType.SET_EVENTEMITTER:

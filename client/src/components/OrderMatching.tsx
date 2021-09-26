@@ -26,16 +26,12 @@ function OrderMatch() {
 
   const { account, library } = useWeb3React<providers.Web3Provider>();
 
-  const data =
-    "0x7f7465737432000000000000000000000000000000000000000000000000000000600057";
-  let orderArray;
-
-  const fetchOrders = async () => {
-    orderArray = await state.p2pDb.orders.toArray();
-    console.log(orderArray[orderArray.length - 1]);
-  };
+  const data = "0x7f7465737432000000000000000000000000000000000000000000000000000000600057";
+  
 
   const matchOrders = async () => {
+    const orderArray = await state.p2pDb.orders.toArray();
+    console.log(orderArray[orderArray.length - 1]);
     // const exemptedOrderArray = orderArray
     // filter(orderArray,matches())
     const orderOne = orderArray.pop();
@@ -73,7 +69,7 @@ function OrderMatch() {
       token2Id.get(orderOne.tokenFrom),
       token2Id.get(orderTwo.tokenFrom),
       orderOne.quantity,
-      orderTwo.quantity,
+      orderOne.quantity * orderOne.price,
       data
     );
   };
@@ -131,21 +127,7 @@ function OrderMatch() {
     <div className="w-full bg-white border-gray-200 rounded px-4 py-2">
       <Info message={`${account}`} />
       <div>
-        <button
-          type="submit"
-          className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-          onClick={() => fetchOrders()}
-        >
-          Fetch Order
-        </button>
 
-        <button
-          type="submit"
-          className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-          onClick={() => matchOrders()}
-        >
-          Match Order
-        </button>
 
         <div className="mt-2 mb-6 flex items-center justify-between">
           <Select
@@ -173,7 +155,7 @@ function OrderMatch() {
             className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
             onClick={() => mint()}
           >
-            Mint
+            Mint Tokens
           </button>
           </div>
         <div>
@@ -182,10 +164,17 @@ function OrderMatch() {
             className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
             onClick={() => approval()}
           >
-            Approval
+            Approve Exchange
           </button>
         </div>
       </div>
+      <button
+          type="submit"
+          className="absolute inset-x-0 top-100 mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+          onClick={() => matchOrders()}
+        >
+          Match Order
+      </button>
     </div>
     </div>
   );

@@ -15,7 +15,9 @@ module.exports = {
             },
             colors: {
                 orange: colors.orange,
-            }
+            },
+            tableLayout: ['hover', 'focus'],
+            borderCollapse: ['hover', 'focus'],
         },
     },
     variants: {

@@ -1,6 +1,5 @@
 import React, { useContext, useReducer } from "react";
 import { Action, Reducer, StateContext } from "./Reducer";
-import { EtherStore } from "../../blockchain";
 import { P2PDB } from "../../db";
 import EventEmitter from "events";
 
@@ -16,7 +15,6 @@ const eventBus = new EventEmitter();
 
 const defaultState: StateContext = {
   node: null,
-  etherStore: null,
   p2pDb: p2pDb,
   eventBus: eventBus,
 };

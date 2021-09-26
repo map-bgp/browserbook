@@ -7,7 +7,6 @@ import  createLibp2p  from "../p2p/p2pnode";
 import { getOrCreatePeerId } from '../p2p/peer-id'
 
 import Header from "./Header";
-import {EtherStore,injected} from "../blockchain"
 import { providers } from "ethers";
 import { useWeb3React } from "@web3-react/core";
 import { useEagerConnect,useInactiveListener } from "../store/Hooks";
@@ -20,7 +19,6 @@ import { ActionType } from "./context/Reducer";
 export const App = () => {
 
   const location = useLocation();
-  const etherStore = new EtherStore();
   const { state, setContext } = useAppContext();
 
   // handle logic to eagerly connect to the injected ethereum provider, if it exists and has granted access already
@@ -49,8 +47,6 @@ const loadInitialState = async () => {
     type: ActionType.SET_NODE,
     payload: node
   })
-
-  await etherStore.Start();
 
 }
 }

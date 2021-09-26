@@ -12,16 +12,17 @@ import Bootstrap from "libp2p-bootstrap";
 import KadDHT from "libp2p-kad-dht";
 
 import Gossipsub from "libp2p-gossipsub";
+import { useAppDispatch } from "../store/Hooks";
 
 import { store } from "../store/Store";
-import { setPeerID } from "../store/slices/PeerSlice";
+import {decrementPeers, incrementPeers, setPeerID} from "../store/slices/PeerSlice";
 
 import PeerID from 'peer-id';
 
 const transportKey = Websockets.prototype[Symbol.toStringTag]
 
 const createLibp2p = async (peerId) => {
-  //const dispatch = store.dispatch;
+  const dispatch = store.dispatch;
   //const Peerid = await PeerID.create()
   // Create our libp2p node
   const libp2p: Libp2p = await Libp2p.create({
@@ -77,13 +78,26 @@ const createLibp2p = async (peerId) => {
     },
   });
 
-  // Listen for new peers
-  libp2p.on("peer:discovery", (peerId) => {
-    console.info(`Found peer ${peerId.toB58String()}`);
-  });
 
-  console.info(`libp2p id is ${libp2p.peerId.toB58String()}`);
-  //dispatch(setPeerID(libp2p.peerId.toB58String()));
+  // Listen for new peers
+  libp2p.on('peer:discovery', (peerId) => {
+    console.info(`Found peer ${peerId.toB58String()}`)
+  })
+
+  // Listen for new connections to peers
+  libp2p.connectionManager.on('peer:connect', (connection) => {
+    dispatch(incrementPeers())
+    console.info(`Connected to ${connection.remotePeer.toB58String()}`)
+  })
+
+  // Listen for peers disconnecting
+  libp2p.connectionManager.on('peer:disconnect', (connection) => {
+    dispatch(decrementPeers())
+    console.info(`Disconnected from ${connection.remotePeer.toB58String()}`)
+  })
+
+  console.info(`libp2p id is ${libp2p.peerId.toB58String()}`)
+  dispatch(setPeerID(libp2p.peerId.toB58String()))
 
   await libp2p.start();
 
