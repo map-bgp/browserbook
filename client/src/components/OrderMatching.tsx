@@ -21,9 +21,11 @@ function OrderMatch() {
   const { state, setContext } = useAppContext();
 
   const [token, setToken] = useState(Tokens[0]);
-  const [balanceToken, setBalanceToken] = useState(Tokens[0]);
+  const [multiToken, setMultiToken] = useState(Tokens[0]);
 
   const [value, setValue] = useState();
+
+  const [authorization, setAuthorization] = useState();
 
   const [quantity, setQuantity] = useState<number>(0.0);
 
@@ -34,7 +36,7 @@ function OrderMatch() {
 
   const matchOrders = async () => {
     const orderArray = await state.p2pDb.orders.toArray();
-    console.log(orderArray[orderArray.length - 1]);
+    console.log(`orders array lenght in the db ${orderArray.length}`);
     // const exemptedOrderArray = orderArray
     // filter(orderArray,matches())
     const orderOne = orderArray.pop();
@@ -64,7 +66,7 @@ function OrderMatch() {
       data: data,
     });
 
-    await exchangeContract.executeOrder(
+    const tx = await exchangeContract.executeOrder(
       token2Address.get(orderOne.tokenFrom),
       token2Address.get(orderTwo.tokenFrom),
       orderOne.orderFrm,
@@ -72,9 +74,11 @@ function OrderMatch() {
       token2Id.get(orderOne.tokenFrom),
       token2Id.get(orderTwo.tokenFrom),
       orderOne.quantity,
-      orderOne.quantity * orderOne.price,
+      orderTwo.quantity,
       data
     );
+
+    console.log(tx);
   };
 
   const mint = async () => {
@@ -107,11 +111,11 @@ function OrderMatch() {
 
     const address = await signer.getAddress();
 
-    const tokenContractAddress = token2Address.get(balanceToken.name);
+    const tokenContractAddress = token2Address.get(multiToken.name);
 
-    const tokenContractAbi = token2Abi.get(balanceToken.name);
+    const tokenContractAbi = token2Abi.get(multiToken.name);
 
-    const tokenId = token2Id.get(balanceToken.name);
+    const tokenId = token2Id.get(multiToken.name);
 
     // @ts-ignore
     const tokenInstance = new Contract(tokenContractAddress,tokenContractAbi,signer);
@@ -127,10 +131,11 @@ function OrderMatch() {
 
     const address = await signer.getAddress();
 
-    const tokenContractAddress = token2Address.get(token.name);
+    const tokenContractAddress = token2Address.get(multiToken.name);
 
-    const tokenContractAbi = token2Abi.get(token.name);
+    const tokenContractAbi = token2Abi.get(multiToken.name);
 
+    console.log(tokenContractAddress,tokenContractAbi?.length)
     // @ts-ignore
     const tokenInstance = new Contract(tokenContractAddress,tokenContractAbi,signer);
 
@@ -145,6 +150,28 @@ function OrderMatch() {
     );
 
     console.log(contractBool.toString());
+  };
+
+  const authentication = async () => {
+    // @ts-ignore
+    const signer = library.getSigner();
+
+    const address = await signer.getAddress();
+
+    const tokenContractAddress = token2Address.get(multiToken.name);
+
+    const tokenContractAbi = token2Abi.get(multiToken.name);
+
+    console.log(tokenContractAddress,tokenContractAbi?.length)
+    // @ts-ignore
+    const tokenInstance = new Contract(tokenContractAddress,tokenContractAbi,signer);
+
+    const contractBool = await tokenInstance.isApprovedForAll(
+      address,
+      EXCHANGE
+    );
+
+    setAuthorization(contractBool.toString());
   };
 
   return (
@@ -186,9 +213,9 @@ function OrderMatch() {
             <Select
               label="My Balance of"
               range={Tokens}
-              selected={balanceToken as SelectObject}
+              selected={multiToken as SelectObject}
               setSelected={
-                setBalanceToken as React.Dispatch<React.SetStateAction<SelectObject>>
+                setMultiToken as React.Dispatch<React.SetStateAction<SelectObject>>
               }
             />
             <button
@@ -199,11 +226,6 @@ function OrderMatch() {
               Balance
             </button>
 
-          </div>
-          <div className="ml-3 flex-1 md:flex md:justify-between">
-              <p className="text-sm text-blue-700">{value &&`Tokens Balance of ${balanceToken.name} is ${value}`}</p>
-          </div>
-          <div>
             <button
               type="submit"
               className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
@@ -211,8 +233,24 @@ function OrderMatch() {
             >
               Approve Exchange
             </button>
+
+            <button
+              type="submit"
+              className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+              onClick={() => authentication()}
+            >
+              Authorization Check
+            </button>
+
+          </div>
+          <div className="ml-3 flex-1 md:flex md:justify-between">
+              <p className="text-sm text-blue-700">{value &&`Tokens Balance of ${multiToken.name} is ${value}`}</p>
+          </div>
+          <div className="ml-3 flex-1 md:flex md:justify-between">
+              <p className="text-sm text-blue-700">{authorization && `Exchange has access to ${multiToken.name}`}</p>
           </div>
         </div>
+
         <button
           type="submit"
           className="absolute inset-x-0 top-100 mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
