@@ -2,21 +2,20 @@ import React from "react";
 import "tailwindcss/tailwind.css"
 
 import {Route, Switch} from "react-router-dom";
-
-import {Mesh,} from '@0x/mesh-browser-lite';
-
 import Dashboard from './Dashboard'
 import Market from './Market'
 import Portfolio from './Portfolio'
 import Assets from './Assets'
-import HowItWorks from './HowItWorks'
+import OrderCreate from "./OrderCreate";
+import OrderMatch from "./OrderMatching";
+
 
 type ContentProps = {
   current: string,
-  mesh: Mesh
 }
 
 const Content = (props: ContentProps) => {
+
   return (
     <div className="py-10">
       <header>
@@ -27,7 +26,7 @@ const Content = (props: ContentProps) => {
       <main>
         <Switch>
           <Route exact path={["", "/", "/dashboard"]}>
-            <Dashboard mesh={props.mesh}/>
+            <Dashboard/>
           </Route>
           <Route path="/market">
             <Market/>
@@ -38,8 +37,11 @@ const Content = (props: ContentProps) => {
           <Route path="/assets">
             <Assets/>
           </Route>
-          <Route path={"/how-it-works"}>
-            <HowItWorks/>
+          <Route path="/order-creation">
+            <OrderCreate/>
+          </Route>
+          <Route path="/order-matching">
+            <OrderMatch/>
           </Route>
         </Switch>
       </main>
