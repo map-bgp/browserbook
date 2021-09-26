@@ -21,13 +21,16 @@ function OrderMatch() {
   const { state, setContext } = useAppContext();
 
   const [token, setToken] = useState(Tokens[0]);
+  const [balanceToken, setBalanceToken] = useState(Tokens[0]);
+
+  const [value, setValue] = useState();
 
   const [quantity, setQuantity] = useState<number>(0.0);
 
   const { account, library } = useWeb3React<providers.Web3Provider>();
 
-  const data = "0x7f7465737432000000000000000000000000000000000000000000000000000000600057";
-  
+  const data =
+    "0x7f7465737432000000000000000000000000000000000000000000000000000000600057";
 
   const matchOrders = async () => {
     const orderArray = await state.p2pDb.orders.toArray();
@@ -98,8 +101,27 @@ function OrderMatch() {
     console.log(`Balance is ${tokenBalance.toString()}`);
   };
 
+  const balance = async () => {
+    // @ts-ignore
+    const signer = library.getSigner();
 
-  const approval = async() => {
+    const address = await signer.getAddress();
+
+    const tokenContractAddress = token2Address.get(balanceToken.name);
+
+    const tokenContractAbi = token2Abi.get(balanceToken.name);
+
+    const tokenId = token2Id.get(balanceToken.name);
+
+    // @ts-ignore
+    const tokenInstance = new Contract(tokenContractAddress,tokenContractAbi,signer);
+    //read fucntion
+    const balance = await tokenInstance.balanceOf(address, tokenId);
+
+    setValue(balance.toString());
+  };
+
+  const approval = async () => {
     // @ts-ignore
     const signer = library.getSigner();
 
@@ -112,70 +134,93 @@ function OrderMatch() {
     // @ts-ignore
     const tokenInstance = new Contract(tokenContractAddress,tokenContractAbi,signer);
 
-    //write 
-    const tx = await tokenInstance.setApprovalForAll(EXCHANGE,true);
+    //write
+    const tx = await tokenInstance.setApprovalForAll(EXCHANGE, true);
 
     await tx.wait();
 
-    const contractBool = await tokenInstance.isApprovedForAll(address,EXCHANGE);
+    const contractBool = await tokenInstance.isApprovedForAll(
+      address,
+      EXCHANGE
+    );
 
     console.log(contractBool.toString());
-}
+  };
 
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-    <div className="w-full bg-white border-gray-200 rounded px-4 py-2">
-      <Info message={`${account}`} />
-      <div>
-
-
-        <div className="mt-2 mb-6 flex items-center justify-between">
-          <Select
-            label="I Want"
-            range={Tokens}
-            selected={token as SelectObject}
-            setSelected={
-              setToken as React.Dispatch<React.SetStateAction<SelectObject>>
-            }
-          />
-          <div className="w-1/2 mt-1 ml-4 border-b border-gray-300 focus-within:border-orange-600">
-            <input
-              type="number"
-              name="Quantity"
-              id="quantity"
-              step="1"
-              min={0}
-              onChange={(e) => setQuantity(Number(e.target.value))}
-              className="block w-full text-gray-500 border-0 border-b border-transparent bg-gray-50 focus:border-orange-600 focus:ring-0 sm:text-sm"
-              placeholder="0"
-            />
-          </div>
-          <button
-            type="submit"
-            className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-            onClick={() => mint()}
-          >
-            Mint Tokens
-          </button>
-          </div>
+      <div className="w-full bg-white border-gray-200 rounded px-4 py-2">
+        <Info message={`${account}`} />
         <div>
-          <button
-            type="submit"
-            className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-            onClick={() => approval()}
-          >
-            Approve Exchange
-          </button>
+          <div className="mt-2 mb-6 flex items-center justify-between">
+            <Select
+              label="I Want"
+              range={Tokens}
+              selected={token as SelectObject}
+              setSelected={
+                setToken as React.Dispatch<React.SetStateAction<SelectObject>>
+              }
+            />
+            <div className="w-1/2 mt-1 ml-4 border-b border-gray-300 focus-within:border-orange-600">
+              <input
+                type="number"
+                name="Quantity"
+                id="quantity"
+                step="1"
+                min={0}
+                onChange={(e) => setQuantity(Number(e.target.value))}
+                className="block w-full text-gray-500 border-0 border-b border-transparent bg-gray-50 focus:border-orange-600 focus:ring-0 sm:text-sm"
+                placeholder="0"
+              />
+            </div>
+            <button
+              type="submit"
+              className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+              onClick={() => mint()}
+            >
+              Mint Tokens
+            </button>
+          </div>
+
+          <div className="mt-2 mb-6 flex items-center justify-between">
+            <Select
+              label="My Balance of"
+              range={Tokens}
+              selected={balanceToken as SelectObject}
+              setSelected={
+                setBalanceToken as React.Dispatch<React.SetStateAction<SelectObject>>
+              }
+            />
+            <button
+              type="submit"
+              className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+              onClick={() => balance()}
+            >
+              Balance
+            </button>
+
+          </div>
+          <div className="ml-3 flex-1 md:flex md:justify-between">
+              <p className="text-sm text-blue-700">{value &&`Tokens Balance of ${balanceToken.name} is ${value}`}</p>
+          </div>
+          <div>
+            <button
+              type="submit"
+              className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+              onClick={() => approval()}
+            >
+              Approve Exchange
+            </button>
+          </div>
         </div>
-      </div>
-      <button
+        <button
           type="submit"
           className="absolute inset-x-0 top-100 mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
           onClick={() => matchOrders()}
         >
           Match Order
-      </button>
-    </div>
+        </button>
+      </div>
     </div>
   );
 }
