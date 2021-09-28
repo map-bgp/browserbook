@@ -63,20 +63,9 @@ const Header = (props: HeaderProps) => {
                 </div>
               </div>
               <div className="flex items-center justify-end">
-                <div className="mr-8 my-4 py-2 border border-transparent text-gray-500 text-sm font-medium">
+                <div className="absolute top-0 right-0 mr-8 my-4 py-2 text-gray-500 text-sm font-medium">
                   Peer Count: {getNumPeers()}
                 </div>
-                {state.node !== null && !state.node.isStarted() && <button
-                  type="button"
-                  className="mr-4 ml-auto my-4 block flex items-center px-4 py-2 border border-orange-600 text-sm font-medium rounded-md shadow-sm text-orange-600 bg-white hover:bg-orange-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-                  onClick={() => {
-                    state.node.start()
-                  }}
-                >
-                  Find Peers
-                </button>}
-
-
               </div>
 
               

@@ -42,7 +42,7 @@ function OrderTable() {
   useEffect(() => {
     fetchOrders();
     setTableUpdate(true);
-  }, [ordersTable]);
+  }, []);
 
   const message = `Connected Address:${account}`;
 
@@ -58,7 +58,7 @@ function OrderTable() {
       >
         Balance
       </button>
-{/* 
+      {/* 
       <button
         type="submit"
         className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
@@ -79,9 +79,7 @@ function OrderTable() {
               <TableCell Name={"Price"} />
             </tr>
           </thead>
-          <tbody id="TableBody">
-              {tableUpdate && ordersTable}
-          </tbody>
+          <tbody id="TableBody">{tableUpdate && ordersTable}</tbody>
         </table>
       </div>
     </div>

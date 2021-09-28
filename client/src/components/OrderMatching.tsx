@@ -177,9 +177,9 @@ function OrderMatch() {
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
       <div className="w-full bg-white border-gray-200 rounded px-4 py-2">
-        <Info message={`${account}`} />
+        <Info message={`Connected Account :${account}`} />
         <div>
-          <div className="mt-2 mb-6 flex items-center justify-between">
+          <div className="mt-2 mb-6 flex items-center justify-between space-x-6">
             <Select
               label="I Want"
               range={Tokens}
@@ -209,7 +209,7 @@ function OrderMatch() {
             </button>
           </div>
 
-          <div className="mt-2 mb-6 flex items-center justify-between">
+          <div className="mt-2 mb-6 flex items-center justify-between space-x-6">
             <Select
               label="My Balance of"
               range={Tokens}
@@ -220,12 +220,14 @@ function OrderMatch() {
             />
             <button
               type="submit"
-              className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+              className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 "
               onClick={() => balance()}
             >
               Balance
             </button>
+          </div>
 
+          <div className="mt-2 mb-6 flex items-center justify-between space-x-4">
             <button
               type="submit"
               className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
@@ -233,7 +235,6 @@ function OrderMatch() {
             >
               Approve Exchange
             </button>
-
             <button
               type="submit"
               className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
@@ -241,8 +242,15 @@ function OrderMatch() {
             >
               Authorization Check
             </button>
-
+            <button
+            type="submit"
+            className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+            onClick={() => matchOrders()}
+            >
+            Match Order
+            </button>
           </div>
+
           <div className="ml-3 flex-1 md:flex md:justify-between">
               <p className="text-sm text-blue-700">{value &&`Tokens Balance of ${multiToken.name} is ${value}`}</p>
           </div>
@@ -251,13 +259,7 @@ function OrderMatch() {
           </div>
         </div>
 
-        <button
-          type="submit"
-          className="absolute inset-x-0 top-100 mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-          onClick={() => matchOrders()}
-        >
-          Match Order
-        </button>
+        
       </div>
     </div>
   );
