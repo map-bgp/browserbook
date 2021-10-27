@@ -15,10 +15,10 @@ const Dashboard = () => {
 
   //Index DB storage for the peer ID 
   const peerID = getPeerID();
-  state.p2pDb.transaction('rw', state.p2pDb.peers, async() =>{
-    const id = await state.p2pDb.peers.add({peerId: peerID, joinedTime: Date.now().toString()});
-    console.log(`Peer ID is stored in ${id}`)
-  }).catch(e => { console.log(e.stack || e);});
+  // state.p2pDb.transaction('rw', state.p2pDb.peers, async() =>{
+  //   const id = await state.p2pDb.peers.add({peerId: peerID, joinedTime: Date.now().toString()});
+  //   console.log(`Peer ID is stored in ${id}`)
+  // }).catch(e => { console.log(e.stack || e);});
 
   let peerIDMessage = `Your peer ID is: ${getPeerID()}`;
 

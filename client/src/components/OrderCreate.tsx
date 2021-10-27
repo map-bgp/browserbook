@@ -22,8 +22,6 @@ import { useWeb3React } from "@web3-react/core";
 function OrderCreate() {
     const dispatch = useAppDispatch()
     const { state, setContext } = useAppContext()
-    console.log(`reached OrderCreation`)
-
     const [tokenA, setTokenA] = useState(Tokens[0])
     const [tokenB, setTokenB] = useState(Tokens[1])
 
@@ -38,9 +36,14 @@ function OrderCreate() {
     const TOPIC = '/libp2p/bbook/chat/1.0.0'
     const [message, setMessage] = useState('')
     const [messages, setMessages] = useState([])
+    const [orderPeerID, setOrderPeerID] = useState('')
     const { account, library } = useWeb3React<providers.Web3Provider>()
 
     //const [orderObject, setOrderObject]= useState({TokenA: Tokens[0], TokenB: Tokens[1], OrderType: OrderTypes[0], ActionType: OrderActions[0], Price: '', Quantity: ''})
+
+    const getPeerID = () => {
+        return state.peerId;
+    }
 
     const getTotal = (): number => {
         return (price * quantity)
@@ -92,6 +95,12 @@ function OrderCreate() {
         }
       }
 
+    const randomPeers = async () => {
+        const peerArray = await state.p2pDb.peers.toArray();
+        const obj = peerArray[Math.floor((Math.random()*peerArray.length))];
+        console.log(`Random Peers ${obj.peerId}`);
+        setOrderPeerID(obj.peerId._idB58String);
+      }
 
     /**
    * Leverage use effect to act on state changes
@@ -101,10 +110,13 @@ function OrderCreate() {
         if (!state.node) return
 
         //console.log(`Reached useEffect in OrderFrom`)
+        randomPeers();
     
-        // Create the pubsub chatClient
-        if (!chatClient) {
-          const pubsubChat = new PubsubChat(state.node, TOPIC)
+        // Create the pubsub Client
+        if (!chatClient && orderPeerID) {
+          //console.log(`In Use Effect : ${orderPeerID}`)
+          //console.log(`Peer ID @ Order Create ${getPeerID()}`)
+          const pubsubChat = new PubsubChat(state.node, TOPIC+"_"+getPeerID(), TOPIC+"_"+orderPeerID)
     
           // Listen for messages
           pubsubChat.on('message', (message) => {

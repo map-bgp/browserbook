@@ -39,14 +39,16 @@ message Stats {
 class MessageHandler extends EventEmitter {
   libp2p: any;
   topic: string; 
+  topic_universal: string;
   connectedPeers: any;
   stats: any;
   
-  constructor(libp2p: any, topic: string) {
+  constructor(libp2p: any, topic_universal: string, topic: string) {
 
     super();
     this.libp2p = libp2p;
     this.topic = topic;
+    this.topic_universal = topic_universal;
 
     this.connectedPeers = new Set();
     this.stats = new Map();
@@ -79,13 +81,17 @@ class MessageHandler extends EventEmitter {
    * @private
    */
   join () {
+    this.libp2p.pubsub.on(this.topic_universal, this._onMessage)
     this.libp2p.pubsub.on(this.topic, this._onMessage)
+    this.libp2p.pubsub.subscribe(this.topic_universal)
     this.libp2p.pubsub.subscribe(this.topic)
   }
 
   leave () {
     this.libp2p.pubsub.removeListener(this.topic, this._onMessage)
+    this.libp2p.pubsub.removeListener(this.topic_universal, this._onMessage)
     this.libp2p.pubsub.unsubscribe(this.topic)
+    this.libp2p.pubsub.unsubscribe(this.topic_universal)
   }
 
   _onMessage (message) {
@@ -130,7 +136,7 @@ class MessageHandler extends EventEmitter {
           nodeType: Stats.NodeType.BROWSER
         }
       })
-  
+
       try {
         await this.libp2p.pubsub.publish(this.topic, msg)
       } catch (err) {

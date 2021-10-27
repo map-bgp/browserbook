@@ -41,7 +41,7 @@ const loadInitialState = async () => {
 
   console.info('Creating our Libp2p instance')
 
-  const node = await createLibp2p(state.peerId)
+  const node = await createLibp2p(state)
   
   setContext({
     type: ActionType.SET_NODE,

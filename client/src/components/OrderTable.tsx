@@ -16,6 +16,7 @@ function OrderTable() {
   const { account, library } = useWeb3React<providers.Web3Provider>();
   const [orderArray, setOrderArray] = useState([]);
   const [balance, setBalance] = useState();
+  const [owner, setOwner] = useState();
   const [tableUpdate, setTableUpdate] = useState(false);
   const [ordersTable, setOrdersTable] = useState<any[]>();
   
@@ -26,24 +27,28 @@ function OrderTable() {
 
   const fetchOrders = async () => {
     const orders = await state.p2pDb.orders.toArray();
-    const randomOrdersTable : any[] = []
-    const formattedOrders = orders.map((order) => {
-      order.tokenFrom, order.tokenTo, order.quantity, order.Price;
-    });
-    setOrderArray(formattedOrders);
-    randomOrdersTable.push(
-      formattedOrders.map((item) => {
-          <TableRow items={item} />;
-        }))
-    setOrdersTable(randomOrdersTable);
-    console.log(`Number of Orders: ${formattedOrders.length}`);
+    //const randomOrdersTable : any[] = []
+    // const formattedOrders = orders.map((order) => {
+    //   order.tokenFrom, order.tokenTo, order.quantity, order.Price;
+    // });
+    //setOrderArray(formattedOrders);
+    // randomOrdersTable.push(
+    //   formattedOrders.map((item) => {
+    //       <TableRow items={item} />;
+    //     }))
+    // setOrdersTable(randomOrdersTable);
+    //console.log(`Number of Orders: ${formattedOrders.length}`);
+    //console.log(`Token From: ${orders[1].tokenFrom}`);
   };
+
 
   useEffect(() => {
     fetchOrders();
     setTableUpdate(true);
   }, []);
 
+  const ordersNew = fetchOrders();
+  
   const message = `Connected Address:${account}`;
 
   const balanceInfo = ` Account Balance:${balance}`;
@@ -79,7 +84,14 @@ function OrderTable() {
               <TableCell Name={"Price"} />
             </tr>
           </thead>
-          <tbody id="TableBody">{tableUpdate && ordersTable}</tbody>
+          <tbody id="TableBody">{tableUpdate && ordersTable}
+            <tr>
+              <td>fetchOrders[1].tokenFrom</td>
+              <td>order.tokenTo[1]</td>
+              <td>order.quantity[1]</td>
+              <td>order.Price[1]</td>
+            </tr>
+          </tbody>
         </table>
       </div>
     </div>

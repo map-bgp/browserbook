@@ -34,9 +34,10 @@ function OrderMatch() {
   const data =
     "0x7f7465737432000000000000000000000000000000000000000000000000000000600057";
 
+
   const matchOrders = async () => {
     const orderArray = await state.p2pDb.orders.toArray();
-    console.log(`orders array lenght in the db ${orderArray.length}`);
+    console.log(`orders array length in the db ${orderArray.length}`);
     // const exemptedOrderArray = orderArray
     // filter(orderArray,matches())
     const orderOne = orderArray.pop();

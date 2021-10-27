@@ -21,8 +21,9 @@ import PeerID from 'peer-id';
 
 const transportKey = Websockets.prototype[Symbol.toStringTag]
 
-const createLibp2p = async (peerId) => {
+const createLibp2p = async (state) => {
   const dispatch = store.dispatch;
+  const peerId = state.peerId;
   //const Peerid = await PeerID.create()
   // Create our libp2p node
   const libp2p: Libp2p = await Libp2p.create({
@@ -88,6 +89,10 @@ const createLibp2p = async (peerId) => {
   libp2p.connectionManager.on('peer:connect', (connection) => {
     dispatch(incrementPeers())
     console.info(`Connected to ${connection.remotePeer.toB58String()}`)
+    state.p2pDb.transaction('rw', state.p2pDb.peers, async() =>{
+      const id = await state.p2pDb.peers.add({peerId: connection.remotePeer.toB58String(), joinedTime: Date.now().toString()});
+      //console.log(`Peer ID is stored in ${id}`)
+    }).catch(e => { console.log(e.stack || e);});
   })
 
   // Listen for peers disconnecting
