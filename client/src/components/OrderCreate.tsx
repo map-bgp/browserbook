@@ -114,8 +114,6 @@ function OrderCreate() {
     
         // Create the pubsub Client
         if (!chatClient && orderPeerID) {
-          //console.log(`In Use Effect : ${orderPeerID}`)
-          //console.log(`Peer ID @ Order Create ${getPeerID()}`)
           const pubsubChat = new PubsubChat(state.node, TOPIC+"_"+getPeerID(), TOPIC+"_"+orderPeerID)
     
           // Listen for messages
@@ -124,8 +122,6 @@ function OrderCreate() {
               message.isMine = true
             }
             setMessages((messages) => [...messages, message])
-            //console.log(`On listen message from: ${message.from} , created: ${message.created} , id: ${message.id}`)
-            //Adding the received orders from the peers
 
             state.p2pDb.transaction('rw', state.p2pDb.orders, async() =>{
             const id = await state.p2pDb.orders.add({
@@ -143,7 +139,6 @@ function OrderCreate() {
             });
             console.log(`Order ID is stored in ${id}`)
             }).catch(e => { console.log(e.stack || e);});
-
           })
           
           // Forward stats events to the eventBus

@@ -35,6 +35,25 @@ function OrderMatch() {
     "0x7f7465737432000000000000000000000000000000000000000000000000000000600057";
 
 
+    const joinValidator = async () => {
+      const orderArray = await state.p2pDb.orders.toArray();
+      console.log(`orders array length in the db ${orderArray.length}`);
+      // const exemptedOrderArray = orderArray
+      // filter(orderArray,matches())
+      const orderOne = orderArray.pop();
+      const orderTwo = orderArray.pop();
+      // @ts-ignore
+      const signer = library.getSigner();
+  
+      const address = await signer.getAddress();
+  
+      // console.log(exchangeAbi)
+      // console.log(EXCHANGE)
+  
+      const exchangeContract = new Contract(EXCHANGE, exchangeAbi, signer);
+    };
+
+
   const matchOrders = async () => {
     const orderArray = await state.p2pDb.orders.toArray();
     console.log(`orders array length in the db ${orderArray.length}`);
@@ -229,6 +248,14 @@ function OrderMatch() {
           </div>
 
           <div className="mt-2 mb-6 flex items-center justify-between space-x-4">
+          <button
+              type="submit"
+              className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+              onClick={() => joinValidator()}
+            >
+              Join Validator
+            </button>
+
             <button
               type="submit"
               className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
