@@ -62,7 +62,7 @@ class ValidatorHandler extends EventEmitter {
 
     this._onMessage = this._onMessage.bind(this)
     //this._onOrder = this._onOrder.bind(this)
-
+    //console.log("This is for testing the Validatorshandler function");
     if (this.libp2p.isStarted()) {
       this.join();
     }
@@ -87,7 +87,7 @@ class ValidatorHandler extends EventEmitter {
     try {
       const request = Request.decode(message.data)
       //console.log(`Send message function :${request.sendMessage.tokenA} : ${request.sendMessage.tokenB} : ${request.sendMessage.orderType} : ${request.sendMessage.actionType} : ${request.sendMessage.price} : ${request.sendMessage.quantity}`)
-      //console.log(`OnOrder emit function reached ${request.sendMessage.orderType}`)
+      //console.log(`OnOrder emit function reached ${request.sendMessage.peerID}`)
       switch (request.type) {
         case Request.Type.STATS:
           this.stats.set(message.from, request.stats)
@@ -143,7 +143,7 @@ class ValidatorHandler extends EventEmitter {
   }
 
   async sendOrder(id, peerID, created) {
-   //console.log(`Send message function :${tokenA.name} : ${tokenB.name} : ${orderType.value} : ${actionType.name} : ${price} : ${quantity} : ${account}`)
+   //console.log(`Send message function :${id} : ${peerID} : ${created}`)
     const msg = Request.encode({
       type: Request.Type.SEND_MESSAGE,
       sendMessage: {
@@ -153,7 +153,7 @@ class ValidatorHandler extends EventEmitter {
       }
     });
 
-      //console.log(`Topic at send function ${msg.tokenA} : ${msg.orderFrm}`);   
+      //console.log(`Topic at send function: ${this.topic}`);   
       await this.libp2p.pubsub.publish(this.topic, msg);
   }
 

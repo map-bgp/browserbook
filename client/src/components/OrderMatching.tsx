@@ -1,9 +1,11 @@
+// @ts-nocheck
 import { useWeb3React } from "@web3-react/core";
 import React, { useEffect, useState } from "react";
 import "tailwindcss/tailwind.css";
 import { ethers, providers, Contract } from "ethers";
 import { useAppContext } from "./context/Store";
 import { SelectObject, Select } from "./elements/inputs/Select";
+import PubsubChat from "../p2p/validatorhandler";
 import Info from "./elements/Info";
 import { filter, matches } from "lodash";
 import { Tokens } from "../types/Token";
@@ -15,11 +17,13 @@ import {
   exchangeAbi,
   tokenOneAbi,
   token2Abi,
+  TOPIC_VALIDATOR,
 } from "../constants";
 
 function OrderMatch() {
   const { state, setContext } = useAppContext();
-
+  const [validatorHandler, setValidatorHandler] = useState(null)
+  const [validatorCheck, setValidatorCheck] = useState(null)
   const [token, setToken] = useState(Tokens[0]);
   const [multiToken, setMultiToken] = useState(Tokens[0]);
 
@@ -28,6 +32,8 @@ function OrderMatch() {
   const [authorization, setAuthorization] = useState();
 
   const [quantity, setQuantity] = useState<number>(0.0);
+  const [message, setMessage] = useState('')
+  const [messages, setMessages] = useState([])
 
   const { account, library } = useWeb3React<providers.Web3Provider>();
 
@@ -35,24 +41,13 @@ function OrderMatch() {
     "0x7f7465737432000000000000000000000000000000000000000000000000000000600057";
 
 
-    const joinValidator = async () => {
-      const orderArray = await state.p2pDb.orders.toArray();
-      console.log(`orders array length in the db ${orderArray.length}`);
-      // const exemptedOrderArray = orderArray
-      // filter(orderArray,matches())
-      const orderOne = orderArray.pop();
-      const orderTwo = orderArray.pop();
-      // @ts-ignore
-      const signer = library.getSigner();
-  
-      const address = await signer.getAddress();
-  
-      // console.log(exchangeAbi)
-      // console.log(EXCHANGE)
-  
-      const exchangeContract = new Contract(EXCHANGE, exchangeAbi, signer);
-    };
+  const joinValidator = async () => {
+    setValidatorCheck(true)
+  };
 
+  const getPeerID = () => {
+    return state.peerId;
+  };
 
   const matchOrders = async () => {
     const orderArray = await state.p2pDb.orders.toArray();
@@ -193,6 +188,59 @@ function OrderMatch() {
 
     setAuthorization(contractBool.toString());
   };
+
+   /**
+   * Leverage use effect to act on state changes
+   */
+    useEffect(() => {
+      // Wait for libp2p
+      if (!state.node) return
+
+  
+      // Create the pubsub Client
+      if (!validatorHandler && validatorCheck) {
+        const pubsubChat = new PubsubChat(state.node, TOPIC_VALIDATOR)
+
+        // Listen for messages
+        pubsubChat.on('message', (message) => {
+          if (message.from === state.node.peerId.toB58String()) {
+            message.isMine = true
+          }
+          setMessages((messages) => [...messages, message])
+
+          // state.p2pDb.transaction('rw', state.p2pDb.orders, async() =>{
+          // const id = await state.p2pDb.orders.add({
+          //     id: message.id,
+          //     tokenFrom: message.tokenA, 
+          //     tokenTo: message.tokenB, 
+          //     orderType: message.orderType, 
+          //     actionType: message.actionType,
+          //     price: message.price,
+          //     quantity: message.quantity,
+          //     orderFrm: message.orderFrm,
+          //     //from: message.from,
+          //     created: message.created
+              
+          // });
+          // console.log(`Order ID is stored in ${id}`)
+          // }).catch(e => { console.log(e.stack || e);});
+        })
+        
+        // Forward stats events to the eventBus
+        //pubsubChat.on('stats', (stats) => state.eventBus.emit('stats', stats))
+  
+        setValidatorHandler(pubsubChat)
+      }
+
+      if (validatorHandler && validatorCheck) {
+      console.log("Life ain fair :"+getPeerID())  
+      const id = (~~(Math.random() * 1e9)).toString(36) + Date.now();  
+      const created = Date.now();
+      validatorHandler.sendOrder(id , getPeerID(), created);
+      setValidatorCheck(false);
+      }
+    })
+
 
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
