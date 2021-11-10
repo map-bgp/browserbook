@@ -1,9 +1,10 @@
 import Dexie from 'dexie';
-import {IPeers,IOrders} from "./dto";
+import {IPeers,IOrders,IValidators} from "./dto";
 
 export class P2PDB extends Dexie {
     peers: Dexie.Table<IPeers,number>
     orders: Dexie.Table<IOrders,number>
+    validators: Dexie.Table<IValidators,number>
 
     constructor() {
         super("browserbook");
@@ -19,5 +20,11 @@ export class P2PDB extends Dexie {
         )
         
         this.orders = this.table('orders');
+
+        this.version(3).stores(
+            {validators: 'id,peerId,joinedTime'}
+        )
+        
+        this.validators = this.table('validators');
     }
 }

@@ -195,7 +195,6 @@ function OrderMatch() {
     useEffect(() => {
       // Wait for libp2p
       if (!state.node) return
-
   
       // Create the pubsub Client
       if (!validatorHandler && validatorCheck) {
@@ -208,22 +207,14 @@ function OrderMatch() {
           }
           setMessages((messages) => [...messages, message])
 
-          // state.p2pDb.transaction('rw', state.p2pDb.orders, async() =>{
-          // const id = await state.p2pDb.orders.add({
-          //     id: message.id,
-          //     tokenFrom: message.tokenA, 
-          //     tokenTo: message.tokenB, 
-          //     orderType: message.orderType, 
-          //     actionType: message.actionType,
-          //     price: message.price,
-          //     quantity: message.quantity,
-          //     orderFrm: message.orderFrm,
-          //     //from: message.from,
-          //     created: message.created
-              
-          // });
-          // console.log(`Order ID is stored in ${id}`)
-          // }).catch(e => { console.log(e.stack || e);});
+          state.p2pDb.transaction('rw', state.p2pDb.validators, async() =>{
+          const id = await state.p2pDb.validators.add({
+              id: message.id,
+              peerId: message.peerID,
+              joinedTime: message.created,
+          });
+          console.log(`Order ID is stored in ${id}`)
+          }).catch(e => { console.log(e.stack || e);});
         })
         
         // Forward stats events to the eventBus
@@ -232,8 +223,7 @@ function OrderMatch() {
         setValidatorHandler(pubsubChat)
       }
 
-      if (validatorHandler && validatorCheck) {
-      console.log("Life ain fair :"+getPeerID())  
+      if (validatorHandler && validatorCheck) { 
       const id = (~~(Math.random() * 1e9)).toString(36) + Date.now();  
       const created = Date.now();
       validatorHandler.sendOrder(id , getPeerID(), created);

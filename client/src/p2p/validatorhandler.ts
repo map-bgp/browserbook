@@ -61,8 +61,6 @@ class ValidatorHandler extends EventEmitter {
     });
 
     this._onMessage = this._onMessage.bind(this)
-    //this._onOrder = this._onOrder.bind(this)
-    //console.log("This is for testing the Validatorshandler function");
     if (this.libp2p.isStarted()) {
       this.join();
     }
@@ -86,8 +84,6 @@ class ValidatorHandler extends EventEmitter {
   _onMessage (message) {
     try {
       const request = Request.decode(message.data)
-      //console.log(`Send message function :${request.sendMessage.tokenA} : ${request.sendMessage.tokenB} : ${request.sendMessage.orderType} : ${request.sendMessage.actionType} : ${request.sendMessage.price} : ${request.sendMessage.quantity}`)
-      //console.log(`OnOrder emit function reached ${request.sendMessage.peerID}`)
       switch (request.type) {
         case Request.Type.STATS:
           this.stats.set(message.from, request.stats)
@@ -127,20 +123,20 @@ class ValidatorHandler extends EventEmitter {
       }
     }
 
-  async send(message) {
-    console.log(`Send message function :${message}`)
-    const msg = Request.encode({
-      type: Request.Type.SEND_MESSAGE,
-      sendMessage: {
-        id: uint8arrayFromString((~~(Math.random() * 1e9)).toString(36) + Date.now()),
-        data: uint8arrayFromString(message),
-        created: Date.now()
-      }
-    });
+  // async send(message) {
+  //   console.log(`Send message function :${message}`)
+  //   const msg = Request.encode({
+  //     type: Request.Type.SEND_MESSAGE,
+  //     sendMessage: {
+  //       id: uint8arrayFromString((~~(Math.random() * 1e9)).toString(36) + Date.now()),
+  //       data: uint8arrayFromString(message),
+  //       created: Date.now()
+  //     }
+  //   });
 
-      //console.log(`Topic at send function ${this.topic} and ${msg}`);   
-      await this.libp2p.pubsub.publish(this.topic, msg);
-  }
+  //     //console.log(`Topic at send function ${this.topic} and ${msg}`);   
+  //     await this.libp2p.pubsub.publish(this.topic, msg);
+  // }
 
   async sendOrder(id, peerID, created) {
    //console.log(`Send message function :${id} : ${peerID} : ${created}`)
