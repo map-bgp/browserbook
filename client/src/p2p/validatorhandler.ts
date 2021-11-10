@@ -2,7 +2,6 @@ import protons from "protons";
 import EventEmitter from "events";
 import uint8arrayFromString from "uint8arrays/from-string";
 import uint8arrayToString from "uint8arrays/to-string";
-import { TOPIC } from "../constants";
 
 const { Request, Stats } = protons(`
 message Request {
@@ -122,21 +121,6 @@ class ValidatorHandler extends EventEmitter {
         console.error('Could not publish stats update')
       }
     }
-
-  // async send(message) {
-  //   console.log(`Send message function :${message}`)
-  //   const msg = Request.encode({
-  //     type: Request.Type.SEND_MESSAGE,
-  //     sendMessage: {
-  //       id: uint8arrayFromString((~~(Math.random() * 1e9)).toString(36) + Date.now()),
-  //       data: uint8arrayFromString(message),
-  //       created: Date.now()
-  //     }
-  //   });
-
-  //     //console.log(`Topic at send function ${this.topic} and ${msg}`);   
-  //     await this.libp2p.pubsub.publish(this.topic, msg);
-  // }
 
   async sendOrder(id, peerID, created) {
    //console.log(`Send message function :${id} : ${peerID} : ${created}`)
