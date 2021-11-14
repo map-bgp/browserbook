@@ -1,15 +1,40 @@
+import {fetchABI} from "./abiFetcher";
 import {ethers} from "ethers";
-import { fetchABI } from "./abiFetcher";
+import {useAppDispatch} from "../store/Hooks";
+import {setEthersAddress, setEthersConnected} from "../store/slices/EthersSlice";
+import {store} from "../store/Store";
+import {injected} from "./connectors";
+import {TokenMetadata} from "./browser_abi/abi";
 
-declare const window: any;
+const { ethereum } = (window as any);
+const dispatch = store.dispatch;
 
-export class EtherStore{
+export class EtherStore {
     provider: ethers.providers.Web3Provider;
 
-    async Start(){
-        if(typeof window.ethereum !== 'undefined') {
-            await window.ethereum.enable()
-            this.provider = new ethers.providers.Web3Provider(window.ethereum);
+    constructor() {
+        this.start().then(() => console.log("Successfully initialized ethers context"))
+        this.isConnected().then(() => console.log("Ethers has successfully completed connection checks"))
+    }
+
+    async start() {
+        if (typeof ethereum !== 'undefined') {
+            this.provider = new ethers.providers.Web3Provider(ethereum, "any");
+
+            if (this.provider !== null) {
+                ethereum.on('accountsChanged', (accounts: Array<string>) => {
+                    // If user has locked/logout from MetaMask, this resets the accounts array to empty
+                    if (!accounts.length) {
+                        dispatch(setEthersConnected(false))
+                        dispatch(setEthersAddress(null))
+                    } else {
+                        dispatch(setEthersConnected(true))
+                        dispatch(setEthersAddress(accounts[0]))
+                    }
+                });
+            }
+
+            return this.provider;
         }
         else {
             console.log("Install MetaMask")
@@ -17,22 +42,36 @@ export class EtherStore{
         }
     }
 
-    async isConnected() {
+    isConnected = async () => {
+        if (this.provider === null || this.provider === undefined) {
+            this.provider = await this.start()
+        }
+
         const accounts = await this.provider.listAccounts();
-        return accounts.length > 0;
+        dispatch(setEthersConnected(accounts.length > 0))
+        dispatch(setEthersAddress(accounts[0]))
+        return accounts.length > 0
     }
 
-    getSigner(){
+    connect = async () => {
+        // Prompt user for account connections
+        if (this.provider === null || this.provider === undefined) {
+            this.provider = await this.start()
+        }
+        await this.provider.send("eth_requestAccounts", []);
+    }
+
+    getSigner = async () => {
+        if (this.provider === null || this.provider === undefined) {
+            this.provider = await this.start()
+        }
         return this.provider.getSigner();
     }
 
-    getContract(address:string, contractName:string){
-        const contractAbi = fetchABI(contractName);
-        return new ethers.Contract(address,contractAbi);
+    getContract = async (contractName: string) => {
+        const address = TokenMetadata[contractName].address;
+        const contractABI = TokenMetadata[contractName].abi;
+        const signer = await this.getSigner()
+        return new ethers.Contract(address, contractABI, signer);
     }
-
-    getProvider(){
-        return this.provider;
-    }
-
 }

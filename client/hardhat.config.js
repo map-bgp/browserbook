@@ -32,14 +32,12 @@ module.exports = {
             network_id: 80001,
         }
     },
-
     namedAccounts: {
         deployer: 0
     },
     etherscan:{
         apiKey: "N2X6D6SRJQA8HTD12G798IDTIT4DBR61QG"
     },
-
     solidity: {
         version: "0.8.0",
         settings: {

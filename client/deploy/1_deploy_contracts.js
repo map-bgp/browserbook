@@ -5,13 +5,12 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const  { deployer } = await getNamedAccounts();
 
     console.log(`Deployer :${deployer}`);
+
     // We get the contract to deploy
     const tx = await deploy("TokenFactory", { from: deployer, gasLimit: 6000000, log: true });
-
     console.log(tx.transactionHash);
 
     const tx3 = await deploy("Exchange", {from: deployer, gasLimit: 6000000, log: true});
-
     console.log(tx3.transactionHash);
     
     await ethers.provider.waitForTransaction(tx3.transactionHash,1)

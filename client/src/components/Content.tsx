@@ -5,7 +5,7 @@ import {Route, Switch} from "react-router-dom";
 import Dashboard from './Dashboard'
 import Market from './Market'
 import Portfolio from './Portfolio'
-import Assets from './Assets'
+import TokenCreation from './TokenCreation'
 import OrderCreate from "./OrderCreate";
 import OrderMatch from "./OrderMatching";
 
@@ -34,8 +34,8 @@ const Content = (props: ContentProps) => {
           <Route path="/portfolio">
             <Portfolio/>
           </Route>
-          <Route path="/assets">
-            <Assets/>
+          <Route path="/token-creation">
+            <TokenCreation/>
           </Route>
           <Route path="/order-creation">
             <OrderCreate/>

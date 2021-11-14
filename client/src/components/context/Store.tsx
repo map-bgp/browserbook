@@ -8,8 +8,6 @@ export interface Store {
   setContext?: React.Dispatch<Action>;
 }
 
-
-
 const p2pDb = new P2PDB();
 const eventBus = new EventEmitter();
 

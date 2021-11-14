@@ -1,15 +1,15 @@
 import {TypedUseSelectorHook, useDispatch, useSelector} from 'react-redux'
 import type {AppDispatch, RootState} from './Store'
 
-import { useState, useEffect } from 'react'
-import { useWeb3React } from '@web3-react/core'
-import { injected } from '../blockchain'
+import {useEffect, useState} from 'react'
+import {useWeb3React} from '@web3-react/core'
+import {EtherStore, injected} from '../blockchain'
+import {ethers} from "ethers";
 
 
 // Use throughout your store instead of plain `useDispatch` and `useSelector`
 export const useAppDispatch = () => useDispatch<AppDispatch>()
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
-
 
 export function useEagerConnect() {
   const { activate, active } = useWeb3React()

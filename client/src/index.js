@@ -8,8 +8,8 @@ import { Web3ReactProvider } from "@web3-react/core";
 import { providers } from "ethers";
 import App from "./components/App";
 import { StateProvider } from "./components/context/Store";
-
-
+import {EthersContext} from "./components/EthersContext";
+import {EtherStore} from "./blockchain";
 
 function getLibrary(provider) {
   const library = new providers.Web3Provider(provider);
@@ -21,9 +21,11 @@ ReactDom.render(
     <Provider store={store}>
       <Router>
         <StateProvider>
-          <Web3ReactProvider getLibrary={getLibrary}>
+          <EthersContext.Provider value={new EtherStore()}>
+          {/*<Web3ReactProvider getLibrary={getLibrary}>*/}
             <App />
-          </Web3ReactProvider>
+          {/*</Web3ReactProvider>*/}
+          </EthersContext.Provider>
         </StateProvider>
       </Router>
     </Provider>

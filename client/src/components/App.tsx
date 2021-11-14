@@ -28,7 +28,7 @@ export const App = () => {
 
 const loadInitialState = async () => {
 
-  if(setContext){
+  if(setContext) {
 
   console.info('Getting our PeerId')
 
@@ -60,17 +60,17 @@ const loadInitialState = async () => {
       name: "Dashboard",
       key: "dashboard",
     },
+    // {
+    //   name: "Market",
+    //   key: "market",
+    // },
+    // {
+    //   name: "Portfolio",
+    //   key: "portfolio",
+    // },
     {
-      name: "Market",
-      key: "market",
-    },
-    {
-      name: "Portfolio",
-      key: "portfolio",
-    },
-    {
-      name: "Assets",
-      key: "assets",
+      name: "Token Creation",
+      key: "token-creation",
     },
     {
       name: "Order Creation",
@@ -83,7 +83,7 @@ const loadInitialState = async () => {
   ];
 
   return (
-    <div className="min-h-screen AppContextbg-gray-100">
+    <div className="min-h-screen bg-gray-100">
         <Header
           navigation={navigation}
           current={getCurrent(location, navigation)}
