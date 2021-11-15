@@ -231,6 +231,7 @@ contract BBToken is ERC1155{
         emit ownerCredited(id, dividend);
     }
 
+    // TODO typo
     function dividentClaim(address account, uint256 id) public payable{
         require(
             isFungible(id),
