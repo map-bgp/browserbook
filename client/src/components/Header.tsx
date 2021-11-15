@@ -28,7 +28,7 @@ const Header = (props: HeaderProps) => {
       setContract(c)
     }
     setupContract().then(() => console.log("Contract initialized"))
-  }, [setContract])
+  }, [])
 
   const getNumPeers = () => {
     return useAppSelector(state => state.peer.numPeers)
@@ -75,38 +75,30 @@ const Header = (props: HeaderProps) => {
                   ))}
                 </div>
               </div>
-              <div className="flex items-center justify-end">
-                <div className="px-4">
-                  Ethers is connected: {getEthersConnected().toString()}
+              <div className="flex items-center justify-end mr-4">
+                <div className="px-4 flex items-center justify-around mr-4">
+                  {getEthersConnected() ?
+                    <>
+                    <div className="mr-2 my-4 py-2 text-gray-500 text-sm font-medium">Connected</div>
+                    <div className="flex h-3 w-3">
+                      <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-green-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                    </div>
+                    </> :
+                    <button
+                      type="button"
+                      className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                      onClick={() => {
+                        ethers.connect()
+                      }}
+                    >
+                      Connect
+                    </button>}
                 </div>
-                <div className="px-4">
-                  Address: {getEthersAddress()}
-                </div>
-                <div className="absolute top-0 right-0 mr-8 my-4 py-2 text-gray-500 text-sm font-medium">
+                <div className="mr-8 my-4 py-2 text-gray-500 text-sm font-medium">
                   Peer Count: {getNumPeers()}
                 </div>
               </div>
-
-              <button
-                type="button"
-                className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-                onClick={() => {
-                  console.log(ethers)
-                  console.log(contract)
-                }}
-              >
-                log
-              </button>
-              
-              {!getEthersConnected() && <button
-                type="button"
-                className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-                onClick={() => {
-                  ethers.connect()
-                }}
-              >
-                Connect
-              </button>}
 
               <div className="-mr-2 flex items-center sm:hidden">
                 {/* Mobile menu button */}
