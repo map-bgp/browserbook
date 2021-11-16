@@ -8,6 +8,7 @@ message Request {
   enum Type {
     SEND_MESSAGE = 0;
     STATS = 1;
+    SEND_UPDATE = 2;
   }
   required Type type = 1;
   optional SendMessage sendMessage = 2;
@@ -17,6 +18,10 @@ message SendMessage {
   required bytes peerID = 1;
   required int64 created = 2;
   required bytes id = 3;
+}
+message SendUpdate {
+  required bytes id = 1;
+  required bytes status = 2;
 }
 message Stats {
   enum NodeType {
@@ -89,6 +94,11 @@ class ValidatorHandler extends EventEmitter {
           console.log('Incoming Stats:', message.from, request.stats)
           this.emit('stats', this.stats)
           break
+        case Request.Type.SEND_UPDATE:
+          this.stats.set(message.from, request.stats)
+          console.log('Incoming Stats:', message.from, request.stats)
+          this.emit('stats', this.stats)
+          break
         default:
           this.emit('message', {
             from: message.from,
@@ -136,6 +146,20 @@ class ValidatorHandler extends EventEmitter {
       //console.log(`Topic at send function: ${this.topic}`);   
       await this.libp2p.pubsub.publish(this.topic, msg);
   }
+  async sendOrderUpdate(id, status) {
+    //console.log(`Send message function :${id} : ${peerID} : ${created}`)
+     const msg = Request.encode({
+       type: Request.Type.SEND_UPDATE,
+       sendMessage: {
+         id: uint8arrayFromString(id),
+         status: uint8arrayFromString(status)
+       }
+     });
+ 
+       //console.log(`Topic at send function: ${this.topic}`);   
+       await this.libp2p.pubsub.publish(this.topic, msg);
+   }
+  
 
 }
 

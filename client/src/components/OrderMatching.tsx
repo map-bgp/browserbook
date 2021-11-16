@@ -68,6 +68,16 @@ function OrderMatch() {
 
     console.table(orderOne);
     console.table(orderTwo);
+    
+    //Changes the status of the local DB order status on a match
+    state.p2pDb.transaction('rw', state.p2pDb.orders, async() =>{
+      const transaction_id1 = await state.p2pDb.orders.where("id").equals(orderOne.id).modify({status: "MATCHED"});
+      const transaction_id2 = await state.p2pDb.orders.where("id").equals(orderTwo.id).modify({status: "MATCHED"});
+      console.log(`Transaction ID is stored in ${transaction_id1} : ${transaction_id2}`)
+      }).catch(e => { console.log(e.stack || e);});
+
+    //Sent the updated status in the pubsub channel to propagate
+    validatorHandler.sendOrderUpdate(orderOne.id , "MATCHED");
 
     console.table({
       from: token2Address.get(orderOne.tokenFrom),
