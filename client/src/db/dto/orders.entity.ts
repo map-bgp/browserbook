@@ -8,5 +8,6 @@ export interface IOrders{
     quantity: number,
     orderFrm: number,
     from: string,
+    status: string,
     created: string,
 }

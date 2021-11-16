@@ -36,7 +36,7 @@ function OrderCreate() {
     const TOPIC = '/libp2p/bbook/chat/1.0.0'
     const [message, setMessage] = useState('')
     const [messages, setMessages] = useState([])
-    const [orderPeerID, setOrderPeerID] = useState('')
+    //const [orderPeerID, setOrderPeerID] = useState('')
     const { account, library } = useWeb3React<providers.Web3Provider>()
 
     //const [orderObject, setOrderObject]= useState({TokenA: Tokens[0], TokenB: Tokens[1], OrderType: OrderTypes[0], ActionType: OrderActions[0], Price: '', Quantity: ''})
@@ -70,8 +70,9 @@ function OrderCreate() {
         try {
           const id = (~~(Math.random() * 1e9)).toString(36) + Date.now();  
           const created = Date.now();
+          const status = "OPEN";
           //console.log(`Send message function ${id} :${tokenA.name} : ${tokenB.name} : ${orderType.value} : ${actionType.name} : ${price} : ${quantity} : ${account} : ${created}`)
-          await chatClient.sendOrder(id ,tokenA, tokenB, orderType, actionType, price, quantity, account, created)
+          await chatClient.sendOrder(id ,tokenA, tokenB, orderType, actionType, price, quantity, account, status, created)
 
           state.p2pDb.transaction('rw', state.p2pDb.orders, async() =>{
             const order_id = await state.p2pDb.orders.add({
@@ -83,6 +84,7 @@ function OrderCreate() {
                 price: price,
                 quantity: quantity,
                 orderFrm: account,
+                status: status,
                 created: created
                 
             });
@@ -98,8 +100,8 @@ function OrderCreate() {
     const randomPeers = async () => {
         const peerArray = await state.p2pDb.peers.toArray();
         const obj = peerArray[Math.floor((Math.random()*peerArray.length))];
-        console.log(`Random Peers ${obj.peerId}`);
-        setOrderPeerID(obj.peerId._idB58String);
+        //console.log(`Random Peers ${obj.peerId}`);
+        //setOrderPeerID(obj.peerId._idB58String);
       }
 
     /**
@@ -110,11 +112,11 @@ function OrderCreate() {
         if (!state.node) return
 
         //console.log(`Reached useEffect in OrderFrom`)
-        randomPeers();
+        //randomPeers();
     
         // Create the pubsub Client
-        if (!chatClient && orderPeerID) {
-          const pubsubChat = new PubsubChat(state.node, TOPIC+"_"+getPeerID(), TOPIC+"_"+orderPeerID)
+        if (!chatClient) {
+          const pubsubChat = new PubsubChat(state.node, TOPIC)
     
           // Listen for messages
           pubsubChat.on('message', (message) => {
@@ -133,7 +135,7 @@ function OrderCreate() {
                 price: message.price,
                 quantity: message.quantity,
                 orderFrm: message.orderFrm,
-                //from: message.from,
+                status: message.status,
                 created: message.created
                 
             });
