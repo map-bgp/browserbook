@@ -13,6 +13,7 @@ message Request {
   required Type type = 1;
   optional SendMessage sendMessage = 2;
   optional Stats stats = 3;
+  optional SendUpdate sendUpdate = 4;
 }
 message SendMessage {
   required bytes peerID = 1;
@@ -39,13 +40,14 @@ class ValidatorHandler extends EventEmitter {
   topic: string; 
   connectedPeers: any;
   stats: any;
+  topicOrder: any;
   
   constructor(libp2p: any, topic: string) {
 
     super();
     this.libp2p = libp2p;
     this.topic = topic;
-  
+    this.topicOrder = "orderUpdates/channel";
 
     this.connectedPeers = new Set();
     this.stats = new Map();
@@ -77,17 +79,22 @@ class ValidatorHandler extends EventEmitter {
    */
   join () {
     this.libp2p.pubsub.on(this.topic, this._onMessage)
+    this.libp2p.pubsub.on(this.topicOrder, this._onMessage)
     this.libp2p.pubsub.subscribe(this.topic)
+    this.libp2p.pubsub.subscribe(this.topicOrder)
   }
 
   leave () {
     this.libp2p.pubsub.removeListener(this.topic, this._onMessage)
+    this.libp2p.pubsub.removeListener(this.topicOrder, this._onMessage)
     this.libp2p.pubsub.unsubscribe(this.topic)
+    this.libp2p.pubsub.unsubscribe(this.topicOrder)
   }
 
   _onMessage (message) {
     try {
       const request = Request.decode(message.data)
+      //console.log(`onMessage emit function ${request.type}`)
       switch (request.type) {
         case Request.Type.STATS:
           this.stats.set(message.from, request.stats)
@@ -95,9 +102,11 @@ class ValidatorHandler extends EventEmitter {
           this.emit('stats', this.stats)
           break
         case Request.Type.SEND_UPDATE:
-          this.stats.set(message.from, request.stats)
-          console.log('Incoming Stats:', message.from, request.stats)
-          this.emit('stats', this.stats)
+          this.emit('sendUpdate', {
+            from: message.from,
+            status: uint8arrayToString(request.sendUpdate.status),
+            id: uint8arrayToString(request.sendUpdate.id)
+          })
           break
         default:
           this.emit('message', {
@@ -146,21 +155,20 @@ class ValidatorHandler extends EventEmitter {
       //console.log(`Topic at send function: ${this.topic}`);   
       await this.libp2p.pubsub.publish(this.topic, msg);
   }
+
   async sendOrderUpdate(id, status) {
-    //console.log(`Send message function :${id} : ${peerID} : ${created}`)
+    //console.log(`Send message function :${id} : ${status} : ${this.topicOrder}`)
      const msg = Request.encode({
        type: Request.Type.SEND_UPDATE,
-       sendMessage: {
+       sendUpdate: {
          id: uint8arrayFromString(id),
          status: uint8arrayFromString(status)
        }
      });
- 
-       //console.log(`Topic at send function: ${this.topic}`);   
-       await this.libp2p.pubsub.publish(this.topic, msg);
-   }
-  
 
+       //console.log(`Topic at send function: ${this.topic}`);   
+       await this.libp2p.pubsub.publish(this.topicOrder, msg);
+   }
 }
 
 export default ValidatorHandler;

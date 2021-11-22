@@ -34,6 +34,8 @@ function OrderMatch() {
   const [quantity, setQuantity] = useState<number>(0.0);
   const [message, setMessage] = useState('')
   const [messages, setMessages] = useState([])
+  const [updatemsg, setUpdateMessage] = useState('')
+  const [updatemsgs, setUpdateMessages] = useState([])
 
   const { account, library } = useWeb3React<providers.Web3Provider>();
 
@@ -71,13 +73,13 @@ function OrderMatch() {
     
     //Changes the status of the local DB order status on a match
     state.p2pDb.transaction('rw', state.p2pDb.orders, async() =>{
-      const transaction_id1 = await state.p2pDb.orders.where("id").equals(orderOne.id).modify({status: "MATCHED"});
-      const transaction_id2 = await state.p2pDb.orders.where("id").equals(orderTwo.id).modify({status: "MATCHED"});
-      console.log(`Transaction ID is stored in ${transaction_id1} : ${transaction_id2}`)
+      await state.p2pDb.orders.where("id").equals(orderOne.id).modify({status: "MATCHED"});
+      await state.p2pDb.orders.where("id").equals(orderTwo.id).modify({status: "MATCHED"});
       }).catch(e => { console.log(e.stack || e);});
 
     //Sent the updated status in the pubsub channel to propagate
-    validatorHandler.sendOrderUpdate(orderOne.id , "MATCHED");
+    await validatorHandler.sendOrderUpdate(orderOne.id , "MATCHED");
+    await validatorHandler.sendOrderUpdate(orderTwo.id , "MATCHED");
 
     console.table({
       from: token2Address.get(orderOne.tokenFrom),
@@ -216,6 +218,7 @@ function OrderMatch() {
             message.isMine = true
           }
           setMessages((messages) => [...messages, message])
+          //console.log(`update Messages ${message}`)
 
           state.p2pDb.transaction('rw', state.p2pDb.validators, async() =>{
           const id = await state.p2pDb.validators.add({
@@ -226,9 +229,22 @@ function OrderMatch() {
           console.log(`Order ID is stored in ${id}`)
           }).catch(e => { console.log(e.stack || e);});
         })
+
+
         
-        // Forward stats events to the eventBus
-        //pubsubChat.on('stats', (stats) => state.eventBus.emit('stats', stats))
+        // Forward updates events to the eventBus
+        pubsubChat.on('sendUpdate', (updatemsg) => {
+          if (updatemsg.from === state.node.peerId.toB58String()) {
+            updatemsg.isMine = true
+          }
+          setUpdateMessages((updatemsgs) => [...updatemsgs, updatemsg])
+          console.log(`update Messages ${updatemsg}`)
+
+          //Update the database with the updates status of the order.
+          state.p2pDb.transaction('rw', state.p2pDb.orders, async() =>{
+            const transaction_id = await state.p2pDb.orders.where("id").equals(updatemsg.id).modify({status: "MATCHED"});
+            }).catch(e => { console.log(e.stack || e);});
+      })
   
         setValidatorHandler(pubsubChat)
       }
