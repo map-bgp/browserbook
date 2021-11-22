@@ -72,6 +72,27 @@ contract BBToken is ERC1155{
         _;
     }
 
+    function onERC1155Received(
+        address operator,
+        address from,
+        uint256 id,
+        uint256 value,
+        bytes calldata data
+    ) external returns (bytes4){
+        return ERC1155_RECEIVED;
+    }
+
+    IERC1155(token).onERC1155Received()
+    function onERC1155BatchReceived(
+        address operator,
+        address from,
+        uint256[] calldata ids, 
+        uint256[] calldata values,
+        bytes calldata data
+    ) external returns (bytes4){
+        return ERC1155_BATCH_RECEIVED;
+    }
+
     modifier onlyOwner() {
         require(_owner == msg.sender, "You cannot perform this action.");
         _;
