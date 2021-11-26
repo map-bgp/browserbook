@@ -61,6 +61,10 @@ export class EtherStore {
         await this.provider.send("eth_requestAccounts", []);
     }
 
+    getProvider = async () => {
+        return this.provider
+    }
+
     getSigner = async () => {
         if (this.provider === null || this.provider === undefined) {
             this.provider = await this.start()
@@ -72,6 +76,7 @@ export class EtherStore {
         const address = TokenMetadata[contractName].address;
         const contractABI = TokenMetadata[contractName].abi;
         const signer = await this.getSigner()
+
         return new ethers.Contract(address, contractABI, signer);
     }
 }

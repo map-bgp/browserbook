@@ -14,9 +14,9 @@ contract TokenFactory {
     mapping(string => address) private _tokenAddress;
     // To have mapping between company owner and company's tokenFactory address
 
-    event TokenCreated(string , address indexed);
+    event TokenCreated(string, address indexed);
 
-    event TokenOwnerNotice(address, address indexed);
+    event TokenOwnerNotice(address indexed, address);
 
     function create(string calldata URI) public returns (address) {
         // creates a new token

@@ -69,8 +69,8 @@ const loadInitialState = async () => {
     //   key: "portfolio",
     // },
     {
-      name: "Token Creation",
-      key: "token-creation",
+      name: "Token Administration",
+      key: "token-administration",
     },
     {
       name: "Order Creation",

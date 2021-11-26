@@ -11,7 +11,7 @@ import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "./helpers/IterableMapping.sol";
 
-contract BBToken is ERC1155{
+contract BBToken is ERC1155 {
 
     using SafeMath for uint256;
     
