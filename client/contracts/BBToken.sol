@@ -1,6 +1,6 @@
 /**
  * @title BrowserBookToken
- * @author Teja<saitejapottanigari@gmail.com>, Ankan <ankan0011@live.com>, Corey <corey.bothwell@gmail.com>
+ * @author Teja<saitejapottanigari@gmail.com>, Ankan <ankan0011@live.com>, Corey <corey.bothwell@uzh.ch>
  * @dev for company specific ERC1155 token contract.
  */
 
@@ -13,7 +13,6 @@ import "./helpers/IterableMapping.sol";
 
 
 contract BBToken is ERC1155 {
-
     using SafeMath for uint256;
     using IterableMapping for itmap;
     
@@ -23,7 +22,7 @@ contract BBToken is ERC1155 {
     // token nonce
     uint256 internal nonce;
 
-    // The top bit is a flag to tell if this is a NFI.
+    // The top bit is a flag to tell if this is a NFT.
     uint256 internal constant TYPE_NF_BIT = 1 << 255;
 
     // mapping of nft to owner
@@ -47,17 +46,17 @@ contract BBToken is ERC1155 {
         _owner = owner;
     }
 
-  /***********************************|
-  |             EVENTS                |
-  |__________________________________*/
+    /***********************************|
+    |             EVENTS                |
+    |__________________________________*/
 
     event tokenCreation(address indexed, uint256);
     event nfTokenMint(address indexed, uint256 indexed);
     event ownerCredited(uint256 indexed, uint256);
 
     /***********************************|
-  |             Modifiers             |
-  |__________________________________*/
+    |             MODIFIERS             |
+    |__________________________________*/
 
     modifier isAlreadyOwned(uint256 id) {
         if (_nfOwners[id] != address(0)) {
@@ -82,6 +81,10 @@ contract BBToken is ERC1155 {
         require(_owner == msg.sender || _operators[id][msg.sender] == true, "You cannot perform this action.");
         _;
     }
+
+    /***********************************|
+    |             FUNCTIONS             |
+    |__________________________________*/
 
     /// @dev returns true if address is contract.
     function isContract(address _addr) private view returns (bool) {
