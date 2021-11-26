@@ -11,9 +11,11 @@ import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "./helpers/IterableMapping.sol";
 
+
 contract BBToken is ERC1155 {
 
     using SafeMath for uint256;
+    using IterableMapping for itmap;
     
     // address of owner of the token
     address private _owner;
@@ -32,7 +34,6 @@ contract BBToken is ERC1155 {
 
     mapping(uint256 => itmap) internal _holderAmount;
     mapping(uint256 => itmap) internal _claimableAmount;
-    using IterableMapping for itmap;
 
     mapping(uint256 => mapping(address => bool)) internal isHolder;
 
@@ -46,7 +47,7 @@ contract BBToken is ERC1155 {
         _owner = owner;
     }
 
-    /***********************************|
+  /***********************************|
   |             EVENTS                |
   |__________________________________*/
 
@@ -78,10 +79,7 @@ contract BBToken is ERC1155 {
     }
 
     modifier isOwnerOrOperator(uint256 id) {
-        require(
-            _owner == msg.sender || _operators[id][msg.sender] == true,
-            "You cannot perform this action."
-        );
+        require(_owner == msg.sender || _operators[id][msg.sender] == true, "You cannot perform this action.");
         _;
     }
 
@@ -112,10 +110,7 @@ contract BBToken is ERC1155 {
         return _nfOwners[id];
     }
 
-    function transferNfOwner(uint256 id, address to)
-        private
-        isOwnerOrOperator(id)
-    {
+    function transferNfOwner(uint256 id, address to) private isOwnerOrOperator(id) {
         _nfOwners[id] = to;
     }
 
@@ -133,74 +128,40 @@ contract BBToken is ERC1155 {
         emit tokenCreation(msg.sender, id_);
     }
 
-    function nonFungibleMint(
-        address account,
-        uint256 id,
-        string memory tokenURI
-    ) public isAlreadyOwned(id) isOwnerOrOperator(id) {
-        require(
-            isNonFungible(id),
-            "TRIED_TO_MINT_FUNGIBLE_FOR_NON_FUNGIBLE_TOKEN"
-        );
+    function nonFungibleMint(address account, uint256 id, string memory tokenURI) public isAlreadyOwned(id) isOwnerOrOperator(id) {
+        require(isNonFungible(id), "TRIED_TO_MINT_FUNGIBLE_FOR_NON_FUNGIBLE_TOKEN");
 
         transferNfOwner(id, account);
-
         _totalSupply[id] = 1;
 
         tokenMetadata[id] = tokenURI;
-
         emit nfTokenMint(account, id);
     }
 
-    function fungibleMint(
-        address account,
-        uint256 id,
-        uint256 amount,
-        bytes memory data
-    ) public isOwnerOrOperator(id) returns(bool){
-        require(
-            isFungible(id),
-            "TRIED_TO_MINT_FUNGIBLE_FOR_NON_FUNGIBLE_TOKEN"
-        );
+    function fungibleMint(address account, uint256 id, uint256 amount, bytes memory data) public isOwnerOrOperator(id) returns(bool){
+        require(isFungible(id), "TRIED_TO_MINT_NON_FUNGIBLE_FOR_FUNGIBLE_TOKEN");
         super._mint(account, id, amount, data);
-        if(isHolder[id][account]){
+
+        if (isHolder[id][account]) {
             _totalSupply[id] += amount;
-        return _holderAmount[id].increase(account,amount);
-        
-        }
-        else{
+            return _holderAmount[id].increase(account,amount);
+        } else {
           _totalSupply[id] += amount;
           isHolder[id][account]  = true;
           return _holderAmount[id].insert(account,amount);
         }
-
     }
 
-    function fungibleBurn(
-        address account,
-        uint256 id,
-        uint256 amount
-    ) public isOwnerOrOperator(id) returns(bool){
-        require(
-            isFungible(id),
-            "TRIED_TO_BURN_FUNGIBLE_FOR_NON_FUNGIBLE_TOKEN"
-        );
+    function fungibleBurn(address account, uint256 id, uint256 amount) public isOwnerOrOperator(id) returns(bool){
+        require(isFungible(id), "TRIED_TO_BURN_FUNGIBLE_FOR_NON_FUNGIBLE_TOKEN");
         super._burn(account, id, amount);
+
         _totalSupply[id] -= amount;
         return _holderAmount[id].reduce(account,amount);
     }
 
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 id,
-        uint256 amount,
-        bytes memory data
-    ) public virtual override(ERC1155) {
-        require(
-            from == _msgSender() || isApprovedForAll(from, _msgSender()),
-            "ERC1155: caller is not owner nor approved"
-        );
+    function safeTransferFrom(address from, address to, uint256 id, uint256 amount, bytes memory data) public virtual override(ERC1155) {
+        require(from == _msgSender() || isApprovedForAll(from, _msgSender()), "ERC1155: CALLER_IS_NOT_OWNER_OR_APPROVED");
 
         if (isFungible(id)) {
             super._safeTransferFrom(from, to, id, amount, data);
@@ -214,15 +175,15 @@ contract BBToken is ERC1155 {
     }
 
     function provideDividend(uint256 id) public payable onlyOwner {
-        require(
-            isFungible(id),
-            "TRIED_TO_BURN_FUNGIBLE_FOR_NON_FUNGIBLE_TOKEN"
-        );
+        require(isFungible(id), "TRIED_TO_PROVIDE_DIVIDEND_FOR_NON_FUNGIBLE_TOKEN");
+
         uint256 dividend = msg.value;
+
         address account;
         uint256 value;
         uint256 dividendShare;
-        for (uint256 i=1;_holderAmount[id].valid(i);i+=1){
+
+        for (uint256 i=1; _holderAmount[id].valid(i); i+=1) {
             (account, value) = _holderAmount[id].get(i);
             dividendShare = value.div(_totalSupply[id]).mul(dividend);
             _claimableAmount[id].insert(account,dividendShare * 100);
@@ -231,17 +192,13 @@ contract BBToken is ERC1155 {
         emit ownerCredited(id, dividend);
     }
 
-    // TODO typo
-    function dividentClaim(address account, uint256 id) public payable{
-        require(
-            isFungible(id),
-            "TRIED_TO_BURN_FUNGIBLE_FOR_NON_FUNGIBLE_TOKEN"
-        );
+    function dividendClaim(address account, uint256 id) public payable {
+        require(isFungible(id), "TRIED_TO_CLAIM_DIVIDEND_FOR_NON_FUNGIBLE_TOKEN");
+
         uint256 keyIndex = _claimableAmount[id].getKeyIndex(account);
-        (,uint256 value)= _claimableAmount[id].get(keyIndex);
-        _claimableAmount[id].reduce(account,value);
+        (, uint256 value)= _claimableAmount[id].get(keyIndex);
+
+        _claimableAmount[id].reduce(account, value);
         payable(account).transfer(value);
     }
-
-
 }
