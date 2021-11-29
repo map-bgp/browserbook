@@ -9,11 +9,27 @@ message Request {
     SEND_MESSAGE = 0;
     STATS = 1;
     SEND_UPDATE = 2;
+    SEND_ORDER = 3;
   }
   required Type type = 1;
   optional SendMessage sendMessage = 2;
   optional Stats stats = 3;
   optional SendUpdate sendUpdate = 4;
+  optional SendOrder sendOrder = 5;
+}
+message SendOrder {
+  required bytes id = 1;
+  required bytes order1_id = 2;
+  required bytes order2_id = 3;
+  required bytes tokenA = 4;
+  required bytes tokenB = 5;
+  required bytes orderType = 6;
+  required bytes actionType = 7;
+  required bytes price = 8;
+  required bytes quantity = 9;
+  required bytes orderFrm = 10;
+  required int64 created = 11;
+  required bytes status = 12;
 }
 message SendMessage {
   required bytes peerID = 1;
@@ -94,12 +110,24 @@ class ValidatorHandler extends EventEmitter {
   _onMessage (message) {
     try {
       const request = Request.decode(message.data)
-      //console.log(`onMessage emit function ${request.type}`)
+      console.log(`onMessage emit function ${request.type}`)
       switch (request.type) {
-        case Request.Type.STATS:
-          this.stats.set(message.from, request.stats)
-          console.log('Incoming Stats:', message.from, request.stats)
-          this.emit('stats', this.stats)
+        case Request.Type.SEND_ORDER:
+          this.emit('sendOrder', {
+            //from: message.from,
+            id: uint8arrayToString(request.sendOrder.id),
+            order1_id: uint8arrayToString(request.sendOrder.order1_id),
+            order2_id: uint8arrayToString(request.sendOrder.order2_id),
+            tokenA: uint8arrayToString(request.sendOrder.tokenA),
+            tokenB: uint8arrayToString(request.sendOrder.tokenB),
+            orderType: uint8arrayToString(request.sendOrder.orderType),
+            actionType: uint8arrayToString(request.sendOrder.actionType),
+            price: uint8arrayToString(request.sendOrder.price),
+            quantity: uint8arrayToString(request.sendOrder.quantity),
+            orderFrm: uint8arrayToString(request.sendOrder.orderFrm),
+            status: uint8arrayToString(request.sendOrder.status),
+            created: request.sendOrder.created,
+          })
           break
         case Request.Type.SEND_UPDATE:
           this.emit('sendUpdate', {
@@ -108,13 +136,14 @@ class ValidatorHandler extends EventEmitter {
             id: uint8arrayToString(request.sendUpdate.id)
           })
           break
-        default:
+        case Request.Type.SEND_MESSAGE:
           this.emit('message', {
             from: message.from,
             peerID: uint8arrayToString(request.sendMessage.peerID),
             created: request.sendMessage.created,
             id: uint8arrayToString(request.sendMessage.id)
           })
+          break
       }
     } catch (err) {
       console.error(err)
@@ -167,6 +196,30 @@ class ValidatorHandler extends EventEmitter {
      });
 
        //console.log(`Topic at send function: ${this.topic}`);   
+       await this.libp2p.pubsub.publish(this.topicOrder, msg);
+   }
+
+   async sendMatchedOrder(id, order1_id, order2_id, tokenA, tokenB, orderType, actionType, price, quantity, account, status, created) {
+    //console.log(`Send message function : ${order1_id} : ${order2_id} : ${tokenA} : ${tokenB} : ${orderType} : ${actionType} : ${price} : ${quantity} : ${account} : ${status} : ${created}`)
+     const msg = Request.encode({
+       type: Request.Type.SEND_ORDER,
+       sendOrder: {
+         id: uint8arrayFromString(id),
+         order1_id: uint8arrayFromString(order1_id),
+         order2_id: uint8arrayFromString(order2_id),
+         tokenA: uint8arrayFromString(tokenA),
+         tokenB: uint8arrayFromString(tokenB),
+         orderType: uint8arrayFromString(orderType),
+         actionType: uint8arrayFromString(actionType),
+         price: uint8arrayFromString(price),
+         quantity: uint8arrayFromString(quantity),
+         orderFrm: uint8arrayFromString(account),
+         status: uint8arrayFromString(status),
+         created: created
+       }
+     });
+
+       //console.log(`Topic at send function ${msg.tokenA} : ${msg.orderFrm}`);   
        await this.libp2p.pubsub.publish(this.topicOrder, msg);
    }
 }

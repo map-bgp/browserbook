@@ -36,6 +36,8 @@ function OrderMatch() {
   const [messages, setMessages] = useState([])
   const [updatemsg, setUpdateMessage] = useState('')
   const [updatemsgs, setUpdateMessages] = useState([])
+  const [matchedOrder, setMatchedOrder] = useState('')
+  const [matchedOrders, setMatchedOrders] = useState([])
 
   const { account, library } = useWeb3React<providers.Web3Provider>();
 
@@ -53,7 +55,7 @@ function OrderMatch() {
 
   const matchOrders = async () => {
     const orderArray = await state.p2pDb.orders.toArray();
-    console.log(`orders array length in the db ${orderArray.length}`);
+    //console.log(`orders array length in the db ${orderArray.length}`);
     // const exemptedOrderArray = orderArray
     // filter(orderArray,matches())
     const orderOne = orderArray.pop();
@@ -80,6 +82,25 @@ function OrderMatch() {
     //Sent the updated status in the pubsub channel to propagate
     await validatorHandler.sendOrderUpdate(orderOne.id , "MATCHED");
     await validatorHandler.sendOrderUpdate(orderTwo.id , "MATCHED");
+
+    const id = (~~(Math.random() * 1e9)).toString(36) + Date.now();  
+    const created = Date.now();
+
+
+    //Checking if the orderid are already present in the matchedOrder table
+    // state.p2pDb.transaction('rw', state.p2pDb.matchedOrder, async() =>{
+    //   const one = await state.p2pDb.matchedOrder.where("order1_id").equals(orderOne.id).count();
+    //   const two = await state.p2pDb.matchedOrder.where("order1_id").equals(orderTwo.id).count();
+    //   const three = await state.p2pDb.matchedOrder.where("order2_id").equals(orderOne.id).count();
+    //   const four = await state.p2pDb.matchedOrder.where("order2_id").equals(orderTwo.id).count();
+    //   }).catch(e => { console.log(e.stack || e);});
+
+    //console.log(`This to test the dexie query for the duplication check : ${one}`)
+
+    //Sent the matched order to the matched order table 
+    await validatorHandler.sendMatchedOrder(id, orderOne.id, orderTwo.id, token2Address.get(orderOne.tokenFrom), token2Address.get(orderTwo.tokenFrom), orderOne.orderType
+      , orderOne.actionType, orderOne.price, orderOne.quantity, account, "MATCHED", created);
+
 
     console.table({
       from: token2Address.get(orderOne.tokenFrom),
@@ -214,7 +235,7 @@ function OrderMatch() {
 
         // Listen for messages
         pubsubChat.on('message', (message) => {
-          if (message.from === state.node.peerId.toB58String()) {
+          if (message.from === state.node.peerId.toB58String()) { 
             message.isMine = true
           }
           setMessages((messages) => [...messages, message])
@@ -231,8 +252,7 @@ function OrderMatch() {
         })
 
 
-        
-        // Forward updates events to the eventBus
+        // Forward order update event to the eventBus(should be for all the users---> need to move)
         pubsubChat.on('sendUpdate', (updatemsg) => {
           if (updatemsg.from === state.node.peerId.toB58String()) {
             updatemsg.isMine = true
@@ -240,9 +260,37 @@ function OrderMatch() {
           setUpdateMessages((updatemsgs) => [...updatemsgs, updatemsg])
           console.log(`update Messages ${updatemsg}`)
 
-          //Update the database with the updates status of the order.
+        //Update the database with the updates status of the order.
           state.p2pDb.transaction('rw', state.p2pDb.orders, async() =>{
             const transaction_id = await state.p2pDb.orders.where("id").equals(updatemsg.id).modify({status: "MATCHED"});
+            }).catch(e => { console.log(e.stack || e);});
+      })
+
+        // Matched order entry to database
+        pubsubChat.on('sendOrder', (matchedOrder) => {
+          if (matchedOrder.from === state.node.peerId.toB58String()) {
+              matchedOrder.isMine = true
+          }
+          setMatchedOrders((matchedOrders) => [...matchedOrders, matchedOrder])
+          console.log(`update Messages ${matchedOrder}`)
+
+         //Update the database with the updates status of the order.
+          state.p2pDb.transaction('rw', state.p2pDb.matchedOrder, async() =>{
+            const id = await state.p2pDb.matchedOrder.add({
+              id: matchedOrder.id,
+              order1_id: matchedOrder.order1_id,
+              order2_id: matchedOrder.order2_id,
+              tokenA: matchedOrder.tokenA,
+              tokenB: matchedOrder.tokenB,
+              orderType: matchedOrder.orderType,
+              actionType: matchedOrder.actionType,
+              price: matchedOrder.price,
+              quantity: matchedOrder.quantity,
+              orderFrm: matchedOrder.orderFrm,
+              status: matchedOrder.status,
+              created: matchedOrder.created
+            });
+            console.log(`Order ID is stored in ${id}`)
             }).catch(e => { console.log(e.stack || e);});
       })
   
