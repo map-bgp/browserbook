@@ -1,11 +1,8 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import "tailwindcss/tailwind.css"
 import {useAppDispatch, useAppSelector, useEthers} from "../store/Hooks";
-import {selectEthersConnected} from "../store/slices/EthersSlice";
 import {AlertMessage} from "./elements/AlertMessage";
 import {ContractNames} from "../blockchain/ContractNames";
-import {EthersContext} from "./EthersContext";
-import {addOrder} from "../store/slices/OrderbookSlice";
 import {classNames} from "./utils/classNames";
 import {XCircleIcon} from "@heroicons/react/solid";
 import TokenTable from "./elements/TokenTable";
@@ -17,56 +14,38 @@ const TokenAdministration = (props: TokenAdministrationProps) => {
   const dispatch = useAppDispatch();
 
   const tokens = useAppSelector(selectTokens)
-  const [ethers, connected, address, contract, resolved] = useEthers("TokenFactory");
+  const [ethers, connected, address, contract, resolved] = useEthers(ContractNames.TokenFactory);
 
-  const queryAndDispatchTokens = async (contract) => {
-    var res: any[] = []
+  const getWalletTokens = async (contract) => {
+    const tokens: object[] = [];
 
-    const ownerFilter = contract.filters.TokenOwnerNotice(address, null);
-    await contract.queryFilter(ownerFilter).then(async query => {
-      query.forEach(event => res.push(
+    const tokenFilter = contract.filters.TokenCreated(address, null, null);
+    await contract.queryFilter(tokenFilter).then(async result => {
+      result.forEach(event => tokens.push(
         {
-          // @ts-ignore
-          "address": event.args[1]
+          "owner": event.args[0],
+          "address": event.args[1],
+          "uri": event.args[2],
         }
       ))
-
-      for (const token of res) {
-        var uriFilter = contract.filters.TokenCreated(null, token.address);
-        var query = await contract.queryFilter(uriFilter)
-
-        query.forEach(event => {
-          // @ts-ignore
-          token.uri = event.args[0];
-        })
-      }
-
-      dispatch(setTokens(res))
+      dispatch(setTokens(tokens))
     });
-  }
-
-  const logNewEthersHook = () => {
-    console.log("New Ethers", ethers)
-    console.log("New Address", address)
-    console.log("New Contract", contract)
-    console.log("New Resolved", resolved)
   }
 
   useEffect(() => {
     const setup = async () => {
-      if (address !== null && contract !== null) {
-        await queryAndDispatchTokens(contract).then(() => console.log("Tokens successfully queried"));
+      if (resolved) {
+        await getWalletTokens(contract).then(() => console.log("Tokens successfully queried"));
 
-        const ownerFilter = contract.filters.TokenOwnerNotice(address, null);
-        contract.on(ownerFilter, () => queryAndDispatchTokens(contract));
+        const tokenFilter = contract.filters.TokenCreated(address, null, null);
+        contract.on(tokenFilter, () => getWalletTokens(contract));
       }
     }
-    setup().then(() => console.log("Contract initialized"))
-    logNewEthersHook()
-  }, [address, contract])
+    setup().then()
+  }, [resolved])
 
   const createToken = (uri: string) => {
-    if (contract != null) {
+    if (resolved) {
       contract.create(uri).then(tx => console.log(tx))
     } else {
       console.log("Contract not initialized yet")
@@ -139,12 +118,6 @@ const TokenAdministration = (props: TokenAdministrationProps) => {
                     </div>
                 </div>
                 }
-                <button
-                  className={"block ml-auto mr-0 flex items-end px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 active:bg-orange-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"}
-                  onClick={() => logNewEthersHook()}
-                >
-                  Create
-                </button>
                 <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
                   <button
                     type="submit"

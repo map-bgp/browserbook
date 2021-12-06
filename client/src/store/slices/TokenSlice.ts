@@ -2,7 +2,7 @@ import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import type {RootState} from '../Store'
 
 interface TokenState {
-  tokens: string[],
+  tokens: object[],
 }
 
 const initialState: TokenState = {
@@ -13,7 +13,7 @@ export const tokenSlice = createSlice({
   name: 'token',
   initialState,
   reducers: {
-    setTokens: (state, action: PayloadAction<string[]>) => {
+    setTokens: (state, action: PayloadAction<object[]>) => {
       state.tokens = action.payload
     },
   }

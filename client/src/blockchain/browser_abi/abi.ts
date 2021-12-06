@@ -1,42 +1,29 @@
 const TokenFactory = {
-  "address": "0x9F2d7AA3884360a309A5f7D875E14cD9413FF794",
-  "abi": [
+  "address": "0x107c43484bCDDc07c3d92B619AD1105FB3c39122",
+  "abi":  [
     {
       "anonymous": false,
       "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
         {
           "indexed": false,
           "internalType": "string",
           "name": "",
           "type": "string"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "",
-          "type": "address"
         }
       ],
       "name": "TokenCreated",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "name": "TokenOwnerNotice",
       "type": "event"
     },
     {

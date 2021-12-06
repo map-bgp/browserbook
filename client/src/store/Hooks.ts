@@ -31,8 +31,6 @@ export const useEthers = (contractName?: string) => {
 
   useEffect(() => {
     const setupEthers = async () => {
-      dispatch(setEthersResolved(false))
-
       try {
         const signer = await ethers.getSigner();
         const signerAddress = await signer.getAddress();
