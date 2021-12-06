@@ -55,11 +55,13 @@ function OrderMatch() {
 
   const matchOrders = async () => {
     const orderArray = await state.p2pDb.orders.toArray();
+    const matchedOrder = await state.p2pDb.matchedOrder.toArray();
     //console.log(`orders array length in the db ${orderArray.length}`);
     // const exemptedOrderArray = orderArray
     // filter(orderArray,matches())
     const orderOne = orderArray.pop();
     const orderTwo = orderArray.pop();
+    const matchedOrder = matchedOrder.pop();
     // @ts-ignore
     const signer = library.getSigner();
 
@@ -72,6 +74,7 @@ function OrderMatch() {
 
     console.table(orderOne);
     console.table(orderTwo);
+    console.table(matchedOrder);
     
     //Changes the status of the local DB order status on a match
     state.p2pDb.transaction('rw', state.p2pDb.orders, async() =>{
@@ -80,27 +83,26 @@ function OrderMatch() {
       }).catch(e => { console.log(e.stack || e);});
 
     //Sent the updated status in the pubsub channel to propagate
-    await validatorHandler.sendOrderUpdate(orderOne.id , "MATCHED");
-    await validatorHandler.sendOrderUpdate(orderTwo.id , "MATCHED");
+    //await validatorHandler.sendOrderUpdate(orderOne.id , "MATCHED");
+    //await validatorHandler.sendOrderUpdate(orderTwo.id , "MATCHED");
 
     const id = (~~(Math.random() * 1e9)).toString(36) + Date.now();  
     const created = Date.now();
-
+    const one, two , three, four;
 
     //Checking if the orderid are already present in the matchedOrder table
-    // state.p2pDb.transaction('rw', state.p2pDb.matchedOrder, async() =>{
-    //   const one = await state.p2pDb.matchedOrder.where("order1_id").equals(orderOne.id).count();
-    //   const two = await state.p2pDb.matchedOrder.where("order1_id").equals(orderTwo.id).count();
-    //   const three = await state.p2pDb.matchedOrder.where("order2_id").equals(orderOne.id).count();
-    //   const four = await state.p2pDb.matchedOrder.where("order2_id").equals(orderTwo.id).count();
-    //   }).catch(e => { console.log(e.stack || e);});
+    state.p2pDb.transaction('rw', state.p2pDb.matchedOrder, async() =>{
+      one = await state.p2pDb.matchedOrder.where("order1_id").equalsIgnoreCase(orderOne.id).toArray();
+      two = await state.p2pDb.matchedOrder.where("order1_id").equalsIgnoreCase(orderTwo.id).toArray();
+      three = await state.p2pDb.matchedOrder.where("order2_id").equalsIgnoreCase(orderOne.id).toArray();
+      four = await state.p2pDb.matchedOrder.where("order2_id").equalsIgnoreCase(orderTwo.id).toArray();
+      console.log(`This to test the dexie query for the duplication check : ${orderOne.id} : ${one}, ${orderTwo.id} : ${two}, ${orderOne.id} : ${three}, ${orderTwo.id} : ${four}`)
+      //await state.p2pDb.matchedOrder.where({order1_id : "orderOne.id"}).equalsIgnoreCase("david").toArray();
 
-    //console.log(`This to test the dexie query for the duplication check : ${one}`)
-
-    //Sent the matched order to the matched order table 
-    await validatorHandler.sendMatchedOrder(id, orderOne.id, orderTwo.id, token2Address.get(orderOne.tokenFrom), token2Address.get(orderTwo.tokenFrom), orderOne.orderType
-      , orderOne.actionType, orderOne.price, orderOne.quantity, account, "MATCHED", created);
-
+      if( one != null || two != null || three != null || four != null){
+        console.log(`Order have been matched previously.`);
+      }
+      }).catch(e => { console.log(e.stack || e);});
 
     console.table({
       from: token2Address.get(orderOne.tokenFrom),
