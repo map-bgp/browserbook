@@ -5,19 +5,16 @@ import Libp2p from "libp2p";
 import Websockets from "libp2p-websockets";
 import WebRTCStar from "libp2p-webrtc-star";
 
-import { NOISE } from "@chainsafe/libp2p-noise";
+import {NOISE} from "@chainsafe/libp2p-noise";
 import filters from "libp2p-websockets/src/filters"
 import Mplex from "libp2p-mplex";
 import Bootstrap from "libp2p-bootstrap";
 import KadDHT from "libp2p-kad-dht";
 
 import Gossipsub from "libp2p-gossipsub";
-import { useAppDispatch } from "../store/Hooks";
 
-import { store } from "../store/Store";
+import {store} from "../store/Store";
 import {decrementPeers, incrementPeers, setPeerID} from "../store/slices/PeerSlice";
-
-import PeerID from 'peer-id';
 
 const transportKey = Websockets.prototype[Symbol.toStringTag]
 

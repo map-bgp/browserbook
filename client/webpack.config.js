@@ -9,7 +9,7 @@ module.exports = {
     devtool: 'source-map',
     entry: {
         vendor: ['react', 'react-dom'],
-        client: './src/index.js',
+        client: './src/public/index.js',
     },
     output: {
         path: __dirname + '/dist',
@@ -46,8 +46,8 @@ module.exports = {
     plugins: [
         new NodePolyfillPlugin(),
         new HtmlWebpackPlugin({
-            title: 'GoWasm!',
-            template: './src/index.html',
+            title: 'bb',
+            template: './src/public/index.html',
             filename: './index.html',
             inject: true,
             minify: {

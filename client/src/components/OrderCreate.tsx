@@ -1,21 +1,21 @@
 // @ts-nocheck
-import React, {useState, useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 import "tailwindcss/tailwind.css"
 
-import {Radio, RadioObject} from './elements/inputs/Radio'
-import {SelectObject, Select} from "./elements/inputs/Select";
+import {Radio} from './elements/inputs/Radio'
+import {Select, SelectObject} from "./elements/inputs/Select";
 
 import {OrderActions, OrderTypes} from "../types/Order";
 
-import { useAppDispatch } from '../store/Hooks'
-import { addOrder } from '../store/slices/OrderbookSlice'
-import { Tokens } from "../types/Token";
+import {useAppDispatch} from '../store/Hooks'
+import {addOrder} from '../store/slices/OrderbookSlice'
+import {Tokens} from "../types/Token";
 import {classNames} from "./utils/classNames";
 import {XCircleIcon} from "@heroicons/react/solid";
 import PubsubChat from "../p2p/messagehandler";
-import { useAppContext } from "./context/Store";
-import {orderDB } from "../db";
-import { useWeb3React } from "@web3-react/core";
+import {useAppContext} from "./context/Store";
+import {useWeb3React} from "@web3-react/core";
+
 //import uint8arrayToString from "uint8arrays/to-string";
 
 

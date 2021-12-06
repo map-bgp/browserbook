@@ -2,7 +2,6 @@ import "tailwindcss/tailwind.css";
 
 import React from "react";
 import TableCell from "./TableCell";
-import { iteratorSymbol } from "immer/dist/internal";
 
 type CellProps = {
   items: string[];
@@ -16,4 +15,5 @@ function TableRow(props: CellProps) {
   </tr>);
 }
 
+// @ts-ignore
 export default TableRow;

@@ -2,7 +2,6 @@ import protons from "protons";
 import EventEmitter from "events";
 import uint8arrayFromString from "uint8arrays/from-string";
 import uint8arrayToString from "uint8arrays/to-string";
-import { TOPIC } from "../constants";
 
 const { Request, Stats } = protons(`
 message Request {

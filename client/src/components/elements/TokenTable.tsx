@@ -1,5 +1,6 @@
 import React from "react"
 import {classNames} from "../utils/classNames";
+import {Link, useRouteMatch} from "react-router-dom";
 
 type TokenTableProps = {
   tokens: any[]
@@ -7,6 +8,8 @@ type TokenTableProps = {
 }
 
 const TokenTable = (props: TokenTableProps) => {
+  let { path, url } = useRouteMatch();
+
   return (
     <div className={classNames(props.styles, "flex flex-col")}>
       <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -38,9 +41,9 @@ const TokenTable = (props: TokenTableProps) => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{token.uri}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{token.address}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <a href="#" className="text-orange-600 hover:text-orange-900">
+                    <Link to={`${url}/${token.uri}`} className="text-orange-600 hover:text-orange-900">
                       View
-                    </a>
+                    </Link>
                   </td>
                 </tr>
               ))}

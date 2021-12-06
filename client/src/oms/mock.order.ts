@@ -1,4 +1,4 @@
-import { IOrders, Tokens, OrderType } from "./matching";
+import {IOrders, OrderType, Tokens} from "./matching";
 
 export const OrderA : IOrders = {
     from: "0x12",

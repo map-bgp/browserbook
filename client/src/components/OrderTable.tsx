@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import "tailwindcss/tailwind.css";
-import { providers } from "ethers";
-import { useWeb3React } from "@web3-react/core";
+import {providers} from "ethers";
+import {useWeb3React} from "@web3-react/core";
 
-import { useAppDispatch } from "../store/Hooks";
+import {useAppDispatch} from "../store/Hooks";
 import Info from "./elements/Info";
-import { tokenOneAbi } from "../constants";
 import TableCell from "./elements/TableCell";
 import TableRow from "./elements/TableRow";
-import { useAppContext } from "./context/Store";
+import {useAppContext} from "./context/Store";
 
 function OrderTable() {
   const dispatch = useAppDispatch();

@@ -1,5 +1,5 @@
 import Dexie from 'dexie';
-import {IPeers,IOrders} from "./dto";
+import {IOrders, IPeers} from "./dto";
 
 export class P2PDB extends Dexie {
     peers: Dexie.Table<IPeers,number>

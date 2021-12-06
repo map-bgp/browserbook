@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react'
+import React from 'react'
 import "tailwindcss/tailwind.css"
 
 import {Link} from "react-router-dom";
@@ -6,10 +6,8 @@ import {Disclosure} from '@headlessui/react'
 import {MenuIcon, XIcon} from '@heroicons/react/outline'
 
 import {classNames} from './utils/classNames'
-import {useAppDispatch, useAppSelector} from "../store/Hooks";
-import {selectEthersConnected, selectEthersAddress} from "../store/slices/EthersSlice";
-import {EthersContext} from "./EthersContext";
-import {ContractNames} from "../blockchain/ContractNames";
+import {useAppSelector, useEthers} from "../store/Hooks";
+import {selectEthersConnected} from "../store/slices/EthersSlice";
 
 type HeaderProps = {
   navigation: any[],
@@ -17,18 +15,7 @@ type HeaderProps = {
 }
 
 const Header = (props: HeaderProps) => {
-  const dispatch = useAppDispatch();
-
-  const ethers = useContext(EthersContext);
-  const [contract, setContract] = useState<any | null>(null);
-
-  useEffect(() => {
-    const setupContract = async () => {
-      const c = await ethers.getContract(ContractNames.TokenFactory)
-      setContract(c)
-    }
-    setupContract().then(() => console.log("Contract initialized"))
-  }, [])
+  const [ethers, connected, address ] = useEthers();
 
   const getNumPeers = () => {
     return useAppSelector(state => state.peer.numPeers)
@@ -36,10 +23,6 @@ const Header = (props: HeaderProps) => {
 
   const getEthersConnected = () => {
     return useAppSelector(selectEthersConnected)
-  }
-
-  const getEthersAddress = () => {
-    return useAppSelector(selectEthersAddress)
   }
 
   return (
@@ -60,7 +43,7 @@ const Header = (props: HeaderProps) => {
                 <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                   {props.navigation.map((item) => (
                     <Link
-                      to={item.key}
+                      to={`/${ item.key }`}
                       key={item.key}
                       className={classNames(
                         props.current === item.name

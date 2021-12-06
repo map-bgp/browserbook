@@ -1,21 +1,12 @@
-import { useWeb3React } from "@web3-react/core";
-import React, { useEffect, useState } from "react";
+import {useWeb3React} from "@web3-react/core";
+import React, {useState} from "react";
 import "tailwindcss/tailwind.css";
-import { ethers, providers, Contract } from "ethers";
-import { useAppContext } from "./context/Store";
-import { SelectObject, Select } from "./elements/inputs/Select";
+import {Contract, providers} from "ethers";
+import {useAppContext} from "./context/Store";
+import {Select, SelectObject} from "./elements/inputs/Select";
 import Info from "./elements/Info";
-import { filter, matches } from "lodash";
-import { Tokens } from "../types/Token";
-import {
-  token2Address,
-  token2Id,
-  EXCHANGE,
-  TOKENONE,
-  exchangeAbi,
-  tokenOneAbi,
-  token2Abi,
-} from "../constants";
+import {Tokens} from "../types/Token";
+import {EXCHANGE, exchangeAbi, token2Abi, token2Address, token2Id,} from "../constants";
 
 function OrderMatch() {
   const { state, setContext } = useAppContext();

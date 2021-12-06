@@ -4,7 +4,7 @@ import OrderBook from "./OrderBook";
 import OrderTable from "./OrderTable";
 import Info from "./elements/Info";
 import Chart from "./elements/Chart";
-import { useAppContext } from "./context/Store";
+import {useAppContext} from "./context/Store";
 
 const Dashboard = () => {
   const { state, setContext } = useAppContext()

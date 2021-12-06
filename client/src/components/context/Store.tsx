@@ -1,6 +1,6 @@
-import React, { useContext, useReducer } from "react";
-import { Action, Reducer, StateContext } from "./Reducer";
-import { P2PDB } from "../../db";
+import React, {useContext, useReducer} from "react";
+import {Action, Reducer, StateContext} from "./Reducer";
+import {P2PDB} from "../../db";
 import EventEmitter from "events";
 
 export interface Store {

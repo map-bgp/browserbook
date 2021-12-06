@@ -1,9 +1,6 @@
-import {fetchABI} from "./abiFetcher";
 import {ethers} from "ethers";
-import {useAppDispatch} from "../store/Hooks";
 import {setEthersAddress, setEthersConnected} from "../store/slices/EthersSlice";
 import {store} from "../store/Store";
-import {injected} from "./connectors";
 import {TokenMetadata} from "./browser_abi/abi";
 
 const { ethereum } = (window as any);

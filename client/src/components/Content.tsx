@@ -5,10 +5,9 @@ import {Route, Switch} from "react-router-dom";
 import Dashboard from './Dashboard'
 import Market from './Market'
 import Portfolio from './Portfolio'
-import TokenCreation from './TokenAdministration'
+import TokenAdministration from './TokenAdministration'
 import OrderCreate from "./OrderCreate";
 import OrderMatch from "./OrderMatching";
-import TokenAdministration from "./TokenAdministration";
 
 
 type ContentProps = {

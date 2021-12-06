@@ -1,7 +1,6 @@
-import React, {useState} from 'react'
+import React from 'react'
 import {RadioGroup} from '@headlessui/react'
 import {classNames} from "../../utils/classNames";
-import {SelectObject} from "./Select";
 
 export type RadioObject = {
   id: number;
