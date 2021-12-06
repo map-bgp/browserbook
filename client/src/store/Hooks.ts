@@ -4,12 +4,57 @@ import type {AppDispatch, RootState} from './Store'
 import {useEffect, useState} from 'react'
 import {useWeb3React} from '@web3-react/core'
 import {EtherStore, injected} from '../blockchain'
-import {ethers} from "ethers";
+import {Contract, ethers} from "ethers";
+import {
+  selectEthersAddress,
+  selectEthersConnected,
+  selectEthersResolved,
+  setEthersAddress,
+  setEthersResolved
+} from "./slices/EthersSlice";
 
 
 // Use throughout your store instead of plain `useDispatch` and `useSelector`
 export const useAppDispatch = () => useDispatch<AppDispatch>()
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
+
+export const useEthers = (contractName?: string) => {
+  const dispatch = useAppDispatch();
+
+  const ethers: EtherStore = new EtherStore();
+
+  const connected = useAppSelector(selectEthersConnected)
+  const address = useAppSelector(selectEthersAddress)
+  const resolved = useAppSelector(selectEthersResolved)
+
+  const [contract, setContract] = useState<any>(null);
+
+  useEffect(() => {
+    const setupEthers = async () => {
+      dispatch(setEthersResolved(false))
+
+      try {
+        const signer = await ethers.getSigner();
+        const signerAddress = await signer.getAddress();
+
+        dispatch(setEthersAddress(signerAddress))
+
+        if (contractName !== undefined) {
+          const contract = await ethers.getContract(contractName)
+          setContract(contract)
+        }
+
+        dispatch(setEthersResolved(true));
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    setupEthers().then();
+  }, []);
+
+  return [ ethers, connected, address, contract, resolved ];
+};
 
 export function useEagerConnect() {
   const { activate, active } = useWeb3React()

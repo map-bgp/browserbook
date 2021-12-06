@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 import "tailwindcss/tailwind.css"
-import {useAppDispatch, useAppSelector} from "../store/Hooks";
-import {selectEthersActive} from "../store/slices/EthersSlice";
+import {useAppDispatch, useAppSelector, useEthers} from "../store/Hooks";
+import {selectEthersConnected} from "../store/slices/EthersSlice";
 import {AlertMessage} from "./elements/AlertMessage";
 import {ContractNames} from "../blockchain/ContractNames";
 import {EthersContext} from "./EthersContext";
@@ -9,21 +9,17 @@ import {addOrder} from "../store/slices/OrderbookSlice";
 import {classNames} from "./utils/classNames";
 import {XCircleIcon} from "@heroicons/react/solid";
 import TokenTable from "./elements/TokenTable";
+import {selectTokens, setTokens} from "../store/slices/TokenSlice";
 
 type TokenAdministrationProps = {}
 
 const TokenAdministration = (props: TokenAdministrationProps) => {
-
   const dispatch = useAppDispatch();
-  const ethersStatus = useAppSelector(selectEthersActive)
 
-  const ethers = useContext(EthersContext);
-  const [address, setAddress] = useState<any | null>(null);
-  const [contract, setContract] = useState<any | null>(null);
+  const tokens = useAppSelector(selectTokens)
+  const [ethers, connected, address, contract, resolved] = useEthers("TokenFactory");
 
-  const [tokens, setTokens] = useState<any | null>(null);
-
-  const queryAndSetTokens = async (contract) => {
+  const queryAndDispatchTokens = async (contract) => {
     var res: any[] = []
 
     const ownerFilter = contract.filters.TokenOwnerNotice(address, null);
@@ -45,24 +41,29 @@ const TokenAdministration = (props: TokenAdministrationProps) => {
         })
       }
 
-      setTokens(res)
+      dispatch(setTokens(res))
     });
+  }
+
+  const logNewEthersHook = () => {
+    console.log("New Ethers", ethers)
+    console.log("New Address", address)
+    console.log("New Contract", contract)
+    console.log("New Resolved", resolved)
   }
 
   useEffect(() => {
     const setup = async () => {
-      setAddress(await ethers.getSigner().then(signer => signer.getAddress()))
+      if (address !== null && contract !== null) {
+        await queryAndDispatchTokens(contract).then(() => console.log("Tokens successfully queried"));
 
-      const c = await ethers.getContract(ContractNames.TokenFactory)
-      setContract(c)
-
-      await queryAndSetTokens(c).then(() => console.log("Tokens successfully queried"));
-
-      const ownerFilter = c.filters.TokenOwnerNotice(address, null);
-      c.on(ownerFilter, () => queryAndSetTokens(c));
+        const ownerFilter = contract.filters.TokenOwnerNotice(address, null);
+        contract.on(ownerFilter, () => queryAndDispatchTokens(contract));
+      }
     }
     setup().then(() => console.log("Contract initialized"))
-  }, [])
+    logNewEthersHook()
+  }, [address, contract])
 
   const createToken = (uri: string) => {
     if (contract != null) {
@@ -89,17 +90,9 @@ const TokenAdministration = (props: TokenAdministrationProps) => {
     }
   }
 
-  const getTokens = () => {
-    if (tokens !== null) {
-      return (tokens.map(tokenAddress => <div className="block w-full first:mt-2 flex items-center justify-between text-xs font-light"><span className="block text-red-500 ml-2">{tokenAddress}</span></div>));
-    } else {
-      return <div>Loading</div>
-    }
-  }
-
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-      {ethersStatus ?
+      {connected ?
         <div className="px-4 py-8 sm:px-0 flex flex-col sm:flex-none sm:grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-8">
           <div className="md:col-span-1 align-top">
             <div>
@@ -146,6 +139,12 @@ const TokenAdministration = (props: TokenAdministrationProps) => {
                     </div>
                 </div>
                 }
+                <button
+                  className={"block ml-auto mr-0 flex items-end px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 active:bg-orange-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"}
+                  onClick={() => logNewEthersHook()}
+                >
+                  Create
+                </button>
                 <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
                   <button
                     type="submit"

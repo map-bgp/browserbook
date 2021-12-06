@@ -1,13 +1,6 @@
 import React from "react"
 import {classNames} from "../utils/classNames";
 
-/* This example requires Tailwind CSS v2.0+ */
-const tokens = [
-  { uri: 'test-uri.com', address: 'randomrandomrandomrandomrandomrandom' },
-  { uri: 'test-urasdai.com', address: 'ranasdfadomrandomrandomrandomrandomrandom' },
-  // More people...
-]
-
 type TokenTableProps = {
   tokens: any[]
   styles?: string

@@ -7,7 +7,7 @@ import {MenuIcon, XIcon} from '@heroicons/react/outline'
 
 import {classNames} from './utils/classNames'
 import {useAppDispatch, useAppSelector} from "../store/Hooks";
-import {selectEthersActive, selectEthersAddress} from "../store/slices/EthersSlice";
+import {selectEthersConnected, selectEthersAddress} from "../store/slices/EthersSlice";
 import {EthersContext} from "./EthersContext";
 import {ContractNames} from "../blockchain/ContractNames";
 
@@ -35,7 +35,7 @@ const Header = (props: HeaderProps) => {
   }
 
   const getEthersConnected = () => {
-    return useAppSelector(selectEthersActive)
+    return useAppSelector(selectEthersConnected)
   }
 
   const getEthersAddress = () => {

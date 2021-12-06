@@ -36,6 +36,4 @@ contract TokenFactory {
     function getTokenAddress(string calldata URI) public view returns (address) {
         return _tokenAddress[URI];
     }
-
-    
 }
