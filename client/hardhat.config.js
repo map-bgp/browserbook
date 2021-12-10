@@ -17,7 +17,7 @@ module.exports = {
         },
         development: {
             url: "http://localhost:9545",
-            accounts:{mnemonic:"hawk myth suggest very kitten fine ketchup message pulse fuel field muscle"}
+            accounts:{mnemonic:"muffin area swamp arm hundred photo upon chalk acoustic dawn home dragon"}
         },
         goerli:{
             url: process.env.GOERLI_RPC_URL,

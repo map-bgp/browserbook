@@ -1,6 +1,6 @@
-import * as BBookToken from "./blockchain/abi/BBookToken.json";
+import * as BBookToken from "./blockchain/abi/BBToken.json";
 import * as Exchange from "./blockchain/abi/Exchange.json";
-import * as BBookToken2 from "./blockchain/abi/BBookToken2.json";
+import * as BBookToken2 from "./blockchain/abi/BBToken.json";
 
 export const TOPIC = "/libp2p/example/chat/1.0.0";
 export const EXCHANGE = "0x9A862B129908c972Ef76575c4D205cD4e3fE9F75";

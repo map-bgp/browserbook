@@ -1,14 +1,11 @@
 import "tailwindcss/tailwind.css";
-
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+
+
 import  createLibp2p  from "../p2p/p2pnode";
-
 import { getOrCreatePeerId } from '../p2p/peer-id'
-
 import Header from "./Header";
-import { providers } from "ethers";
-import { useWeb3React } from "@web3-react/core";
 import { useEagerConnect,useInactiveListener } from "../store/Hooks";
 import { getCurrent } from "./utils/getCurrent";
 import Content from "./Content";
@@ -79,7 +76,12 @@ const loadInitialState = async () => {
     {
       name: "Order Matching",
       key: "order-matching",
+    },
+    {
+      name: "be a Matcher",
+      key: "be-a-matcher",
     }
+
   ];
 
   return (

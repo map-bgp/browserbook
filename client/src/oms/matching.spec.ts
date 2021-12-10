@@ -15,7 +15,6 @@ test('initalize the Matcher node', () => {
 
 // test('Test Orders compare', () => {
 //     const orderArray = [OrderA,OrderB,OrderC,OrderD];
-
 //     const matcher = new Matcher(orderArray);
 //     console.log(matcher.orderCompare(OrderA,OrderB));
 //     expect(matcher).toBeDefined();
