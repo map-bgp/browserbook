@@ -1,14 +1,11 @@
 import "tailwindcss/tailwind.css";
-
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+
+
 import  createLibp2p  from "../p2p/p2pnode";
-
 import { getOrCreatePeerId } from '../p2p/peer-id'
-
 import Header from "./Header";
-import { providers } from "ethers";
-import { useWeb3React } from "@web3-react/core";
 import { useEagerConnect,useInactiveListener } from "../store/Hooks";
 import { getCurrent } from "./utils/getCurrent";
 import Content from "./Content";
@@ -28,7 +25,7 @@ export const App = () => {
 
 const loadInitialState = async () => {
 
-  if(setContext){
+  if(setContext) {
 
   console.info('Getting our PeerId')
 
@@ -60,17 +57,17 @@ const loadInitialState = async () => {
       name: "Dashboard",
       key: "dashboard",
     },
+    // {
+    //   name: "Market",
+    //   key: "market",
+    // },
+    // {
+    //   name: "Portfolio",
+    //   key: "portfolio",
+    // },
     {
-      name: "Market",
-      key: "market",
-    },
-    {
-      name: "Portfolio",
-      key: "portfolio",
-    },
-    {
-      name: "Assets",
-      key: "assets",
+      name: "Token Administration",
+      key: "token-administration",
     },
     {
       name: "Order Creation",
@@ -79,11 +76,16 @@ const loadInitialState = async () => {
     {
       name: "Order Matching",
       key: "order-matching",
+    },
+    {
+      name: "be a Matcher",
+      key: "be-a-matcher",
     }
+
   ];
 
   return (
-    <div className="min-h-screen AppContextbg-gray-100">
+    <div className="min-h-screen bg-gray-100">
         <Header
           navigation={navigation}
           current={getCurrent(location, navigation)}

@@ -1,18 +1,15 @@
-import React from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import "tailwindcss/tailwind.css"
 
-import {Link, useHistory} from "react-router-dom";
-import { providers } from "ethers";
-import { useWeb3React } from "@web3-react/core";
-
+import {Link} from "react-router-dom";
 import {Disclosure} from '@headlessui/react'
 import {MenuIcon, XIcon} from '@heroicons/react/outline'
 
 import {classNames} from './utils/classNames'
-import PriceTicker from "./elements/Ticker";
-import {useAppSelector} from "../store/Hooks";
-import {useAppContext} from "./context/Store";
-import { injected } from '../blockchain';
+import {useAppDispatch, useAppSelector} from "../store/Hooks";
+import {selectEthersConnected, selectEthersAddress} from "../store/slices/EthersSlice";
+import {EthersContext} from "./EthersContext";
+import {ContractNames} from "../blockchain/ContractNames";
 
 type HeaderProps = {
   navigation: any[],
@@ -20,13 +17,29 @@ type HeaderProps = {
 }
 
 const Header = (props: HeaderProps) => {
-  const { account, activate, deactivate, active, error } = useWeb3React<providers.Web3Provider>()
-  const history = useHistory();
+  const dispatch = useAppDispatch();
 
-  const { state, setContext } = useAppContext()
+  const ethers = useContext(EthersContext);
+  const [contract, setContract] = useState<any | null>(null);
+
+  useEffect(() => {
+    const setupContract = async () => {
+      const c = await ethers.getContract(ContractNames.TokenFactory)
+      setContract(c)
+    }
+    setupContract().then(() => console.log("Contract initialized"))
+  }, [])
 
   const getNumPeers = () => {
     return useAppSelector(state => state.peer.numPeers)
+  }
+
+  const getEthersConnected = () => {
+    return useAppSelector(selectEthersConnected)
+  }
+
+  const getEthersAddress = () => {
+    return useAppSelector(selectEthersAddress)
   }
 
   return (
@@ -62,30 +75,30 @@ const Header = (props: HeaderProps) => {
                   ))}
                 </div>
               </div>
-              <div className="flex items-center justify-end">
-                <div className="absolute top-0 right-0 mr-8 my-4 py-2 text-gray-500 text-sm font-medium">
+              <div className="flex items-center justify-end mr-4">
+                <div className="px-4 flex items-center justify-around mr-4">
+                  {getEthersConnected() ?
+                    <>
+                    <div className="mr-2 my-4 py-2 text-gray-500 text-sm font-medium">Connected</div>
+                    <div className="flex h-3 w-3">
+                      <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-green-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                    </div>
+                    </> :
+                    <button
+                      type="button"
+                      className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                      onClick={() => {
+                        ethers.connect()
+                      }}
+                    >
+                      Connect
+                    </button>}
+                </div>
+                <div className="mr-8 my-4 py-2 text-gray-500 text-sm font-medium">
                   Peer Count: {getNumPeers()}
                 </div>
               </div>
-
-              
-              {!account && <button
-                type="button"
-                className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-                onClick={() => activate(injected)}
-              >
-                Connect
-              </button>}
-
-              {account && <button
-                type="button"
-                className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-                onClick={() => deactivate()}
-              >
-                Disconnect
-              </button>}
-
-
 
               <div className="-mr-2 flex items-center sm:hidden">
                 {/* Mobile menu button */}
@@ -124,7 +137,6 @@ const Header = (props: HeaderProps) => {
         </>
       )}
     </Disclosure>
-      <PriceTicker />
     </>
   );
 }
