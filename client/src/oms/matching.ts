@@ -54,6 +54,18 @@ export interface PriceInfo {
   price: number;
 }
 
+onmessage = function(e) {
+  console.log('Worker: Message received from main script');
+  const result = e.data;
+  if (isNaN(result)) {
+    postMessage('Please write two numbers');
+  } else {
+    const workerResult = 'Result: ' + result;
+    console.log('Worker: Posting message back to main script');
+    postMessage(workerResult);
+  }
+}
+
 export class Matcher {
   /* What all this matcher contains
     Step-wise: 
@@ -221,7 +233,7 @@ export class Matcher {
         order1.orderType === OrderType.Limit &&
         order2.orderType === OrderType.Market
       ) {
-        // CASE1.1: Same tokens at same price
+        // CASE3.1: Same tokens at same price
         if (tradeBenefitRatio == 1 && order1.amountS == order2.amountB) {
           return {
             orderOne: order1,
@@ -230,7 +242,7 @@ export class Matcher {
             price: order1.amountS || order2.amountB,
           } as MatchingResponse;
         }
-        // CASE1.2: Same tokens at different quoted price, so mean price of the two quoted
+        // CASE3.2: Same tokens at different quoted price, so mean price of the two quoted
         else {
           if (tradeBenefitRatio > 1 && order1.amountB < order2.amountS)
             return {

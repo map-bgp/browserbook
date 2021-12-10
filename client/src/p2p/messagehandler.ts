@@ -24,6 +24,7 @@ message SendMessage {
   required bytes orderFrm = 7;
   required int64 created = 8;
   required bytes id = 9;
+  required bytes status = 10;
 }
 message Stats {
   enum NodeType {
@@ -39,6 +40,7 @@ message Stats {
 class MessageHandler extends EventEmitter {
   libp2p: any;
   topic: string; 
+  topic_universal: string;
   connectedPeers: any;
   stats: any;
   
@@ -92,7 +94,6 @@ class MessageHandler extends EventEmitter {
     try {
       const request = Request.decode(message.data)
       //console.log(`Send message function :${request.sendMessage.tokenA} : ${request.sendMessage.tokenB} : ${request.sendMessage.orderType} : ${request.sendMessage.actionType} : ${request.sendMessage.price} : ${request.sendMessage.quantity}`)
-      //console.log(`OnOrder emit function reached ${request.sendMessage.orderType}`)
       switch (request.type) {
         case Request.Type.STATS:
           this.stats.set(message.from, request.stats)
@@ -109,6 +110,7 @@ class MessageHandler extends EventEmitter {
             price: uint8arrayToString(request.sendMessage.price),
             quantity: uint8arrayToString(request.sendMessage.quantity),
             orderFrm: uint8arrayToString(request.sendMessage.orderFrm),
+            status: uint8arrayToString(request.sendMessage.status),
             created: request.sendMessage.created,
             id: uint8arrayToString(request.sendMessage.id)
           })
@@ -130,7 +132,7 @@ class MessageHandler extends EventEmitter {
           nodeType: Stats.NodeType.BROWSER
         }
       })
-  
+
       try {
         await this.libp2p.pubsub.publish(this.topic, msg)
       } catch (err) {
@@ -153,8 +155,9 @@ class MessageHandler extends EventEmitter {
       await this.libp2p.pubsub.publish(this.topic, msg);
   }
 
-  async sendOrder(id, tokenA, tokenB, orderType, actionType, price, quantity, account, created) {
+  async sendOrder(id, tokenA, tokenB, orderType, actionType, price, quantity, account, status, created) {
    //console.log(`Send message function :${tokenA.name} : ${tokenB.name} : ${orderType.value} : ${actionType.name} : ${price} : ${quantity} : ${account}`)
+   //console.log(`Status field at sendOrder :${status}`)
     const msg = Request.encode({
       type: Request.Type.SEND_MESSAGE,
       sendMessage: {
@@ -166,6 +169,7 @@ class MessageHandler extends EventEmitter {
         price: uint8arrayFromString(price),
         quantity: uint8arrayFromString(quantity),
         orderFrm: uint8arrayFromString(account),
+        status: uint8arrayFromString(status),
         created: created
       }
     });

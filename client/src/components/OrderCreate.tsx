@@ -22,8 +22,6 @@ import { useWeb3React } from "@web3-react/core";
 function OrderCreate() {
     const dispatch = useAppDispatch()
     const { state, setContext } = useAppContext()
-    console.log(`reached OrderCreation`)
-
     const [tokenA, setTokenA] = useState(Tokens[0])
     const [tokenB, setTokenB] = useState(Tokens[1])
 
@@ -38,9 +36,14 @@ function OrderCreate() {
     const TOPIC = '/libp2p/bbook/chat/1.0.0'
     const [message, setMessage] = useState('')
     const [messages, setMessages] = useState([])
+    //const [orderPeerID, setOrderPeerID] = useState('')
     const { account, library } = useWeb3React<providers.Web3Provider>()
 
     //const [orderObject, setOrderObject]= useState({TokenA: Tokens[0], TokenB: Tokens[1], OrderType: OrderTypes[0], ActionType: OrderActions[0], Price: '', Quantity: ''})
+
+    const getPeerID = () => {
+        return state.peerId;
+    }
 
     const getTotal = (): number => {
         return (price * quantity)
@@ -67,8 +70,9 @@ function OrderCreate() {
         try {
           const id = (~~(Math.random() * 1e9)).toString(36) + Date.now();  
           const created = Date.now();
+          const status = "OPEN";
           //console.log(`Send message function ${id} :${tokenA.name} : ${tokenB.name} : ${orderType.value} : ${actionType.name} : ${price} : ${quantity} : ${account} : ${created}`)
-          await chatClient.sendOrder(id ,tokenA, tokenB, orderType, actionType, price, quantity, account, created)
+          await chatClient.sendOrder(id ,tokenA, tokenB, orderType, actionType, price, quantity, account, status, created)
 
           state.p2pDb.transaction('rw', state.p2pDb.orders, async() =>{
             const order_id = await state.p2pDb.orders.add({
@@ -80,6 +84,7 @@ function OrderCreate() {
                 price: price,
                 quantity: quantity,
                 orderFrm: account,
+                status: status,
                 created: created
                 
             });
@@ -92,6 +97,12 @@ function OrderCreate() {
         }
       }
 
+    const randomPeers = async () => {
+        const peerArray = await state.p2pDb.peers.toArray();
+        const obj = peerArray[Math.floor((Math.random()*peerArray.length))];
+        //console.log(`Random Peers ${obj.peerId}`);
+        //setOrderPeerID(obj.peerId._idB58String);
+      }
 
     /**
    * Leverage use effect to act on state changes
@@ -101,8 +112,9 @@ function OrderCreate() {
         if (!state.node) return
 
         //console.log(`Reached useEffect in OrderFrom`)
+        //randomPeers();
     
-        // Create the pubsub chatClient
+        // Create the pubsub Client
         if (!chatClient) {
           const pubsubChat = new PubsubChat(state.node, TOPIC)
     
@@ -112,8 +124,6 @@ function OrderCreate() {
               message.isMine = true
             }
             setMessages((messages) => [...messages, message])
-            //console.log(`On listen message from: ${message.from} , created: ${message.created} , id: ${message.id}`)
-            //Adding the received orders from the peers
 
             state.p2pDb.transaction('rw', state.p2pDb.orders, async() =>{
             const id = await state.p2pDb.orders.add({
@@ -125,13 +135,12 @@ function OrderCreate() {
                 price: message.price,
                 quantity: message.quantity,
                 orderFrm: message.orderFrm,
-                //from: message.from,
+                status: message.status,
                 created: message.created
                 
             });
             console.log(`Order ID is stored in ${id}`)
             }).catch(e => { console.log(e.stack || e);});
-
           })
           
           // Forward stats events to the eventBus

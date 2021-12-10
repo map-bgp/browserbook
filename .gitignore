@@ -9,3 +9,4 @@ node_modules/
 /browserbook/.idea/workspace.xml
 /client/artifacts/
 /client/cache/
+package-lock.json

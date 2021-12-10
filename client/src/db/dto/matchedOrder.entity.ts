@@ -1,5 +1,7 @@
-export interface IOrders{
+export interface IMatchedOrders{
     id?: string,
+    order1_id: string,
+    order2_id: string,
     tokenFrom: string,
     tokenTo: string,
     orderType: string,
@@ -7,7 +9,6 @@ export interface IOrders{
     price: number,
     quantity: number,
     orderFrm: number,
-    from: string,
     status: string,
     created: string,
 }
