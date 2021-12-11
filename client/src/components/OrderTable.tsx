@@ -3,7 +3,7 @@ import "tailwindcss/tailwind.css";
 import { providers } from "ethers";
 import { useWeb3React } from "@web3-react/core";
 
-import { useAppDispatch } from "../store/Hooks";
+import {useAppDispatch, useAppSelector, useEthers} from "../store/Hooks";
 import Info from "./elements/Info";
 import { tokenOneAbi } from "../constants";
 import TableCell from "./elements/TableCell";
@@ -13,7 +13,7 @@ import { useAppContext } from "./context/Store";
 function OrderTable() {
   const dispatch = useAppDispatch();
   const { state, setContext } = useAppContext();
-  const { account, library } = useWeb3React<providers.Web3Provider>();
+  const [ address,resolved] = useEthers();
   const [orderArray, setOrderArray] = useState([]);
   const [balance, setBalance] = useState();
   const [owner, setOwner] = useState();
@@ -43,13 +43,15 @@ function OrderTable() {
 
 
   useEffect(() => {
+    if(resolved){
     fetchOrders();
     setTableUpdate(true);
-  }, []);
+  }
+  }, [resolved]);
 
   const ordersNew = fetchOrders();
   
-  const message = `Connected Address:${account}`;
+  const message = `Connected Address:${address}`;
 
   const balanceInfo = ` Account Balance:${balance}`;
 

@@ -4,7 +4,6 @@ import type {AppDispatch, RootState} from './Store'
 import {useEffect, useState} from 'react'
 import {useWeb3React} from '@web3-react/core'
 import {EtherStore, injected} from '../blockchain'
-import {Contract, ethers} from "ethers";
 import {
   selectEthersAddress,
   selectEthersConnected,

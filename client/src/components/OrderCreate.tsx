@@ -1,240 +1,326 @@
 // @ts-nocheck
-import React, {useState, useEffect} from 'react'
-import "tailwindcss/tailwind.css"
+import React, { useState, useEffect } from "react";
+import "tailwindcss/tailwind.css";
 
-import {Radio, RadioObject} from './elements/inputs/Radio'
-import {SelectObject, Select} from "./elements/inputs/Select";
+import { Radio, RadioObject } from "./elements/inputs/Radio";
+import { SelectObject, Select } from "./elements/inputs/Select";
 
-import {OrderActions, OrderTypes} from "../types/Order";
+import { OrderActions, OrderTypes } from "../types/Order";
 
-import { useAppDispatch } from '../store/Hooks'
-import { addOrder } from '../store/slices/OrderbookSlice'
+import { useAppDispatch } from "../store/Hooks";
+import { addOrder } from "../store/slices/OrdersSlice";
 import { Tokens } from "../types/Token";
-import {classNames} from "./utils/classNames";
-import {XCircleIcon} from "@heroicons/react/solid";
+import { classNames } from "./utils/classNames";
+import { XCircleIcon } from "@heroicons/react/solid";
 import PubsubChat from "../p2p/messagehandler";
 import { useAppContext } from "./context/Store";
-import {orderDB } from "../db";
+import { orderDB } from "../db";
 import { useWeb3React } from "@web3-react/core";
 //import uint8arrayToString from "uint8arrays/to-string";
 
-
 function OrderCreate() {
-    const dispatch = useAppDispatch()
-    const { state, setContext } = useAppContext()
-    const [tokenA, setTokenA] = useState(Tokens[0])
-    const [tokenB, setTokenB] = useState(Tokens[1])
+  const dispatch = useAppDispatch();
+  const { state, setContext } = useAppContext();
+  const [tokenA, setTokenA] = useState(Tokens[0]);
+  const [tokenB, setTokenB] = useState(Tokens[1]);
 
-    const [orderType, setOrderType] = useState(OrderTypes[0])
-    const [actionType, setActionType] = useState(OrderActions[0])
+  const [orderType, setOrderType] = useState(OrderTypes[0]);
+  const [actionType, setActionType] = useState(OrderActions[0]);
 
-    const [price, setPrice] = useState<number>(0.00);
-    const [quantity, setQuantity] = useState<number>(0.00)
+  const [price, setPrice] = useState<number>(0.0);
+  const [quantity, setQuantity] = useState<number>(0.0);
 
-    //Created while integration with Order
-    const [chatClient, setChatClient] = useState(null)
-    const TOPIC = '/libp2p/bbook/chat/1.0.0'
-    const [message, setMessage] = useState('')
-    const [messages, setMessages] = useState([])
-    //const [orderPeerID, setOrderPeerID] = useState('')
-    const { account, library } = useWeb3React<providers.Web3Provider>()
+  //Created while integration with Order
+  const [chatClient, setChatClient] = useState(null);
+  const TOPIC = "/libp2p/bbook/chat/1.0.0";
+  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState([]);
+  //const [orderPeerID, setOrderPeerID] = useState('')
+  const { account, library } = useWeb3React<providers.Web3Provider>();
 
-    //const [orderObject, setOrderObject]= useState({TokenA: Tokens[0], TokenB: Tokens[1], OrderType: OrderTypes[0], ActionType: OrderActions[0], Price: '', Quantity: ''})
+  //const [orderObject, setOrderObject]= useState({TokenA: Tokens[0], TokenB: Tokens[1], OrderType: OrderTypes[0], ActionType: OrderActions[0], Price: '', Quantity: ''})
 
-    const getPeerID = () => {
-        return state.peerId;
-    }
+  const getPeerID = () => {
+    return state.peerId;
+  };
 
-    const getTotal = (): number => {
-        return (price * quantity)
-    }
+  const getTotal = (): number => {
+    return price * quantity;
+  };
 
-    const getTotalDisplay = (): string => {
-        return (price * quantity).toFixed(4)
-    }
+  const getTotalDisplay = (): string => {
+    return (price * quantity).toFixed(4);
+  };
 
-    const isValid = (): boolean => {
-        return tokenA !== tokenB
-    }
+  const isValid = (): boolean => {
+    return tokenA !== tokenB;
+  };
 
-    const handleSubmit = (evt) => {
-        evt.preventDefault()
-        dispatch(addOrder({'type': orderType.value, 'price': price, 'quantity': quantity}))
-    }
- 
+  const handleSubmit = (evt) => {
+    evt.preventDefault();
+    dispatch(
+      addOrder({
+        from: account,
+        status: "Open",
+        created: Date.now(),
+        tokenFrom: tokenA.name,
+        tokenTo: tokenB.name,
+        actionType: actionType.name,
+        type: orderType.value,
+        price: price,
+        quantity: quantity,
+      })
+    );
+  };
 
-    /**
+  /**
    * Sends the current message in the chat field
    */
-     const sendOrderMessage = async () => {
-        try {
-          const id = (~~(Math.random() * 1e9)).toString(36) + Date.now();  
-          const created = Date.now();
-          const status = "OPEN";
-          //console.log(`Send message function ${id} :${tokenA.name} : ${tokenB.name} : ${orderType.value} : ${actionType.name} : ${price} : ${quantity} : ${account} : ${created}`)
-          await chatClient.sendOrder(id ,tokenA, tokenB, orderType, actionType, price, quantity, account, status, created)
+  const sendOrderMessage = async () => {
+    try {
+      const id = (~~(Math.random() * 1e9)).toString(36) + Date.now();
+      const created = Date.now();
+      const status = "OPEN";
+      //console.log(`Send message function ${id} :${tokenA.name} : ${tokenB.name} : ${orderType.value} : ${actionType.name} : ${price} : ${quantity} : ${account} : ${created}`)
+      await chatClient.sendOrder(
+        id,
+        tokenA,
+        tokenB,
+        orderType,
+        actionType,
+        price,
+        quantity,
+        account,
+        status,
+        created
+      );
 
-          state.p2pDb.transaction('rw', state.p2pDb.orders, async() =>{
-            const order_id = await state.p2pDb.orders.add({
-                id: id,
-                tokenFrom: tokenA.name, 
-                tokenTo: tokenB.name, 
-                orderType: orderType.value, 
-                actionType: actionType.name,
-                price: price,
-                quantity: quantity,
-                orderFrm: account,
-                status: status,
-                created: created
-                
-            });
-            console.log(`Order ID is stored in ${order_id}`)
-            }).catch(e => { console.log(e.stack || e);});
+      state.p2pDb
+        .transaction("rw", state.p2pDb.orders, async () => {
+          const order_id = await state.p2pDb.orders.add({
+            id: id,
+            tokenFrom: tokenA.name,
+            tokenTo: tokenB.name,
+            orderType: orderType.value,
+            actionType: actionType.name,
+            price: price,
+            quantity: quantity,
+            orderFrm: account,
+            status: status,
+            created: created,
+          });
+          console.log(`Order ID is stored in ${order_id}`);
+        })
+        .catch((e) => {
+          console.log(e.stack || e);
+        });
 
-          console.info('Publish done')
-        } catch (err) {
-          console.error('Could not send message', err)
-        }
-      }
+      console.info("Publish done");
+    } catch (err) {
+      console.error("Could not send message", err);
+    }
+  };
 
-    const randomPeers = async () => {
-        const peerArray = await state.p2pDb.peers.toArray();
-        const obj = peerArray[Math.floor((Math.random()*peerArray.length))];
-        //console.log(`Random Peers ${obj.peerId}`);
-        //setOrderPeerID(obj.peerId._idB58String);
-      }
+  const randomPeers = async () => {
+    const peerArray = await state.p2pDb.peers.toArray();
+    const obj = peerArray[Math.floor(Math.random() * peerArray.length)];
+    //console.log(`Random Peers ${obj.peerId}`);
+    //setOrderPeerID(obj.peerId._idB58String);
+  };
 
-    /**
+  /**
    * Leverage use effect to act on state changes
    */
-     useEffect(() => {
-        // Wait for libp2p
-        if (!state.node) return
+  useEffect(() => {
+    // Wait for libp2p
+    if (!state.node) return;
 
-        //console.log(`Reached useEffect in OrderFrom`)
-        //randomPeers();
-    
-        // Create the pubsub Client
-        if (!chatClient) {
-          const pubsubChat = new PubsubChat(state.node, TOPIC)
-    
-          // Listen for messages
-          pubsubChat.on('message', (message) => {
-            if (message.from === state.node.peerId.toB58String()) {
-              message.isMine = true
-            }
-            setMessages((messages) => [...messages, message])
+    //console.log(`Reached useEffect in OrderFrom`)
+    //randomPeers();
 
-            state.p2pDb.transaction('rw', state.p2pDb.orders, async() =>{
-            const id = await state.p2pDb.orders.add({
-                id: message.id,
-                tokenFrom: message.tokenA, 
-                tokenTo: message.tokenB, 
-                orderType: message.orderType, 
-                actionType: message.actionType,
-                price: message.price,
-                quantity: message.quantity,
-                orderFrm: message.orderFrm,
-                status: message.status,
-                created: message.created
-                
-            });
-            console.log(`Order ID is stored in ${id}`)
-            }).catch(e => { console.log(e.stack || e);});
-          })
-          
-          // Forward stats events to the eventBus
-          pubsubChat.on('stats', (stats) => state.eventBus.emit('stats', stats))
-    
-          setChatClient(pubsubChat)
+    // Create the pubsub Client
+    if (!chatClient) {
+      const pubsubChat = new PubsubChat(state.node, TOPIC);
+
+      // Listen for messages
+      pubsubChat.on("message", (message) => {
+        if (message.from === state.node.peerId.toB58String()) {
+          message.isMine = true;
         }
-      })
+        setMessages((messages) => [...messages, message]);
+        dispatch(
+          addOrder({
+            id: message.id,
+            tokenFrom: message.tokenA,
+            tokenTo: message.tokenB,
+            orderType: message.orderType,
+            actionType: message.actionType,
+            price: message.price,
+            quantity: message.quantity,
+            orderFrm: message.orderFrm,
+            status: message.status,
+            created: message.created,
+          })
+        );
+        state.p2pDb
+          .transaction("rw", state.p2pDb.orders, async () => {
+            const id = await state.p2pDb.orders.add({
+              id: message.id,
+              tokenFrom: message.tokenA,
+              tokenTo: message.tokenB,
+              orderType: message.orderType,
+              actionType: message.actionType,
+              price: message.price,
+              quantity: message.quantity,
+              orderFrm: message.orderFrm,
+              status: message.status,
+              created: message.created,
+            });
+            console.log(`Order ID is stored in ${id}`);
+          })
+          .catch((e) => {
+            console.log(e.stack || e);
+          });
+      });
 
+      // Forward stats events to the eventBus
+      pubsubChat.on("stats", (stats) => state.eventBus.emit("stats", stats));
 
-    return (
+      setChatClient(pubsubChat);
+    }
+  });
+
+  return (
     <div className="max-w-6xl mx-auto sm:px-6 lg:px-8">
       <div className="w-full bg-white border-gray-200 rounded px-4 py-2">
         <form className="h-full" onSubmit={handleSubmit}>
-            <div className="mt-2 flex items-center justify-between">
-                <Select label="I Have" range={Tokens} selected={tokenA as SelectObject} setSelected={setTokenA as React.Dispatch<React.SetStateAction<SelectObject>>} />
+          <div className="mt-2 flex items-center justify-between">
+            <Select
+              label="I Have"
+              range={Tokens}
+              selected={tokenA as SelectObject}
+              setSelected={
+                setTokenA as React.Dispatch<React.SetStateAction<SelectObject>>
+              }
+            />
+          </div>
+          <div className="mt-2 mb-6 flex items-center justify-between">
+            <Select
+              label="I Want"
+              range={Tokens}
+              selected={tokenB as SelectObject}
+              setSelected={
+                setTokenB as React.Dispatch<React.SetStateAction<SelectObject>>
+              }
+            />
+          </div>
+          <div className="border-t mb-6 border-gray-200 w-4/5 mx-auto"></div>
+          <div className="mt-2 flex items-center justify-between">
+            <Radio
+              label="Queue Type"
+              range={OrderTypes}
+              selected={orderType}
+              setSelected={setOrderType}
+            />
+          </div>
+          <div className="mt-2 flex items-center justify-between">
+            <Select
+              label="Action Type"
+              range={OrderActions}
+              selected={actionType}
+              setSelected={setActionType}
+            />
+          </div>
+          <div className="w-full mt-2 flex items-center justify-between">
+            <label
+              htmlFor="name"
+              className="block ml-2 text-sm font-medium text-gray-700"
+            >
+              Price
+            </label>
+            <div className="w-1/2 mt-1 ml-4 border-b border-gray-300 focus-within:border-orange-600">
+              <input
+                type="number"
+                name="price"
+                id="price"
+                step="0.0001"
+                min={0}
+                onChange={(e) => setPrice(Number(e.target.value))}
+                className="block w-full text-gray-500 border-0 border-b border-transparent bg-gray-50 focus:border-orange-600 focus:ring-0 sm:text-sm"
+                placeholder="0.0000"
+              />
             </div>
-            <div className="mt-2 mb-6 flex items-center justify-between">
-                <Select label="I Want" range={Tokens} selected={tokenB as SelectObject} setSelected={setTokenB as React.Dispatch<React.SetStateAction<SelectObject>>} />
+          </div>
+          <div className="w-full mt-2 flex items-center justify-between">
+            <label
+              htmlFor="name"
+              className="block ml-2 text-sm font-medium text-gray-700"
+            >
+              Quantity
+            </label>
+            <div className="w-1/2 mt-1 ml-4 border-b border-gray-300 focus-within:border-orange-600">
+              <input
+                type="number"
+                name="quantity"
+                id="quantity"
+                step="0.0001"
+                min={0}
+                onChange={(e) => setQuantity(Number(e.target.value))}
+                className="block w-full text-gray-500 border-0 border-b border-transparent bg-gray-50 focus:border-orange-600 focus:ring-0 sm:text-sm"
+                placeholder="0.0000"
+              />
             </div>
-            <div className="border-t mb-6 border-gray-200 w-4/5 mx-auto">
+          </div>
+          <div className="w-full mt-4 flex items-center justify-between mt-4">
+            <span className="block ml-2 text-sm font-medium text-gray-700">
+              Total
+            </span>
+            <div className="w-1/2 mt-1 ml-4 text-right">
+              <span className="block w-full sm:text-sm">
+                {getTotalDisplay()}
+              </span>
             </div>
-            <div className="mt-2 flex items-center justify-between">
-                <Radio label="Queue Type" range={OrderTypes} selected={orderType} setSelected={setOrderType} />
-            </div>
-            <div className="mt-2 flex items-center justify-between">
-                <Select label="Action Type" range={OrderActions} selected={actionType} setSelected={setActionType} />
-            </div>
-            <div className="w-full mt-2 flex items-center justify-between">
-                <label htmlFor="name" className="block ml-2 text-sm font-medium text-gray-700">
-                    Price
-                </label>
-                <div className="w-1/2 mt-1 ml-4 border-b border-gray-300 focus-within:border-orange-600">
-                    <input
-                      type="number"
-                      name="price"
-                      id="price"
-                      step="0.0001"
-                      min={0}
-                      onChange={e => setPrice(Number(e.target.value))}
-                      className="block w-full text-gray-500 border-0 border-b border-transparent bg-gray-50 focus:border-orange-600 focus:ring-0 sm:text-sm"
-                      placeholder="0.0000"
+          </div>
+          <div
+            className={classNames(
+              "mt-10",
+              isValid() ? "" : "flex items-center justify-between"
+            )}
+          >
+            {!isValid() && (
+              <div className="w-3/5">
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <XCircleIcon
+                      className="h-5 w-5 text-red-400"
+                      aria-hidden="true"
                     />
+                  </div>
+                  <div className="ml-3">
+                    <h3 className="text-xs font-medium text-red-800">
+                      Please select two different tokens
+                    </h3>
+                  </div>
                 </div>
-            </div>
-            <div className="w-full mt-2 flex items-center justify-between">
-                <label htmlFor="name" className="block ml-2 text-sm font-medium text-gray-700">
-                    Quantity
-                </label>
-                <div className="w-1/2 mt-1 ml-4 border-b border-gray-300 focus-within:border-orange-600">
-                    <input
-                      type="number"
-                      name="quantity"
-                      id="quantity"
-                      step="0.0001"
-                      min={0}
-                      onChange={e => setQuantity(Number(e.target.value))}
-                      className="block w-full text-gray-500 border-0 border-b border-transparent bg-gray-50 focus:border-orange-600 focus:ring-0 sm:text-sm"
-                      placeholder="0.0000"
-                    />
-                </div>
-            </div>
-            <div className="w-full mt-4 flex items-center justify-between mt-4">
-                <span className="block ml-2 text-sm font-medium text-gray-700">
-                    Total
-                </span>
-                <div className="w-1/2 mt-1 ml-4 text-right">
-                    <span className="block w-full sm:text-sm">{getTotalDisplay()}</span>
-                </div>
-            </div>
-            <div className={classNames("mt-10", isValid() ? "" : "flex items-center justify-between")}>
-                {!isValid() &&
-                    <div className="w-3/5">
-                        <div className="flex">
-                            <div className="flex-shrink-0">
-                                <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
-                            </div>
-                            <div className="ml-3">
-                                <h3 className="text-xs font-medium text-red-800">Please select two different tokens</h3>
-                            </div>
-                        </div>
-                    </div>
-                }
-                <button
-                    type="submit"
-                    className={classNames( !isValid() ? "cursor-not-allowed hover:bg-orange-600 active:bg-orange-600 focus:outline-none focus:ring-0" : "ml-auto mr-0 ", "block flex items-end px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 active:bg-orange-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500")}
-                    onClick={() => sendOrderMessage()}>
-                    Submit Order
-                </button>
-            </div>
+              </div>
+            )}
+            <button
+              type="submit"
+              className={classNames(
+                !isValid()
+                  ? "cursor-not-allowed hover:bg-orange-600 active:bg-orange-600 focus:outline-none focus:ring-0"
+                  : "ml-auto mr-0 ",
+                "block flex items-end px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 active:bg-orange-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+              )}
+              onClick={() => sendOrderMessage()}
+            >
+              Submit Order
+            </button>
+          </div>
         </form>
       </div>
     </div>
-    )
+  );
 }
 
-export default OrderCreate
+export default OrderCreate;
