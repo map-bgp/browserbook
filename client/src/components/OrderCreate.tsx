@@ -135,57 +135,9 @@ function OrderCreate() {
     // Wait for libp2p
     if (!state.node) return;
 
-    //console.log(`Reached useEffect in OrderFrom`)
-    //randomPeers();
-
     // Create the pubsub Client
     if (!chatClient) {
       const pubsubChat = new PubsubChat(state.node, TOPIC);
-
-      // Listen for messages
-      pubsubChat.on("message", (message) => {
-        if (message.from === state.node.peerId.toB58String()) {
-          message.isMine = true;
-        }
-        setMessages((messages) => [...messages, message]);
-        dispatch(
-          addOrder({
-            id: message.id,
-            tokenFrom: message.tokenA,
-            tokenTo: message.tokenB,
-            orderType: message.orderType,
-            actionType: message.actionType,
-            price: message.price,
-            quantity: message.quantity,
-            orderFrm: message.orderFrm,
-            status: message.status,
-            created: message.created,
-          })
-        );
-        state.p2pDb
-          .transaction("rw", state.p2pDb.orders, async () => {
-            const id = await state.p2pDb.orders.add({
-              id: message.id,
-              tokenFrom: message.tokenA,
-              tokenTo: message.tokenB,
-              orderType: message.orderType,
-              actionType: message.actionType,
-              price: message.price,
-              quantity: message.quantity,
-              orderFrm: message.orderFrm,
-              status: message.status,
-              created: message.created,
-            });
-            console.log(`Order ID is stored in ${id}`);
-          })
-          .catch((e) => {
-            console.log(e.stack || e);
-          });
-      });
-
-      // Forward stats events to the eventBus
-      pubsubChat.on("stats", (stats) => state.eventBus.emit("stats", stats));
-
       setChatClient(pubsubChat);
     }
   });

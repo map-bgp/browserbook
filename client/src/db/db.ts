@@ -5,7 +5,7 @@ export class P2PDB extends Dexie {
     peers: Dexie.Table<IPeers,number>
     orders: Dexie.Table<IOrders,number>
     validators: Dexie.Table<IValidators,number>
-    matchedOrder: Dexie.Table<IMatchedOrders,number>
+    matchedOrders: Dexie.Table<IMatchedOrders,number>
 
     constructor() {
         super("browserbook");
@@ -28,6 +28,38 @@ export class P2PDB extends Dexie {
         this.version(4).stores(
             {matchedOrder: 'id,order1_id,order2_id,tokenFrom,tokenTo,orderType,actionType,price,quantity,orderFrm,status,created'}
         )
-        this.matchedOrder = this.table('matchedOrder');
+        this.matchedOrders = this.table('matchedOrder');
     }
+
+    async addPeers(peer: IPeers){
+        await this.peers.add(peer)
+    }
+
+    async addValidator(validator: IValidators){
+        await this.validators.add(validator)
+    }
+
+    async addOrder(order: IOrders){
+        await this.orders.add(order);
+    }
+    async addMatchOrder(matchedOrder: IMatchedOrders){
+        await this.matchedOrders.add(matchedOrder)
+    }
+
+    async removePeers(id: number){
+        await this.peers.delete(id)
+    }
+
+    async removeValidator(id: number){
+        await this.validators.delete(id);
+    }
+
+    async removeOrder(id: number){
+        await this.orders.delete(id);
+    }
+
+    async removeMatchOrder(id: number){
+        await this.validators.delete(id);
+    }
+
 }

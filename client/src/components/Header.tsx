@@ -10,6 +10,11 @@ import {useAppDispatch, useAppSelector} from "../store/Hooks";
 import {selectEthersConnected, selectEthersAddress} from "../store/slices/EthersSlice";
 import {EthersContext} from "./EthersContext";
 import {ContractNames} from "../blockchain/ContractNames";
+import { addOrder } from "../store/slices/OrdersSlice";
+import PubsubChat from "../p2p/messagehandler";
+import { getAccountPath } from 'ethers/lib/utils';
+import {useEthers} from '../store/Hooks';
+import {useAppContext} from './context/Store';
 
 type HeaderProps = {
   navigation: any[],
@@ -18,17 +23,69 @@ type HeaderProps = {
 
 const Header = (props: HeaderProps) => {
   const dispatch = useAppDispatch();
+  const TOPIC = "/libp2p/bbook/chat/1.0.0";
+
+  const [ address]  = useEthers();
+  const { state, setContext } = useAppContext();
+  const [chatClient, setChatClient] = useState(null);
 
   const ethers = useContext(EthersContext);
   const [contract, setContract] = useState<any | null>(null);
 
   useEffect(() => {
-    const setupContract = async () => {
-      const c = await ethers.getContract(ContractNames.TokenFactory)
-      setContract(c)
-    }
-    setupContract().then(() => console.log("Contract initialized"))
-  }, [])
+    if (!state.node) return;
+    // Create the pubsub Client
+    if (!chatClient) {
+      const pubsubChat = new PubsubChat(state.node, TOPIC);
+
+      // Listen for messages
+      pubsubChat.on("message", (message) => {
+        if (message.from === state.node.peerId.toB58String()) {
+          message.isMine = true;
+        }
+        dispatch(
+          addOrder({
+            id: message.id,
+            tokenFrom: message.tokenA,
+            tokenTo: message.tokenB,
+            orderType: message.orderType,
+            actionType: message.actionType,
+            price: message.price,
+            quantity: message.quantity,
+            orderFrm: message.orderFrm,
+            from: message.from,
+            status: message.status,
+            created: message.created,
+          })
+        );
+        state.p2pDb
+          .transaction("rw", state.p2pDb.orders, async () => {
+            const id = await state.p2pDb.orders.add({
+              id: message.id,
+              tokenFrom: message.tokenA,
+              tokenTo: message.tokenB,
+              orderType: message.orderType,
+              actionType: message.actionType,
+              price: message.price,
+              quantity: message.quantity,
+              orderFrm: message.orderFrm,
+              status: message.status,
+              created: message.created,
+            });
+            console.log(`Order ID is stored in ${id}`);
+          })
+          .catch((e) => {
+            console.log(e.stack || e);
+          });
+      });
+
+      // Forward stats events to the eventBus
+      pubsubChat.on("stats", (stats) => state.eventBus.emit("stats", stats));
+      
+      //@ts-ignore
+      setChatClient(pubsubChat);
+  }
+}, []);
 
   const getNumPeers = () => {
     return useAppSelector(state => state.peer.numPeers)
