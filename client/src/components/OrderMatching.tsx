@@ -247,6 +247,7 @@ function OrderMatch() {
           const id = await state.p2pDb.validators.add({
               id: message.id,
               peerId: message.peerID,
+              address: message.address,
               joinedTime: message.created,
           });
           console.log(`Order ID is stored in ${id}`)

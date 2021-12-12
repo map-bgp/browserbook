@@ -21,7 +21,7 @@ export class P2PDB extends Dexie {
         this.orders = this.table('orders');
 
         this.version(3).stores(
-            {validators: 'id,peerId,joinedTime'}
+            {validators: 'id,peerId,address,joinedTime'}
         )
         this.validators = this.table('validators');
 

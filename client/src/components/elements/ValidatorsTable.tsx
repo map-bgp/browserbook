@@ -27,6 +27,12 @@ const ValidatorsTable = (props: ValidatorsTableProps) => {
                     scope="col"
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
+                    ETH_Address
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
                     Joined_Time
                   </th>
                 </tr>
@@ -40,6 +46,9 @@ const ValidatorsTable = (props: ValidatorsTableProps) => {
                     >
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                         {validator.peerId}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {validator.address}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {validator.joinedTime}

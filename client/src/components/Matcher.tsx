@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import "tailwindcss/tailwind.css"
 
-import {useAppDispatch, useAppSelector} from "../store/Hooks";
+import {useAppDispatch, useAppSelector, useEthers} from "../store/Hooks";
 import { useAppContext } from "./context/Store";
 import { selectMatchedOrders, selectOrders, selectValidators, addMatchedOrder,addValidator,removeMatchedOrder, removeValidator } from "../store/slices/OrdersSlice";
 import ValidatorsTable from './elements/ValidatorsTable'
@@ -9,6 +9,7 @@ import ValidatorsTable from './elements/ValidatorsTable'
 function Matcher() {
   const dispatch = useAppDispatch();
 
+  const [ethers, connected, address, contract, resolved] = useEthers();
   const { state, setContext } = useAppContext();
   const orders = useAppSelector(selectOrders);
   const matchedOrders = useAppSelector(selectMatchedOrders);
@@ -34,7 +35,7 @@ function Matcher() {
   const beingMatcher = async () => {
     const id = (~~(Math.random() * 1e9)).toString(36) + Date.now();
     await state.p2pDb.validators.add({id: id, peerId: String(state.peerId), joinedTime: Date.now().toString()});
-    dispatch(addValidator({peerId: String(state.peerId), joinedTime: Date.now().toString()}))
+    dispatch(addValidator({peerId: String(state.peerId), address: address, joinedTime: Date.now().toString()}))
   };
   
   return (

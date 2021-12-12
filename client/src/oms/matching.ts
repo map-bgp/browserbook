@@ -135,7 +135,7 @@ export class Matcher {
     console.log(this.matchableTokens);
     console.log(this.matchableTokenSets);
 
-    return this.matchableTokenSets.forEach((singleTokenSet) => {
+    this.matchableTokenSets.forEach((singleTokenSet) => {
       singleTokenSet.bids.forEach((order2) => {
         singleTokenSet.asks.every((order1) => {
           const matchingResponse = this.orderCompare(order1, order2);
