@@ -59,7 +59,7 @@ export class P2PDB extends Dexie {
     }
 
     async removeMatchOrder(id: number){
-        await this.validators.delete(id);
+        await this.matchedOrders.delete(id);
     }
 
 }

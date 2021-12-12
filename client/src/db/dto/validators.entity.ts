@@ -1,5 +1,5 @@
 export interface IValidators{
-    id?: number,
+    id?: string,
     peerId: string,
     joinedTime:string,
 }

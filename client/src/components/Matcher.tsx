@@ -4,7 +4,7 @@ import "tailwindcss/tailwind.css"
 import {useAppDispatch, useAppSelector} from "../store/Hooks";
 import { useAppContext } from "./context/Store";
 import { selectMatchedOrders, selectOrders, selectValidators, addMatchedOrder,addValidator,removeMatchedOrder, removeValidator } from "../store/slices/OrdersSlice";
-
+import ValidatorsTable from './elements/ValidatorsTable'
 
 function Matcher() {
   const dispatch = useAppDispatch();
@@ -31,10 +31,10 @@ function Matcher() {
   // };
 
 
-  const beingMatcher = () => {
-    const validatorIndex = validators.pop()?.id || 0;
-    state
-    dispatch(addValidator({id: validatorIndex + 1 ,peerId: state.peerId, joinedTime: Date.now().toString() }))
+  const beingMatcher = async () => {
+    const id = (~~(Math.random() * 1e9)).toString(36) + Date.now();
+    await state.p2pDb.validators.add({id: id, peerId: String(state.peerId), joinedTime: Date.now().toString()});
+    dispatch(addValidator({peerId: String(state.peerId), joinedTime: Date.now().toString()}))
   };
   
   return (
@@ -46,7 +46,8 @@ function Matcher() {
               onClick={() => beingMatcher()}
             >
               BeMatcher
-            </button>
+      </button>
+      <ValidatorsTable validators={validators} />
     </div>
   );
 }

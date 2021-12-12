@@ -54,17 +54,17 @@ export interface PriceInfo {
   price: number;
 }
 
-onmessage = function(e) {
-  console.log('Worker: Message received from main script');
+onmessage = function (e) {
+  console.log("Worker: Message received from main script");
   const result = e.data;
   if (isNaN(result)) {
-    postMessage('Please write two numbers');
+    postMessage("Please write two numbers");
   } else {
-    const workerResult = 'Result: ' + result;
-    console.log('Worker: Posting message back to main script');
+    const workerResult = "Result: " + result;
+    console.log("Worker: Posting message back to main script");
     postMessage(workerResult);
   }
-}
+};
 
 export class Matcher {
   /* What all this matcher contains
@@ -135,13 +135,13 @@ export class Matcher {
     console.log(this.matchableTokens);
     console.log(this.matchableTokenSets);
 
-    this.matchableTokenSets.forEach((singleTokenSet) => {
+    return this.matchableTokenSets.forEach((singleTokenSet) => {
       singleTokenSet.bids.forEach((order2) => {
         singleTokenSet.asks.every((order1) => {
           const matchingResponse = this.orderCompare(order1, order2);
           if (matchingResponse) {
             this.handleMatchingResponse(matchingResponse);
-            return false;
+            return matchingResponse;
           }
         });
       });
@@ -149,7 +149,6 @@ export class Matcher {
   }
 
   handleMatchingResponse(matchingResponse: MatchingResponse) {
-    
     this.removeOrder(matchingResponse.orderOne);
     this.removeOrder(matchingResponse.orderTwo);
   }
