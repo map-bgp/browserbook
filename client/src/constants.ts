@@ -13,6 +13,29 @@ export const exchangeAbi = Exchange.abi;
 export const tokenOneAbi = BBookToken.abi;
 export const tokenTwoAbi = BBookToken2.abi;
 
+export const chainId = 1337;
+
+export const domain = {
+  name: "BrowserBook",
+  version: "1",
+  chainId: 1337,
+  verifyingContract: "0xD7ACd2a9FD159E69Bb102A1ca21C9a3e3A5F771B",
+};
+
+export const orderTypes = {
+  
+Order : [
+  {name: 'id', type: 'string'},
+  {name: 'tokenFrom', type: 'string'},
+  {name: 'tokenTo', type: 'string'},
+  {name: 'orderType', type: 'string'},
+  {name: 'price', type: 'string'},
+  {name: 'quantity', type: 'string'},
+  {name: 'from', type: 'address'},
+  {name: 'created', type: 'string'},
+]
+}
+
 
 export const token2Address = new Map([
     ["Token A", TOKENONE],

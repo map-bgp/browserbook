@@ -14,8 +14,10 @@ import { classNames } from "./utils/classNames";
 import { XCircleIcon } from "@heroicons/react/solid";
 import PubsubChat from "../p2p/messagehandler";
 import { useAppContext } from "./context/Store";
+import { useEthers } from "../store/Hooks";
 import { orderDB } from "../db";
 import { useWeb3React } from "@web3-react/core";
+import { domain } from '../constants';
 //import uint8arrayToString from "uint8arrays/to-string";
 
 function OrderCreate() {
@@ -30,11 +32,16 @@ function OrderCreate() {
   const [price, setPrice] = useState<number>(0.0);
   const [quantity, setQuantity] = useState<number>(0.0);
 
+  const [connected, address, contract, resolved, signer] = useEthers();
+
   //Created while integration with Order
   const [chatClient, setChatClient] = useState(null);
   const TOPIC = "/libp2p/bbook/chat/1.0.0";
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
+
+  
+  
   //const [orderPeerID, setOrderPeerID] = useState('')
   const { account, library } = useWeb3React<providers.Web3Provider>();
 
@@ -94,7 +101,6 @@ function OrderCreate() {
         status,
         created
       );
-
       state.p2pDb
         .transaction("rw", state.p2pDb.orders, async () => {
           const order_id = await state.p2pDb.orders.add({
@@ -126,6 +132,7 @@ function OrderCreate() {
     const obj = peerArray[Math.floor(Math.random() * peerArray.length)];
     //console.log(`Random Peers ${obj.peerId}`);
     //setOrderPeerID(obj.peerId._idB58String);
+
   };
 
   /**

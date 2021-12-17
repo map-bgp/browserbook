@@ -8,6 +8,7 @@ import { selectValidatorListen, selectMatchedOrders, selectOrders, selectValidat
 import ValidatorsTable from './elements/ValidatorsTable'
 import PubsubChat from "../p2p/validatorhandler";
 import {TOPIC_VALIDATOR} from "../constants";
+import {IOrders} from '../db';
 
 function Matcher() {
   const dispatch = useAppDispatch();
@@ -27,6 +28,9 @@ function Matcher() {
     dispatch(toggleValidator(true));
   };
 
+  const convertIorders = () => {
+    
+  }
 
   // const beingMatcher = () => {
   //   setTimeout(()=>{console.error('I hit the base')},1000)
