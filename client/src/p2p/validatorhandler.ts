@@ -137,7 +137,7 @@ class ValidatorHandler extends EventEmitter {
           })
           break
         case Request.Type.SEND_MESSAGE:
-          this.emit('message', {
+          this.emit('sendMatcher', {
             from: message.from,
             peerID: uint8arrayToString(request.sendMessage.peerID),
             created: request.sendMessage.created,

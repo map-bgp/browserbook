@@ -10,11 +10,13 @@ import {useAppDispatch, useAppSelector} from "../store/Hooks";
 import {selectEthersConnected, selectEthersAddress} from "../store/slices/EthersSlice";
 import {EthersContext} from "./EthersContext";
 import {ContractNames} from "../blockchain/ContractNames";
-import { addOrder } from "../store/slices/OrdersSlice";
+import { addOrder, selectValidatorListen, toggleValidator } from "../store/slices/OrdersSlice";
 import PubsubChat from "../p2p/messagehandler";
 import { getAccountPath } from 'ethers/lib/utils';
 import {useEthers} from '../store/Hooks';
 import {useAppContext} from './context/Store';
+import {TOPIC_VALIDATOR} from "../constants";
+
 
 type HeaderProps = {
   navigation: any[],
@@ -31,12 +33,14 @@ const Header = (props: HeaderProps) => {
 
   const ethers = useContext(EthersContext);
   const [contract, setContract] = useState<any | null>(null);
+  const validatorListener = useAppSelector(selectValidatorListen);
 
   useEffect(() => {
     if (!state.node) return;
     // Create the pubsub Client
     if (!chatClient) {
       const pubsubChat = new PubsubChat(state.node, TOPIC);
+      const pubsubChat2 = new PubsubChat(state.node, TOPIC_VALIDATOR)
 
       // Listen for messages
       pubsubChat.on("message", (message) => {
@@ -78,6 +82,30 @@ const Header = (props: HeaderProps) => {
             console.log(e.stack || e);
           });
       });
+
+      console.log(`validatorListener value is : ${validatorListener}`)
+      if (validatorListener) {
+      // Listen for messages
+      pubsubChat2.on('sendMatcher', (message) => {
+        if (message.from === state.node.peerId.toB58String()) { 
+          message.isMine = true
+        }
+        console.log(`Header section of the Validator Listener`)
+        state.p2pDb
+          .transaction('rw', state.p2pDb.validators, async() =>{ 
+            const id = await state.p2pDb.validators.add({
+              id: message.id,
+              peerId: message.peerID,
+              address: message.address,
+              joinedTime: message.created,
+          });
+          console.log(`Validator stored in ${id}`)
+        })
+        .catch(e => {
+          console.log(e.stack || e);
+        });
+      });
+     }
 
       // Forward stats events to the eventBus
       pubsubChat.on("stats", (stats) => state.eventBus.emit("stats", stats));

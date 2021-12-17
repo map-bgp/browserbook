@@ -235,26 +235,6 @@ function OrderMatch() {
       if (!validatorHandler && validatorCheck) {
         const pubsubChat = new PubsubChat(state.node, TOPIC_VALIDATOR)
 
-        // Listen for messages
-        pubsubChat.on('message', (message) => {
-          if (message.from === state.node.peerId.toB58String()) { 
-            message.isMine = true
-          }
-          setMessages((messages) => [...messages, message])
-          //console.log(`update Messages ${message}`)
-
-          state.p2pDb.transaction('rw', state.p2pDb.validators, async() =>{
-          const id = await state.p2pDb.validators.add({
-              id: message.id,
-              peerId: message.peerID,
-              address: message.address,
-              joinedTime: message.created,
-          });
-          console.log(`Order ID is stored in ${id}`)
-          }).catch(e => { console.log(e.stack || e);});
-        })
-
-
         // Forward order update event to the eventBus(should be for all the users---> need to move)
         pubsubChat.on('sendUpdate', (updatemsg) => {
           if (updatemsg.from === state.node.peerId.toB58String()) {
@@ -295,16 +275,9 @@ function OrderMatch() {
             });
             console.log(`Order ID is stored in ${id}`)
             }).catch(e => { console.log(e.stack || e);});
-      })
+        })
   
         setValidatorHandler(pubsubChat)
-      }
-
-      if (validatorHandler && validatorCheck) { 
-      const id = (~~(Math.random() * 1e9)).toString(36) + Date.now();  
-      const created = Date.now();
-      validatorHandler.sendOrder(id , getPeerID(), created);
-      setValidatorCheck(false);
       }
     })
 
@@ -363,14 +336,6 @@ function OrderMatch() {
           </div>
 
           <div className="mt-2 mb-6 flex items-center justify-between space-x-4">
-          <button
-              type="submit"
-              className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-              onClick={() => joinValidator()}
-            >
-              Join Validator
-            </button>
-
             <button
               type="submit"
               className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"

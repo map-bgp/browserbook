@@ -7,12 +7,14 @@ interface OrdersState {
   orders: IOrders[];
   matchedOrders: IMatchedOrders[];
   validators: IValidators[];
+  validatorListen: boolean;
 }
 
 const initialState: OrdersState = {
   orders: [],
   matchedOrders: [],
   validators: [],
+  validatorListen: false
 };
 export const ordersSlice = createSlice({
   name: "orders",
@@ -36,6 +38,9 @@ export const ordersSlice = createSlice({
     removeValidator: (state, action: PayloadAction<IValidators>) => {
       state.validators.push(action.payload);
     },
+    toggleValidator: (state, action: PayloadAction<boolean>) => {
+      state.validatorListen = action.payload;
+    }
   },
 });
 
@@ -46,6 +51,7 @@ export const {
   removeMatchedOrder,
   removeOrder,
   removeValidator,
+  toggleValidator
 } = ordersSlice.actions;
 
 export const selectOrders = (state: RootState) => state.orders.orders;
@@ -54,5 +60,7 @@ export const selectMatchedOrders = (state: RootState) =>
   state.orders.matchedOrders;
 
 export const selectValidators = (state: RootState) => state.orders.validators;
+
+export const selectValidatorListen = (state: RootState) => state.orders.validatorListen;
 
 export default ordersSlice.reducer;
