@@ -10,12 +10,12 @@ import {useAppDispatch, useAppSelector} from "../store/Hooks";
 import {selectEthersConnected, selectEthersAddress} from "../store/slices/EthersSlice";
 import {EthersContext} from "./EthersContext";
 import {ContractNames} from "../blockchain/ContractNames";
-import { addOrder, selectValidatorListen, toggleValidator } from "../store/slices/OrdersSlice";
+import { addOrder, selectValidatorListen, toggleValidator, addValidator } from "../store/slices/OrdersSlice";
 import PubsubChat from "../p2p/messagehandler";
+import ValidatorHandler from "../p2p/validatorhandler";
 import { getAccountPath } from 'ethers/lib/utils';
 import {useEthers} from '../store/Hooks';
 import {useAppContext} from './context/Store';
-import {TOPIC_VALIDATOR} from "../constants";
 
 
 type HeaderProps = {
@@ -26,10 +26,10 @@ type HeaderProps = {
 const Header = (props: HeaderProps) => {
   const dispatch = useAppDispatch();
   const TOPIC = "/libp2p/bbook/chat/1.0.0";
+  const TOPIC_VALIDATOR = "/libp2p/example/validator/1.0.0";
 
   const [ address]  = useEthers();
   const { state, setContext } = useAppContext();
-  const [chatClient, setChatClient] = useState(null);
 
   const ethers = useContext(EthersContext);
   const [contract, setContract] = useState<any | null>(null);
@@ -38,9 +38,9 @@ const Header = (props: HeaderProps) => {
   useEffect(() => {
     if (!state.node) return;
     // Create the pubsub Client
-    if (!chatClient) {
       const pubsubChat = new PubsubChat(state.node, TOPIC);
-      const pubsubChat2 = new PubsubChat(state.node, TOPIC_VALIDATOR)
+      const validatorChannel = new ValidatorHandler(state.node, TOPIC_VALIDATOR)
+      //console.log(`Header section Handlevalidator : ${validatorListener}`)
 
       // Listen for messages
       pubsubChat.on("message", (message) => {
@@ -83,16 +83,17 @@ const Header = (props: HeaderProps) => {
           });
       });
 
-      console.log(`validatorListener value is : ${validatorListener}`)
+      
       if (validatorListener) {
       // Listen for messages
-      pubsubChat2.on('sendMatcher', (message) => {
+      validatorChannel.on('sendMatcher', (message) => {
         if (message.from === state.node.peerId.toB58String()) { 
           message.isMine = true
         }
-        console.log(`Header section of the Validator Listener`)
+
+        dispatch(addValidator({peerId: String(message.peerID), address: message.address, joinedTime: message.created}));
         state.p2pDb
-          .transaction('rw', state.p2pDb.validators, async() =>{ 
+          .transaction('rw', state.p2pDb.validators, async() =>{
             const id = await state.p2pDb.validators.add({
               id: message.id,
               peerId: message.peerID,
@@ -106,14 +107,7 @@ const Header = (props: HeaderProps) => {
         });
       });
      }
-
-      // Forward stats events to the eventBus
-      pubsubChat.on("stats", (stats) => state.eventBus.emit("stats", stats));
-      
-      //@ts-ignore
-      setChatClient(pubsubChat);
-  }
-}, []);
+});
 
   const getNumPeers = () => {
     return useAppSelector(state => state.peer.numPeers)

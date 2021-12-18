@@ -2,17 +2,18 @@ import protons from "protons";
 import EventEmitter from "events";
 import uint8arrayFromString from "uint8arrays/from-string";
 import uint8arrayToString from "uint8arrays/to-string";
+import {TOPIC_VALIDATOR} from "../constants";
 
 const { Request, Stats } = protons(`
 message Request {
   enum Type {
-    SEND_MESSAGE = 0;
+    SEND_MATCHER = 0;
     STATS = 1;
     SEND_UPDATE = 2;
     SEND_ORDER = 3;
   }
   required Type type = 1;
-  optional SendMessage sendMessage = 2;
+  optional SendMatcher sendMatcher = 2;
   optional Stats stats = 3;
   optional SendUpdate sendUpdate = 4;
   optional SendOrder sendOrder = 5;
@@ -31,7 +32,7 @@ message SendOrder {
   required int64 created = 11;
   required bytes status = 12;
 }
-message SendMessage {
+message SendMatcher {
   required bytes peerID = 1;
   required int64 created = 2;
   required bytes id = 3;
@@ -96,7 +97,7 @@ class ValidatorHandler extends EventEmitter {
   _onMessage (message) {
     try {
       const request = Request.decode(message.data)
-      console.log(`onMessage emit function ${request.type}`)
+      console.log(`onMessage emit function`)
       switch (request.type) {
         case Request.Type.SEND_ORDER:
           this.emit('sendOrder', {
@@ -122,12 +123,13 @@ class ValidatorHandler extends EventEmitter {
             id: uint8arrayToString(request.sendUpdate.id)
           })
           break
-        case Request.Type.SEND_MESSAGE:
+        case Request.Type.SEND_MATCHER:
+          console.log(`Emitting the sendMatcher logic`)
           this.emit('sendMatcher', {
             from: message.from,
-            peerID: uint8arrayToString(request.sendMessage.peerID),
-            created: request.sendMessage.created,
-            id: uint8arrayToString(request.sendMessage.id)
+            peerID: uint8arrayToString(request.sendMatcher.peerID),
+            created: request.sendMatcher.created,
+            id: uint8arrayToString(request.sendMatcher.id)
           })
           break
       }
@@ -159,8 +161,8 @@ class ValidatorHandler extends EventEmitter {
   async sendOrder(id, peerID, created) {
    //console.log(`Send message function :${id} : ${peerID} : ${created}`)
     const msg = Request.encode({
-      type: Request.Type.SEND_MESSAGE,
-      sendMessage: {
+      type: Request.Type.SEND_MATCHER,
+      sendMatcher: {
         id: uint8arrayFromString(id),
         peerID: uint8arrayFromString(peerID),
         created: created
@@ -168,7 +170,7 @@ class ValidatorHandler extends EventEmitter {
     });
 
       //console.log(`Topic at send function: ${this.topic}`);   
-      await this.libp2p.pubsub.publish(this.topic, msg);
+      await this.libp2p.pubsub.publish(TOPIC_VALIDATOR, msg);
   }
 
   async sendOrderUpdate(id, status) {

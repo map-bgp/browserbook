@@ -59,13 +59,13 @@ function Matcher() {
       const pubsubChat = new PubsubChat(state.node, TOPIC_VALIDATOR)
       setValidatorHandler(pubsubChat)
     }
-    console.log(`Handle validator ${validatorHandler} & ${validatorListener}`)
+    console.log(`Handle validator ${validatorListener}`)
 
-    if (validatorHandler && validatorListener) { 
+    if (validatorListener) { 
         const id = (~~(Math.random() * 1e9)).toString(36) + Date.now();  
         const created = Date.now();
         validatorHandler.sendOrder(id , String(state.peerId), created);
-        toggleValidator(false);
+        //toggleValidator(false);
     }
     })
 
@@ -73,7 +73,7 @@ function Matcher() {
     joinValidator();
     const id = (~~(Math.random() * 1e9)).toString(36) + Date.now();
     await state.p2pDb.validators.add({id: id, peerId: String(state.peerId), joinedTime: Date.now().toString()});
-    dispatch(addValidator({peerId: String(state.peerId), address: address, joinedTime: Date.now().toString()}))
+    dispatch(addValidator({peerId: String(state.peerId), address: address, joinedTime: Date.now().toString()}));
   };
   
   return (
