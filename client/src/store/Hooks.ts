@@ -11,6 +11,7 @@ import {
   setEthersAddress,
   setEthersResolved
 } from "./slices/EthersSlice";
+import { ethers } from 'ethers'
 
 
 // Use throughout your store instead of plain `useDispatch` and `useSelector`
@@ -26,6 +27,7 @@ export const useEthers = (contractName?: string) => {
   const address = useAppSelector(selectEthersAddress)
   const resolved = useAppSelector(selectEthersResolved)
 
+  const [signer, setSigner] = useState<any>(null)
   const [contract, setContract] = useState<any>(null);
 
   useEffect(() => {
@@ -40,7 +42,7 @@ export const useEthers = (contractName?: string) => {
           const contract = await ethers.getContract(contractName)
           setContract(contract)
         }
-
+        setSigner(signer);
         dispatch(setEthersResolved(true));
       } catch (error) {
         console.log(error);
@@ -50,7 +52,7 @@ export const useEthers = (contractName?: string) => {
     setupEthers().then();
   }, []);
 
-  return [ ethers, connected, address, contract, resolved ];
+  return [ ethers, connected, address, contract, resolved, signer];
 };
 
 export function useEagerConnect() {

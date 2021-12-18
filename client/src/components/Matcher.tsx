@@ -5,6 +5,7 @@ import {useAppDispatch, useAppSelector, useEthers} from "../store/Hooks";
 import { useAppContext } from "./context/Store";
 import { selectMatchedOrders, selectOrders, selectValidators, addMatchedOrder,addValidator,removeMatchedOrder, removeValidator } from "../store/slices/OrdersSlice";
 import ValidatorsTable from './elements/ValidatorsTable'
+import {IOrders} from '../db';
 
 function Matcher() {
   const dispatch = useAppDispatch();
@@ -15,6 +16,9 @@ function Matcher() {
   const matchedOrders = useAppSelector(selectMatchedOrders);
   const validators = useAppSelector(selectValidators)
 
+  const convertIorders = () => {
+    
+  }
 
   // const beingMatcher = () => {
   //   setTimeout(()=>{console.error('I hit the base')},1000)
