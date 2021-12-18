@@ -56,7 +56,7 @@ export interface PriceInfo {
 
 onmessage = function (orders) {
   console.log("Worker: Message received from main script");
-  // const result = new Matcher(orders.data).processStarted();
+  new Matcher(orders.data).processStarted();
   const result = 10;
   if (isNaN(result)) {
     postMessage("Please write two numbers");

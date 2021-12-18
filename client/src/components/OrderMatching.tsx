@@ -10,7 +10,7 @@ import Info from "./elements/Info";
 import { filter, matches } from "lodash";
 import { Tokens } from "../types/Token";
 import { IOrders } from "../db";
-import { ethers as eth } from 'ethers';
+import { ethers as eth } from "ethers";
 import {
   domain,
   orderTypes,
@@ -265,7 +265,9 @@ function OrderMatch() {
     console.log(await signer.getAddress());
     const signature = await signer._signTypedData(domain, orderTypes, value);
     console.log(eth.utils.splitSignature(signature));
-    console.log(eth.utils.verifyTypedData(domain, orderTypes, value, signature))
+    console.log(
+      eth.utils.verifyTypedData(domain, orderTypes, value, signature)
+    );
   };
 
   const authentication = async () => {
@@ -395,7 +397,7 @@ function OrderMatch() {
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
       <div className="w-full bg-white border-gray-200 rounded px-4 py-2">
-        <Info message={`Connected Account :${account}`} />
+        <Info message={`Connected Account :${address}`} />
         <div>
           <div className="mt-2 mb-6 flex items-center justify-between space-x-6">
             <Select
@@ -477,13 +479,13 @@ function OrderMatch() {
             >
               Match Order
             </button>
-            <button
+           {address && <button
               type="submit"
               className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
               onClick={() => signOrder()}
             >
               Sign Order
-            </button>
+            </button>}
           </div>
 
           <div className="ml-3 flex-1 md:flex md:justify-between">

@@ -82,13 +82,13 @@ const createLibp2p = async (state) => {
 
   // Listen for new peers
   libp2p.on('peer:discovery', (peerId) => {
-    console.info(`Found peer ${peerId.toB58String()}`)
+    console.debug(`Found peer ${peerId.toB58String()}`)
   })
 
   // Listen for new connections to peers
   libp2p.connectionManager.on('peer:connect', (connection) => {
     dispatch(incrementPeers())
-    console.info(`Connected to ${connection.remotePeer.toB58String()}`)
+    console.debug(`Connected to ${connection.remotePeer.toB58String()}`)
     state.p2pDb.transaction('rw', state.p2pDb.peers, async() =>{
       const id = await state.p2pDb.peers.add({peerId: connection.remotePeer.toB58String(), joinedTime: Date.now().toString()});
       //console.log(`Peer ID is stored in ${id}`)
@@ -98,10 +98,10 @@ const createLibp2p = async (state) => {
   // Listen for peers disconnecting
   libp2p.connectionManager.on('peer:disconnect', (connection) => {
     dispatch(decrementPeers())
-    console.info(`Disconnected from ${connection.remotePeer.toB58String()}`)
+    console.debug(`Disconnected from ${connection.remotePeer.toB58String()}`)
   })
 
-  console.info(`libp2p id is ${libp2p.peerId.toB58String()}`)
+  console.debug(`libp2p id is ${libp2p.peerId.toB58String()}`)
   dispatch(setPeerID(libp2p.peerId.toB58String()))
 
   await libp2p.start();

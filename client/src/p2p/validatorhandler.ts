@@ -68,20 +68,6 @@ class ValidatorHandler extends EventEmitter {
     this.connectedPeers = new Set();
     this.stats = new Map();
 
-    this.libp2p.connectionManager.on("peer:connect", (connection) => {
-      console.log("Connected to", connection.remotePeer.toB58String());
-      if (this.connectedPeers.has(connection.remotePeer.toB58String())) return;
-      this.connectedPeers.add(connection.remotePeer.toB58String());
-      this.sendStats(Array.from(this.connectedPeers));
-    });
-
-    this.libp2p.connectionManager.on("peer:disconnect", (connection) => {
-      console.log("Disconnected from", connection.remotePeer.toB58String());
-      if (this.connectedPeers.delete(connection.remotePeer.toB58String())) {
-        this.sendStats(Array.from(this.connectedPeers));
-      }
-    });
-
     this._onMessage = this._onMessage.bind(this)
     if (this.libp2p.isStarted()) {
       this.join();

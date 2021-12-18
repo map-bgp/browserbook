@@ -32,20 +32,20 @@ function Matcher() {
     
   }
 
-  // const beingMatcher = () => {
-  //   setTimeout(()=>{console.error('I hit the base')},1000)
-  //   if (window.Worker) {
-  //     const myWorker = new Worker(new URL('../oms/matching.ts', import.meta.url));
+  const turnOnMatching = () => {
+    setInterval(()=>{console.error('I hit the base')
+    if (window.Worker) {
+      const myWorker = new Worker(new URL('../oms/matching.ts', import.meta.url));
 
-  //     myWorker.postMessage(10);
+      myWorker.postMessage(10);
     
-  //     myWorker.onmessage = function(e) {
-  //       console.log(`Message received from worker ${e.data}`);
-  //     }
-  //   } else {
-  //     console.log('Your browser doesn\'t support web workers.');
-  //   }
-  // };
+      myWorker.onmessage = function(e) {
+        console.log(`Message received from worker ${e.data}`);
+      }
+    } else {
+      console.log('Your browser doesn\'t support web workers.');
+    }},1000)
+  };
 
   /**
    * Leverage use effect to act on state changes
