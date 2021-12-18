@@ -56,14 +56,12 @@ export interface PriceInfo {
 
 onmessage = function (orders) {
   console.log("Worker: Message received from main script");
-  new Matcher(orders.data).processStarted();
-  const result = 10;
-  if (isNaN(result)) {
-    postMessage("Please write two numbers");
+  const result = new Matcher(orders.data).processStarted();;
+  if (result) {
+    postMessage([]);
   } else {
-    const workerResult = "Result: " + result;
     console.log("Worker: Posting message back to main script");
-    postMessage(workerResult);
+    postMessage(result);
   }
 };
 
@@ -126,7 +124,7 @@ export class Matcher {
     return this;
   }
 
-  processStarted() {
+  processStarted(): MatchingResponse[] {
     const matchingRequest = [];
     this.matchableTokenSets = _.filter(this.tokenWiseOrders, (o) => {
       return o.askedLiquidity > 0 && o.pooledLiquidity > 0;
@@ -136,17 +134,35 @@ export class Matcher {
     console.log(this.matchableTokens);
     console.log(this.matchableTokenSets);
 
+    let matchingOrders: MatchingResponse[] = [];
+
     this.matchableTokenSets.forEach((singleTokenSet) => {
-      return singleTokenSet.bids.forEach((order2) => {
-        return singleTokenSet.asks.every((order1) => {
-          const matchingResponse = this.orderCompare(order1, order2);
-          if (matchingResponse) {
-            this.handleMatchingResponse(matchingResponse);
-            return matchingResponse;
-          }
-        });
-      });
+      let bidsIndex = 0;
+      let asksIndex = 0;
+
+      while (
+        singleTokenSet.countOfAsks > asksIndex &&
+        singleTokenSet.countOfBids > bidsIndex
+      ) {
+
+        let matchingResponse = this.orderCompare(
+          singleTokenSet.asks[asksIndex],
+          singleTokenSet.bids[bidsIndex]
+        );
+        asksIndex++;
+        if (matchingResponse) {
+          this.handleMatchingResponse(matchingResponse);
+          bidsIndex++;
+          matchingOrders.push(matchingResponse);
+        }
+        if (asksIndex == singleTokenSet.countOfAsks &&  singleTokenSet.countOfBids > bidsIndex){
+          asksIndex = 0;
+          bidsIndex++;
+        }
+      }
     });
+
+    return matchingOrders;
   }
 
   handleMatchingResponse(matchingResponse: MatchingResponse) {
