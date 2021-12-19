@@ -158,7 +158,7 @@ class ValidatorHandler extends EventEmitter {
       }
     }
 
-  async sendOrder(id, peerID, created) {
+  async sendMatcher(id, peerID, created) {
    //console.log(`Send message function :${id} : ${peerID} : ${created}`)
     const msg = Request.encode({
       type: Request.Type.SEND_MATCHER,

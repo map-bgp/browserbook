@@ -15,7 +15,6 @@ function Matcher() {
 
   const [ethers, connected, address, contract, resolved] = useEthers();
   const [validatorHandler, setValidatorHandler] = useState(null)
-  //const [validatorCheck, setValidatorCheck] = useState(null)
   const [message, setMessage] = useState('')
   const [messages, setMessages] = useState([])
   const { state, setContext } = useAppContext();
@@ -59,13 +58,11 @@ function Matcher() {
       const pubsubChat = new PubsubChat(state.node, TOPIC_VALIDATOR)
       setValidatorHandler(pubsubChat)
     }
-    console.log(`Handle validator ${validatorListener}`)
 
-    if (validatorListener) { 
+    if (validatorHandler && validatorListener) { 
         const id = (~~(Math.random() * 1e9)).toString(36) + Date.now();  
         const created = Date.now();
-        validatorHandler.sendOrder(id , String(state.peerId), created);
-        //toggleValidator(false);
+        validatorHandler.sendMatcher(id , String(state.peerId), created);
     }
     })
 

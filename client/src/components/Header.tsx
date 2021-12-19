@@ -40,7 +40,6 @@ const Header = (props: HeaderProps) => {
     // Create the pubsub Client
       const pubsubChat = new PubsubChat(state.node, TOPIC);
       const validatorChannel = new ValidatorHandler(state.node, TOPIC_VALIDATOR)
-      //console.log(`Header section Handlevalidator : ${validatorListener}`)
 
       // Listen for messages
       pubsubChat.on("message", (message) => {
@@ -91,7 +90,7 @@ const Header = (props: HeaderProps) => {
           message.isMine = true
         }
 
-        dispatch(addValidator({peerId: String(message.peerID), address: message.address, joinedTime: message.created}));
+        //dispatch(addValidator({peerId: String(message.peerID), address: message.address, joinedTime: message.created}));
         state.p2pDb
           .transaction('rw', state.p2pDb.validators, async() =>{
             const id = await state.p2pDb.validators.add({
@@ -107,7 +106,7 @@ const Header = (props: HeaderProps) => {
         });
       });
      }
-});
+},[validatorListener]);
 
   const getNumPeers = () => {
     return useAppSelector(state => state.peer.numPeers)
