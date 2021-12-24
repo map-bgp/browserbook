@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import "tailwindcss/tailwind.css"
 
 import {Link} from "react-router-dom";
@@ -6,8 +6,17 @@ import {Disclosure} from '@headlessui/react'
 import {MenuIcon, XIcon} from '@heroicons/react/outline'
 
 import {classNames} from './utils/classNames'
-import {useAppSelector, useEthers} from "../store/Hooks";
-import {selectEthersConnected} from "../store/slices/EthersSlice";
+import {useAppDispatch, useAppSelector} from "../store/Hooks";
+import {selectEthersConnected, selectEthersAddress} from "../store/slices/EthersSlice";
+import {EthersContext} from "./EthersContext";
+import {ContractNames} from "../blockchain/ContractNames";
+import { addOrder, selectValidatorListen, toggleValidator, addValidator } from "../store/slices/OrdersSlice";
+import PubsubChat from "../p2p/messagehandler";
+import ValidatorHandler from "../p2p/validatorhandler";
+import { getAccountPath } from 'ethers/lib/utils';
+import {useEthers} from '../store/Hooks';
+import {useAppContext} from './context/Store';
+
 
 type HeaderProps = {
   navigation: any[],
@@ -15,7 +24,89 @@ type HeaderProps = {
 }
 
 const Header = (props: HeaderProps) => {
-  const [ethers, connected, address ] = useEthers();
+  const dispatch = useAppDispatch();
+  const TOPIC = "/libp2p/bbook/chat/1.0.0";
+  const TOPIC_VALIDATOR = "/libp2p/example/validator/1.0.0";
+
+  const [ address]  = useEthers();
+  const { state, setContext } = useAppContext();
+
+  const ethers = useContext(EthersContext);
+  const [contract, setContract] = useState<any | null>(null);
+  const validatorListener = useAppSelector(selectValidatorListen);
+
+  useEffect(() => {
+    if (!state.node) return;
+    // Create the pubsub Client
+      const pubsubChat = new PubsubChat(state.node, TOPIC);
+      const validatorChannel = new ValidatorHandler(state.node, TOPIC_VALIDATOR)
+
+      // Listen for messages
+      pubsubChat.on("message", (message) => {
+        if (message.from === state.node.peerId.toB58String()) {
+          message.isMine = true;
+        }
+        dispatch(
+          addOrder({
+            id: message.id,
+            tokenFrom: message.tokenA,
+            tokenTo: message.tokenB,
+            orderType: message.orderType,
+            actionType: message.actionType,
+            price: message.price,
+            quantity: message.quantity,
+            orderFrm: message.orderFrm,
+            from: message.from,
+            status: message.status,
+            created: message.created,
+          })
+        );
+        state.p2pDb
+          .transaction("rw", state.p2pDb.orders, async () => {
+            const id = await state.p2pDb.orders.add({
+              id: message.id,
+              tokenFrom: message.tokenA,
+              tokenTo: message.tokenB,
+              orderType: message.orderType,
+              actionType: message.actionType,
+              price: message.price,
+              quantity: message.quantity,
+              orderFrm: message.orderFrm,
+              status: message.status,
+              created: message.created,
+            });
+            console.log(`Order ID is stored in ${id}`);
+          })
+          .catch((e) => {
+            console.log(e.stack || e);
+          });
+      });
+
+      
+      if (validatorListener) {
+      // Listen for messages
+      validatorChannel.on('sendMatcher', (message) => {
+        if (message.from === state.node.peerId.toB58String()) { 
+          message.isMine = true
+        }
+
+        //dispatch(addValidator({peerId: String(message.peerID), address: message.address, joinedTime: message.created}));
+        state.p2pDb
+          .transaction('rw', state.p2pDb.validators, async() =>{
+            const id = await state.p2pDb.validators.add({
+              id: message.id,
+              peerId: message.peerID,
+              address: message.address,
+              joinedTime: message.created,
+          });
+          console.log(`Validator stored in ${id}`)
+        })
+        .catch(e => {
+          console.log(e.stack || e);
+        });
+      });
+     }
+},[validatorListener]);
 
   const getNumPeers = () => {
     return useAppSelector(state => state.peer.numPeers)
@@ -23,6 +114,10 @@ const Header = (props: HeaderProps) => {
 
   const getEthersConnected = () => {
     return useAppSelector(selectEthersConnected)
+  }
+
+  const getEthersAddress = () => {
+    return useAppSelector(selectEthersAddress)
   }
 
   return (
@@ -43,7 +138,7 @@ const Header = (props: HeaderProps) => {
                 <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                   {props.navigation.map((item) => (
                     <Link
-                      to={`/${ item.key }`}
+                      to={item.key}
                       key={item.key}
                       className={classNames(
                         props.current === item.name

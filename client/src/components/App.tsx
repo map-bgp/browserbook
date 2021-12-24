@@ -1,17 +1,16 @@
 import "tailwindcss/tailwind.css";
+import React, { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
-import React, {useEffect} from "react";
-import {useLocation} from "react-router-dom";
-import createLibp2p from "../p2p/p2pnode";
 
-import {getOrCreatePeerId} from '../p2p/peer-id'
-
+import  createLibp2p  from "../p2p/p2pnode";
+import { getOrCreatePeerId } from '../p2p/peer-id'
 import Header from "./Header";
-import {useEagerConnect, useInactiveListener} from "../store/Hooks";
-import {getCurrent} from "./utils/getCurrent";
+import { useEagerConnect,useInactiveListener } from "../store/Hooks";
+import { getCurrent } from "./utils/getCurrent";
 import Content from "./Content";
-import {useAppContext} from "./context/Store";
-import {ActionType} from "./context/Reducer";
+import { useAppContext } from "./context/Store";
+import { ActionType } from "./context/Reducer";
 
 
 export const App = () => {
@@ -39,7 +38,7 @@ const loadInitialState = async () => {
 
   console.info('Creating our Libp2p instance')
 
-  const node = await createLibp2p(state.peerId)
+  const node = await createLibp2p(state)
   
   setContext({
     type: ActionType.SET_NODE,
@@ -77,7 +76,12 @@ const loadInitialState = async () => {
     {
       name: "Order Matching",
       key: "order-matching",
+    },
+    {
+      name: "be a Matcher",
+      key: "be-a-matcher",
     }
+
   ];
 
   return (

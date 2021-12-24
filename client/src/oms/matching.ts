@@ -24,7 +24,7 @@ export interface IOrders {
   orderType: OrderType;
   amountS: number;
   amountB: number;
-  orderFrm: number;
+  orderFrom: number;
   from: string;
   created: string;
 }
@@ -53,6 +53,17 @@ export interface PriceInfo {
   to: Tokens;
   price: number;
 }
+
+onmessage = function (orders) {
+  console.log("Worker: Message received from main script");
+  const result = new Matcher(orders.data).processStarted();;
+  if (result) {
+    postMessage([]);
+  } else {
+    console.log("Worker: Posting message back to main script");
+    postMessage(result);
+  }
+};
 
 export class Matcher {
   /* What all this matcher contains
@@ -113,7 +124,7 @@ export class Matcher {
     return this;
   }
 
-  processStarted() {
+  processStarted(): MatchingResponse[] {
     const matchingRequest = [];
     this.matchableTokenSets = _.filter(this.tokenWiseOrders, (o) => {
       return o.askedLiquidity > 0 && o.pooledLiquidity > 0;
@@ -123,21 +134,38 @@ export class Matcher {
     console.log(this.matchableTokens);
     console.log(this.matchableTokenSets);
 
+    let matchingOrders: MatchingResponse[] = [];
+
     this.matchableTokenSets.forEach((singleTokenSet) => {
-      singleTokenSet.bids.forEach((order2) => {
-        singleTokenSet.asks.every((order1) => {
-          const matchingResponse = this.orderCompare(order1, order2);
-          if (matchingResponse) {
-            this.handleMatchingResponse(matchingResponse);
-            return false;
-          }
-        });
-      });
+      let bidsIndex = 0;
+      let asksIndex = 0;
+
+      while (
+        singleTokenSet.countOfAsks > asksIndex &&
+        singleTokenSet.countOfBids > bidsIndex
+      ) {
+
+        let matchingResponse = this.orderCompare(
+          singleTokenSet.asks[asksIndex],
+          singleTokenSet.bids[bidsIndex]
+        );
+        asksIndex++;
+        if (matchingResponse) {
+          this.handleMatchingResponse(matchingResponse);
+          bidsIndex++;
+          matchingOrders.push(matchingResponse);
+        }
+        if (asksIndex == singleTokenSet.countOfAsks &&  singleTokenSet.countOfBids > bidsIndex){
+          asksIndex = 0;
+          bidsIndex++;
+        }
+      }
     });
+
+    return matchingOrders;
   }
 
   handleMatchingResponse(matchingResponse: MatchingResponse) {
-    
     this.removeOrder(matchingResponse.orderOne);
     this.removeOrder(matchingResponse.orderTwo);
   }
@@ -221,7 +249,7 @@ export class Matcher {
         order1.orderType === OrderType.Limit &&
         order2.orderType === OrderType.Market
       ) {
-        // CASE1.1: Same tokens at same price
+        // CASE3.1: Same tokens at same price
         if (tradeBenefitRatio == 1 && order1.amountS == order2.amountB) {
           return {
             orderOne: order1,
@@ -230,7 +258,7 @@ export class Matcher {
             price: order1.amountS || order2.amountB,
           } as MatchingResponse;
         }
-        // CASE1.2: Same tokens at different quoted price, so mean price of the two quoted
+        // CASE3.2: Same tokens at different quoted price, so mean price of the two quoted
         else {
           if (tradeBenefitRatio > 1 && order1.amountB < order2.amountS)
             return {

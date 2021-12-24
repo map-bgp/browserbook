@@ -2,6 +2,8 @@ import protons from "protons";
 import EventEmitter from "events";
 import uint8arrayFromString from "uint8arrays/from-string";
 import uint8arrayToString from "uint8arrays/to-string";
+import { TOPIC } from "../constants";
+import { useAppDispatch } from "../store/Hooks";
 
 const { Request, Stats } = protons(`
 message Request {
@@ -23,6 +25,7 @@ message SendMessage {
   required bytes orderFrm = 7;
   required int64 created = 8;
   required bytes id = 9;
+  required bytes status = 10;
 }
 message Stats {
   enum NodeType {
@@ -38,6 +41,7 @@ message Stats {
 class MessageHandler extends EventEmitter {
   libp2p: any;
   topic: string; 
+  topic_universal: string;
   connectedPeers: any;
   stats: any;
   
@@ -49,20 +53,6 @@ class MessageHandler extends EventEmitter {
 
     this.connectedPeers = new Set();
     this.stats = new Map();
-
-    this.libp2p.connectionManager.on("peer:connect", (connection) => {
-      console.log("Connected to", connection.remotePeer.toB58String());
-      if (this.connectedPeers.has(connection.remotePeer.toB58String())) return;
-      this.connectedPeers.add(connection.remotePeer.toB58String());
-      this.sendStats(Array.from(this.connectedPeers));
-    });
-
-    this.libp2p.connectionManager.on("peer:disconnect", (connection) => {
-      console.log("Disconnected from", connection.remotePeer.toB58String());
-      if (this.connectedPeers.delete(connection.remotePeer.toB58String())) {
-        this.sendStats(Array.from(this.connectedPeers));
-      }
-    });
 
     this._onMessage = this._onMessage.bind(this)
     //this._onOrder = this._onOrder.bind(this)
@@ -91,7 +81,6 @@ class MessageHandler extends EventEmitter {
     try {
       const request = Request.decode(message.data)
       //console.log(`Send message function :${request.sendMessage.tokenA} : ${request.sendMessage.tokenB} : ${request.sendMessage.orderType} : ${request.sendMessage.actionType} : ${request.sendMessage.price} : ${request.sendMessage.quantity}`)
-      //console.log(`OnOrder emit function reached ${request.sendMessage.orderType}`)
       switch (request.type) {
         case Request.Type.STATS:
           this.stats.set(message.from, request.stats)
@@ -108,6 +97,7 @@ class MessageHandler extends EventEmitter {
             price: uint8arrayToString(request.sendMessage.price),
             quantity: uint8arrayToString(request.sendMessage.quantity),
             orderFrm: uint8arrayToString(request.sendMessage.orderFrm),
+            status: uint8arrayToString(request.sendMessage.status),
             created: request.sendMessage.created,
             id: uint8arrayToString(request.sendMessage.id)
           })
@@ -129,7 +119,7 @@ class MessageHandler extends EventEmitter {
           nodeType: Stats.NodeType.BROWSER
         }
       })
-  
+
       try {
         await this.libp2p.pubsub.publish(this.topic, msg)
       } catch (err) {
@@ -152,8 +142,9 @@ class MessageHandler extends EventEmitter {
       await this.libp2p.pubsub.publish(this.topic, msg);
   }
 
-  async sendOrder(id, tokenA, tokenB, orderType, actionType, price, quantity, account, created) {
+  async sendOrder(id, tokenA, tokenB, orderType, actionType, price, quantity, account, status, created) {
    //console.log(`Send message function :${tokenA.name} : ${tokenB.name} : ${orderType.value} : ${actionType.name} : ${price} : ${quantity} : ${account}`)
+   //console.log(`Status field at sendOrder :${status}`)
     const msg = Request.encode({
       type: Request.Type.SEND_MESSAGE,
       sendMessage: {
@@ -165,6 +156,7 @@ class MessageHandler extends EventEmitter {
         price: uint8arrayFromString(price),
         quantity: uint8arrayFromString(quantity),
         orderFrm: uint8arrayFromString(account),
+        status: uint8arrayFromString(status),
         created: created
       }
     });

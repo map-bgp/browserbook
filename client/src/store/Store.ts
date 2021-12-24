@@ -3,13 +3,15 @@ import peerReducer from './slices/PeerSlice'
 import orderbookReducer from './slices/OrderbookSlice'
 import ethersReducer from './slices/EthersSlice'
 import tokenReducer from './slices/TokenSlice'
+import ordersReducer from './slices/OrdersSlice';
 
 export const store = configureStore({
   reducer: {
     peer: peerReducer,
     orderbook: orderbookReducer,
     ethers: ethersReducer,
-    token: tokenReducer
+    token: tokenReducer,
+    orders: ordersReducer
   }
 })
 

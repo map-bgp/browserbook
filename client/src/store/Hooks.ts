@@ -4,7 +4,6 @@ import type {AppDispatch, RootState} from './Store'
 import {useEffect, useState} from 'react'
 import {useWeb3React} from '@web3-react/core'
 import {EtherStore, injected} from '../blockchain'
-import {Contract} from "ethers";
 import {
   selectEthersAddress,
   selectEthersConnected,
@@ -12,6 +11,7 @@ import {
   setEthersAddress,
   setEthersResolved
 } from "./slices/EthersSlice";
+import { ethers } from 'ethers'
 
 
 // Use throughout your store instead of plain `useDispatch` and `useSelector`
@@ -27,7 +27,8 @@ export const useEthers = (contractName?: string) => {
   const address = useAppSelector(selectEthersAddress)
   const resolved = useAppSelector(selectEthersResolved)
 
-  const [contract, setContract] = useState<any|Contract>(null);
+  const [signer, setSigner] = useState<any>(null)
+  const [contract, setContract] = useState<any>(null);
 
   useEffect(() => {
     const setupEthers = async () => {
@@ -41,7 +42,7 @@ export const useEthers = (contractName?: string) => {
           const contract = await ethers.getContract(contractName)
           setContract(contract)
         }
-
+        setSigner(signer);
         dispatch(setEthersResolved(true));
       } catch (error) {
         console.log(error);
@@ -51,7 +52,7 @@ export const useEthers = (contractName?: string) => {
     setupEthers().then();
   }, []);
 
-  return [ ethers, connected, address, contract, resolved ];
+  return [ ethers, connected, address, contract, resolved, signer];
 };
 
 export function useEagerConnect() {

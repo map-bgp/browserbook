@@ -1,24 +1,26 @@
 import React from "react";
 import "tailwindcss/tailwind.css";
 import OrderBook from "./OrderBook";
-import OrderTable from "./OrderTable";
+import OrdersTable from "./elements/OrdersTable";
 import Info from "./elements/Info";
 import Chart from "./elements/Chart";
-import {useAppContext} from "./context/Store";
+import { useAppDispatch, useAppSelector } from "../store/Hooks";
+import { useAppContext } from "./context/Store";
+import { selectOrders } from "../store/slices/OrdersSlice";
 
 const Dashboard = () => {
-  const { state, setContext } = useAppContext()
-
+  const { state, setContext } = useAppContext();
+  const orders = useAppSelector(selectOrders);
   const getPeerID = () => {
     return state.peerId;
   };
 
-  //Index DB storage for the peer ID 
+  //Index DB storage for the peer ID
   const peerID = getPeerID();
-  state.p2pDb.transaction('rw', state.p2pDb.peers, async() =>{
-    const id = await state.p2pDb.peers.add({peerId: peerID, joinedTime: Date.now().toString()});
-    console.log(`Peer ID is stored in ${id}`)
-  }).catch(e => { console.log(e.stack || e);});
+  // state.p2pDb.transaction('rw', state.p2pDb.peers, async() =>{
+  //   const id = await state.p2pDb.peers.add({peerId: peerID, joinedTime: Date.now().toString()});
+  //   console.log(`Peer ID is stored in ${id}`)
+  // }).catch(e => { console.log(e.stack || e);});
 
   let peerIDMessage = `Your peer ID is: ${getPeerID()}`;
 
@@ -34,7 +36,7 @@ const Dashboard = () => {
         </div>
       </div>
       <div className="flex justify-around h-[30rem] col-span-4">
-          <OrderTable/>
+        <OrdersTable orders={orders} />
       </div>
     </div>
   );
