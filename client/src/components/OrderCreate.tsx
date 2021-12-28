@@ -17,7 +17,9 @@ import { useAppContext } from "./context/Store";
 import { useEthers } from "../store/Hooks";
 import { orderDB } from "../db";
 import { useWeb3React } from "@web3-react/core";
+import { mapTokenValuesToEnum, mapOrderTypeToEnum } from "./utils/mapToEnum";
 import { domain } from '../constants';
+import { Token } from "./elements/Token";
 //import uint8arrayToString from "uint8arrays/to-string";
 
 function OrderCreate() {
@@ -88,6 +90,7 @@ function OrderCreate() {
       const id = (~~(Math.random() * 1e9)).toString(36) + Date.now();
       const created = Date.now();
       const status = "OPEN";
+
       //console.log(`Send message function ${id} :${tokenA.name} : ${tokenB.name} : ${orderType.value} : ${actionType.name} : ${price} : ${quantity} : ${account} : ${created}`)
       await chatClient.sendOrder(
         id,
@@ -105,9 +108,9 @@ function OrderCreate() {
         .transaction("rw", state.p2pDb.orders, async () => {
           const order_id = await state.p2pDb.orders.add({
             id: id,
-            tokenFrom: tokenA.name,
-            tokenTo: tokenB.name,
-            orderType: orderType.value,
+            tokenFrom: mapTokenValuesToEnum(tokenA.name),
+            tokenTo: mapTokenValuesToEnum(tokenB.name),
+            orderType: mapOrderTypeToEnum(orderType.value),
             actionType: actionType.name,
             price: price,
             quantity: quantity,

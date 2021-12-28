@@ -55,7 +55,6 @@ class MessageHandler extends EventEmitter {
     this.stats = new Map();
 
     this._onMessage = this._onMessage.bind(this)
-    //this._onOrder = this._onOrder.bind(this)
 
     if (this.libp2p.isStarted()) {
       this.join();
@@ -161,7 +160,7 @@ class MessageHandler extends EventEmitter {
       }
     });
 
-      //console.log(`Topic at send function ${msg.tokenA} : ${msg.orderFrm}`);   
+      //console.log(`Topic at send Order function: ${this.topic}`);   
       await this.libp2p.pubsub.publish(this.topic, msg);
   }
 

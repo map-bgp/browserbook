@@ -16,6 +16,7 @@ import ValidatorHandler from "../p2p/validatorhandler";
 import { getAccountPath } from 'ethers/lib/utils';
 import {useEthers} from '../store/Hooks';
 import {useAppContext} from './context/Store';
+import { mapTokenValuesToEnum, mapOrderTypeToEnum } from "./utils/mapToEnum";
 
 
 type HeaderProps = {
@@ -65,9 +66,9 @@ const Header = (props: HeaderProps) => {
           .transaction("rw", state.p2pDb.orders, async () => {
             const id = await state.p2pDb.orders.add({
               id: message.id,
-              tokenFrom: message.tokenA,
-              tokenTo: message.tokenB,
-              orderType: message.orderType,
+              tokenFrom: mapTokenValuesToEnum(message.tokenA),
+              tokenTo: mapTokenValuesToEnum(message.tokenB),
+              orderType: mapOrderTypeToEnum(message.orderType),
               actionType: message.actionType,
               price: message.price,
               quantity: message.quantity,
@@ -106,7 +107,7 @@ const Header = (props: HeaderProps) => {
         });
       });
      }
-},[validatorListener]);
+});
 
   const getNumPeers = () => {
     return useAppSelector(state => state.peer.numPeers)

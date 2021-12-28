@@ -26,3 +26,8 @@ export const OrderActions: SelectObject[] = [
   { id: 3, name: 'Fill or Kill' },
   { id: 4, name: 'Yolo' },
 ]
+
+export enum OrderType {
+  Market = "Market",
+  Limit = "Limit",
+}
