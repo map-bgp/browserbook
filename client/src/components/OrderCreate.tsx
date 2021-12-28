@@ -17,7 +17,7 @@ import { useAppContext } from "./context/Store";
 import { useEthers } from "../store/Hooks";
 import { orderDB } from "../db";
 import { useWeb3React } from "@web3-react/core";
-import { mapTokenValuesToEnum, mapOrderTypeToEnum } from "./utils/mapToEnum";
+import { mapTokenValuesToEnum, mapActionTypeToEnum } from "./utils/mapToEnum";
 import { domain } from '../constants';
 import { Token } from "./elements/Token";
 //import uint8arrayToString from "uint8arrays/to-string";
@@ -30,6 +30,9 @@ function OrderCreate() {
 
   const [orderType, setOrderType] = useState(OrderTypes[0]);
   const [actionType, setActionType] = useState(OrderActions[0]);
+
+  const [sellPrice, setSellPrice] = useState<number>(0.0);
+  const [buyPrice, setBuyPrice] = useState<number>(0.0);
 
   const [price, setPrice] = useState<number>(0.0);
   const [quantity, setQuantity] = useState<number>(0.0);
@@ -75,9 +78,9 @@ function OrderCreate() {
         tokenFrom: tokenA.name,
         tokenTo: tokenB.name,
         actionType: actionType.name,
-        type: orderType.value,
-        price: price,
-        quantity: quantity,
+        orderType: orderType.value,
+        buyPrice: buyPrice,
+        sellPrice: sellPrice,
       })
     );
   };
@@ -98,8 +101,8 @@ function OrderCreate() {
         tokenB,
         orderType,
         actionType,
-        price,
-        quantity,
+        buyPrice,
+        sellPrice,
         account,
         status,
         created
@@ -110,10 +113,10 @@ function OrderCreate() {
             id: id,
             tokenFrom: mapTokenValuesToEnum(tokenA.name),
             tokenTo: mapTokenValuesToEnum(tokenB.name),
-            orderType: mapOrderTypeToEnum(orderType.value),
-            actionType: actionType.name,
-            price: price,
-            quantity: quantity,
+            orderType: orderType.value,
+            actionType: mapActionTypeToEnum(actionType.name),
+            buyPrice: buyPrice,
+            sellPrice: sellPrice,
             orderFrm: account,
             status: status,
             created: created,
@@ -198,16 +201,16 @@ function OrderCreate() {
               htmlFor="name"
               className="block ml-2 text-sm font-medium text-gray-700"
             >
-              Price
+              Amount Selling
             </label>
             <div className="w-1/2 mt-1 ml-4 border-b border-gray-300 focus-within:border-orange-600">
               <input
                 type="number"
-                name="price"
-                id="price"
+                name="sell"
+                id="sell"
                 step="0.0001"
                 min={0}
-                onChange={(e) => setPrice(Number(e.target.value))}
+                onChange={(e) => setBuyPrice(Number(e.target.value))}
                 className="block w-full text-gray-500 border-0 border-b border-transparent bg-gray-50 focus:border-orange-600 focus:ring-0 sm:text-sm"
                 placeholder="0.0000"
               />
@@ -218,16 +221,16 @@ function OrderCreate() {
               htmlFor="name"
               className="block ml-2 text-sm font-medium text-gray-700"
             >
-              Quantity
+              Amount Buying
             </label>
             <div className="w-1/2 mt-1 ml-4 border-b border-gray-300 focus-within:border-orange-600">
               <input
                 type="number"
-                name="quantity"
-                id="quantity"
+                name="buy"
+                id="buy"
                 step="0.0001"
                 min={0}
-                onChange={(e) => setQuantity(Number(e.target.value))}
+                onChange={(e) => setSellPrice(Number(e.target.value))}
                 className="block w-full text-gray-500 border-0 border-b border-transparent bg-gray-50 focus:border-orange-600 focus:ring-0 sm:text-sm"
                 placeholder="0.0000"
               />

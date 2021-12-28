@@ -1,5 +1,5 @@
 import { TokensPrime } from "../../types/Token";
-import { OrderType } from "../../types/Order";
+import { ActionType } from "../../types/Order";
 
 export const mapTokenValuesToEnum = (Tokens) =>{
   if(Tokens == TokensPrime.tokenA){
@@ -13,11 +13,11 @@ export const mapTokenValuesToEnum = (Tokens) =>{
   }
 }
 
-export const mapOrderTypeToEnum = (orderType) =>{
-  if(orderType == OrderType.Market){
-    return OrderType.Market;
+export const mapActionTypeToEnum = (actionType) =>{
+  if(actionType == ActionType.Market){
+    return ActionType.Market;
   }
   else{
-    return OrderType.Limit;
+    return ActionType.Limit;
   }
 }

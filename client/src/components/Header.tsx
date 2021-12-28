@@ -16,7 +16,7 @@ import ValidatorHandler from "../p2p/validatorhandler";
 import { getAccountPath } from 'ethers/lib/utils';
 import {useEthers} from '../store/Hooks';
 import {useAppContext} from './context/Store';
-import { mapTokenValuesToEnum, mapOrderTypeToEnum } from "./utils/mapToEnum";
+import { mapTokenValuesToEnum, mapActionTypeToEnum } from "./utils/mapToEnum";
 
 
 type HeaderProps = {
@@ -43,7 +43,7 @@ const Header = (props: HeaderProps) => {
       const validatorChannel = new ValidatorHandler(state.node, TOPIC_VALIDATOR)
 
       // Listen for messages
-      pubsubChat.on("message", (message) => {
+      pubsubChat.on("sendOrder", (message) => {
         if (message.from === state.node.peerId.toB58String()) {
           message.isMine = true;
         }
@@ -54,8 +54,8 @@ const Header = (props: HeaderProps) => {
             tokenTo: message.tokenB,
             orderType: message.orderType,
             actionType: message.actionType,
-            price: message.price,
-            quantity: message.quantity,
+            buyPrice: message.buyPrice,
+            sellPrice: message.sellPrice,
             orderFrm: message.orderFrm,
             from: message.from,
             status: message.status,
@@ -68,10 +68,10 @@ const Header = (props: HeaderProps) => {
               id: message.id,
               tokenFrom: mapTokenValuesToEnum(message.tokenA),
               tokenTo: mapTokenValuesToEnum(message.tokenB),
-              orderType: mapOrderTypeToEnum(message.orderType),
-              actionType: message.actionType,
-              price: message.price,
-              quantity: message.quantity,
+              orderType: message.orderType,
+              actionType: mapActionTypeToEnum(message.actionType),
+              buyPrice: message.buyPrice,
+              sellPrice: message.sellPrice,
               orderFrm: message.orderFrm,
               status: message.status,
               created: message.created,
@@ -83,7 +83,6 @@ const Header = (props: HeaderProps) => {
           });
       });
 
-      
       if (validatorListener) {
       // Listen for messages
       validatorChannel.on('sendMatcher', (message) => {

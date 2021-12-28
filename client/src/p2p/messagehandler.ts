@@ -8,20 +8,20 @@ import { useAppDispatch } from "../store/Hooks";
 const { Request, Stats } = protons(`
 message Request {
   enum Type {
-    SEND_MESSAGE = 0;
+    SEND_ORDER = 0;
     STATS = 1;
   }
   required Type type = 1;
-  optional SendMessage sendMessage = 2;
+  optional SendOrder sendOrder = 2;
   optional Stats stats = 3;
 }
-message SendMessage {
+message SendOrder {
   required bytes tokenA = 1;
   required bytes tokenB = 2;
   required bytes orderType = 3;
   required bytes actionType = 4;
-  required bytes price = 5;
-  required bytes quantity = 6;
+  required bytes buyPrice = 5;
+  required bytes sellPrice = 6;
   required bytes orderFrm = 7;
   required int64 created = 8;
   required bytes id = 9;
@@ -87,18 +87,18 @@ class MessageHandler extends EventEmitter {
           this.emit('stats', this.stats)
           break
         default:
-          this.emit('message', {
+          this.emit('sendOrder', {
             from: message.from,
-            tokenA: uint8arrayToString(request.sendMessage.tokenA),
-            tokenB: uint8arrayToString(request.sendMessage.tokenB),
-            orderType: uint8arrayToString(request.sendMessage.orderType),
-            actionType: uint8arrayToString(request.sendMessage.actionType),
-            price: uint8arrayToString(request.sendMessage.price),
-            quantity: uint8arrayToString(request.sendMessage.quantity),
-            orderFrm: uint8arrayToString(request.sendMessage.orderFrm),
-            status: uint8arrayToString(request.sendMessage.status),
-            created: request.sendMessage.created,
-            id: uint8arrayToString(request.sendMessage.id)
+            tokenA: uint8arrayToString(request.sendOrder.tokenA),
+            tokenB: uint8arrayToString(request.sendOrder.tokenB),
+            orderType: uint8arrayToString(request.sendOrder.orderType),
+            actionType: uint8arrayToString(request.sendOrder.actionType),
+            buyPrice: uint8arrayToString(request.sendOrder.buyPrice),
+            sellPrice: uint8arrayToString(request.sendOrder.sellPrice),
+            orderFrm: uint8arrayToString(request.sendOrder.orderFrm),
+            status: uint8arrayToString(request.sendOrder.status),
+            created: request.sendOrder.created,
+            id: uint8arrayToString(request.sendOrder.id)
           })
       }
     } catch (err) {
@@ -141,19 +141,19 @@ class MessageHandler extends EventEmitter {
       await this.libp2p.pubsub.publish(this.topic, msg);
   }
 
-  async sendOrder(id, tokenA, tokenB, orderType, actionType, price, quantity, account, status, created) {
+  async sendOrder(id, tokenA, tokenB, orderType, actionType, buyPrice, sellPrice, account, status, created) {
    //console.log(`Send message function :${tokenA.name} : ${tokenB.name} : ${orderType.value} : ${actionType.name} : ${price} : ${quantity} : ${account}`)
    //console.log(`Status field at sendOrder :${status}`)
     const msg = Request.encode({
-      type: Request.Type.SEND_MESSAGE,
-      sendMessage: {
+      type: Request.Type.SEND_ORDER,
+      sendOrder: {
         id: uint8arrayFromString(id),
         tokenA: uint8arrayFromString(tokenA.name),
         tokenB: uint8arrayFromString(tokenB.name),
         orderType: uint8arrayFromString(orderType.value),
         actionType: uint8arrayFromString(actionType.name),
-        price: uint8arrayFromString(price),
-        quantity: uint8arrayFromString(quantity),
+        buyPrice: uint8arrayFromString(buyPrice),
+        sellPrice: uint8arrayFromString(sellPrice),
         orderFrm: uint8arrayFromString(account),
         status: uint8arrayFromString(status),
         created: created
