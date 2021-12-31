@@ -52,7 +52,7 @@ export const useEthers = (contractName?: string) => {
     setupEthers().then();
   }, []);
 
-  return [ ethers, connected, address, contract, resolved, signer];
+  return [ ethers, connected, address, contract, resolved, signer ];
 };
 
 export function useEagerConnect() {

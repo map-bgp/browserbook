@@ -8,15 +8,13 @@ import {MenuIcon, XIcon} from '@heroicons/react/outline'
 import {classNames} from './utils/classNames'
 import {useAppDispatch, useAppSelector} from "../store/Hooks";
 import {selectEthersConnected, selectEthersAddress} from "../store/slices/EthersSlice";
-import {EthersContext} from "./EthersContext";
-import {ContractNames} from "../blockchain/ContractNames";
-import { addOrder, selectValidatorListen, toggleValidator, addValidator } from "../store/slices/OrdersSlice";
+import { addOrder, selectValidatorListen } from "../store/slices/OrdersSlice";
 import PubsubChat from "../p2p/messagehandler";
 import ValidatorHandler from "../p2p/validatorhandler";
-import { getAccountPath } from 'ethers/lib/utils';
 import {useEthers} from '../store/Hooks';
 import {useAppContext} from './context/Store';
 
+import EthCrypto from 'eth-crypto'
 
 type HeaderProps = {
   navigation: any[],
@@ -28,11 +26,13 @@ const Header = (props: HeaderProps) => {
   const TOPIC = "/libp2p/bbook/chat/1.0.0";
   const TOPIC_VALIDATOR = "/libp2p/example/validator/1.0.0";
 
-  const [ address]  = useEthers();
+  const [ethers, isConnected, address ]  = useEthers();
   const { state, setContext } = useAppContext();
 
-  const ethers = useContext(EthersContext);
-  const [contract, setContract] = useState<any | null>(null);
+  // Testing
+  const [cipherText, setCipherText] = useState<string>("")
+  const [localAddress, setLocalAddress] = useState<string>("")
+
   const validatorListener = useAppSelector(selectValidatorListen);
 
   useEffect(() => {
@@ -116,8 +116,16 @@ const Header = (props: HeaderProps) => {
     return useAppSelector(selectEthersConnected)
   }
 
-  const getEthersAddress = () => {
-    return useAppSelector(selectEthersAddress)
+  const encrypt = async () => {
+    const [cipherText, localAddress] = await ethers.encryptMessage(address)
+
+    setCipherText(cipherText)
+    setLocalAddress(localAddress)
+  }
+
+  const decrypt = async () => {
+    let r = await ethers.decryptMessage(cipherText, address)
+    console.log(r)
   }
 
   return (
@@ -162,6 +170,24 @@ const Header = (props: HeaderProps) => {
                       <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-green-400 opacity-75"></span>
                       <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
                     </div>
+                    <button
+                      type="button"
+                      className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                      onClick={() => {
+                        encrypt().then()
+                      }}
+                    >
+                      Encrypt
+                    </button>
+                    <button
+                      type="button"
+                      className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                      onClick={() => {
+                        decrypt().then()
+                      }}
+                    >
+                      Decrypt
+                    </button>
                     </> :
                     <button
                       type="button"
