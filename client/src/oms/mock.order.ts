@@ -5,8 +5,8 @@ export const OrderA : IOrders = {
     tokenS: Tokens.tokenA,
     tokenB: Tokens.tokenB,
     actionType: ActionType.Market,
-    amountS: 100,
-    amountB: 10,
+    amountS: 4,
+    amountB: 4,
     orderFrom: 786786,
     created: '1636288913',
     id: "12"
@@ -16,8 +16,8 @@ export const OrderB : IOrders = { 
     tokenS: Tokens.tokenB,
     tokenB: Tokens.tokenA,
     actionType: ActionType.Market,
-    amountS: 10,
-    amountB: 90,
+    amountS: 4,
+    amountB: 4,
     orderFrom: 23543543,
     created: '1636289212',
     id: "14",
@@ -25,24 +25,24 @@ export const OrderB : IOrders = { 
 
 export const OrderC : IOrders = {
     from: "0x14",
+    tokenS: Tokens.tokenA,
+    tokenB: Tokens.tokenB,
+    actionType: ActionType.Market,
+    amountS: 5,
+    amountB: 5,
+    orderFrom: 786786,
+    created: '1636288913',
+    id: "12"
+}
+export const OrderD : IOrders = { 
+    from: "0x15",
     tokenS: Tokens.tokenB,
     tokenB: Tokens.tokenA,
     actionType: ActionType.Market,
-    amountS: 1,
-    amountB: 10,
-    orderFrom: 23432445,
-    created: '1636289367',
-    id: "15",
+    amountS: 5,
+    amountB: 5,
+    orderFrom: 23543543,
+    created: '1636289212',
+    id: "14",
 };
 
-export const OrderD : IOrders = {
-    from: "0x15",
-    tokenS: Tokens.tokenB,
-    tokenB: Tokens.tokenC,
-    actionType: ActionType.Market,
-    amountS: 100,
-    amountB: 20,
-    orderFrom: 382748394,
-    created: '38278932780',
-    id: "16",
-};

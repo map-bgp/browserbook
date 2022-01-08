@@ -1,9 +1,9 @@
 import {Matcher} from './matching';
-import {OrderA, OrderB, OrderC} from "./mock.order"
+import {OrderA, OrderB,OrderC,OrderD} from "./mock.order"
 import {inspect} from 'util';
 
 test('initalize the Matcher node', () => {
-    const orderArray = [OrderA,OrderB,OrderC];
+    const orderArray = [OrderA,OrderB,OrderD,OrderC];
 
     const matcher = new Matcher(orderArray);
     matcher.initialOrderlisting().populateLiquidity();

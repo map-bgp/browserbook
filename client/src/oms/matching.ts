@@ -54,10 +54,13 @@ export interface PriceInfo {
   price: number;
 }
 
-onmessage = function (orders) {
+export const onmessage = function (orders) {
   console.log("Worker: Message received from main script");
-  console.log(orders.data)
-  const result = new Matcher(orders.data).initialOrderlisting().populateLiquidity().processStarted();
+  console.log(orders.data);
+  const result = new Matcher(orders.data)
+    .initialOrderlisting()
+    .populateLiquidity()
+    .processStarted();
   if (result) {
     postMessage(result);
   } else {
@@ -140,12 +143,10 @@ export class Matcher {
     this.matchableTokenSets.forEach((singleTokenSet) => {
       let bidsIndex = 0;
       let asksIndex = 0;
+      let count = 1;
 
-      while (
-        singleTokenSet.countOfAsks > asksIndex &&
-        singleTokenSet.countOfBids > bidsIndex
-      ) {
-
+      while (singleTokenSet.countOfAsks > 0 && singleTokenSet.countOfBids > 0) {
+        console.log(`Iteration Number: ${count}`);
         let matchingResponse = this.orderCompare(
           singleTokenSet.asks[asksIndex],
           singleTokenSet.bids[bidsIndex]
@@ -156,14 +157,23 @@ export class Matcher {
           bidsIndex++;
           matchingOrders.push(matchingResponse);
         }
-        if (asksIndex == singleTokenSet.countOfAsks &&  singleTokenSet.countOfBids > bidsIndex){
+        if (
+          asksIndex === singleTokenSet.countOfAsks &&
+          singleTokenSet.countOfBids > bidsIndex
+        ) {
           asksIndex = 0;
           bidsIndex++;
+        }
+        if (
+          singleTokenSet.countOfAsks === asksIndex &&
+          singleTokenSet.countOfBids === bidsIndex
+        ) {
+          break;
         }
       }
     });
 
-    console.log(matchingOrders)
+    console.log(matchingOrders);
     return matchingOrders;
   }
 
@@ -177,10 +187,12 @@ export class Matcher {
       if (element.asks.indexOf(order) !== -1) {
         element.asks.splice(element.asks.indexOf(order), 1);
         element.askedLiquidity -= order.amountB;
+        element.countOfAsks -= 1;
       }
       if (element.bids.indexOf(order) !== -1) {
         element.bids.splice(element.bids.indexOf(order), 1);
         element.pooledLiquidity -= order.amountS;
+        element.countOfBids -= 1;
       }
     });
   }
@@ -192,12 +204,10 @@ export class Matcher {
       order1.tokenB == order2.tokenS &&
       order1.amountB === order2.amountS
     ) {
-
       const tradeBenefitRatio =
         (order1.amountS / order1.amountB) * (order2.amountS / order2.amountB);
 
-
-      console.log(tradeBenefitRatio)
+      console.log(tradeBenefitRatio);
 
       if (
         order1.actionType === ActionType.Market &&
