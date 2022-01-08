@@ -16,7 +16,7 @@ export class P2PDB extends Dexie {
         this.peers = this.table('peers');
 
         this.version(2).stores(
-            {orders: 'id,tokenFrom,tokenTo,orderType,actionType,buyPrice,sellPrice,orderFrm,from,status,created'}
+            {orders: 'id,tokenS,tokenB,orderType,actionType,amountB,amountS,orderFrom,from,status,created'}
         )
         this.orders = this.table('orders');
 

@@ -35,7 +35,7 @@ function Matcher() {
     setInterval(()=>{console.error('I hit the base')
     if (window.Worker) {
       const myWorker = new Worker(new URL('../oms/matching.ts', import.meta.url));
-
+      
       myWorker.postMessage(orders);
     
       myWorker.onmessage = function(e) {

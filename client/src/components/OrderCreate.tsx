@@ -5,10 +5,10 @@ import "tailwindcss/tailwind.css";
 import { Radio, RadioObject } from "./elements/inputs/Radio";
 import { SelectObject, Select } from "./elements/inputs/Select";
 
-import { OrderActions, OrderTypes } from "../types/Order";
+import { ActionTypes, OrderTypes } from "../types/Order";
 
-import { useAppDispatch } from "../store/Hooks";
-import { addOrder } from "../store/slices/OrdersSlice";
+import { useAppDispatch, useAppSelector } from "../store/Hooks";
+import { addOrder, selectOrders } from "../store/slices/OrdersSlice";
 import { Tokens } from "../types/Token";
 import { classNames } from "./utils/classNames";
 import { XCircleIcon } from "@heroicons/react/solid";
@@ -29,13 +29,15 @@ function OrderCreate() {
   const [tokenB, setTokenB] = useState(Tokens[1]);
 
   const [orderType, setOrderType] = useState(OrderTypes[0]);
-  const [actionType, setActionType] = useState(OrderActions[0]);
+  const [actionType, setActionType] = useState(ActionTypes[0]);
 
   const [sellPrice, setSellPrice] = useState<number>(0.0);
   const [buyPrice, setBuyPrice] = useState<number>(0.0);
 
   const [price, setPrice] = useState<number>(0.0);
   const [quantity, setQuantity] = useState<number>(0.0);
+
+  const dbStateOrders = useAppSelector(selectOrders);
 
   const [connected, address, contract, resolved, signer] = useEthers();
 
@@ -75,12 +77,12 @@ function OrderCreate() {
         from: account,
         status: "Open",
         created: Date.now(),
-        tokenFrom: tokenA.name,
-        tokenTo: tokenB.name,
+        tokenS: tokenA.name,
+        tokenB: tokenB.name,
         actionType: actionType.name,
         orderType: orderType.value,
-        buyPrice: buyPrice,
-        sellPrice: sellPrice,
+        amountB: buyPrice,
+        amountS: sellPrice,
       })
     );
   };
@@ -93,6 +95,8 @@ function OrderCreate() {
       const id = (~~(Math.random() * 1e9)).toString(36) + Date.now();
       const created = Date.now();
       const status = "OPEN";
+
+    console.log(``)
 
       //console.log(`Send message function ${id} :${tokenA.name} : ${tokenB.name} : ${orderType.value} : ${actionType.name} : ${price} : ${quantity} : ${account} : ${created}`)
       await chatClient.sendOrder(
@@ -111,13 +115,13 @@ function OrderCreate() {
         .transaction("rw", state.p2pDb.orders, async () => {
           const order_id = await state.p2pDb.orders.add({
             id: id,
-            tokenFrom: mapTokenValuesToEnum(tokenA.name),
-            tokenTo: mapTokenValuesToEnum(tokenB.name),
+            tokenS: mapTokenValuesToEnum(tokenA.name),
+            tokenB: mapTokenValuesToEnum(tokenB.name),
             orderType: orderType.value,
             actionType: mapActionTypeToEnum(actionType.name),
-            buyPrice: buyPrice,
-            sellPrice: sellPrice,
-            orderFrm: account,
+            amountB: buyPrice,
+            amountS: sellPrice,
+            orderFrom: account,
             status: status,
             created: created,
           });
@@ -191,7 +195,7 @@ function OrderCreate() {
           <div className="mt-2 flex items-center justify-between">
             <Select
               label="Action Type"
-              range={OrderActions}
+              range={ActionTypes}
               selected={actionType}
               setSelected={setActionType}
             />
@@ -277,7 +281,8 @@ function OrderCreate() {
                   : "ml-auto mr-0 ",
                 "block flex items-end px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 active:bg-orange-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
               )}
-              onClick={() => sendOrderMessage()}
+              onClick={() => {sendOrderMessage()
+                              handleSubmit()} }
             >
               Submit Order
             </button>

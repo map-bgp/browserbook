@@ -1,22 +1,21 @@
-import {IOrders, OrderType, Tokens} from "./matching";
+import {IOrders, ActionType, Tokens} from "./matching";
 
 export const OrderA : IOrders = {
     from: "0x12",
     tokenS: Tokens.tokenA,
     tokenB: Tokens.tokenB,
-    orderType: OrderType.Market,
+    actionType: ActionType.Market,
     amountS: 100,
     amountB: 10,
     orderFrom: 786786,
     created: '1636288913',
-    id: "12",
-};
-
-export const OrderB : IOrders = {
+    id: "12"
+}
+export const OrderB : IOrders = { 
     from: "0x13",
     tokenS: Tokens.tokenB,
     tokenB: Tokens.tokenA,
-    orderType: OrderType.Market,
+    actionType: ActionType.Market,
     amountS: 10,
     amountB: 90,
     orderFrom: 23543543,
@@ -28,7 +27,7 @@ export const OrderC : IOrders = {
     from: "0x14",
     tokenS: Tokens.tokenB,
     tokenB: Tokens.tokenA,
-    orderType: OrderType.Market,
+    actionType: ActionType.Market,
     amountS: 1,
     amountB: 10,
     orderFrom: 23432445,
@@ -40,7 +39,7 @@ export const OrderD : IOrders = {
     from: "0x15",
     tokenS: Tokens.tokenB,
     tokenB: Tokens.tokenC,
-    orderType: OrderType.Market,
+    actionType: ActionType.Market,
     amountS: 100,
     amountB: 20,
     orderFrom: 382748394,

@@ -1,14 +1,14 @@
 import _ from "lodash";
 
 export enum Tokens {
-  tokenA = "tokenA",
-  tokenB = "tokenB",
-  tokenC = "tokenC",
+  tokenA = "TokenA",
+  tokenB = "TokenB",
+  tokenC = "TokenC",
 }
 
-export enum OrderType {
-  Market = "Market",
-  Limit = "Limit",
+export enum ActionType {
+  Market = "Market Order",
+  Limit = "Limit Order",
 }
 
 export enum MatchingStatus {
@@ -21,7 +21,7 @@ export interface IOrders {
   id?: string;
   tokenS: Tokens;
   tokenB: Tokens;
-  orderType: OrderType;
+  actionType: ActionType;
   amountS: number;
   amountB: number;
   orderFrom: number;
@@ -56,12 +56,13 @@ export interface PriceInfo {
 
 onmessage = function (orders) {
   console.log("Worker: Message received from main script");
-  const result = new Matcher(orders.data).processStarted();;
+  console.log(orders.data)
+  const result = new Matcher(orders.data).initialOrderlisting().populateLiquidity().processStarted();
   if (result) {
-    postMessage([]);
+    postMessage(result);
   } else {
     console.log("Worker: Posting message back to main script");
-    postMessage(result);
+    postMessage([]);
   }
 };
 
@@ -131,7 +132,7 @@ export class Matcher {
     });
     // this.preCleanOrder(matchableTokenSets)
     this.matchableTokens.push(...this.matchableTokenSets.map((o) => o.token));
-    console.log(this.matchableTokens);
+    console.log(this.tokenWiseOrders);
     console.log(this.matchableTokenSets);
 
     let matchingOrders: MatchingResponse[] = [];
@@ -162,6 +163,7 @@ export class Matcher {
       }
     });
 
+    console.log(matchingOrders)
     return matchingOrders;
   }
 
@@ -190,14 +192,16 @@ export class Matcher {
       order1.tokenB == order2.tokenS &&
       order1.amountB === order2.amountS
     ) {
-      console.log(`Comparing orders between ${order1.id} and ${order2.id}`);
 
       const tradeBenefitRatio =
         (order1.amountS / order1.amountB) * (order2.amountS / order2.amountB);
 
+
+      console.log(tradeBenefitRatio)
+
       if (
-        order1.orderType === OrderType.Market &&
-        order2.orderType === OrderType.Market
+        order1.actionType === ActionType.Market &&
+        order2.actionType === ActionType.Market
       ) {
         // CASE1.1: Same tokens at same price
         if (tradeBenefitRatio == 1 && order1.amountS == order2.amountB) {
@@ -223,8 +227,8 @@ export class Matcher {
         }
         return undefined;
       } else if (
-        order1.orderType === OrderType.Market &&
-        order2.orderType === OrderType.Limit
+        order1.actionType === ActionType.Market &&
+        order2.actionType === ActionType.Limit
       ) {
         // CASE2.1: Same tokens at same price
         if (tradeBenefitRatio == 1 && order1.amountS == order2.amountB) {
@@ -246,8 +250,8 @@ export class Matcher {
         }
         return undefined;
       } else if (
-        order1.orderType === OrderType.Limit &&
-        order2.orderType === OrderType.Market
+        order1.actionType === ActionType.Limit &&
+        order2.actionType === ActionType.Market
       ) {
         // CASE3.1: Same tokens at same price
         if (tradeBenefitRatio == 1 && order1.amountS == order2.amountB) {
@@ -270,8 +274,8 @@ export class Matcher {
         }
         return undefined;
       } else if (
-        order1.orderType === OrderType.Limit &&
-        order2.orderType === OrderType.Limit
+        order1.actionType === ActionType.Limit &&
+        order2.actionType === ActionType.Limit
       ) {
         // CASE1.1: Same tokens at same price
         if (tradeBenefitRatio == 1 && order1.amountS == order2.amountB) {

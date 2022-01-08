@@ -8,8 +8,8 @@ test('initalize the Matcher node', () => {
     const matcher = new Matcher(orderArray);
     matcher.initialOrderlisting().populateLiquidity();
     console.log(inspect(matcher.tokenWiseOrders));
-    matcher.processStarted();
-    console.log(inspect(matcher.tokenWiseOrders));
+    const result = matcher.processStarted();
+    console.log(inspect(result));
     expect(matcher).toBeDefined();
   });
 

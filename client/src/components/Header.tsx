@@ -50,13 +50,13 @@ const Header = (props: HeaderProps) => {
         dispatch(
           addOrder({
             id: message.id,
-            tokenFrom: message.tokenA,
-            tokenTo: message.tokenB,
+            tokenS: message.tokenA,
+            tokenB: message.tokenB,
             orderType: message.orderType,
             actionType: message.actionType,
-            buyPrice: message.buyPrice,
-            sellPrice: message.sellPrice,
-            orderFrm: message.orderFrm,
+            amountB: message.buyPrice,
+            amountS: message.sellPrice,
+            orderFrom: message.orderFrm,
             from: message.from,
             status: message.status,
             created: message.created,
@@ -66,13 +66,13 @@ const Header = (props: HeaderProps) => {
           .transaction("rw", state.p2pDb.orders, async () => {
             const id = await state.p2pDb.orders.add({
               id: message.id,
-              tokenFrom: mapTokenValuesToEnum(message.tokenA),
-              tokenTo: mapTokenValuesToEnum(message.tokenB),
+              tokenS: mapTokenValuesToEnum(message.tokenA),
+              tokenB: mapTokenValuesToEnum(message.tokenB),
               orderType: message.orderType,
               actionType: mapActionTypeToEnum(message.actionType),
-              buyPrice: message.buyPrice,
-              sellPrice: message.sellPrice,
-              orderFrm: message.orderFrm,
+              amountB: message.buyPrice,
+              amountS: message.sellPrice,
+              orderFrom: message.orderFrm,
               status: message.status,
               created: message.created,
             });

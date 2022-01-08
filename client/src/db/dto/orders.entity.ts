@@ -1,23 +1,23 @@
-export enum TokensPrime {
-    tokenA = "Token A",
-    tokenB = "Token B",
-    tokenC = "Token C",
+export enum Tokens {
+    tokenA = "TokenA",
+    tokenB = "TokenB",
+    tokenC = "TokenC",
   }
 
-export enum OrderType  {
-    Market = "Market",
-    Limit = "Limit",
-  }
+export enum ActionType {
+  Market = "Market",
+  Limit = "Limit",
+}
 
 export interface IOrders{
     id?: string,
-    tokenFrom: TokensPrime,
-    tokenTo: TokensPrime,
-    orderType: OrderType,
-    actionType: string,
-    buyPrice: number,
-    sellPrice: number,
-    orderFrm: number,
+    tokenS: Tokens,
+    tokenB: Tokens,
+    orderType: string,
+    actionType: ActionType,
+    amountB: number,
+    amountS: number,
+    orderFrom: number,
     from: string,
     status: string,
     created: string,

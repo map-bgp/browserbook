@@ -20,11 +20,9 @@ export const OrderTypes: RadioObject[] = [
   }
 ]
 
-export const OrderActions: SelectObject[] = [
+export const ActionTypes: SelectObject[] = [
   { id: 1, name: 'Market Order' },
   { id: 2, name: 'Limit Order' },
-  { id: 3, name: 'Fill or Kill' },
-  { id: 4, name: 'Yolo' },
 ]
 
 export enum ActionType {
