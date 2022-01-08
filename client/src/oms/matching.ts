@@ -54,7 +54,7 @@ export interface PriceInfo {
   price: number;
 }
 
-export const onmessage = function (orders) {
+onmessage = function (orders) {
   console.log("Worker: Message received from main script");
   console.log(orders.data);
   const result = new Matcher(orders.data)
