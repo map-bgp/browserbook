@@ -1,9 +1,9 @@
-import {configureStore} from '@reduxjs/toolkit'
-import peerReducer from './slices/PeerSlice'
-import orderbookReducer from './slices/OrderbookSlice'
-import ethersReducer from './slices/EthersSlice'
-import tokenReducer from './slices/TokenSlice'
-import ordersReducer from './slices/OrdersSlice';
+import { configureStore } from "@reduxjs/toolkit"
+import peerReducer from "./slices/PeerSlice"
+import orderbookReducer from "./slices/OrderbookSlice"
+import ethersReducer from "./slices/EthersSlice"
+import tokenReducer from "./slices/TokenSlice"
+import ordersReducer from "./slices/OrdersSlice"
 
 export const store = configureStore({
   reducer: {
@@ -11,8 +11,8 @@ export const store = configureStore({
     orderbook: orderbookReducer,
     ethers: ethersReducer,
     token: tokenReducer,
-    orders: ordersReducer
-  }
+    orders: ordersReducer,
+  },
 })
 
 export type RootState = ReturnType<typeof store.getState>

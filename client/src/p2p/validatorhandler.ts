@@ -1,8 +1,8 @@
-import protons from "protons";
-import EventEmitter from "events";
-import uint8arrayFromString from "uint8arrays/from-string";
-import uint8arrayToString from "uint8arrays/to-string";
-import {TOPIC_VALIDATOR} from "../constants";
+import protons from "protons"
+import EventEmitter from "events"
+import uint8arrayFromString from "uint8arrays/from-string"
+import uint8arrayToString from "uint8arrays/to-string"
+import { TOPIC_VALIDATOR } from "../constants"
 
 const { Request, Stats } = protons(`
 message Request {
@@ -53,54 +53,53 @@ message Stats {
 `)
 
 class ValidatorHandler extends EventEmitter {
-  libp2p: any;
-  topic: string; 
-  connectedPeers: any;
-  stats: any;
-  topicOrder: any;
-  
+  libp2p: any
+  topic: string
+  connectedPeers: any
+  stats: any
+  topicOrder: any
+
   constructor(libp2p: any, topic: string) {
+    super()
+    this.libp2p = libp2p
+    this.topic = topic
+    this.topicOrder = "orderUpdates/channel"
 
-    super();
-    this.libp2p = libp2p;
-    this.topic = topic;
-    this.topicOrder = "orderUpdates/channel";
-
-    this.connectedPeers = new Set();
-    this.stats = new Map();
+    this.connectedPeers = new Set()
+    this.stats = new Map()
 
     this._onMessage = this._onMessage.bind(this)
     if (this.libp2p.isStarted()) {
-      this.join();
+      this.join()
     }
-   }
+  }
 
-    /**
+  /**
    * Subscribes to `Chat.topic`. All messages will be
    * forwarded to `messageHandler`
    * @private
    */
-  join () {
+  join() {
     this.libp2p.pubsub.on(this.topic, this._onMessage)
     this.libp2p.pubsub.on(this.topicOrder, this._onMessage)
     this.libp2p.pubsub.subscribe(this.topic)
     this.libp2p.pubsub.subscribe(this.topicOrder)
   }
 
-  leave () {
+  leave() {
     this.libp2p.pubsub.removeListener(this.topic, this._onMessage)
     this.libp2p.pubsub.removeListener(this.topicOrder, this._onMessage)
     this.libp2p.pubsub.unsubscribe(this.topic)
     this.libp2p.pubsub.unsubscribe(this.topicOrder)
   }
 
-  _onMessage (message) {
+  _onMessage(message) {
     try {
       const request = Request.decode(message.data)
       console.log(`onMessage emit function`)
       switch (request.type) {
         case Request.Type.SEND_ORDER:
-          this.emit('sendOrder', {
+          this.emit("sendOrder", {
             //from: message.from,
             id: uint8arrayToString(request.sendOrder.id),
             order1_id: uint8arrayToString(request.sendOrder.order1_id),
@@ -117,19 +116,19 @@ class ValidatorHandler extends EventEmitter {
           })
           break
         case Request.Type.SEND_UPDATE:
-          this.emit('sendUpdate', {
+          this.emit("sendUpdate", {
             from: message.from,
             status: uint8arrayToString(request.sendUpdate.status),
-            id: uint8arrayToString(request.sendUpdate.id)
+            id: uint8arrayToString(request.sendUpdate.id),
           })
           break
         case Request.Type.SEND_MATCHER:
           console.log(`Emitting the sendMatcher logic`)
-          this.emit('sendMatcher', {
+          this.emit("sendMatcher", {
             from: message.from,
             peerID: uint8arrayToString(request.sendMatcher.peerID),
             created: request.sendMatcher.created,
-            id: uint8arrayToString(request.sendMatcher.id)
+            id: uint8arrayToString(request.sendMatcher.id),
           })
           break
       }
@@ -138,78 +137,91 @@ class ValidatorHandler extends EventEmitter {
     }
   }
 
-   /**
+  /**
    * Sends the updated stats to the pubsub network
    * @param {Array<string>} connectedPeers
    */
-    async sendStats (connectedPeers) {
-      const msg = Request.encode({
-        type: Request.Type.STATS,
-        stats: {
-          connectedPeers: connectedPeers.map(id => uint8arrayFromString(id)),
-          nodeType: Stats.NodeType.BROWSER
-        }
-      })
+  async sendStats(connectedPeers) {
+    const msg = Request.encode({
+      type: Request.Type.STATS,
+      stats: {
+        connectedPeers: connectedPeers.map((id) => uint8arrayFromString(id)),
+        nodeType: Stats.NodeType.BROWSER,
+      },
+    })
 
-      try {
-        await this.libp2p.pubsub.publish(this.topic, msg)
-      } catch (err) {
-        console.error('Could not publish stats update')
-      }
+    try {
+      await this.libp2p.pubsub.publish(this.topic, msg)
+    } catch (err) {
+      console.error("Could not publish stats update")
     }
+  }
 
   async sendMatcher(id, peerID, created) {
-   //console.log(`Send message function :${id} : ${peerID} : ${created}`)
+    //console.log(`Send message function :${id} : ${peerID} : ${created}`)
     const msg = Request.encode({
       type: Request.Type.SEND_MATCHER,
       sendMatcher: {
         id: uint8arrayFromString(id),
         peerID: uint8arrayFromString(peerID),
-        created: created
-      }
-    });
+        created: created,
+      },
+    })
 
-      //console.log(`Topic at send function: ${this.topic}`);   
-      await this.libp2p.pubsub.publish(TOPIC_VALIDATOR, msg);
+    //console.log(`Topic at send function: ${this.topic}`);
+    await this.libp2p.pubsub.publish(TOPIC_VALIDATOR, msg)
   }
 
   async sendOrderUpdate(id, status) {
     //console.log(`Send message function :${id} : ${status} : ${this.topicOrder}`)
-     const msg = Request.encode({
-       type: Request.Type.SEND_UPDATE,
-       sendUpdate: {
-         id: uint8arrayFromString(id),
-         status: uint8arrayFromString(status)
-       }
-     });
+    const msg = Request.encode({
+      type: Request.Type.SEND_UPDATE,
+      sendUpdate: {
+        id: uint8arrayFromString(id),
+        status: uint8arrayFromString(status),
+      },
+    })
 
-       //console.log(`Topic at send function: ${this.topic}`);   
-       await this.libp2p.pubsub.publish(this.topicOrder, msg);
-   }
+    //console.log(`Topic at send function: ${this.topic}`);
+    await this.libp2p.pubsub.publish(this.topicOrder, msg)
+  }
 
-   async sendMatchedOrder(id, order1_id, order2_id, tokenA, tokenB, orderType, actionType, price, quantity, account, status, created) {
+  async sendMatchedOrder(
+    id,
+    order1_id,
+    order2_id,
+    tokenA,
+    tokenB,
+    orderType,
+    actionType,
+    price,
+    quantity,
+    account,
+    status,
+    created
+  ) {
     //console.log(`Send message function : ${order1_id} : ${order2_id} : ${tokenA} : ${tokenB} : ${orderType} : ${actionType} : ${price} : ${quantity} : ${account} : ${status} : ${created}`)
-     const msg = Request.encode({
-       type: Request.Type.SEND_ORDER,
-       sendOrder: {
-         id: uint8arrayFromString(id),
-         order1_id: uint8arrayFromString(order1_id),
-         order2_id: uint8arrayFromString(order2_id),
-         tokenA: uint8arrayFromString(tokenA),
-         tokenB: uint8arrayFromString(tokenB),
-         orderType: uint8arrayFromString(orderType),
-         actionType: uint8arrayFromString(actionType),
-         price: uint8arrayFromString(price),
-         quantity: uint8arrayFromString(quantity),
-         orderFrm: uint8arrayFromString(account),
-         status: uint8arrayFromString(status),
-         created: created
-       }
-     });
+    const msg = Request.encode({
+      type: Request.Type.SEND_ORDER,
+      sendOrder: {
+        id: uint8arrayFromString(id),
+        order1_id: uint8arrayFromString(order1_id),
+        order2_id: uint8arrayFromString(order2_id),
+        tokenA: uint8arrayFromString(tokenA),
+        tokenB: uint8arrayFromString(tokenB),
+        orderType: uint8arrayFromString(orderType),
+        actionType: uint8arrayFromString(actionType),
+        price: uint8arrayFromString(price),
+        quantity: uint8arrayFromString(quantity),
+        orderFrm: uint8arrayFromString(account),
+        status: uint8arrayFromString(status),
+        created: created,
+      },
+    })
 
-       //console.log(`Topic at send function ${msg.tokenA} : ${msg.orderFrm}`);   
-       await this.libp2p.pubsub.publish(this.topicOrder, msg);
-   }
+    //console.log(`Topic at send function ${msg.tokenA} : ${msg.orderFrm}`);
+    await this.libp2p.pubsub.publish(this.topicOrder, msg)
+  }
 }
 
-export default ValidatorHandler;
+export default ValidatorHandler

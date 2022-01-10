@@ -56,13 +56,13 @@ function OrderMatch() {
 
   const matchOrders = async () => {
     const orderArray = await state.p2pDb.orders.toArray();
-    let matchedOrder = await state.p2pDb.matchedOrder.toArray();
+    //let matchedOrder = await state.p2pDb.matchedOrder.toArray();
     //console.log(`orders array length in the db ${orderArray.length}`);
     // const exemptedOrderArray = orderArray
     // filter(orderArray,matches())
     const orderOne = orderArray.pop();
     const orderTwo = orderArray.pop();
-    matchedOrder = matchedOrder.pop();
+    //matchedOrder = matchedOrder.pop();
     // @ts-ignore
     const signer = library.getSigner();
 
@@ -73,9 +73,10 @@ function OrderMatch() {
 
     const exchangeContract = new Contract(EXCHANGE, exchangeAbi, signer);
 
-    console.table(orderOne);
-    console.table(orderTwo);
-    console.table(matchedOrder);
+    //console.table(orderOne);
+    //console.table(orderTwo);
+    
+    //console.table(matchedOrder);
 
     //Changes the status of the local DB order status on a match
     state.p2pDb
@@ -134,24 +135,24 @@ function OrderMatch() {
       });
 
     console.table({
-      from: token2Address.get(orderOne.tokenFrom),
-      to: token2Address.get(orderTwo.tokenFrom),
-      s1: orderOne.orderFrm,
-      s2: orderTwo.orderFrm,
-      t1: token2Id.get(orderOne.tokenFrom),
-      t2: token2Id.get(orderTwo.tokenFrom),
+      from: token2Address.get(orderOne.tokenS),
+      to: token2Address.get(orderTwo.tokenS),
+      s1: orderOne.orderFrom,
+      s2: orderTwo.orderFrom,
+      t1: token2Id.get(orderOne.tokenS),
+      t2: token2Id.get(orderTwo.tokenS),
       d1: orderOne.quantity,
       d2: orderTwo.quantity,
       data: data,
     });
 
     const tx = await exchangeContract.executeOrder(
-      token2Address.get(orderOne.tokenFrom),
-      token2Address.get(orderTwo.tokenFrom),
-      orderOne.orderFrm,
-      orderTwo.orderFrm,
-      token2Id.get(orderOne.tokenFrom),
-      token2Id.get(orderTwo.tokenFrom),
+      token2Address.get(orderOne.tokenS),
+      token2Address.get(orderTwo.tokenS),
+      orderOne.orderFrom,
+      orderTwo.orderFrom,
+      token2Id.get(orderOne.tokenS),
+      token2Id.get(orderTwo.tokenS),
       orderOne.quantity,
       orderTwo.quantity,
       data
@@ -247,8 +248,8 @@ function OrderMatch() {
     console.log("I am in Signed Order");
     value = {
       id: "21321312",
-      tokenFrom: "A",
-      tokenTo: "B",
+      tokenS: "A",
+      tokenB: "B",
       orderType: "bid",
       price: "10",
       quantity: "100",

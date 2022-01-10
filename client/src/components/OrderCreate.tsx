@@ -5,10 +5,10 @@ import "tailwindcss/tailwind.css";
 import { Radio, RadioObject } from "./elements/inputs/Radio";
 import { SelectObject, Select } from "./elements/inputs/Select";
 
-import { OrderActions, OrderTypes } from "../types/Order";
+import { ActionTypes, OrderTypes } from "../types/Order";
 
-import { useAppDispatch } from "../store/Hooks";
-import { addOrder } from "../store/slices/OrdersSlice";
+import { useAppDispatch, useAppSelector } from "../store/Hooks";
+import { addOrder, selectOrders } from "../store/slices/OrdersSlice";
 import { Tokens } from "../types/Token";
 import { classNames } from "./utils/classNames";
 import { XCircleIcon } from "@heroicons/react/solid";
@@ -17,7 +17,9 @@ import { useAppContext } from "./context/Store";
 import { useEthers } from "../store/Hooks";
 import { orderDB } from "../db";
 import { useWeb3React } from "@web3-react/core";
+import { mapTokenValuesToEnum, mapActionTypeToEnum } from "./utils/mapToEnum";
 import { domain } from '../constants';
+import { Token } from "./elements/Token";
 //import uint8arrayToString from "uint8arrays/to-string";
 
 function OrderCreate() {
@@ -27,10 +29,15 @@ function OrderCreate() {
   const [tokenB, setTokenB] = useState(Tokens[1]);
 
   const [orderType, setOrderType] = useState(OrderTypes[0]);
-  const [actionType, setActionType] = useState(OrderActions[0]);
+  const [actionType, setActionType] = useState(ActionTypes[0]);
+
+  const [sellPrice, setSellPrice] = useState<number>(0.0);
+  const [buyPrice, setBuyPrice] = useState<number>(0.0);
 
   const [price, setPrice] = useState<number>(0.0);
   const [quantity, setQuantity] = useState<number>(0.0);
+
+  const dbStateOrders = useAppSelector(selectOrders);
 
   const [connected, address, contract, resolved, signer] = useEthers();
 
@@ -70,12 +77,12 @@ function OrderCreate() {
         from: account,
         status: "Open",
         created: Date.now(),
-        tokenFrom: tokenA.name,
-        tokenTo: tokenB.name,
+        tokenS: tokenA.name,
+        tokenB: tokenB.name,
         actionType: actionType.name,
-        type: orderType.value,
-        price: price,
-        quantity: quantity,
+        orderType: orderType.value,
+        amountB: buyPrice,
+        amountS: sellPrice,
       })
     );
   };
@@ -88,6 +95,9 @@ function OrderCreate() {
       const id = (~~(Math.random() * 1e9)).toString(36) + Date.now();
       const created = Date.now();
       const status = "OPEN";
+
+    console.log(``)
+
       //console.log(`Send message function ${id} :${tokenA.name} : ${tokenB.name} : ${orderType.value} : ${actionType.name} : ${price} : ${quantity} : ${account} : ${created}`)
       await chatClient.sendOrder(
         id,
@@ -95,8 +105,8 @@ function OrderCreate() {
         tokenB,
         orderType,
         actionType,
-        price,
-        quantity,
+        buyPrice,
+        sellPrice,
         account,
         status,
         created
@@ -105,13 +115,13 @@ function OrderCreate() {
         .transaction("rw", state.p2pDb.orders, async () => {
           const order_id = await state.p2pDb.orders.add({
             id: id,
-            tokenFrom: tokenA.name,
-            tokenTo: tokenB.name,
+            tokenS: mapTokenValuesToEnum(tokenA.name),
+            tokenB: mapTokenValuesToEnum(tokenB.name),
             orderType: orderType.value,
-            actionType: actionType.name,
-            price: price,
-            quantity: quantity,
-            orderFrm: account,
+            actionType: mapActionTypeToEnum(actionType.name),
+            amountB: buyPrice,
+            amountS: sellPrice,
+            orderFrom: account,
             status: status,
             created: created,
           });
@@ -185,7 +195,7 @@ function OrderCreate() {
           <div className="mt-2 flex items-center justify-between">
             <Select
               label="Action Type"
-              range={OrderActions}
+              range={ActionTypes}
               selected={actionType}
               setSelected={setActionType}
             />
@@ -195,16 +205,16 @@ function OrderCreate() {
               htmlFor="name"
               className="block ml-2 text-sm font-medium text-gray-700"
             >
-              Price
+              Amount Selling
             </label>
             <div className="w-1/2 mt-1 ml-4 border-b border-gray-300 focus-within:border-orange-600">
               <input
                 type="number"
-                name="price"
-                id="price"
+                name="sell"
+                id="sell"
                 step="0.0001"
                 min={0}
-                onChange={(e) => setPrice(Number(e.target.value))}
+                onChange={(e) => setBuyPrice(Number(e.target.value))}
                 className="block w-full text-gray-500 border-0 border-b border-transparent bg-gray-50 focus:border-orange-600 focus:ring-0 sm:text-sm"
                 placeholder="0.0000"
               />
@@ -215,16 +225,16 @@ function OrderCreate() {
               htmlFor="name"
               className="block ml-2 text-sm font-medium text-gray-700"
             >
-              Quantity
+              Amount Buying
             </label>
             <div className="w-1/2 mt-1 ml-4 border-b border-gray-300 focus-within:border-orange-600">
               <input
                 type="number"
-                name="quantity"
-                id="quantity"
+                name="buy"
+                id="buy"
                 step="0.0001"
                 min={0}
-                onChange={(e) => setQuantity(Number(e.target.value))}
+                onChange={(e) => setSellPrice(Number(e.target.value))}
                 className="block w-full text-gray-500 border-0 border-b border-transparent bg-gray-50 focus:border-orange-600 focus:ring-0 sm:text-sm"
                 placeholder="0.0000"
               />
@@ -271,7 +281,8 @@ function OrderCreate() {
                   : "ml-auto mr-0 ",
                 "block flex items-end px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 active:bg-orange-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
               )}
-              onClick={() => sendOrderMessage()}
+              onClick={() => {sendOrderMessage()
+                              handleSubmit()} }
             >
               Submit Order
             </button>
