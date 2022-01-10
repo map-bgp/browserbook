@@ -24,8 +24,8 @@ module.exports = {
             blockGasLimit: 0x1fffffffffff
         },
         development: {
-            url: "http://localhost:9545",
-            accounts:{mnemonic:"muffin area swamp arm hundred photo upon chalk acoustic dawn home dragon"}
+            url: "http://localhost:8545",
+            accounts: { mnemonic: "muffin area swamp arm hundred photo upon chalk acoustic dawn home dragon" }
         },
         goerli:{
             url: process.env.GOERLI_RPC_URL,

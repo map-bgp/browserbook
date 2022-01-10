@@ -78,8 +78,8 @@ const loadInitialState = async () => {
       key: "order-matching",
     },
     {
-      name: "be a Matcher",
-      key: "be-a-matcher",
+      name: "Order Validation",
+      key: "order-validation",
     }
 
   ];

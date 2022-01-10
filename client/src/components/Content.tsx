@@ -44,7 +44,7 @@ const Content = (props: ContentProps) => {
           <Route path="/order-matching">
             <OrderMatch/>
           </Route>
-          <Route path="/be-a-matcher">
+          <Route path="/order-validation">
             <Matcher/>
           </Route>
         </Switch>

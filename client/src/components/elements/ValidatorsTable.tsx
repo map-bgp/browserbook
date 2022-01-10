@@ -16,6 +16,7 @@ const ValidatorsTable = (props: ValidatorsTableProps) => {
           <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
+              {props.validators &&
                 <tr>
                   <th
                     scope="col"
@@ -35,7 +36,7 @@ const ValidatorsTable = (props: ValidatorsTableProps) => {
                   >
                     Joined_Time
                   </th>
-                </tr>
+                </tr>}
               </thead>
               <tbody>
                 {props.validators &&

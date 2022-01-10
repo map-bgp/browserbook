@@ -116,18 +116,6 @@ const Header = (props: HeaderProps) => {
     return useAppSelector(selectEthersConnected)
   }
 
-  const encrypt = async () => {
-    const [cipherText, localAddress] = await ethers.encryptMessage(address)
-
-    setCipherText(cipherText)
-    setLocalAddress(localAddress)
-  }
-
-  const decrypt = async () => {
-    let r = await ethers.decryptMessage(cipherText, address)
-    console.log(r)
-  }
-
   return (
     <>
       <Disclosure as="nav" className="bg-white shadow-sm">
@@ -170,24 +158,6 @@ const Header = (props: HeaderProps) => {
                       <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-green-400 opacity-75"></span>
                       <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
                     </div>
-                    <button
-                      type="button"
-                      className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-                      onClick={() => {
-                        encrypt().then()
-                      }}
-                    >
-                      Encrypt
-                    </button>
-                    <button
-                      type="button"
-                      className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-                      onClick={() => {
-                        decrypt().then()
-                      }}
-                    >
-                      Decrypt
-                    </button>
                     </> :
                     <button
                       type="button"

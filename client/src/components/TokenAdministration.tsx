@@ -15,9 +15,7 @@ const TokenAdministration = (props: TokenAdministrationProps) => {
   const dispatch = useAppDispatch();
 
   const tokens = useAppSelector(selectTokens);
-  const [ethers, connected, address, contract, resolved] = useEthers(
-    ContractNames.TokenFactory
-  );
+  const [ethers, connected, address, contract, resolved] = useEthers(ContractNames.TokenFactory);
 
   const getWalletTokens = async (contract) => {
     const tokens: object[] = [];

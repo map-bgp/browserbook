@@ -1,5 +1,5 @@
 const TokenFactory = {
-  "address": "0x107c43484bCDDc07c3d92B619AD1105FB3c39122",
+  "address": "0x158DE9dCBD61Cb02C83FEE4D606288f12BFCbebB",
   "abi":  [
     {
       "anonymous": false,
@@ -67,7 +67,51 @@ const TokenFactory = {
   ]
 }
 
+const Encrypt = {
+  "address": "0x158DE9dCBD61Cb02C83FEE4D606288f12BFCbebB",
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "signerKey",
+          "type": "string"
+        }
+      ],
+      "name": "setSignerKey",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "signerKeys",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
+}
+
 // TODO for some reason the enum mapping won't work - try again some other time
 export const TokenMetadata = {
   "TokenFactory": TokenFactory,
+  "Encrypt": Encrypt,
 }

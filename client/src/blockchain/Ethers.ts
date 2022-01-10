@@ -77,6 +77,7 @@ export class EtherStore {
         const contractABI = TokenMetadata[contractName].abi;
         const signer = await this.getSigner()
 
+        console.log("Signer is attached", signer);
         return new ethers.Contract(address, contractABI, signer);
     }
 
@@ -116,7 +117,7 @@ export class EtherStore {
     //     return publicKey
     // }
 
-    encryptMessage = async (address: string) => {
+    encryptSignerKey = async (address: string) => {
         const encryptionPublicKey =  await this.requestEncryptionKey(address)
         const signerKey = ethers.Wallet.createRandom().privateKey
 
@@ -138,7 +139,7 @@ export class EtherStore {
         return [cipherText, address]
     }
 
-    decryptMessage = async (cipherText: string, address: string) => {
+    decryptSignerKey = async (cipherText: string, address: string) => {
         return await ethereum.request({
             method: 'eth_decrypt',
             params: [cipherText, address],
