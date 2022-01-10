@@ -41,8 +41,8 @@ contract Exchange {
         return true;
     }
 
-    function getPass() public view returns(string memory){
-        return password[msg.sender];
+    function getPass(address addr) external view returns(string memory){
+        return password[addr];
     }
 
     function verifySignature(Order memory order, uint8 v, bytes32 r, bytes32 s) internal view returns(bool){

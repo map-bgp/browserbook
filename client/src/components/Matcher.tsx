@@ -122,7 +122,7 @@ function Matcher() {
 
   const fetchAndDecryptMessage = async () => {
     if (resolved) {
-      const encryptText = await contract.getPass();
+      const encryptText = await contract.getPass(address);
       const decryptedText = await provider.send("eth_decrypt", [encryptText, address]);
       setDecryptedPrivateKey(decryptedText);
     } else {
@@ -156,7 +156,7 @@ function Matcher() {
 
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-      {publicKey && <Info message={`Your Mining Address is: ${publicKey}`} />}
+      {publicKey && <Info message={`Your Public Key is: ${publicKey}`} />}
       <button
         type="submit"
         className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 "

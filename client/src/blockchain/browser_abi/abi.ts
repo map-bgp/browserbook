@@ -68,7 +68,7 @@ const TokenFactory = {
 }
 
 const Exchange = {
-  address: "0xe75411DC167f5369b93407A756e06ab1a65e2590",
+  address: "0x71F63d031c96C6b607d0845169aeE29025391081",
   abi: [
     {
       inputs: [],
@@ -129,7 +129,13 @@ const Exchange = {
       type: "function",
     },
     {
-      inputs: [],
+      inputs: [
+        {
+          internalType: "address",
+          name: "addr",
+          type: "address",
+        },
+      ],
       name: "getPass",
       outputs: [
         {
