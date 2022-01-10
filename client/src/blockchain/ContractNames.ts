@@ -1,4 +1,4 @@
 export enum ContractNames {
   TokenFactory = "TokenFactory",
-  Encrypt = "Encrypt",
+  Exchange = "Exchange",
 }

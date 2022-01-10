@@ -1,48 +1,48 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
 
-import { IMatchedOrders, IOrders, IValidators } from "../../db";
-import { RootState } from "../Store";
+import { IMatchedOrders, IOrders, IValidators } from "../../db"
+import { RootState } from "../Store"
 
 interface OrdersState {
-  orders: IOrders[];
-  matchedOrders: IMatchedOrders[];
-  validators: IValidators[];
-  validatorListen: boolean;
+  orders: IOrders[]
+  matchedOrders: IMatchedOrders[]
+  validators: IValidators[]
+  validatorListen: boolean
 }
 
 const initialState: OrdersState = {
   orders: [],
   matchedOrders: [],
   validators: [],
-  validatorListen: false
-};
+  validatorListen: false,
+}
 export const ordersSlice = createSlice({
   name: "orders",
   initialState,
   reducers: {
     addOrder: (state, action: PayloadAction<IOrders>) => {
-      state.orders.push(action.payload);
+      state.orders.push(action.payload)
     },
     removeOrder: (state, action: PayloadAction<IOrders>) => {
-      state.orders.push(action.payload);
+      state.orders.push(action.payload)
     },
     addMatchedOrder: (state, action: PayloadAction<IMatchedOrders>) => {
-      state.matchedOrders.push(action.payload);
+      state.matchedOrders.push(action.payload)
     },
     removeMatchedOrder: (state, action: PayloadAction<IMatchedOrders>) => {
-      state.matchedOrders.push(action.payload);
+      state.matchedOrders.push(action.payload)
     },
     addValidator: (state, action: PayloadAction<IValidators>) => {
-      state.validators.push(action.payload);
+      state.validators.push(action.payload)
     },
     removeValidator: (state, action: PayloadAction<IValidators>) => {
-      state.validators.push(action.payload);
+      state.validators.push(action.payload)
     },
     toggleValidator: (state, action: PayloadAction<boolean>) => {
-      state.validatorListen = action.payload;
-    }
+      state.validatorListen = action.payload
+    },
   },
-});
+})
 
 export const {
   addOrder,
@@ -51,16 +51,17 @@ export const {
   removeMatchedOrder,
   removeOrder,
   removeValidator,
-  toggleValidator
-} = ordersSlice.actions;
+  toggleValidator,
+} = ordersSlice.actions
 
-export const selectOrders = (state: RootState) => state.orders.orders;
+export const selectOrders = (state: RootState) => state.orders.orders
 
 export const selectMatchedOrders = (state: RootState) =>
-  state.orders.matchedOrders;
+  state.orders.matchedOrders
 
-export const selectValidators = (state: RootState) => state.orders.validators;
+export const selectValidators = (state: RootState) => state.orders.validators
 
-export const selectValidatorListen = (state: RootState) => state.orders.validatorListen;
+export const selectValidatorListen = (state: RootState) =>
+  state.orders.validatorListen
 
-export default ordersSlice.reducer;
+export default ordersSlice.reducer

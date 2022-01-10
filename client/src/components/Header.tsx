@@ -13,6 +13,7 @@ import PubsubChat from "../p2p/messagehandler";
 import ValidatorHandler from "../p2p/validatorhandler";
 import {useEthers} from '../store/Hooks';
 import {useAppContext} from './context/Store';
+import { mapTokenValuesToEnum, mapActionTypeToEnum } from "./utils/mapToEnum";
 
 import EthCrypto from 'eth-crypto'
 
@@ -42,20 +43,20 @@ const Header = (props: HeaderProps) => {
       const validatorChannel = new ValidatorHandler(state.node, TOPIC_VALIDATOR)
 
       // Listen for messages
-      pubsubChat.on("message", (message) => {
+      pubsubChat.on("sendOrder", (message) => {
         if (message.from === state.node.peerId.toB58String()) {
           message.isMine = true;
         }
         dispatch(
           addOrder({
             id: message.id,
-            tokenFrom: message.tokenA,
-            tokenTo: message.tokenB,
+            tokenS: message.tokenA,
+            tokenB: message.tokenB,
             orderType: message.orderType,
             actionType: message.actionType,
-            price: message.price,
-            quantity: message.quantity,
-            orderFrm: message.orderFrm,
+            amountB: message.buyPrice,
+            amountS: message.sellPrice,
+            orderFrom: message.orderFrm,
             from: message.from,
             status: message.status,
             created: message.created,
@@ -65,13 +66,13 @@ const Header = (props: HeaderProps) => {
           .transaction("rw", state.p2pDb.orders, async () => {
             const id = await state.p2pDb.orders.add({
               id: message.id,
-              tokenFrom: message.tokenA,
-              tokenTo: message.tokenB,
+              tokenS: mapTokenValuesToEnum(message.tokenA),
+              tokenB: mapTokenValuesToEnum(message.tokenB),
               orderType: message.orderType,
-              actionType: message.actionType,
-              price: message.price,
-              quantity: message.quantity,
-              orderFrm: message.orderFrm,
+              actionType: mapActionTypeToEnum(message.actionType),
+              amountB: message.buyPrice,
+              amountS: message.sellPrice,
+              orderFrom: message.orderFrm,
               status: message.status,
               created: message.created,
             });
@@ -82,7 +83,6 @@ const Header = (props: HeaderProps) => {
           });
       });
 
-      
       if (validatorListener) {
       // Listen for messages
       validatorChannel.on('sendMatcher', (message) => {
@@ -106,7 +106,7 @@ const Header = (props: HeaderProps) => {
         });
       });
      }
-},[validatorListener]);
+});
 
   const getNumPeers = () => {
     return useAppSelector(state => state.peer.numPeers)

@@ -1,0 +1,17 @@
+{
+    "semi": false,
+    "overrides": [
+      {
+        "files": "*.spec.ts",
+        "options": {
+          "semi": true
+        }
+      },
+      {
+        "files": ["*.html", "legacy/**/*.ts"],
+        "options": {
+          "tabWidth": 4
+        }
+      }
+    ]
+  }

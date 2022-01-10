@@ -1,4 +1,4 @@
-declare module '*.wasm';
+declare module "*.wasm"
 
-declare module '*.png';
-declare module '*.jpg';
+declare module "*.png"
+declare module "*.jpg"

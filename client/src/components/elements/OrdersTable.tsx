@@ -51,16 +51,16 @@ const OrdersTable = (props: OrdersTableProps) => {
                       className={orderIdx % 2 === 0 ? "bg-white" : "bg-gray-50"}
                     >
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {order.tokenTo}
+                        {order.tokenB}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {order.tokenFrom}
+                        {order.tokenS}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {order.price}
+                        {order.amountB}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {order.quantity}
+                        {order.amountS}
                       </td>
                     </tr>
                   ))}

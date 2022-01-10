@@ -1,40 +1,43 @@
-import {TypedUseSelectorHook, useDispatch, useSelector} from 'react-redux'
-import type {AppDispatch, RootState} from './Store'
+import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux"
+import type { AppDispatch, RootState } from "./Store"
 
-import {useEffect, useState} from 'react'
-import {useWeb3React} from '@web3-react/core'
-import {EtherStore, injected} from '../blockchain'
+import { useEffect, useState } from "react"
+import { useWeb3React } from "@web3-react/core"
+import { EtherStore, injected } from "../blockchain"
 import {
   selectEthersAddress,
   selectEthersConnected,
   selectEthersResolved,
   setEthersAddress,
-  setEthersResolved
-} from "./slices/EthersSlice";
-import { ethers } from 'ethers'
-
+  setEthersResolved,
+} from "./slices/EthersSlice"
+import { ethers } from "ethers"
 
 // Use throughout your store instead of plain `useDispatch` and `useSelector`
 export const useAppDispatch = () => useDispatch<AppDispatch>()
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
 
 export const useEthers = (contractName?: string) => {
-  const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch()
 
-  const ethers: EtherStore = new EtherStore();
+  const ethers: EtherStore = new EtherStore()
 
   const connected = useAppSelector(selectEthersConnected)
   const address = useAppSelector(selectEthersAddress)
   const resolved = useAppSelector(selectEthersResolved)
 
   const [signer, setSigner] = useState<any>(null)
-  const [contract, setContract] = useState<any>(null);
+  const [provider, setProvider] = useState<any>(null)
+  // const [publicKey, setPublicKey] = useState<any>(null);
+  const [contract, setContract] = useState<any>(null)
 
   useEffect(() => {
     const setupEthers = async () => {
       try {
-        const signer = await ethers.getSigner();
-        const signerAddress = await signer.getAddress();
+        const signer = await ethers.getSigner()
+        const signerAddress = await signer.getAddress()
+        const provider = await ethers.getProvider()
+        // const publicKey = await ethers.getPublicKey();
 
         dispatch(setEthersAddress(signerAddress))
 
@@ -42,18 +45,20 @@ export const useEthers = (contractName?: string) => {
           const contract = await ethers.getContract(contractName)
           setContract(contract)
         }
-        setSigner(signer);
-        dispatch(setEthersResolved(true));
+        // setPublicKey(publicKey);
+        setProvider(provider)
+        setSigner(signer)
+        dispatch(setEthersResolved(true))
       } catch (error) {
-        console.log(error);
+        console.log(error)
       }
-    };
+    }
 
-    setupEthers().then();
-  }, []);
+    setupEthers().then()
+  }, [])
 
-  return [ ethers, connected, address, contract, resolved, signer ];
-};
+  return [ethers, connected, address, contract, resolved, signer, provider] //, publicKey];
+}
 
 export function useEagerConnect() {
   const { activate, active } = useWeb3React()
@@ -107,17 +112,17 @@ export function useInactiveListener(suppress: boolean = false) {
         activate(injected)
       }
 
-      ethereum.on('connect', handleConnect)
-      ethereum.on('chainChanged', handleChainChanged)
-      ethereum.on('accountsChanged', handleAccountsChanged)
-      ethereum.on('networkChanged', handleNetworkChanged)
+      ethereum.on("connect", handleConnect)
+      ethereum.on("chainChanged", handleChainChanged)
+      ethereum.on("accountsChanged", handleAccountsChanged)
+      ethereum.on("networkChanged", handleNetworkChanged)
 
       return () => {
         if (ethereum.removeListener) {
-          ethereum.removeListener('connect', handleConnect)
-          ethereum.removeListener('chainChanged', handleChainChanged)
-          ethereum.removeListener('accountsChanged', handleAccountsChanged)
-          ethereum.removeListener('networkChanged', handleNetworkChanged)
+          ethereum.removeListener("connect", handleConnect)
+          ethereum.removeListener("chainChanged", handleChainChanged)
+          ethereum.removeListener("accountsChanged", handleAccountsChanged)
+          ethereum.removeListener("networkChanged", handleNetworkChanged)
         }
       }
     }
