@@ -17,17 +17,18 @@ const TokenAdministration = (props: TokenAdministrationProps) => {
   const tokens = useAppSelector(selectTokens);
   const [ethers, connected, address, contract, resolved] = useEthers(ContractNames.TokenFactory);
 
-  const getWalletTokens = async (contract) => {
+  const getTokens = async () => {
     const tokens: object[] = [];
-
     const tokenFilter = contract.filters.TokenCreated(address, null, null);
+
     await contract.queryFilter(tokenFilter).then(async (result) => {
-      result.forEach((event) =>
+      result.forEach((event) => {
+        console.log(event);
         tokens.push({
           owner: event.args[0],
           address: event.args[1],
           uri: event.args[2],
-        })
+        })}
       );
       dispatch(setTokens(tokens));
     });
@@ -36,20 +37,17 @@ const TokenAdministration = (props: TokenAdministrationProps) => {
   useEffect(() => {
     const setup = async () => {
       if (resolved) {
-        await getWalletTokens(contract).then(() =>
-          console.log("Tokens successfully queried")
-        );
-
+        await getTokens();
         const tokenFilter = contract.filters.TokenCreated(address, null, null);
-        contract.on(tokenFilter, () => getWalletTokens(contract));
+        contract.on(tokenFilter, () => getTokens());
       }
     };
     setup().then();
   }, [resolved]);
 
-  const createToken = (uri: string) => {
+  const createToken = async (uri: string) => {
     if (resolved) {
-      contract.create(uri).then((tx) => console.log(tx));
+      await contract.create(uri).then(() => console.log("Created token"));
     } else {
       console.log("Contract not initialized yet");
     }
@@ -144,6 +142,15 @@ const TokenAdministration = (props: TokenAdministrationProps) => {
                     }
                   >
                     Create
+                  </button>
+                  <button
+                    type="submit"
+                    onClick={() => getTokens()}
+                    className={
+                      "block ml-auto mr-0 flex items-end px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 active:bg-orange-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                    }
+                  >
+                    Get Tokens
                   </button>
                 </div>
               </div>

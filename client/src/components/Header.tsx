@@ -15,8 +15,6 @@ import {useEthers} from '../store/Hooks';
 import {useAppContext} from './context/Store';
 import { mapTokenValuesToEnum, mapActionTypeToEnum } from "./utils/mapToEnum";
 
-import EthCrypto from 'eth-crypto'
-
 type HeaderProps = {
   navigation: any[],
   current: string,
