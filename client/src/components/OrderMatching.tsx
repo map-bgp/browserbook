@@ -41,7 +41,6 @@ function OrderMatch() {
   const [messages, setMessages] = useState([]);
   const [updatemsg, setUpdateMessage] = useState("");
   const [updatemsgs, setUpdateMessages] = useState([]);
-  const [matchedOrder, setMatchedOrder] = useState("");
   const [matchedOrders, setMatchedOrders] = useState([]);
 
   const [ethers, connected, address, contract, resolved, signer] = useEthers();
@@ -57,13 +56,13 @@ function OrderMatch() {
 
   const matchOrders = async () => {
     const orderArray = await state.p2pDb.orders.toArray();
-    const matchedOrder = await state.p2pDb.matchedOrder.toArray();
+    let matchedOrder = await state.p2pDb.matchedOrder.toArray();
     //console.log(`orders array length in the db ${orderArray.length}`);
     // const exemptedOrderArray = orderArray
     // filter(orderArray,matches())
     const orderOne = orderArray.pop();
     const orderTwo = orderArray.pop();
-    const matchedOrder = matchedOrder.pop();
+    matchedOrder = matchedOrder.pop();
     // @ts-ignore
     const signer = library.getSigner();
 
@@ -100,7 +99,7 @@ function OrderMatch() {
 
     const id = (~~(Math.random() * 1e9)).toString(36) + Date.now();
     const created = Date.now();
-    const one, two, three, four;
+    let one, two, three, four;
 
     //Checking if the orderid are already present in the matchedOrder table
     state.p2pDb
