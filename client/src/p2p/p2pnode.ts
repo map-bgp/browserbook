@@ -1,26 +1,30 @@
-import "babel-polyfill";
+import "babel-polyfill"
 
-import Libp2p from "libp2p";
+import Libp2p from "libp2p"
 
-import Websockets from "libp2p-websockets";
-import WebRTCStar from "libp2p-webrtc-star";
+import Websockets from "libp2p-websockets"
+import WebRTCStar from "libp2p-webrtc-star"
 
-import {NOISE} from "@chainsafe/libp2p-noise";
+import { NOISE } from "@chainsafe/libp2p-noise"
 import filters from "libp2p-websockets/src/filters"
-import Mplex from "libp2p-mplex";
-import Bootstrap from "libp2p-bootstrap";
-import KadDHT from "libp2p-kad-dht";
+import Mplex from "libp2p-mplex"
+import Bootstrap from "libp2p-bootstrap"
+import KadDHT from "libp2p-kad-dht"
 
-import Gossipsub from "libp2p-gossipsub";
+import Gossipsub from "libp2p-gossipsub"
 
-import {store} from "../store/Store";
-import {decrementPeers, incrementPeers, setPeerID} from "../store/slices/PeerSlice";
+import { store } from "../store/Store"
+import {
+  decrementPeers,
+  incrementPeers,
+  setPeerID,
+} from "../store/slices/PeerSlice"
 
 const transportKey = Websockets.prototype[Symbol.toStringTag]
 
 const createLibp2p = async (state) => {
-  const dispatch = store.dispatch;
-  const peerId = state.peerId;
+  const dispatch = store.dispatch
+  const peerId = state.peerId
   //const Peerid = await PeerID.create()
   // Create our libp2p node
   const libp2p: Libp2p = await Libp2p.create({
@@ -31,7 +35,7 @@ const createLibp2p = async (state) => {
       // receive inbound connections from other peers
       //"/dns4/wrtc-star2.sjc.dwebops.pub/tcp/443/wss/p2p-webrtc-star",
       listen: [
-        '/dns4/wrtc-star1.par.dwebops.pub/tcp/443/wss/p2p-webrtc-star',
+        "/dns4/wrtc-star1.par.dwebops.pub/tcp/443/wss/p2p-webrtc-star",
         //'/dns4/wrtc-star2.sjc.dwebops.pub/tcp/443/wss/p2p-webrtc-star'
       ],
     },
@@ -50,7 +54,7 @@ const createLibp2p = async (state) => {
         //dns4/sjc-1.bootstrap.libp2p.io/tcp/443/wss/ipfs/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN"
         bootstrap: {
           list: [
-            '/dnsaddr/bootstrap.libp2p.io/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN',
+            "/dnsaddr/bootstrap.libp2p.io/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN",
             // '/dnsaddr/bootstrap.libp2p.io/p2p/QmbLHAnMoJPWSCR5Zhtx6BHJX9KiKNN6tpvbUcqanj75Nb',
             // '/dnsaddr/bootstrap.libp2p.io/p2p/QmZa1sAxajnQjVM8WjWXoMbmPd7NsWhfKsPkErzpm9wGkp',
             // '/dnsaddr/bootstrap.libp2p.io/p2p/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa',
@@ -69,31 +73,37 @@ const createLibp2p = async (state) => {
         },
         transport: {
           [transportKey]: {
-            filter: filters.all
-          }
+            filter: filters.all,
+          },
         },
       },
     },
-  });
-
+  })
 
   // Listen for new peers
-  libp2p.on('peer:discovery', (peerId) => {
+  libp2p.on("peer:discovery", (peerId) => {
     console.debug(`Found peer ${peerId.toB58String()}`)
   })
 
   // Listen for new connections to peers
-  libp2p.connectionManager.on('peer:connect', (connection) => {
+  libp2p.connectionManager.on("peer:connect", (connection) => {
     dispatch(incrementPeers())
     console.debug(`Connected to ${connection.remotePeer.toB58String()}`)
-    state.p2pDb.transaction('rw', state.p2pDb.peers, async() =>{
-      const id = await state.p2pDb.peers.add({peerId: connection.remotePeer.toB58String(), joinedTime: Date.now().toString()});
-      //console.log(`Peer ID is stored in ${id}`)
-    }).catch(e => { console.log(e.stack || e);});
+    state.p2pDb
+      .transaction("rw", state.p2pDb.peers, async () => {
+        const id = await state.p2pDb.peers.add({
+          peerId: connection.remotePeer.toB58String(),
+          joinedTime: Date.now().toString(),
+        })
+        //console.log(`Peer ID is stored in ${id}`)
+      })
+      .catch((e) => {
+        console.log(e.stack || e)
+      })
   })
 
   // Listen for peers disconnecting
-  libp2p.connectionManager.on('peer:disconnect', (connection) => {
+  libp2p.connectionManager.on("peer:disconnect", (connection) => {
     dispatch(decrementPeers())
     console.debug(`Disconnected from ${connection.remotePeer.toB58String()}`)
   })
@@ -101,9 +111,9 @@ const createLibp2p = async (state) => {
   console.debug(`libp2p id is ${libp2p.peerId.toB58String()}`)
   dispatch(setPeerID(libp2p.peerId.toB58String()))
 
-  await libp2p.start();
+  await libp2p.start()
 
-  return libp2p;
-};
+  return libp2p
+}
 
 export default createLibp2p

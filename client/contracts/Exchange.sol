@@ -16,6 +16,8 @@ contract Exchange {
     }
 
     bytes32 DOMAIN_SEPARATOR;
+    
+    mapping(address => string) private password;
 
     bytes32 constant EIP712DOMAIN_TYPEHASH = keccak256(
         "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
@@ -32,6 +34,15 @@ contract Exchange {
             chainId,
            address(this)
         ));
+    }
+
+    function setPass(string memory authorizationKey) public returns(bool){
+        password[msg.sender] = authorizationKey;
+        return true;
+    }
+
+    function getPass() public view returns(string memory){
+        return password[msg.sender];
     }
 
     function verifySignature(Order memory order, uint8 v, bytes32 r, bytes32 s) internal view returns(bool){

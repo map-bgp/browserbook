@@ -1,28 +1,28 @@
-import {RadioObject} from "../components/elements/inputs/Radio";
-import {SelectObject} from "../components/elements/inputs/Select";
+import { RadioObject } from "../components/elements/inputs/Radio"
+import { SelectObject } from "../components/elements/inputs/Select"
 
 export type Order = {
-  type: string;
-  price: number;
-  quantity: number;
+  type: string
+  price: number
+  quantity: number
 }
 
 export const OrderTypes: RadioObject[] = [
   {
     id: 1,
     value: "BID",
-    display: "Bid"
+    display: "Bid",
   },
   {
     id: 2,
     value: "ASK",
-    display: "Ask"
-  }
+    display: "Ask",
+  },
 ]
 
 export const ActionTypes: SelectObject[] = [
-  { id: 1, name: 'Market Order' },
-  { id: 2, name: 'Limit Order' },
+  { id: 1, name: "Market Order" },
+  { id: 2, name: "Limit Order" },
 ]
 
 export enum ActionType {

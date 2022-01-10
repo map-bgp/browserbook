@@ -1,9 +1,9 @@
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import type {RootState} from '../Store'
+import { createSlice, PayloadAction } from "@reduxjs/toolkit"
+import type { RootState } from "../Store"
 
 interface EthersState {
-  connected: boolean,
-  address: string | null | undefined,
+  connected: boolean
+  address: string | null | undefined
   resolved: boolean
 }
 
@@ -14,24 +14,29 @@ const initialState: EthersState = {
 }
 
 export const ethersSlice = createSlice({
-  name: 'ethers',
+  name: "ethers",
   initialState,
   reducers: {
     setEthersConnected: (state, action: PayloadAction<boolean>) => {
       state.connected = action.payload
     },
-    setEthersAddress: (state, action: PayloadAction<string | null | undefined>) => {
+    setEthersAddress: (
+      state,
+      action: PayloadAction<string | null | undefined>
+    ) => {
       state.address = action.payload
     },
     setEthersResolved: (state, action: PayloadAction<boolean>) => {
-      state.resolved= action.payload
+      state.resolved = action.payload
     },
-  }
+  },
 })
 
-export const { setEthersConnected, setEthersAddress, setEthersResolved } = ethersSlice.actions
+export const { setEthersConnected, setEthersAddress, setEthersResolved } =
+  ethersSlice.actions
 
-export const selectEthersConnected = (state: RootState) => state.ethers.connected
+export const selectEthersConnected = (state: RootState) =>
+  state.ethers.connected
 
 export const selectEthersAddress = (state: RootState) => {
   if (state.ethers.address == null) {

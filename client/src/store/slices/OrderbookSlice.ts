@@ -1,7 +1,7 @@
-import {createSlice, PayloadAction} from '@reduxjs/toolkit'
-import type {RootState} from '../Store'
-import {Order} from "../../types/Order";
-import {mockAskQueue, mockBidQueue} from "../../mocks/MockQueues";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit"
+import type { RootState } from "../Store"
+import { Order } from "../../types/Order"
+import { mockAskQueue, mockBidQueue } from "../../mocks/MockQueues"
 
 interface OrderbookState {
   bidQueue: Order[]
@@ -14,25 +14,24 @@ const initialState: OrderbookState = {
 }
 
 export const orderbookSlice = createSlice({
-  name: 'orderbook',
+  name: "orderbook",
   initialState,
   reducers: {
     addOrder: (state, action: PayloadAction<Order>) => {
       // We want the highest bid at the top
-      const sortBid = key => (a, b) => a[key] < b[key] ? 1 : -1
+      const sortBid = (key) => (a, b) => a[key] < b[key] ? 1 : -1
       // We want the lowest ask at the bottom
-      const sortAsk = key => (a, b) => a[key] < b[key] ? 1 : -1
+      const sortAsk = (key) => (a, b) => a[key] < b[key] ? 1 : -1
 
-      if (action.payload.type === 'BID') {
+      if (action.payload.type === "BID") {
         state.bidQueue.push(action.payload)
-        state.bidQueue = state.bidQueue.slice().sort(sortBid('price'))
-      }
-      else if (action.payload.type === 'ASK') {
+        state.bidQueue = state.bidQueue.slice().sort(sortBid("price"))
+      } else if (action.payload.type === "ASK") {
         state.askQueue.push(action.payload)
-        state.askQueue = state.askQueue.slice().sort(sortAsk('price'))
+        state.askQueue = state.askQueue.slice().sort(sortAsk("price"))
       }
-    }
-  }
+    },
+  },
 })
 
 export const { addOrder } = orderbookSlice.actions

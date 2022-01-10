@@ -22,5 +22,5 @@ export const navigation = [
   {
     name: "Order Matching",
     key: "order-matching",
-  }
-];
+  },
+]

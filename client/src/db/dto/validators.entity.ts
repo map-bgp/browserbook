@@ -1,6 +1,6 @@
-export interface IValidators{
-    id?: string,
-    peerId: string,
-    address: string,
-    joinedTime:string,
+export interface IValidators {
+  id?: string
+  peerId: string
+  address: string
+  joinedTime: string
 }
