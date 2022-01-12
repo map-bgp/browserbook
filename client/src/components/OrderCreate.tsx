@@ -20,6 +20,7 @@ import { useWeb3React } from "@web3-react/core";
 import { mapTokenValuesToEnum, mapActionTypeToEnum } from "./utils/mapToEnum";
 import { domain } from '../constants';
 import { Token } from "./elements/Token";
+import { id } from "ethers/lib/utils";
 //import uint8arrayToString from "uint8arrays/to-string";
 
 function OrderCreate() {
@@ -44,7 +45,7 @@ function OrderCreate() {
   //Created while integration with Order
   const [chatClient, setChatClient] = useState(null);
   const TOPIC = "/libp2p/bbook/chat/1.0.0";
-  const [message, setMessage] = useState("");
+  const [id, setId] = useState("");
   const [messages, setMessages] = useState([]);
 
   
@@ -74,6 +75,7 @@ function OrderCreate() {
     evt.preventDefault();
     dispatch(
       addOrder({
+        id: id,
         from: account,
         status: "Open",
         created: Date.now(),
@@ -93,6 +95,7 @@ function OrderCreate() {
   const sendOrderMessage = async () => {
     try {
       const id = (~~(Math.random() * 1e9)).toString(36) + Date.now();
+      setId(id);
       const created = Date.now();
       const status = "OPEN";
 
