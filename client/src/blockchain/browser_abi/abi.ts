@@ -1,5 +1,5 @@
 const TokenFactory = {
-  address: "0x158DE9dCBD61Cb02C83FEE4D606288f12BFCbebB",
+  address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
   abi: [
     {
       "anonymous": false,

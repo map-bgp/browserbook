@@ -60,6 +60,29 @@ export const useEthers = (contractName?: string) => {
   return [ethers, connected, address, contract, resolved, signer, provider] //, publicKey];
 }
 
+export const useContract = (contractName: string) => {
+  const ethers: EtherStore = new EtherStore()
+
+  const [contract, setContract] = useState<any>(null)
+  const [resolved, setResolved] = useState<any>(null)
+
+  useEffect(() => {
+    const setupEthers = async () => {
+      try {
+        const contract = await ethers.getContract(contractName)
+        setContract(contract)
+        setResolved(true)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    setupEthers().then()
+  }, [])
+
+  return [contract, resolved] ;
+}
+
 export function useEagerConnect() {
   const { activate, active } = useWeb3React()
 

@@ -172,8 +172,56 @@ function OrderCreation() {
         </div>
         <div className="md:col-span-2">
           <form onSubmit={handleSubmit}>
-            <div className="shadow sm:rounded-md sm:overflow-hidden">
-              <div className="px-4 py-5 bg-white space-y-6 sm:p-6">
+            <div className="bg-white shadow sm:rounded-md sm:overflow-hidden">
+
+              <div className="px-4 py-5 sm:p-6 grid grid-cols-6 gap-6">
+                <div className="col-span-6 sm:col-span-3">
+                  <div className="block text-sm font-medium text-gray-700 mb-2">
+                    Order Type
+                  </div>
+                  <div className="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-5">
+                    <div className="flex items-center">
+                      <input id="bid" name="order-type" type="radio" checked className="focus:ring-orange-500 h-4 w-4 text-orange-600 border-gray-300" />
+                      <label htmlFor="bid" className="ml-3 block text-sm font-medium text-gray-700">
+                        Bid
+                      </label>
+                    </div>
+
+                    <div className="flex items-center">
+                      <input id="ask" name="order-type" type="radio" className="focus:ring-orange-500 h-4 w-4 text-orange-600 border-gray-300" />
+                      <label htmlFor="ask" className="ml-3 block text-sm font-medium text-gray-700">
+                        Ask
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-span-6 sm:col-span-3">
+                  <div className="block text-sm font-medium text-gray-700 mb-2">
+                    Order Mechanism
+                  </div>
+                  <div className="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-5">
+                    <div className="flex items-center">
+                      <input id="bid" name="order-type" type="radio" checked className="focus:ring-orange-500 h-4 w-4 text-orange-600 border-gray-300" />
+                      <label htmlFor="bid" className="ml-3 block text-sm font-medium text-gray-700">
+                        Market
+                      </label>
+                    </div>
+
+                    <div className="flex items-center">
+                      <input id="ask" name="order-type" type="radio" className="focus:ring-orange-500 h-4 w-4 text-orange-600 border-gray-300" />
+                      <label htmlFor="ask" className="ml-3 block text-sm font-medium text-gray-700">
+                        Limit
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="h-1 mx-auto w-11/12 border-t border-gray-200"></div>
+
+              <div className="px-4 py-5 space-y-6 sm:p-6">
                 <div className="grid grid-cols-6 gap-6">
                   <div className="col-span-6 sm:col-span-3">
                     <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-2">
