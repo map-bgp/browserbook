@@ -1,14 +1,11 @@
 import React from "react";
-import "tailwindcss/tailwind.css"
-
 import {Routes, Route} from "react-router-dom";
-// import Dashboard from './Dashboard'
-// import OrderCreation from "./OrderCreation";
-// import OrderMatch from "./OrderMatching";
-// import TokenAdministration from "./TokenAdministration";
-// import OrderValidation from './OrderValidation';
+
 import {NavPage} from "./utils/constants";
 import Dashboard from "./Dashboard";
+import TokenAdministration from "./TokenAdministration";
+import OrderCreation from "./OrderCreation";
+import OrderBook from "./OrderMatching";
 
 
 type ContentProps = {
@@ -16,7 +13,6 @@ type ContentProps = {
 }
 
 const Content = (props: ContentProps) => {
-
   return (
     <div className="py-10">
       <header>
@@ -26,31 +22,12 @@ const Content = (props: ContentProps) => {
       </header>
       <main>
         <Routes>
-          <Route path="/" element={<Dashboard />}>
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="token-administration" element={<Dashboard />} />
-            <Route path="order-creation" element={<Dashboard />} />
-            <Route path="order-matching" element={<Dashboard />} />
-            <Route path="order-validation" element={<Dashboard />} />
-          </Route>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="token-administration" element={<TokenAdministration />} />
+          <Route path="trade" element={<OrderCreation />} />
+          <Route path="order-book" element={<OrderBook />} />
         </Routes>
-        {/*<Routes>*/}
-          {/*<Route path={"/"} element={<Dashboard />}>*/}
-
-          {/*</Route>*/}
-          {/*<Route path="/token-administration">*/}
-          {/*  <TokenAdministration/>*/}
-          {/*</Route>*/}
-          {/*<Route path="/order-creation">*/}
-          {/*  <OrderCreation/>*/}
-          {/*</Route>*/}
-          {/*<Route path="/order-matching">*/}
-          {/*  <OrderMatch/>*/}
-          {/*</Route>*/}
-          {/*<Route path="/order-validation">*/}
-          {/*  <OrderValidation/>*/}
-          {/*</Route>*/}
-        {/*</Routes>*/}
       </main>
     </div>
   );
