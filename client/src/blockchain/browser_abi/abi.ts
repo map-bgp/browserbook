@@ -1,5 +1,5 @@
 const TokenFactory = {
-  address: "0x158DE9dCBD61Cb02C83FEE4D606288f12BFCbebB",
+  address: "0x0a61F35b57AEe0F4d47b2F84F8F37A78A56B5D30",
   abi: [
     {
       "anonymous": false,
@@ -68,12 +68,43 @@ const TokenFactory = {
 }
 
 const Exchange = {
-  address: "0xe75411DC167f5369b93407A756e06ab1a65e2590",
+  address: "0x2f2c80fACC4621430456105aAf58908B5eABd456",
   abi: [
     {
       "inputs": [],
       "stateMutability": "nonpayable",
       "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "TokensExchangedAt",
+      "type": "event"
     },
     {
       "inputs": [
