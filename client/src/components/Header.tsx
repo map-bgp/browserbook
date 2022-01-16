@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, {useContext, useEffect, useState} from 'react'
 import "tailwindcss/tailwind.css"
 
@@ -19,6 +20,7 @@ import {useAppContext} from './context/Store';
 import { mapTokenValuesToEnum, mapActionTypeToEnum } from "./utils/mapToEnum";
 
 
+
 type HeaderProps = {
   navigation: any[],
   current: string,
@@ -35,6 +37,8 @@ const Header = (props: HeaderProps) => {
   const ethers = useContext(EthersContext);
   const [contract, setContract] = useState<any | null>(null);
   const validatorListener = useAppSelector(selectValidatorListen);
+  const [updatemsg, setUpdateMessage] = useState("");
+  const [updatemsgs, setUpdateMessages] = useState([]);
 
   useEffect(() => {
     if (!state.node) return;
@@ -83,6 +87,27 @@ const Header = (props: HeaderProps) => {
           });
       });
 
+      // Forward order update event to the eventBus(should be for all the users---> need to move)
+      validatorChannel.on("sendUpdate", (updatemsg) => {
+        if (updatemsg.from === state.node.peerId.toB58String()) {
+          updatemsg.isMine = true;
+        }
+        setUpdateMessages((updatemsgs) => [...updatemsgs, updatemsg]);
+        console.log(`update Messages ${updatemsg}`);
+
+        //Update the database with the updates status of the order.
+        state.p2pDb
+          .transaction("rw", state.p2pDb.orders, async () => {
+            const transaction_id = await state.p2pDb.orders
+              .where("id")
+              .equals(updatemsg.id)
+              .modify({ status: "MATCHED" });
+          })
+          .catch((e) => {
+            console.log(e.stack || e);
+          });
+      });
+
       if (validatorListener) {
       // Listen for messages
       validatorChannel.on('sendMatcher', (message) => {
@@ -105,6 +130,34 @@ const Header = (props: HeaderProps) => {
           console.log(e.stack || e);
         });
       });
+
+
+      validatorChannel.on('sendMatchedOrder', (message) => {
+        if (message.from === state.node.peerId.toB58String()) { 
+          message.isMine = true
+        }
+        console.log(`Getting the values for the send Matched order`)
+        state.p2pDb
+          .transaction('rw', state.p2pDb.matchedOrders, async() =>{
+            const id = await state.p2pDb.matchedOrders.add({
+            id: message.id,
+            order1_id: message.order1_id,
+            order2_id: message.order2_id,
+            tokenA: message.tokenA,
+            tokenB: message.tokenB,
+            actionType: message.actionType,
+            amountA: message.amountA,
+            amountB: message.amountB,
+            orderFrom: message.orderFrom,
+            status: message.status,
+            created: message.created,
+          });
+          console.log(`Matched Order stored in ${id}`)
+        })
+        .catch(e => {
+          console.log(e.stack || e);
+        });
+      }); 
      }
 });
 

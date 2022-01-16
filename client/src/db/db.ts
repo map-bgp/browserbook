@@ -24,7 +24,7 @@ export class P2PDB extends Dexie {
 
     this.version(4).stores({
       matchedOrder:
-        "id,order1_id,order2_id,tokenFrom,tokenTo,orderType,actionType,price,quantity,orderFrm,status,created",
+        "id,order1_id,order2_id,tokenA,tokenB,actionType,amountA,amountB,orderFrom,status,created",
     })
     this.matchedOrders = this.table("matchedOrder")
   }

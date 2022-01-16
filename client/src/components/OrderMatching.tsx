@@ -78,10 +78,6 @@ function OrderMatch() {
     
     //console.table(matchedOrder);
 
-    //Sent the updated status in the pubsub channel to propagate
-    //await validatorHandler.sendOrderUpdate(orderOne.id , "MATCHED");
-    //await validatorHandler.sendOrderUpdate(orderTwo.id , "MATCHED");
-
     const id = (~~(Math.random() * 1e9)).toString(36) + Date.now();
     const created = Date.now();
 
@@ -253,27 +249,6 @@ function OrderMatch() {
     // Create the pubsub Client
     if (!validatorHandler && validatorCheck) {
       const pubsubChat = new PubsubChat(state.node, TOPIC_VALIDATOR);
-
-      // Forward order update event to the eventBus(should be for all the users---> need to move)
-      pubsubChat.on("sendUpdate", (updatemsg) => {
-        if (updatemsg.from === state.node.peerId.toB58String()) {
-          updatemsg.isMine = true;
-        }
-        setUpdateMessages((updatemsgs) => [...updatemsgs, updatemsg]);
-        console.log(`update Messages ${updatemsg}`);
-
-        //Update the database with the updates status of the order.
-        state.p2pDb
-          .transaction("rw", state.p2pDb.orders, async () => {
-            const transaction_id = await state.p2pDb.orders
-              .where("id")
-              .equals(updatemsg.id)
-              .modify({ status: "MATCHED" });
-          })
-          .catch((e) => {
-            console.log(e.stack || e);
-          });
-      });
 
       // Matched order entry to database
       pubsubChat.on("sendOrder", (matchedOrder) => {

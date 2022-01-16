@@ -44,6 +44,7 @@ function Matcher() {
   const validatorListener = useAppSelector(selectValidatorListen);
   const [matchedOrder, setMatchedOrder] = useState<MatchingResponse[]>([]);
 
+
   const joinValidator = () => {
     dispatch(toggleValidator(true));
   };
@@ -134,8 +135,36 @@ function Matcher() {
           console.log(e.stack || e);
         });
 
-        //TODO: adding the order to the MatchedOrders table
-        //TODO: add the order updates via listeners
+        //Sent the updated status in the pubsub channel to propagate
+         validatorHandler.sendOrderUpdate(order.orderOne.id , "MATCHED");
+         validatorHandler.sendOrderUpdate(order.orderTwo.id , "MATCHED");
+
+        //Send the matched order to MatchedOrder emit pubsub channel
+        const id = (~~(Math.random() * 1e9)).toString(36) + Date.now();
+        validatorHandler.sendMatchedOrder(id, order.orderOne.id, order.orderTwo.id, order.orderOne.tokenB, order.orderOne.tokenS, order.orderOne.actionType, order.orderOne.amountB, order.orderOne.amountS, order.orderOne.orderFrom, "Filled", order.orderOne.created);
+
+        //Send the matched order to MatchedOrder table local
+        state.p2pDb
+          .transaction('rw', state.p2pDb.matchedOrders, async() =>{
+            const store_id = await state.p2pDb.matchedOrders.add({
+            id: id,
+            order1_id: order.orderOne.id,
+            order2_id: order.orderTwo.id,
+            tokenA: order.orderOne.tokenB,
+            tokenB: order.orderOne.tokenS,
+            actionType: order.orderOne.actionType,
+            amountA: order.orderOne.amountA,
+            amountB: order.orderOne.amountB,
+            orderFrom: order.orderOne.orderFrom,
+            status: "Filled",
+            created: order.orderOne.created,
+          });
+          console.log(`Matched Order stored in ${store_id}`)
+        })
+        .catch(e => {
+          console.log(e.stack || e);
+        });
+
       }
     })
 },[matchedOrder]);
