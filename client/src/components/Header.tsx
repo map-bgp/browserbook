@@ -24,6 +24,8 @@ const Header = (props: HeaderProps) => {
   const { ethers, signer, contract } = useEthers(ContractName.Greeter);
   const log = () => console.log("Ethers", ethers, "Signer", signer, "Contract", contract)
 
+  const getPublicKey = async () => await ethers.getPublicKey(accounts)
+
   // const getNumPeers = () => {
   //   return useAppSelector(state => state.peer.numPeers)
   // }
@@ -67,6 +69,15 @@ const Header = (props: HeaderProps) => {
                 </div>
                 <div className="flex items-center justify-end mr-4">
                   <div className="px-4 flex items-center justify-around mr-4">
+                    <button
+                      type="button"
+                      className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                      onClick={() => {
+                        getPublicKey().then(r => ethers.encryptDelegatedSigner(r)).then(([cipherText, address]) => console.log("Cipher Text", cipherText, "Address", address))
+                      }}
+                    >
+                      Get Public Key
+                    </button>
                     <button
                       type="button"
                       className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"

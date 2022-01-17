@@ -1,4 +1,8 @@
 import { ethers } from "ethers"
+
+// import {bufferToHex} from "ethereumjs-util";
+import {encrypt} from "eth-sig-util";
+
 import { store } from "../store/Store";
 import {setAccounts} from "../store/slices/EthersSlice";
 import {ContractName, ContractMetadata} from "./ContractMetadata";
@@ -31,13 +35,36 @@ export class EtherStore {
     }
   }
 
-  // getPublicKey = async () => {
-  //   if (this.isConnected()) {
-  //     return await this.provider!.send('eth_getEncryptionPublicKey',[this.accounts[0]])
-  //   } else {
-  //     return null
-  //   }
-  // }
+  getPublicKey = async (accounts: Array<string>, onlyFirst: boolean = true) => {
+    if (this.provider) {
+      const accountsToRequest = onlyFirst ? [accounts[0]] : accounts
+      return await this.provider.send('eth_getEncryptionPublicKey', accountsToRequest)
+    } else {
+      return null
+    }
+  }
+
+  encryptDelegatedSigner = async (encryptionKey: string) => {
+    const { address, privateKey } = ethers.Wallet.createRandom()
+
+    const cipherText = address;
+
+    // Throws error in the browser
+    // const cipherText = bufferToHex(
+    //   Buffer.from(
+    //     JSON.stringify(
+    //       encrypt(
+    //         encryptionKey,
+    //         { data: privateKey },
+    //         "x25519-xsalsa20-poly1305"
+    //       )
+    //     ),
+    //     "utf8"
+    //   )
+    // )
+
+    return [cipherText, address]
+  }
 
   getContract = async (contract: ContractName) => {
     if(this.provider) {
