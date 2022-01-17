@@ -1,11 +1,13 @@
 import React from 'react'
-import "tailwindcss/tailwind.css"
 
 import {Link} from "react-router-dom";
 import {Disclosure} from '@headlessui/react'
 import {MenuIcon, XIcon} from '@heroicons/react/outline'
 import {classNames} from "./utils/utils";
 import {Navigation, NavPage} from "./utils/constants";
+import {selectAccounts, selectIsConnected} from "../store/slices/EthersSlice";
+import {useAppSelector, useEthers} from "../store/Hooks";
+import {ContractName} from "../chain/ContractMetadata";
 
 // import {classNames} from './utils/classNames'
 // import {useEthers} from '../store/Hooks';
@@ -16,9 +18,11 @@ type HeaderProps = {
 }
 
 const Header = (props: HeaderProps) => {
+  const isConnected = useAppSelector(selectIsConnected)
+  const accounts = useAppSelector(selectAccounts);
 
-  // const [ethers, isConnected, address ]  = useEthers();
-  // const { state, setContext } = useAppContext();
+  const { ethers, signer, contract } = useEthers(ContractName.Greeter);
+  const log = () => console.log("Ethers", ethers, "Signer", signer, "Contract", contract)
 
   // const getNumPeers = () => {
   //   return useAppSelector(state => state.peer.numPeers)
@@ -63,23 +67,32 @@ const Header = (props: HeaderProps) => {
                 </div>
                 <div className="flex items-center justify-end mr-4">
                   <div className="px-4 flex items-center justify-around mr-4">
-                    { false ? /*{getEthersConnected() ?*/
-                      <>
-                        <div className="mr-2 my-4 py-2 text-gray-500 text-sm font-medium">Connected</div>
-                        <div className="flex h-3 w-3">
-                          <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-green-400 opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-                        </div>
-                      </> :
+                    <button
+                      type="button"
+                      className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                      onClick={() => {
+                        log()
+                      }}
+                    >
+                      Log
+                    </button>
+                    {isConnected ? "Connected" : "Not Connected"}
+                      {/*<>*/}
+                      {/*  <div className="mr-2 my-4 py-2 text-gray-500 text-sm font-medium">Connected</div>*/}
+                      {/*  <div className="flex h-3 w-3">*/}
+                      {/*    <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-green-400 opacity-75"></span>*/}
+                      {/*    <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>*/}
+                      {/*  </div>*/}
+                      {/*</>*/}
                       <button
                         type="button"
                         className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
                         onClick={() => {
-                          // ethers.connect()
+                          ethers.connect().then()
                         }}
                       >
                         Connect
-                      </button>}
+                      </button>
                   </div>
                   <div className="mr-8 my-4 py-2 text-gray-500 text-sm font-medium">
                     {/*Peer Count: {getNumPeers()}*/} Peer Count
