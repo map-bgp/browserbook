@@ -1,48 +1,67 @@
-import React, {useState} from 'react'
-
-import {Link} from "react-router-dom";
-import {Disclosure} from '@headlessui/react'
-import {MenuIcon, XIcon} from '@heroicons/react/outline'
-import {classNames} from "./utils/utils";
-import {Navigation, NavPage} from "./utils/constants";
-import {selectAccounts, selectIsConnected} from "../store/slices/EthersSlice";
-import {useAppSelector, useEthers} from "../store/Hooks";
-import {ContractName} from "../chain/ContractMetadata";
-import {selectEthersAddress} from "../../old/store/slices/EthersSlice";
+import { Link } from 'react-router-dom'
+import { Disclosure } from '@headlessui/react'
+import { MenuIcon, XIcon } from '@heroicons/react/outline'
+import { classNames } from './utils/utils'
+import { Navigation, NavPage } from './utils/constants'
+import { selectAccounts, selectIsConnected } from '../store/slices/EthersSlice'
+import { useAppSelector, useEthers } from '../store/Hooks'
+import { ContractName } from '../chain/ContractMetadata'
+import { useDispatch } from 'react-redux'
+import {
+  selectEncryptedSignerKey,
+  setEncryptedSignerKey,
+  setSignerAddress,
+} from '../store/slices/SignerSlice'
+import { useEffect } from 'react'
 
 // import {classNames} from './utils/classNames'
-// import {useEthers} from '../store/Hooks';
-// import {useAppContext} from './context/Store';
 
 type HeaderProps = {
-  current: NavPage,
+  current: NavPage
 }
 
 const Header = (props: HeaderProps) => {
+  const dispatch = useDispatch()
+
   const isConnected = useAppSelector(selectIsConnected)
-  const accounts = useAppSelector(selectAccounts);
+  const accounts = useAppSelector(selectAccounts)
   const primaryAccount = accounts[0]
 
-  const { ethers, signer, contract } = useEthers(ContractName.Greeter);
-  const log = () => console.log("Ethers", ethers, "Signer", signer, "Contract", contract)
+  const encryptedSignerKey = useAppSelector(selectEncryptedSignerKey)
 
-  const [cipher, setCipher] = useState<string>('');
+  const { ethers, signer, contract } = useEthers(ContractName.TokenFactory)
+
+  const log = () => {
+    console.log('Ethers', ethers, 'Signer', signer, 'Contract', contract)
+    console.log('Filter function', ethers.getFilter(contract!, 'TokenCreated', []))
+  }
+
+  useEffect(() => {
+    const runFilterEffect = async () => {
+      if (contract !== null) {
+        const filter = ethers.getFilter(contract!, 'TokenCreated', [])
+        console.log('Hook query result:', await ethers.queryFilter(contract, filter))
+        ethers.setFilterHandler(contract, filter, (events) => console.log(events))
+      }
+    }
+
+    runFilterEffect()
+  }, [contract])
 
   const encryptSigner = async () => {
     try {
-      const r = await ethers.getPublicKey(accounts)
-      const [cipherText, address] = await ethers.encryptDelegatedSigner(r)
-      setCipher(cipherText)
-      console.log("cipherText:", cipherText)
-      console.log("address:", address)
+      const [signerAddress, encryptedSignerKey] = await ethers.encryptDelegatedSigner(primaryAccount)
+      dispatch(setSignerAddress(signerAddress))
+      dispatch(setEncryptedSignerKey(encryptedSignerKey))
     } catch (error) {
       console.log(error)
     }
   }
 
   const decryptSigner = async () => {
+    if (encryptedSignerKey === null) throw new Error('Cannot decrypt null signer key')
     try {
-      console.log("Decrypted message", await ethers.decrypt(cipher, primaryAccount))
+      console.log('Decrypted message', await ethers.decrypt(encryptedSignerKey, primaryAccount))
     } catch (error) {
       console.log(error)
     }
@@ -59,16 +78,25 @@ const Header = (props: HeaderProps) => {
   return (
     <>
       <Disclosure as="nav" className="bg-white shadow-sm">
-        {({open}) => (
+        {({ open }) => (
           <>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between h-16">
                 <div className="flex">
                   <div className="flex-shrink-0 flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24"
-                         stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-12 w-12"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                      />
                     </svg>
                   </div>
                   <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
@@ -80,7 +108,7 @@ const Header = (props: HeaderProps) => {
                           props.current === name
                             ? 'border-orange-500 text-gray-900'
                             : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
-                          'inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium'
+                          'inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium',
                         )}
                         aria-current={props.current === name ? 'page' : undefined}
                       >
@@ -118,23 +146,23 @@ const Header = (props: HeaderProps) => {
                     >
                       Decrypt Signer
                     </button>
-                    {isConnected ? "Connected" : "Not Connected"}
-                      {/*<>*/}
-                      {/*  <div className="mr-2 my-4 py-2 text-gray-500 text-sm font-medium">Connected</div>*/}
-                      {/*  <div className="flex h-3 w-3">*/}
-                      {/*    <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-green-400 opacity-75"></span>*/}
-                      {/*    <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>*/}
-                      {/*  </div>*/}
-                      {/*</>*/}
-                      <button
-                        type="button"
-                        className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-                        onClick={() => {
-                          ethers.connect().then()
-                        }}
-                      >
-                        Connect
-                      </button>
+                    {isConnected ? 'Connected' : 'Not Connected'}
+                    {/*<>*/}
+                    {/*  <div className="mr-2 my-4 py-2 text-gray-500 text-sm font-medium">Connected</div>*/}
+                    {/*  <div className="flex h-3 w-3">*/}
+                    {/*    <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-green-400 opacity-75"></span>*/}
+                    {/*    <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>*/}
+                    {/*  </div>*/}
+                    {/*</>*/}
+                    <button
+                      type="button"
+                      className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                      onClick={() => {
+                        ethers.connect().then()
+                      }}
+                    >
+                      Connect
+                    </button>
                   </div>
                   <div className="mr-8 my-4 py-2 text-gray-500 text-sm font-medium">
                     {/*Peer Count: {getNumPeers()}*/} Peer Count
@@ -143,13 +171,12 @@ const Header = (props: HeaderProps) => {
 
                 <div className="-mr-2 flex items-center sm:hidden">
                   {/* Mobile menu button */}
-                  <Disclosure.Button
-                    className="bg-white inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+                  <Disclosure.Button className="bg-white inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
                     <span className="sr-only">Open main menu</span>
                     {open ? (
-                      <XIcon className="block h-6 w-6" aria-hidden="true"/>
+                      <XIcon className="block h-6 w-6" aria-hidden="true" />
                     ) : (
-                      <MenuIcon className="block h-6 w-6" aria-hidden="true"/>
+                      <MenuIcon className="block h-6 w-6" aria-hidden="true" />
                     )}
                   </Disclosure.Button>
                 </div>
@@ -166,7 +193,7 @@ const Header = (props: HeaderProps) => {
                       props.current === name
                         ? 'border-orange-500 text-gray-900'
                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
-                      'inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium'
+                      'inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium',
                     )}
                     aria-current={props.current === name ? 'page' : undefined}
                   >
@@ -179,7 +206,7 @@ const Header = (props: HeaderProps) => {
         )}
       </Disclosure>
     </>
-  );
+  )
 }
 
 export default Header

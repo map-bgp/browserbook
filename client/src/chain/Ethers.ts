@@ -1,81 +1,112 @@
-import {ethers} from "ethers"
+import { ethers } from 'ethers'
 
-import {store} from "../store/Store";
-import {setAccounts} from "../store/slices/EthersSlice";
-import {ContractMetadata, ContractName} from "./ContractMetadata";
-import {encrypt} from "./Encryption";
+import { store } from '../store/Store'
+import { selectEncryptionKey, setAccounts, setEncryptionKey } from '../store/slices/EthersSlice'
+import { setEncryptedSignerKey } from '../store/slices/SignerSlice'
+import { ContractMetadata, ContractName } from './ContractMetadata'
+import { encrypt } from './Encryption'
 
-const {ethereum} = window as any
+const { ethereum } = window as any
+
 const dispatch = store.dispatch
 
 export class EtherStore {
-  provider: ethers.providers.Web3Provider | null = null;
-  signer: ethers.providers.JsonRpcSigner | null = null;
+  provider: ethers.providers.Web3Provider
+  signer: ethers.providers.JsonRpcSigner
 
   constructor() {
-    this.provider = typeof ethereum !== "undefined" ? new ethers.providers.Web3Provider(ethereum, "any") : null
-
-    if (this.provider !== null) {
-      ethereum.on("accountsChanged", (accounts: Array<string>) => {
-        // If user has locked/logout from MetaMask, this resets the accounts array to empty
-        dispatch(setAccounts(accounts))
-      })
+    if (typeof ethereum === 'undefined') {
+      throw new Error('Ethereum object is not injected')
     }
+
+    this.provider = new ethers.providers.Web3Provider(ethereum, 'any')
+    this.signer = this.provider.getSigner()
+
+    // If user has locked/logout from MetaMask, this resets the accounts array to empty
+    ethereum.on('accountsChanged', (accounts: Array<string>) => dispatch(setAccounts(accounts)))
   }
 
-  // isConnected = () => this.provider && this.signer && this.accounts.length
-  getAccounts = async () => this.provider ? await this.provider.listAccounts() : []
-  getSigner = () => this.provider ? this.provider.getSigner() : null
+  connect = async () => await this.provider.send('eth_requestAccounts', [])
 
-  connect = async () => {
-    if (this.provider) {
-      await this.provider.send("eth_requestAccounts", [])
-    }
-  }
-
-  // TODO Read from REDUX Store
-  getPublicKey = async (accounts: Array<string>, onlyFirst: boolean = true): Promise<string> => {
-    if (this.provider && accounts.length !== 0) {
-      const accountsToRequest = onlyFirst ? [accounts[0]] : accounts
-      return await this.provider.send('eth_getEncryptionPublicKey', accountsToRequest)
-    } else {
-      throw new Error("No accounts defined")
-    }
-  }
-
-  encryptDelegatedSigner = async (encryptionKey: string) => {
-    const {address, privateKey} = ethers.Wallet.createRandom()
-
-    const cipherText = ethers.utils.hexlify(
-      ethers.utils.toUtf8Bytes(
-        JSON.stringify(encrypt(
-          {
-            publicKey: encryptionKey,
-            data: privateKey,
-            version: "x25519-xsalsa20-poly1305",
-          })
-        )))
-
-    return [cipherText, address]
-  }
-
-  decrypt = async (cipherText: string, address: string) => {
-    if (this.provider) {
-      return await this.provider.send("eth_decrypt", [cipherText, address]);
-    } else {
-      throw new Error("Metamask provider is null")
-    }
-  }
+  getSigner = () => this.signer
+  getAccounts = async () => await this.provider.listAccounts()
 
   getContract = async (contract: ContractName) => {
-    if (this.provider) {
-      const address = ContractMetadata[contract].address
-      const contractABI = ContractMetadata[contract].abi
-      const signer = await this.getSigner()
+    const address = ContractMetadata[contract].address
+    const contractABI = ContractMetadata[contract].abi
 
-      return new ethers.Contract(address, contractABI, signer!)
+    return new ethers.Contract(address, contractABI, this.signer!)
+  }
+
+  getFilter = (
+    contract: ethers.Contract,
+    filterName: string,
+    args: Array<string>,
+  ): ethers.EventFilter => {
+    if (!Reflect.ownKeys(contract.filters).includes(filterName)) {
+      throw new Error('Filter not present on contract')
+    }
+
+    return contract.filters[filterName](...args)
+  }
+
+  queryFilter = async (
+    contract: ethers.Contract,
+    filter: ethers.EventFilter,
+  ): Promise<Array<ethers.Event>> => {
+    if (contract === null) {
+      throw new Error('Cannot query filters on null contract')
+    }
+
+    return await contract.queryFilter(filter)
+  }
+
+  setFilterHandler = (
+    contract: ethers.Contract,
+    filter: ethers.EventFilter,
+    callback: (events?: Array<ethers.Event>) => void,
+  ): void => {
+    if (contract === null) {
+      throw new Error('Cannot set handler on null contract')
+    }
+    contract.on(filter, (events) => callback(events))
+  }
+
+  // TODO Don't forget to reset this somewhere when needed
+  getEncryptionKey = async (account: string): Promise<string> => {
+    if (account === '') {
+      throw new Error('Malformed account')
+    }
+
+    if (selectEncryptionKey(store.getState()) === null) {
+      const encryptionKey = await this.provider.send('eth_getEncryptionPublicKey', [account])
+
+      dispatch(setEncryptionKey(encryptionKey))
+      return encryptionKey
     } else {
-      throw new Error("Metamask provider is null")
+      return selectEncryptionKey(store.getState())!
     }
   }
+
+  encryptDelegatedSigner = async (account: string) => {
+    const encryptionKey = await this.getEncryptionKey(account)
+    const { address: signerAddress, privateKey } = ethers.Wallet.createRandom()
+
+    const encryptedSignerKey = ethers.utils.hexlify(
+      ethers.utils.toUtf8Bytes(
+        JSON.stringify(
+          encrypt({
+            publicKey: encryptionKey,
+            data: privateKey,
+            version: 'x25519-xsalsa20-poly1305',
+          }),
+        ),
+      ),
+    )
+
+    return [signerAddress, encryptedSignerKey]
+  }
+
+  decrypt = async (cipherText: string, address: string) =>
+    await this.provider.send('eth_decrypt', [cipherText, address])
 }
