@@ -1,13 +1,11 @@
-import { ethers } from "ethers"
+import {ethers} from "ethers"
 
-// import {bufferToHex} from "ethereumjs-util";
-import {encrypt} from "eth-sig-util";
-
-import { store } from "../store/Store";
+import {store} from "../store/Store";
 import {setAccounts} from "../store/slices/EthersSlice";
-import {ContractName, ContractMetadata} from "./ContractMetadata";
+import {ContractMetadata, ContractName} from "./ContractMetadata";
+import {encrypt} from "./Encryption";
 
-const { ethereum } = window as any
+const {ethereum} = window as any
 const dispatch = store.dispatch
 
 export class EtherStore {
@@ -35,46 +33,49 @@ export class EtherStore {
     }
   }
 
-  getPublicKey = async (accounts: Array<string>, onlyFirst: boolean = true) => {
-    if (this.provider) {
+  // TODO Read from REDUX Store
+  getPublicKey = async (accounts: Array<string>, onlyFirst: boolean = true): Promise<string> => {
+    if (this.provider && accounts.length !== 0) {
       const accountsToRequest = onlyFirst ? [accounts[0]] : accounts
       return await this.provider.send('eth_getEncryptionPublicKey', accountsToRequest)
     } else {
-      return null
+      throw new Error("No accounts defined")
     }
   }
 
   encryptDelegatedSigner = async (encryptionKey: string) => {
-    const { address, privateKey } = ethers.Wallet.createRandom()
+    const {address, privateKey} = ethers.Wallet.createRandom()
 
-    const cipherText = address;
-
-    // Throws error in the browser
-    // const cipherText = bufferToHex(
-    //   Buffer.from(
-    //     JSON.stringify(
-    //       encrypt(
-    //         encryptionKey,
-    //         { data: privateKey },
-    //         "x25519-xsalsa20-poly1305"
-    //       )
-    //     ),
-    //     "utf8"
-    //   )
-    // )
+    const cipherText = ethers.utils.hexlify(
+      ethers.utils.toUtf8Bytes(
+        JSON.stringify(encrypt(
+          {
+            publicKey: encryptionKey,
+            data: privateKey,
+            version: "x25519-xsalsa20-poly1305",
+          })
+        )))
 
     return [cipherText, address]
   }
 
+  decrypt = async (cipherText: string, address: string) => {
+    if (this.provider) {
+      return await this.provider.send("eth_decrypt", [cipherText, address]);
+    } else {
+      throw new Error("Metamask provider is null")
+    }
+  }
+
   getContract = async (contract: ContractName) => {
-    if(this.provider) {
+    if (this.provider) {
       const address = ContractMetadata[contract].address
       const contractABI = ContractMetadata[contract].abi
       const signer = await this.getSigner()
 
       return new ethers.Contract(address, contractABI, signer!)
     } else {
-      return null; // Way to improve this?
+      throw new Error("Metamask provider is null")
     }
   }
 }
