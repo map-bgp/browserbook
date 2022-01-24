@@ -3,12 +3,10 @@ import "tailwindcss/tailwind.css"
 
 import {Route, Switch} from "react-router-dom";
 import Dashboard from './Dashboard'
-import Market from './Market'
-import Portfolio from './Portfolio'
-import OrderCreate from "./OrderCreate";
+import OrderCreation from "./OrderCreation";
 import OrderMatch from "./OrderMatching";
 import TokenAdministration from "./TokenAdministration";
-import Matcher from './Matcher';
+import OrderValidation from './OrderValidation';
 
 
 type ContentProps = {
@@ -29,23 +27,17 @@ const Content = (props: ContentProps) => {
           <Route exact path={["", "/", "/dashboard"]}>
             <Dashboard/>
           </Route>
-          <Route path="/market">
-            <Market/>
-          </Route>
-          <Route path="/portfolio">
-            <Portfolio/>
-          </Route>
           <Route path="/token-administration">
             <TokenAdministration/>
           </Route>
           <Route path="/order-creation">
-            <OrderCreate/>
+            <OrderCreation/>
           </Route>
           <Route path="/order-matching">
             <OrderMatch/>
           </Route>
-          <Route path="/be-a-matcher">
-            <Matcher/>
+          <Route path="/order-validation">
+            <OrderValidation/>
           </Route>
         </Switch>
       </main>

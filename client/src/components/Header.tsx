@@ -9,12 +9,9 @@ import {MenuIcon, XIcon} from '@heroicons/react/outline'
 import {classNames} from './utils/classNames'
 import {useAppDispatch, useAppSelector} from "../store/Hooks";
 import {selectEthersConnected, selectEthersAddress} from "../store/slices/EthersSlice";
-import {EthersContext} from "./EthersContext";
-import {ContractNames} from "../blockchain/ContractNames";
-import { addOrder, selectValidatorListen, toggleValidator, addValidator } from "../store/slices/OrdersSlice";
+import { addOrder, selectValidatorListen } from "../store/slices/OrdersSlice";
 import PubsubChat from "../p2p/messagehandler";
 import ValidatorHandler from "../p2p/validatorhandler";
-import { getAccountPath } from 'ethers/lib/utils';
 import {useEthers} from '../store/Hooks';
 import {useAppContext} from './context/Store';
 import { mapTokenValuesToEnum, mapActionTypeToEnum } from "./utils/mapToEnum";
@@ -31,11 +28,13 @@ const Header = (props: HeaderProps) => {
   const TOPIC = "/libp2p/bbook/chat/1.0.0";
   const TOPIC_VALIDATOR = "/libp2p/example/validator/1.0.0";
 
-  const [ address]  = useEthers();
+  const [ethers, isConnected, address ]  = useEthers();
   const { state, setContext } = useAppContext();
 
-  const ethers = useContext(EthersContext);
-  const [contract, setContract] = useState<any | null>(null);
+  // Testing
+  const [cipherText, setCipherText] = useState<string>("")
+  const [localAddress, setLocalAddress] = useState<string>("")
+
   const validatorListener = useAppSelector(selectValidatorListen);
   const [updatemsg, setUpdateMessage] = useState("");
   const [updatemsgs, setUpdateMessages] = useState([]);
@@ -167,10 +166,6 @@ const Header = (props: HeaderProps) => {
 
   const getEthersConnected = () => {
     return useAppSelector(selectEthersConnected)
-  }
-
-  const getEthersAddress = () => {
-    return useAppSelector(selectEthersAddress)
   }
 
   return (

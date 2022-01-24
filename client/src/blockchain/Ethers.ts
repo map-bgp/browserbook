@@ -14,7 +14,7 @@ export class EtherStore {
 
   constructor() {
     this.start().then(() =>
-      console.log("Successfully initialized ethers context")
+      console.log("Started Ethers")
     )
     this.isConnected().then(() =>
       console.log("Ethers has successfully completed connection checks")

@@ -27,7 +27,7 @@ import { ethers as ethPkg } from "ethers";
 import { IOrders } from "../db";
 import {MatchingResponse} from "../oms/matching";
 
-function Matcher() {
+function OrderValidation() {
   const dispatch = useAppDispatch();
 
   const [ethers, connected, address, contract, resolved, signer, provider] =
@@ -299,4 +299,4 @@ function Matcher() {
 
 }
 
-export default Matcher;
+export default OrderValidation;

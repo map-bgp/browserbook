@@ -7,6 +7,14 @@ require("hardhat-deploy-ethers")
 const HDWalletProvider = require('@truffle/hdwallet-provider')
 require('dotenv').config()
 
+task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
+    const accounts = await hre.ethers.getSigners();
+
+    for (const account of accounts) {
+        console.log(account.address, account.privateKey);
+    }
+});
+
 module.exports = {
     networks: {
         hardhat: {
@@ -17,7 +25,7 @@ module.exports = {
         },
         development: {
             url: "http://localhost:9545",
-            accounts:{mnemonic:"muffin area swamp arm hundred photo upon chalk acoustic dawn home dragon"}
+            accounts: { mnemonic: "muffin area swamp arm hundred photo upon chalk acoustic dawn home dragon" }
         },
         goerli:{
             url: process.env.GOERLI_RPC_URL,

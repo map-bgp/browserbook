@@ -44,11 +44,11 @@ export const useEthers = (contractName?: string) => {
         if (contractName !== undefined) {
           const contract = await ethers.getContract(contractName)
           setContract(contract)
+          dispatch(setEthersResolved(true))
         }
         // setPublicKey(publicKey);
         setProvider(provider)
         setSigner(signer)
-        dispatch(setEthersResolved(true))
       } catch (error) {
         console.log(error)
       }
