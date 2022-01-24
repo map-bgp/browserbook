@@ -2,13 +2,12 @@ export interface IMatchedOrders {
   id?: string
   order1_id: string
   order2_id: string
-  tokenFrom: string
-  tokenTo: string
-  orderType: string
+  tokenA: string
+  tokenB: string
   actionType: string
-  price: number
-  quantity: number
-  orderFrm: number
+  amountA: number
+  amountB: number
+  orderFrom: number
   status: string
   created: string
 }

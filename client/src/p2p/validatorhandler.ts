@@ -10,27 +10,26 @@ message Request {
     SEND_MATCHER = 0;
     STATS = 1;
     SEND_UPDATE = 2;
-    SEND_ORDER = 3;
+    SEND_MATCHED_ORDER = 3;
   }
   required Type type = 1;
   optional SendMatcher sendMatcher = 2;
   optional Stats stats = 3;
   optional SendUpdate sendUpdate = 4;
-  optional SendOrder sendOrder = 5;
+  optional SendMatchedOrder sendMatchedOrder = 5;
 }
-message SendOrder {
+message SendMatchedOrder {
   required bytes id = 1;
   required bytes order1_id = 2;
   required bytes order2_id = 3;
   required bytes tokenA = 4;
   required bytes tokenB = 5;
-  required bytes orderType = 6;
-  required bytes actionType = 7;
-  required bytes price = 8;
-  required bytes quantity = 9;
-  required bytes orderFrm = 10;
-  required int64 created = 11;
-  required bytes status = 12;
+  required bytes actionType = 6;
+  required bytes amountA = 7;
+  required bytes amountB = 8;
+  required bytes orderFrom = 9;
+  required int64 created = 10;
+  required bytes status = 11;
 }
 message SendMatcher {
   required bytes peerID = 1;
@@ -96,23 +95,22 @@ class ValidatorHandler extends EventEmitter {
   _onMessage(message) {
     try {
       const request = Request.decode(message.data)
-      console.log(`onMessage emit function`)
+      //console.log(`onMessage emit function`)
       switch (request.type) {
-        case Request.Type.SEND_ORDER:
-          this.emit("sendOrder", {
-            //from: message.from,
-            id: uint8arrayToString(request.sendOrder.id),
-            order1_id: uint8arrayToString(request.sendOrder.order1_id),
-            order2_id: uint8arrayToString(request.sendOrder.order2_id),
-            tokenA: uint8arrayToString(request.sendOrder.tokenA),
-            tokenB: uint8arrayToString(request.sendOrder.tokenB),
-            orderType: uint8arrayToString(request.sendOrder.orderType),
-            actionType: uint8arrayToString(request.sendOrder.actionType),
-            price: uint8arrayToString(request.sendOrder.price),
-            quantity: uint8arrayToString(request.sendOrder.quantity),
-            orderFrm: uint8arrayToString(request.sendOrder.orderFrm),
-            status: uint8arrayToString(request.sendOrder.status),
-            created: request.sendOrder.created,
+        case Request.Type.SEND_MATCHED_ORDER:
+          console.log(`Emitting the sendMatched Order`)
+          this.emit("sendMatchedOrder", {
+            id: uint8arrayToString(request.sendMatchedOrder.id),
+            order1_id: uint8arrayToString(request.sendMatchedOrder.order1_id),
+            order2_id: uint8arrayToString(request.sendMatchedOrder.order2_id),
+            tokenA: uint8arrayToString(request.sendMatchedOrder.tokenA),
+            tokenB: uint8arrayToString(request.sendMatchedOrder.tokenB),
+            actionType: uint8arrayToString(request.sendMatchedOrder.actionType),
+            amountA: uint8arrayToString(request.sendMatchedOrder.amountA),
+            amountB: uint8arrayToString(request.sendMatchedOrder.amountB),
+            orderFrom: uint8arrayToString(request.sendMatchedOrder.orderFrom),
+            status: uint8arrayToString(request.sendMatchedOrder.status),
+            created: request.sendMatchedOrder.created,
           })
           break
         case Request.Type.SEND_UPDATE:
@@ -123,7 +121,6 @@ class ValidatorHandler extends EventEmitter {
           })
           break
         case Request.Type.SEND_MATCHER:
-          console.log(`Emitting the sendMatcher logic`)
           this.emit("sendMatcher", {
             from: message.from,
             peerID: uint8arrayToString(request.sendMatcher.peerID),
@@ -192,28 +189,26 @@ class ValidatorHandler extends EventEmitter {
     order2_id,
     tokenA,
     tokenB,
-    orderType,
     actionType,
-    price,
-    quantity,
+    amountA,
+    amountB,
     account,
     status,
     created
   ) {
     //console.log(`Send message function : ${order1_id} : ${order2_id} : ${tokenA} : ${tokenB} : ${orderType} : ${actionType} : ${price} : ${quantity} : ${account} : ${status} : ${created}`)
     const msg = Request.encode({
-      type: Request.Type.SEND_ORDER,
-      sendOrder: {
+      type: Request.Type.SEND_MATCHED_ORDER,
+      sendMatchedOrder: {
         id: uint8arrayFromString(id),
         order1_id: uint8arrayFromString(order1_id),
         order2_id: uint8arrayFromString(order2_id),
         tokenA: uint8arrayFromString(tokenA),
         tokenB: uint8arrayFromString(tokenB),
-        orderType: uint8arrayFromString(orderType),
         actionType: uint8arrayFromString(actionType),
-        price: uint8arrayFromString(price),
-        quantity: uint8arrayFromString(quantity),
-        orderFrm: uint8arrayFromString(account),
+        amountA: uint8arrayFromString(amountA),
+        amountB: uint8arrayFromString(amountB),
+        orderFrom: uint8arrayFromString(account),
         status: uint8arrayFromString(status),
         created: created,
       },
