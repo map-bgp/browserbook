@@ -23,5 +23,9 @@ export const tokensSlice = createSlice({
 export const { setTokens } = tokensSlice.actions
 
 export const selectTokens = (state: RootState): Array<Token> => state.tokens.tokens
+export const selectTokenByAddress = (state: RootState, address: string): Token | null => {
+  const res = selectTokens(state).find((e) => e.address === address)
+  return res !== undefined ? res : null
+}
 
 export default tokensSlice.reducer

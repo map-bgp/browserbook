@@ -4,7 +4,7 @@ import { ethers, EventFilter } from 'ethers'
 
 import type { AppDispatch, RootState } from './Store'
 import { setAccounts } from './slices/EthersSlice'
-import { EtherStore, SlickEtherStore } from '../chain/Ethers'
+import { EtherStore } from '../chain/Ethers'
 import { ContractName } from '../chain/ContractMetadata'
 
 export const useAppDispatch = () => useDispatch<AppDispatch>()
@@ -25,7 +25,6 @@ export const useEthers = (contractName?: ContractName) => {
       if (contractName) {
         const contract = await ethers.getContract(contractName)
         setContract(contract)
-        // dispatch(setEthersResolved(true))
       }
     }
     setupEthers().then()
@@ -34,23 +33,47 @@ export const useEthers = (contractName?: ContractName) => {
   return { ethers, signer, contract }
 }
 
-export const useFilter = (
+// export const useFilter = (
+//   contract: ethers.Contract | null,
+//   filterName: string,
+//   filterArgs: Array<string> | null,
+//   callback: (events: Array<ethers.Event>) => void,
+// ) => {
+//   useEffect(() => {
+//     console.log('Here are the filter args', filterArgs)
+
+//     const setupFilter = async () => {
+//       if (!!contract && !!filterArgs) {
+//         contract.removeAllListeners()
+
+//         const filter = EtherStore.getFilter(contract, filterName, filterArgs)
+//         EtherStore.setFilterHandler(contract, filter, callback)
+//       }
+//     }
+
+//     setupFilter()
+//   }, [contract, filterArgs])
+// }
+
+// Change to async thunk for integration into store?
+export const useTokenFilter = (
   contract: ethers.Contract | null,
   filterName: string,
-  filterArgs: Array<string>,
+  ownerAddress: string | null,
   callback: (events: Array<ethers.Event>) => void,
 ) => {
-  const slickEthers = new SlickEtherStore()
   useEffect(() => {
-    const setupFilter = async () => {
-      if (!!contract) {
-        const filter = EtherStore.getFilter(contract, filterName, filterArgs)
+    console.log('Here are the filter args', ownerAddress)
 
+    const setupFilter = async () => {
+      if (!!contract && !!ownerAddress) {
+        contract.removeAllListeners()
+
+        const filter = EtherStore.getFilter(contract, filterName, [ownerAddress])
         EtherStore.setFilterHandler(contract, filter, callback)
-        callback(await EtherStore.queryFilter(contract, filter))
       }
     }
 
     setupFilter()
-  }, [contract])
+  }, [contract, ownerAddress])
 }

@@ -23,46 +23,8 @@ type HeaderProps = {
 }
 
 const Header = (props: HeaderProps) => {
-  const dispatch = useDispatch()
-
-  const { isConnected, accounts, primaryAccount } = useAppSelector(selectAccountData)
-  const { ethers, signer, contract } = useEthers(ContractName.TokenFactory)
-
-  const encryptedSignerKey = useAppSelector(selectEncryptedSignerKey)
-
-  const log = () => {
-    console.log('Ethers', ethers, 'Signer', signer, 'Contract', contract)
-    console.log('Filter function', EtherStore.getFilter(contract!, 'TokenCreated', []))
-  }
-
-  const encryptSigner = async () => {
-    try {
-      if (isSome(primaryAccount)) {
-        const [signerAddress, encryptedSignerKey] = await ethers.encryptDelegatedSigner(
-          primaryAccount.value,
-        )
-        dispatch(setSignerAddress(signerAddress))
-        dispatch(setEncryptedSignerKey(encryptedSignerKey))
-      } else {
-        throw new Error('Cannot encrypt a delegated signer for an empty account')
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  const decryptSigner = async () => {
-    if (encryptedSignerKey === null) throw new Error('Cannot decrypt null signer key')
-    try {
-      if (isSome(primaryAccount)) {
-        console.log('Decrypted message', await ethers.decrypt(encryptedSignerKey, primaryAccount.value))
-      } else {
-        throw new Error('Cannot decrypt a delegated signer for an empty account')
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  const { isConnected } = useAppSelector(selectAccountData)
+  const { ethers } = useEthers()
 
   // const getNumPeers = () => {
   //   return useAppSelector(state => state.peer.numPeers)
@@ -116,50 +78,25 @@ const Header = (props: HeaderProps) => {
                 </div>
                 <div className="flex items-center justify-end mr-4">
                   <div className="px-4 flex items-center justify-around mr-4">
-                    <button
-                      type="button"
-                      className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-                      onClick={() => {
-                        log()
-                      }}
-                    >
-                      Log
-                    </button>
-                    <button
-                      type="button"
-                      className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-                      onClick={() => {
-                        encryptSigner()
-                      }}
-                    >
-                      Encrypt Signer
-                    </button>
-                    <button
-                      type="button"
-                      className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-                      onClick={() => {
-                        decryptSigner()
-                      }}
-                    >
-                      Decrypt Signer
-                    </button>
-                    {isConnected ? 'Connected' : 'Not Connected'}
-                    {/*<>*/}
-                    {/*  <div className="mr-2 my-4 py-2 text-gray-500 text-sm font-medium">Connected</div>*/}
-                    {/*  <div className="flex h-3 w-3">*/}
-                    {/*    <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-green-400 opacity-75"></span>*/}
-                    {/*    <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>*/}
-                    {/*  </div>*/}
-                    {/*</>*/}
-                    <button
-                      type="button"
-                      className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-                      onClick={() => {
-                        ethers.connect().then()
-                      }}
-                    >
-                      Connect
-                    </button>
+                    {isConnected ? (
+                      <>
+                        <div className="mr-2 my-4 py-2 text-gray-500 text-sm font-medium">Connected</div>
+                        <div className="flex h-3 w-3">
+                          <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-green-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                        </div>
+                      </>
+                    ) : (
+                      <button
+                        type="button"
+                        className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                        onClick={() => {
+                          ethers.connect().then()
+                        }}
+                      >
+                        Connect
+                      </button>
+                    )}
                   </div>
                   <div className="mr-8 my-4 py-2 text-gray-500 text-sm font-medium">
                     {/*Peer Count: {getNumPeers()}*/} Peer Count

@@ -10,26 +10,26 @@ const { ethereum } = window as any
 
 const dispatch = store.dispatch
 
-export class SlickEtherStore {
-  provider: ethers.providers.Web3Provider
-  signer: ethers.providers.JsonRpcSigner
+// export class SlickEtherStore {
+//   provider: ethers.providers.Web3Provider
+//   signer: ethers.providers.JsonRpcSigner
 
-  constructor() {
-    if (typeof ethereum === 'undefined') {
-      throw new Error('Ethereum object is not injected')
-    }
+//   constructor() {
+//     if (typeof ethereum === 'undefined') {
+//       throw new Error('Ethereum object is not injected')
+//     }
 
-    this.provider = new ethers.providers.Web3Provider(ethereum, 'any')
-    this.signer = this.provider.getSigner()
-  }
+//     this.provider = new ethers.providers.Web3Provider(ethereum, 'any')
+//     this.signer = this.provider.getSigner()
+//   }
 
-  getContract = async (contract: ContractName) => {
-    const address = ContractMetadata[contract].address
-    const contractABI = ContractMetadata[contract].abi
+//   getContract = async (contract: ContractName) => {
+//     const address = ContractMetadata[contract].address
+//     const contractABI = ContractMetadata[contract].abi
 
-    return new ethers.Contract(address, contractABI, this.signer)
-  }
-}
+//     return new ethers.Contract(address, contractABI, this.signer)
+//   }
+// }
 
 export class EtherStore {
   provider: ethers.providers.Web3Provider
@@ -82,15 +82,21 @@ export class EtherStore {
     return await contract.queryFilter(filter)
   }
 
-  static setFilterHandler = (
+  static setFilterHandler = async (
     contract: ethers.Contract,
     filter: ethers.EventFilter,
     callback: (events: Array<ethers.Event>) => void,
-  ): void => {
+  ): Promise<void> => {
     if (contract === null) {
       throw new Error('Cannot set handler on null contract')
     }
-    contract.on(filter, callback)
+    const queryFilter = async () => {
+      const res = await EtherStore.queryFilter(contract, filter)
+      console.log('Result of nested query:', res)
+      callback(res)
+    }
+
+    contract.on(filter, () => queryFilter())
   }
 
   // TODO Don't forget to reset this somewhere when needed

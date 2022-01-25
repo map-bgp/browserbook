@@ -1,15 +1,16 @@
-import React from "react";
-import {Routes, Route} from "react-router-dom";
+import React from 'react'
+import { Routes, Route, Outlet } from 'react-router-dom'
 
-import {NavPage} from "./utils/constants";
-import Dashboard from "./Dashboard";
-import TokenAdministration from "./TokenAdministration";
-import OrderCreation from "./OrderCreation";
-import OrderBook from "./OrderMatching";
-
+import { NavPage } from './utils/constants'
+import Dashboard from './Dashboard'
+import TokenAdministration from './TokenAdministration'
+import OrderCreation from './OrderCreation'
+import OrderBook from './OrderMatching'
+import ControlPanel from './ControlPanel'
+import Token from './elements/Token'
 
 type ContentProps = {
-  current: NavPage,
+  current: NavPage
 }
 
 const Content = (props: ContentProps) => {
@@ -24,13 +25,17 @@ const Content = (props: ContentProps) => {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="dashboard" element={<Dashboard />} />
-          <Route path="token-administration" element={<TokenAdministration />} />
+          <Route path="token-administration" element={<Outlet />}>
+            <Route index element={<TokenAdministration />} />
+            <Route path=":tokenAddress" element={<Token />} />
+          </Route>
           <Route path="trade" element={<OrderCreation />} />
           <Route path="order-book" element={<OrderBook />} />
+          <Route path="control-panel" element={<ControlPanel />} />
         </Routes>
       </main>
     </div>
-  );
+  )
 }
 
 export default Content

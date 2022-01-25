@@ -1,5 +1,3 @@
-import { Option, some, none } from 'fp-ts/Option'
-
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../Store'
 
@@ -30,8 +28,9 @@ export const { setAccounts, setEncryptionKey } = ethersSlice.actions
 
 export const selectIsConnected = (state: RootState): boolean => state.ethers.accounts.length !== 0
 export const selectAccounts = (state: RootState): Array<string> => state.ethers.accounts
-export const selectPrimaryAccount = (state: RootState): Option<string> =>
-  state.ethers.accounts.length !== 0 ? some<string>(state.ethers.accounts[0]) : none
+// Would like to use the optional type here
+export const selectPrimaryAccount = (state: RootState): string | null =>
+  state.ethers.accounts.length !== 0 ? state.ethers.accounts[0] : null
 
 export const selectAccountData = (state: RootState) => ({
   isConnected: selectIsConnected(state),

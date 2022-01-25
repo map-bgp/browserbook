@@ -1,4 +1,4 @@
 export type Token = {
-  //   uri: string
-  //   address: string
+  uri: string
+  address: string
 }
