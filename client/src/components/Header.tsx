@@ -3,7 +3,7 @@ import { Disclosure } from '@headlessui/react'
 import { MenuIcon, XIcon } from '@heroicons/react/outline'
 import { classNames } from './utils/utils'
 import { Navigation, NavPage } from './utils/constants'
-import { selectAccounts, selectIsConnected } from '../store/slices/EthersSlice'
+import { selectAccountData } from '../store/slices/EthersSlice'
 import { useAppSelector, useEthers } from '../store/Hooks'
 import { ContractName } from '../chain/ContractMetadata'
 import { useDispatch } from 'react-redux'
@@ -13,6 +13,8 @@ import {
   setSignerAddress,
 } from '../store/slices/SignerSlice'
 import { useEffect } from 'react'
+import { some, none, isSome } from 'fp-ts/Option'
+import { EtherStore } from '../chain/Ethers'
 
 // import {classNames} from './utils/classNames'
 
@@ -23,36 +25,27 @@ type HeaderProps = {
 const Header = (props: HeaderProps) => {
   const dispatch = useDispatch()
 
-  const isConnected = useAppSelector(selectIsConnected)
-  const accounts = useAppSelector(selectAccounts)
-  const primaryAccount = accounts[0]
+  const { isConnected, accounts, primaryAccount } = useAppSelector(selectAccountData)
+  const { ethers, signer, contract } = useEthers(ContractName.TokenFactory)
 
   const encryptedSignerKey = useAppSelector(selectEncryptedSignerKey)
 
-  const { ethers, signer, contract } = useEthers(ContractName.TokenFactory)
-
   const log = () => {
     console.log('Ethers', ethers, 'Signer', signer, 'Contract', contract)
-    console.log('Filter function', ethers.getFilter(contract!, 'TokenCreated', []))
+    console.log('Filter function', EtherStore.getFilter(contract!, 'TokenCreated', []))
   }
-
-  useEffect(() => {
-    const runFilterEffect = async () => {
-      if (contract !== null) {
-        const filter = ethers.getFilter(contract!, 'TokenCreated', [])
-        console.log('Hook query result:', await ethers.queryFilter(contract, filter))
-        ethers.setFilterHandler(contract, filter, (events) => console.log(events))
-      }
-    }
-
-    runFilterEffect()
-  }, [contract])
 
   const encryptSigner = async () => {
     try {
-      const [signerAddress, encryptedSignerKey] = await ethers.encryptDelegatedSigner(primaryAccount)
-      dispatch(setSignerAddress(signerAddress))
-      dispatch(setEncryptedSignerKey(encryptedSignerKey))
+      if (isSome(primaryAccount)) {
+        const [signerAddress, encryptedSignerKey] = await ethers.encryptDelegatedSigner(
+          primaryAccount.value,
+        )
+        dispatch(setSignerAddress(signerAddress))
+        dispatch(setEncryptedSignerKey(encryptedSignerKey))
+      } else {
+        throw new Error('Cannot encrypt a delegated signer for an empty account')
+      }
     } catch (error) {
       console.log(error)
     }
@@ -61,7 +54,11 @@ const Header = (props: HeaderProps) => {
   const decryptSigner = async () => {
     if (encryptedSignerKey === null) throw new Error('Cannot decrypt null signer key')
     try {
-      console.log('Decrypted message', await ethers.decrypt(encryptedSignerKey, primaryAccount))
+      if (isSome(primaryAccount)) {
+        console.log('Decrypted message', await ethers.decrypt(encryptedSignerKey, primaryAccount.value))
+      } else {
+        throw new Error('Cannot decrypt a delegated signer for an empty account')
+      }
     } catch (error) {
       console.log(error)
     }
