@@ -10,27 +10,6 @@ const { ethereum } = window as any
 
 const dispatch = store.dispatch
 
-// export class SlickEtherStore {
-//   provider: ethers.providers.Web3Provider
-//   signer: ethers.providers.JsonRpcSigner
-
-//   constructor() {
-//     if (typeof ethereum === 'undefined') {
-//       throw new Error('Ethereum object is not injected')
-//     }
-
-//     this.provider = new ethers.providers.Web3Provider(ethereum, 'any')
-//     this.signer = this.provider.getSigner()
-//   }
-
-//   getContract = async (contract: ContractName) => {
-//     const address = ContractMetadata[contract].address
-//     const contractABI = ContractMetadata[contract].abi
-
-//     return new ethers.Contract(address, contractABI, this.signer)
-//   }
-// }
-
 export class EtherStore {
   provider: ethers.providers.Web3Provider
   signer: ethers.providers.JsonRpcSigner
