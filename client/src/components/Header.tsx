@@ -5,16 +5,7 @@ import { classNames } from './utils/utils'
 import { Navigation, NavPage } from './utils/constants'
 import { selectAccountData } from '../store/slices/EthersSlice'
 import { useAppSelector, useEthers } from '../store/Hooks'
-import { ContractName } from '../chain/ContractMetadata'
-import { useDispatch } from 'react-redux'
-import {
-  selectEncryptedSignerKey,
-  setEncryptedSignerKey,
-  setSignerAddress,
-} from '../store/slices/SignerSlice'
-import { useEffect } from 'react'
-import { some, none, isSome } from 'fp-ts/Option'
-import { EtherStore } from '../chain/Ethers'
+import { selectNumPeers } from '../store/slices/PeerSlice'
 
 // import {classNames} from './utils/classNames'
 
@@ -26,13 +17,7 @@ const Header = (props: HeaderProps) => {
   const { isConnected } = useAppSelector(selectAccountData)
   const { ethers } = useEthers()
 
-  // const getNumPeers = () => {
-  //   return useAppSelector(state => state.peer.numPeers)
-  // }
-  //
-  // const getEthersConnected = () => {
-  //   return useAppSelector(selectEthersConnected)
-  // }
+  const numPeers = useAppSelector(selectNumPeers)
 
   return (
     <>
@@ -99,7 +84,7 @@ const Header = (props: HeaderProps) => {
                     )}
                   </div>
                   <div className="mr-8 my-4 py-2 text-gray-500 text-sm font-medium">
-                    {/*Peer Count: {getNumPeers()}*/} Peer Count
+                    Peer Count: {numPeers}
                   </div>
                 </div>
 

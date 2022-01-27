@@ -7,7 +7,7 @@ import { Navigation } from './components/utils/constants'
 import { getCurrent } from './components/utils/utils'
 import Header from './components/Header'
 import Content from './components/Content'
-// import { Peer } from './p2p/PeerNode'
+import { Peer } from './p2p/PeerNode'
 
 const App = () => {
   const location: Location = useLocation()
@@ -15,8 +15,8 @@ const App = () => {
   useEffect(() => {
     const setup = async () => {
       const config = getConfig()
-      // const peer = await Peer.init(config)
-      // await peer.start()
+      const peer = await Peer.init(config)
+      await peer.start()
     }
 
     setup()
