@@ -1,5 +1,6 @@
-import { isSome } from 'fp-ts/lib/Option'
+import { useContext, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
+import { useLiveQuery } from 'dexie-react-hooks'
 import { ContractName } from '../chain/ContractMetadata'
 import { EtherStore } from '../chain/Ethers'
 import { useAppSelector, useEthers } from '../store/Hooks'
@@ -10,11 +11,14 @@ import {
   setSignerAddress,
 } from '../store/slices/SignerSlice'
 
+import { AppContext } from './AppContext'
+
 const ControlPanel = () => {
   const dispatch = useDispatch()
 
   const { isConnected, accounts, primaryAccount } = useAppSelector(selectAccountData)
   const { ethers, signer, contract } = useEthers(ContractName.TokenFactory)
+  const { db, eventBus } = useContext(AppContext)
 
   const encryptedSignerKey = useAppSelector(selectEncryptedSignerKey)
 
@@ -22,6 +26,15 @@ const ControlPanel = () => {
     console.log('Ethers', ethers, 'Signer', signer, 'Contract', contract)
     console.log('Filter function', EtherStore.getFilter(contract!, 'TokenCreated', []))
   }
+
+  const addPeer = async () => {
+    const id = await db.peers.add({
+      peerId: (Math.random() * 100).toPrecision(2).toString(),
+      joinedTime: 0,
+    })
+  }
+
+  const peers = useLiveQuery(() => db.peers.toArray())
 
   const encryptSigner = async () => {
     try {
@@ -87,6 +100,16 @@ const ControlPanel = () => {
           >
             Decrypt Signer
           </button>
+          <button
+            type="button"
+            className="w-36 my-4 block flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+            onClick={() => {
+              addPeer()
+            }}
+          >
+            Add Peer
+          </button>
+          <p>{peers?.map((peer) => peer.peerId)}</p>
         </div>
       </div>
     </div>

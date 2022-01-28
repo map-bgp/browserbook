@@ -38,12 +38,14 @@ export interface IMatchedOrder {
 }
 
 export class P2PDB extends Dexie {
+  static instance: P2PDB
+
   peers: Dexie.Table<IPeer>
   validators: Dexie.Table<IValidator>
   orders: Dexie.Table<IOrder>
   matchedOrders: Dexie.Table<IMatchedOrder>
 
-  constructor() {
+  private constructor() {
     super('browserbook')
 
     this.version(1).stores({
@@ -56,6 +58,15 @@ export class P2PDB extends Dexie {
     this.peers = this.table('peers')
     this.validators = this.table('validators')
     this.orders = this.table('orders')
-    this.matchedOrders = this.table('matchedOrder')
+    this.matchedOrders = this.table('matchedOrders')
+  }
+
+  static initialize() {
+    if (this.instance) {
+      return this.instance
+    } else {
+      this.instance = new P2PDB()
+      return this.instance
+    }
   }
 }
