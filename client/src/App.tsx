@@ -7,7 +7,7 @@ import { Navigation } from './components/utils/constants'
 import { getCurrent } from './components/utils/utils'
 import Header from './components/Header'
 import Content from './components/Content'
-import { Peer } from './p2p/PeerNode'
+import { Peer } from './p2p/Peer'
 
 const App = () => {
   const location: Location = useLocation()
