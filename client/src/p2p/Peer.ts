@@ -43,6 +43,8 @@ export class Peer {
     // this._onMessage = this._onMessage.bind(this)
     this.node = node
 
+    // The correct syntax! this.node.pubsub :)
+
     // this.pubsub.on(this.topic, this._onMessage)
   }
 
