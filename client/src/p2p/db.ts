@@ -1,8 +1,7 @@
 import Dexie from 'dexie'
 
 export interface IPeer {
-  id?: number
-  peerId: string
+  id: string
   joinedTime: number
 }
 
@@ -49,8 +48,8 @@ export class P2PDB extends Dexie {
     super('browserbook')
 
     this.version(1).stores({
-      peers: '++id,peerId',
-      validators: '++id,peerId,address',
+      peers: 'id',
+      validators: 'id,address',
       orders: '++id,tokenS,tokenT,from,status',
       matchedOrders: '++id,order1,order2,tokenS,tokenT,from,status',
     })

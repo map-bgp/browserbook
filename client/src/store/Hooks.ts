@@ -4,7 +4,7 @@ import { ethers, EventFilter } from 'ethers'
 
 import type { AppDispatch, RootState } from './Store'
 import { setAccounts } from './slices/EthersSlice'
-import { EtherStore } from '../chain/Ethers'
+import { EtherStore } from '../chain/EtherStore'
 import { ContractName } from '../chain/ContractMetadata'
 
 export const useAppDispatch = () => useDispatch<AppDispatch>()

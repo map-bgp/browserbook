@@ -1,33 +1,15 @@
 import Libp2p, { Libp2pOptions } from 'libp2p'
-import protons from 'protons'
-
 import { store } from '../store/Store'
-import { decrementPeers, incrementPeers, selectPeerId, setPeerId } from '../store/slices/PeerSlice'
-// import { Record } from 'libp2p-kad-dht/dist/src/message/dht'
-import { IOrder } from './db'
+import { decrementPeers, incrementPeers, setPeerId } from '../store/slices/PeerSlice'
+import { Order } from './protocol_buffers/order'
+import { IPeer, P2PDB } from './db'
 
 const dispatch = store.dispatch
-
-const { ORDER_SCHEMA } = protons(`
-syntax = "proto3";
-package browserbook;
-
-message Order {
-  string id = 1;
-  string tokenS = 2;
-  string tokenT = 3;
-  int32 amountS = 4;
-  int32 amountT = 5;
-  string from = 6;
-  string status = 7;
-  int32 created = 8;
-}
-`)
 
 export class Peer {
   static TOPIC: string = '/libp2p/bbook/chat/1.0.0'
   static VALIDATION_TOPIC: string = '/libp2p/example/validator/1.0.0'
-  static PROTO_PATH = './protocol_buffers/order.json'
+  static DB: P2PDB = P2PDB.initialize()
 
   config: Libp2pOptions
   node: Libp2p | null = null
@@ -37,7 +19,6 @@ export class Peer {
 
   constructor(config: Libp2pOptions) {
     this.config = config
-    console.log(Peer.PROTO_PATH)
   }
 
   async init() {
@@ -45,28 +26,16 @@ export class Peer {
 
     dispatch(setPeerId(this.node.peerId.toB58String()))
 
-    this.node.on('peer:discovery', (peerId) => {
-      console.debug(`Found peer ${peerId.toB58String()}`)
-    })
+    // this.node.on('peer:discovery', (peerId) => {})
 
-    this.node.connectionManager.on('peer:connect', (connection) => {
+    this.node.connectionManager.on('peer:connect', async (connection) => {
       dispatch(incrementPeers())
-
-      // state.p2pDb
-      //   .transaction('rw', state.p2pDb.peers, async () => {
-      //     const id = await state.p2pDb.peers.add({
-      //       peerId: connection.remotePeer.toB58String(),
-      //       joinedTime: Date.now().toString(),
-      //     })
-      //     //console.log(`Peer ID is stored in ${id}`)
-      //   })
-      //   .catch((e) => {
-      //     console.log(e.stack || e)
-      //   })
+      await this.addPeer({ id: connection.id, joinedTime: Date.now() })
     })
 
-    this.node.connectionManager.on('peer:disconnect', (connection) => {
+    this.node.connectionManager.on('peer:disconnect', async (connection) => {
       dispatch(decrementPeers())
+      await this.removePeer(connection.id)
     })
 
     this.processOrderMessage = this.processOrderMessage.bind(this)
@@ -90,22 +59,30 @@ export class Peer {
     this.node.pubsub.unsubscribe(Peer.TOPIC)
   }
 
-  // Temporary type
-  // This will stream orders to the DB, calls service methods
-  // Do we need to send them to the redux store? Hmm..
-  processOrderMessage(order: any) {
-    // const request = Requeest.decode(message.data)
-    console.log('Received order', order)
+  async addPeer(peer: IPeer) {
+    await Peer.DB.peers.add(peer)
   }
 
-  async publishOrderMessage(order: IOrder) {
+  async removePeer(id: string) {
+    await Peer.DB.peers.delete(id)
+  }
+
+  // Send to redux?
+  // Sadly any type as libp2p is untyped
+  processOrderMessage(encodedOrder: any) {
+    const decodedOrder = Order.decode(encodedOrder.data)
+    console.log('Received order', decodedOrder)
+    // db.orders.add(decodedOrder)
+  }
+
+  async publishOrderMessage(order: Order) {
     if (!this.node) {
       throw new Error('Cannot send pubsub message before Peer is initialized')
     }
 
-    console.log('Publishing order', order)
-    const encodedOrder = ORDER_SCHEMA.encode(order)
-    console.log('Encoded order', encodedOrder)
+    console.log('Sending order', order)
+
+    const encodedOrder = Order.encode(order).finish()
     await this.node.pubsub.publish(Peer.TOPIC, encodedOrder)
   }
 }

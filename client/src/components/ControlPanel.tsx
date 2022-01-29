@@ -1,8 +1,8 @@
-import { useContext, useEffect } from 'react'
+import { useContext } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { ContractName } from '../chain/ContractMetadata'
-import { EtherStore } from '../chain/Ethers'
+import { EtherStore } from '../chain/EtherStore'
 import { useAppSelector, useEthers } from '../store/Hooks'
 import { selectAccountData } from '../store/slices/EthersSlice'
 import {
@@ -12,7 +12,7 @@ import {
 } from '../store/slices/SignerSlice'
 
 import { AppContext } from './AppContext'
-import { IOrder } from '../p2p/db'
+import { Order } from '../p2p/protocol_buffers/order'
 
 const ControlPanel = () => {
   const dispatch = useDispatch()
@@ -25,12 +25,13 @@ const ControlPanel = () => {
 
   const log = () => {
     console.log('Ethers', ethers, 'Signer', signer, 'Contract', contract)
+    console.log('Peer', peer, 'DB', db, 'EventBus', eventBus)
     console.log('Filter function', EtherStore.getFilter(contract!, 'TokenCreated', []))
   }
 
   const addPeer = async () => {
     const id = await db.peers.add({
-      peerId: (Math.random() * 100).toPrecision(2).toString(),
+      id: (Math.random() * 100).toPrecision(2).toString(),
       joinedTime: 0,
     })
   }
@@ -64,8 +65,12 @@ const ControlPanel = () => {
     }
   }
 
+  const joinChannel = async () => {
+    await peer.join()
+  }
+
   const publishTestOrder = async () => {
-    const order: IOrder = {
+    const order: Order = {
       id: '1',
       tokenS: '1',
       tokenT: '2',
@@ -128,12 +133,21 @@ const ControlPanel = () => {
             type="button"
             className="w-36 my-4 block flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
             onClick={() => {
+              joinChannel()
+            }}
+          >
+            Join Channel
+          </button>
+          <button
+            type="button"
+            className="w-36 my-4 block flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+            onClick={() => {
               publishTestOrder()
             }}
           >
             Publish Test Order
           </button>
-          <p>{peers?.map((peer) => peer.peerId)}</p>
+          <p>{peers?.map((peer) => peer.id)}</p>
         </div>
       </div>
     </div>

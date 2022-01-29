@@ -1,4 +1,3 @@
-import { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { Disclosure } from '@headlessui/react'
 import { MenuIcon, XIcon } from '@heroicons/react/outline'
@@ -7,7 +6,6 @@ import { Navigation, NavPage } from './utils/constants'
 import { selectAccountData } from '../store/slices/EthersSlice'
 import { useAppSelector, useEthers } from '../store/Hooks'
 import { selectNumPeers } from '../store/slices/PeerSlice'
-import { AppContext } from './AppContext'
 
 // import {classNames} from './utils/classNames'
 
@@ -17,9 +15,9 @@ type HeaderProps = {
 
 const Header = (props: HeaderProps) => {
   const { isConnected } = useAppSelector(selectAccountData)
-  const { ethers } = useEthers()
-
   const numPeers = useAppSelector(selectNumPeers)
+
+  const { ethers } = useEthers()
 
   return (
     <>
