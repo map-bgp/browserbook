@@ -1,63 +1,30 @@
 import Dexie from 'dexie'
+import { Match, Order } from './protocol_buffers/gossip_schema'
 
 export interface IPeer {
   id: string
   joinedTime: number
 }
 
-export interface IValidator {
-  id?: string
-  peerId: string
-  address: string
-  joinedTime: number
-}
-
-export interface IOrder {
-  id?: string
-  tokenS: string
-  tokenT: string
-  amountS: number
-  amountT: number
-  from: string
-  status: string
-  created: number
-}
-
-export interface IMatchedOrder {
-  id?: string
-  order1: string
-  order2: string
-  tokenS: string
-  tokenT: string
-  amountS: number
-  amountT: number
-  from: number
-  status: string
-  created: number
-}
-
 export class P2PDB extends Dexie {
   static instance: P2PDB
 
   peers: Dexie.Table<IPeer>
-  validators: Dexie.Table<IValidator>
-  orders: Dexie.Table<IOrder>
-  matchedOrders: Dexie.Table<IMatchedOrder>
+  orders: Dexie.Table<Order>
+  matches: Dexie.Table<Match>
 
   private constructor() {
     super('browserbook')
 
     this.version(1).stores({
       peers: 'id',
-      validators: 'id,address',
-      orders: '++id,tokenS,tokenT,from,status',
-      matchedOrders: '++id,order1,order2,tokenS,tokenT,from,status',
+      orders: 'id,tokenS,tokenT,from,status',
+      matches: 'id,makerId,takerId,makerOrderId,takerOrderId,status',
     })
 
     this.peers = this.table('peers')
-    this.validators = this.table('validators')
     this.orders = this.table('orders')
-    this.matchedOrders = this.table('matchedOrders')
+    this.matches = this.table('matches')
   }
 
   static initialize() {

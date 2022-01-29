@@ -15,6 +15,15 @@ export interface Order {
   created: number
 }
 
+export interface Match {
+  id: string
+  makerId: string
+  takerId: string
+  makerOrderId: string
+  takerOrderId: string
+  status: string
+}
+
 function createBaseOrder(): Order {
   return { id: '', tokenS: '', tokenT: '', amountS: 0, amountT: 0, from: '', status: '', created: 0 }
 }
@@ -123,6 +132,100 @@ export const Order = {
     message.from = object.from ?? ''
     message.status = object.status ?? ''
     message.created = object.created ?? 0
+    return message
+  },
+}
+
+function createBaseMatch(): Match {
+  return { id: '', makerId: '', takerId: '', makerOrderId: '', takerOrderId: '', status: '' }
+}
+
+export const Match = {
+  encode(message: Match, writer: Writer = Writer.create()): Writer {
+    if (message.id !== '') {
+      writer.uint32(10).string(message.id)
+    }
+    if (message.makerId !== '') {
+      writer.uint32(18).string(message.makerId)
+    }
+    if (message.takerId !== '') {
+      writer.uint32(26).string(message.takerId)
+    }
+    if (message.makerOrderId !== '') {
+      writer.uint32(34).string(message.makerOrderId)
+    }
+    if (message.takerOrderId !== '') {
+      writer.uint32(42).string(message.takerOrderId)
+    }
+    if (message.status !== '') {
+      writer.uint32(50).string(message.status)
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): Match {
+    const reader = input instanceof Reader ? input : new Reader(input)
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = createBaseMatch()
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.id = reader.string()
+          break
+        case 2:
+          message.makerId = reader.string()
+          break
+        case 3:
+          message.takerId = reader.string()
+          break
+        case 4:
+          message.makerOrderId = reader.string()
+          break
+        case 5:
+          message.takerOrderId = reader.string()
+          break
+        case 6:
+          message.status = reader.string()
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): Match {
+    return {
+      id: isSet(object.id) ? String(object.id) : '',
+      makerId: isSet(object.makerId) ? String(object.makerId) : '',
+      takerId: isSet(object.takerId) ? String(object.takerId) : '',
+      makerOrderId: isSet(object.makerOrderId) ? String(object.makerOrderId) : '',
+      takerOrderId: isSet(object.takerOrderId) ? String(object.takerOrderId) : '',
+      status: isSet(object.status) ? String(object.status) : '',
+    }
+  },
+
+  toJSON(message: Match): unknown {
+    const obj: any = {}
+    message.id !== undefined && (obj.id = message.id)
+    message.makerId !== undefined && (obj.makerId = message.makerId)
+    message.takerId !== undefined && (obj.takerId = message.takerId)
+    message.makerOrderId !== undefined && (obj.makerOrderId = message.makerOrderId)
+    message.takerOrderId !== undefined && (obj.takerOrderId = message.takerOrderId)
+    message.status !== undefined && (obj.status = message.status)
+    return obj
+  },
+
+  fromPartial<I extends Exact<DeepPartial<Match>, I>>(object: I): Match {
+    const message = createBaseMatch()
+    message.id = object.id ?? ''
+    message.makerId = object.makerId ?? ''
+    message.takerId = object.takerId ?? ''
+    message.makerOrderId = object.makerOrderId ?? ''
+    message.takerOrderId = object.takerOrderId ?? ''
+    message.status = object.status ?? ''
     return message
   },
 }

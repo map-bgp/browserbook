@@ -11,3 +11,12 @@ message Order {
   string status = 7;
   int32 created = 8;
 }
+
+message Match {
+  string id = 1;
+  string makerId = 2;
+  string takerId = 3;
+  string makerOrderId = 4;
+  string takerOrderId = 5;
+  string status = 6;
+}

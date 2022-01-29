@@ -16,4 +16,8 @@ const peer = new Peer(peerConfig)
 const db = P2PDB.initialize()
 const eventBus = new EventEmitter()
 
-export const AppContext = React.createContext<IAppContext>({ peer: peer, db: db, eventBus: eventBus })
+export const AppContext = React.createContext<IAppContext>({
+  peer: peer,
+  db: db,
+  eventBus: eventBus,
+})

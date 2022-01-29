@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { ContractName } from '../chain/ContractMetadata'
@@ -12,7 +12,7 @@ import {
 } from '../store/slices/SignerSlice'
 
 import { AppContext } from './AppContext'
-import { Order } from '../p2p/protocol_buffers/order'
+import { Match, Order } from '../p2p/protocol_buffers/gossip_schema'
 
 const ControlPanel = () => {
   const dispatch = useDispatch()
@@ -29,14 +29,8 @@ const ControlPanel = () => {
     console.log('Filter function', EtherStore.getFilter(contract!, 'TokenCreated', []))
   }
 
-  const addPeer = async () => {
-    const id = await db.peers.add({
-      id: (Math.random() * 100).toPrecision(2).toString(),
-      joinedTime: 0,
-    })
-  }
-
   const peers = useLiveQuery(() => db.peers.toArray())
+  const orders = useLiveQuery(() => db.orders.toArray())
 
   const encryptSigner = async () => {
     try {
@@ -71,7 +65,7 @@ const ControlPanel = () => {
 
   const publishTestOrder = async () => {
     const order: Order = {
-      id: '1',
+      id: (Math.random() * 1000000).toString(),
       tokenS: '1',
       tokenT: '2',
       amountS: 100,
@@ -81,6 +75,22 @@ const ControlPanel = () => {
       created: 1234,
     }
     await peer.publishOrderMessage(order)
+  }
+
+  const publishTestMatch = async () => {
+    if (!peer.isMatcher) {
+      peer.setMatcher(true)
+    }
+
+    const match: Match = {
+      id: '1',
+      makerId: '1',
+      takerId: '1',
+      makerOrderId: '1',
+      takerOrderId: '1',
+      status: '1',
+    }
+    await peer.publishMatchMessage(match)
   }
 
   return (
@@ -124,15 +134,6 @@ const ControlPanel = () => {
             type="button"
             className="w-36 my-4 block flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
             onClick={() => {
-              addPeer()
-            }}
-          >
-            Add Peer
-          </button>
-          <button
-            type="button"
-            className="w-36 my-4 block flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-            onClick={() => {
               joinChannel()
             }}
           >
@@ -147,7 +148,17 @@ const ControlPanel = () => {
           >
             Publish Test Order
           </button>
-          <p>{peers?.map((peer) => peer.id)}</p>
+          <button
+            type="button"
+            className="w-36 my-4 block flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+            onClick={() => {
+              publishTestMatch()
+            }}
+          >
+            Publish Test Match
+          </button>
+          <p className="text-red-700">{peers?.map((peer) => peer.id)}</p>
+          <p className="text-green-700">{orders?.map((order) => order.id)}</p>
         </div>
       </div>
     </div>
