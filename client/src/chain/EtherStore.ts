@@ -17,20 +17,19 @@ export class EtherStore {
   constructor() {
     if (typeof ethereum === 'undefined') {
       throw new Error('Ethereum object is not injected')
+    } else {
+      this.provider = new ethers.providers.Web3Provider(ethereum, 'any')
+      this.signer = this.provider.getSigner()
+
+      // If user has locked/logout from MetaMask, this resets the accounts array to empty
+      ethereum.on('accountsChanged', (accounts: Array<string>) => dispatch(setAccounts(accounts)))
     }
-
-    this.provider = new ethers.providers.Web3Provider(ethereum, 'any')
-    this.signer = this.provider.getSigner()
-
-    // If user has locked/logout from MetaMask, this resets the accounts array to empty
-    ethereum.on('accountsChanged', (accounts: Array<string>) => dispatch(setAccounts(accounts)))
   }
 
   connect = async () => await this.provider.send('eth_requestAccounts', [])
 
   getSigner = () => this.signer
   getAccounts = async () => await this.provider.listAccounts()
-
   getContract = async (contract: ContractName) => {
     const address = ContractMetadata[contract].address
     const contractABI = ContractMetadata[contract].abi
