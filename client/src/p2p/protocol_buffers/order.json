@@ -1,0 +1,44 @@
+{
+  "nested": {
+    "browserbook": {
+      "nested": {
+        "Order": {
+          "fields": {
+            "id": {
+              "type": "string",
+              "id": 1
+            },
+            "tokenS": {
+              "type": "string",
+              "id": 2
+            },
+            "tokenT": {
+              "type": "string",
+              "id": 3
+            },
+            "amountS": {
+              "type": "int32",
+              "id": 4
+            },
+            "amountT": {
+              "type": "int32",
+              "id": 5
+            },
+            "from": {
+              "type": "string",
+              "id": 6
+            },
+            "status": {
+              "type": "string",
+              "id": 7
+            },
+            "created": {
+              "type": "int32",
+              "id": 8
+            }
+          }
+        }
+      }
+    }
+  }
+}

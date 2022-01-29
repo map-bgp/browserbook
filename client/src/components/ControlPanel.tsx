@@ -12,13 +12,14 @@ import {
 } from '../store/slices/SignerSlice'
 
 import { AppContext } from './AppContext'
+import { IOrder } from '../p2p/db'
 
 const ControlPanel = () => {
   const dispatch = useDispatch()
 
   const { isConnected, accounts, primaryAccount } = useAppSelector(selectAccountData)
   const { ethers, signer, contract } = useEthers(ContractName.TokenFactory)
-  const { db, eventBus } = useContext(AppContext)
+  const { peer, db, eventBus } = useContext(AppContext)
 
   const encryptedSignerKey = useAppSelector(selectEncryptedSignerKey)
 
@@ -61,6 +62,20 @@ const ControlPanel = () => {
     } catch (error) {
       console.log(error)
     }
+  }
+
+  const publishTestOrder = async () => {
+    const order: IOrder = {
+      id: '1',
+      tokenS: '1',
+      tokenT: '2',
+      amountS: 100,
+      amountT: 100,
+      from: 'a',
+      status: 'good',
+      created: 1234,
+    }
+    await peer.publishOrderMessage(order)
   }
 
   return (
@@ -108,6 +123,15 @@ const ControlPanel = () => {
             }}
           >
             Add Peer
+          </button>
+          <button
+            type="button"
+            className="w-36 my-4 block flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+            onClick={() => {
+              publishTestOrder()
+            }}
+          >
+            Publish Test Order
           </button>
           <p>{peers?.map((peer) => peer.peerId)}</p>
         </div>

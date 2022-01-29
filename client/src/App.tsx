@@ -1,22 +1,19 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { Location, useLocation } from 'react-router-dom'
-
-import { getConfig } from './p2p/Config'
 
 import { Navigation } from './components/utils/constants'
 import { getCurrent } from './components/utils/utils'
 import Header from './components/Header'
 import Content from './components/Content'
-import { Peer } from './p2p/Peer'
+import { AppContext } from './components/AppContext'
 
 const App = () => {
   const location: Location = useLocation()
+  const { peer } = useContext(AppContext)
 
   useEffect(() => {
     const setup = async () => {
-      const config = getConfig()
-      const peer = await Peer.init(config)
-      await peer.start()
+      await peer.init()
     }
 
     setup()

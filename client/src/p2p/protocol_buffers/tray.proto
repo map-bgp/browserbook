@@ -1,0 +1,13 @@
+package browserbook;
+syntax = "proto3";
+
+message Order {
+  string id = 1;
+  string tokenS = 2;
+  string tokenT = 3;
+  int32 amountS = 4;
+  int32 amountT = 5;
+  string from = 6;
+  string status = 7;
+  int32 created = 8;
+}
