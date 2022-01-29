@@ -1,4 +1,4 @@
-import Libp2p, { Libp2pOptions } from 'libp2p'
+import { Libp2pOptions } from 'libp2p'
 import Websockets from 'libp2p-websockets'
 import Filters from 'libp2p-websockets/src/filters'
 import WebRTCStar from 'libp2p-webrtc-star'
