@@ -1,8 +1,8 @@
 import { ethers } from 'ethers'
 
-import { store } from '../app/store/Store'
-import { selectEncryptionKey, setAccounts, setEncryptionKey } from '../app/store/slices/EthersSlice'
-import { setEncryptedSignerKey } from '../app/store/slices/SignerSlice'
+import { store } from '../store/Store'
+import { selectEncryptionKey, setAccounts, setEncryptionKey } from '../store/slices/EthersSlice'
+import { setEncryptedSignerKey } from '../store/slices/SignerSlice'
 import { ContractMetadata, ContractName } from './ContractMetadata'
 import { encrypt } from './Encryption'
 

@@ -1,12 +1,12 @@
 import { Routes, Route, Outlet } from 'react-router-dom'
 
-import { NavPage } from './utils/constants'
-import Dashboard from './Dashboard'
+import { NavPage } from '../components/utils/constants'
+import Dashboard from '../components/Dashboard'
 import TokenAdministration from './TokenAdministration'
-import OrderCreation from './OrderCreation'
-import OrderBook from './OrderMatching'
-import ControlPanel from './ControlPanel'
-import Token from './elements/Token'
+import OrderCreation from '../components/OrderCreation'
+import OrderBook from '../components/OrderMatching'
+import ControlPanel from '../components/ControlPanel'
+import Token from '../components/elements/Token'
 
 type ContentProps = {
   current: NavPage
@@ -26,7 +26,6 @@ const Content = (props: ContentProps) => {
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="token-administration" element={<Outlet />}>
             <Route index element={<TokenAdministration />} />
-            <Route path=":tokenAddress" element={<Token />} />
           </Route>
           <Route path="trade" element={<OrderCreation />} />
           <Route path="order-book" element={<OrderBook />} />

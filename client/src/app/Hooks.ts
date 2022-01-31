@@ -4,9 +4,9 @@ import { ethers } from 'ethers'
 
 import { AppDispatch, RootState, store } from './store/Store'
 import { setAccounts } from './store/slices/EthersSlice'
-import { EtherContractWrapper, EtherStore } from '../chain/EtherStore'
-import { ContractName } from '../chain/ContractMetadata'
-import { setTokens } from './store/slices/TokensSlice'
+import { EtherContractWrapper, EtherStore } from './chain/EtherStore'
+import { ContractName } from './chain/ContractMetadata'
+import { setTokenContract, setTokens } from './store/slices/TokensSlice'
 
 export const useAppDispatch = () => useDispatch<AppDispatch>()
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
@@ -60,14 +60,20 @@ export const useFilter = (
 }
 
 export const useTokenContractFilter = (ownerAddress: string | null) => {
+  const dispatch = useAppDispatch()
   const contractName = ContractName.TokenFactory
   const filterName = 'TokenContractCreated'
 
   const dispatchTokens = (events: Array<ethers.Event>) => {
-    const tokens = events
+    const tokenContractEvent = events
+      .filter((e) => typeof e !== undefined)
       .filter((e) => e.args !== undefined)
-      .map((e) => ({ uri: e.args![1], address: e.args![2] }))
-    store.dispatch(setTokens(tokens))
+      .shift()
+
+    if (!!tokenContractEvent && !!tokenContractEvent.args) {
+      const tokenContract = { uri: tokenContractEvent.args[1], address: tokenContractEvent.args[2] }
+      dispatch(setTokenContract(tokenContract))
+    }
   }
 
   useFilter(contractName, filterName, ownerAddress, dispatchTokens)

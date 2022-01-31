@@ -1,8 +1,8 @@
 import { useContext, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { ContractName } from '../chain/ContractMetadata'
-import { EtherStore } from '../chain/EtherStore'
+import { ContractName } from '../app/chain/ContractMetadata'
+import { EtherStore } from '../app/chain/EtherStore'
 import { useAppSelector, useEthers } from '../app/Hooks'
 import { selectAccountData } from '../app/store/slices/EthersSlice'
 import {

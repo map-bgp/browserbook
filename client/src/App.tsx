@@ -5,7 +5,7 @@ import { withErrorBoundary } from 'react-error-boundary'
 import { Navigation } from './components/utils/constants'
 import { getCurrent } from './components/utils/utils'
 import Header from './components/Header'
-import Content from './components/Content'
+import Content from './pages/Content'
 import { AppContext } from './components/AppContext'
 
 const AppError = () => (
