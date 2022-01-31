@@ -4,8 +4,11 @@ export type TokenContract = {
 }
 
 export type Token = {
-  uri: string
-  address: string
+  id: string
+  name: string
+  metadataURI: string
+  supply: string
+  type: TokenType
 }
 
 export enum TokenType {

@@ -27,13 +27,25 @@ export const TokenTable = (props: TokenTableProps) => {
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                       >
-                        URI
+                        Name
                       </th>
                       <th
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                       >
-                        Address
+                        Metadata URI
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        Supply
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        Type
                       </th>
                       <th scope="col" className="relative px-6 py-3">
                         <span className="sr-only">View</span>
@@ -43,15 +55,18 @@ export const TokenTable = (props: TokenTableProps) => {
                   <tbody>
                     {props.tokens &&
                       props.tokens.map((token, tokenIdx) => (
-                        <tr
-                          key={token.address}
-                          className={tokenIdx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
-                        >
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            {token.uri}
+                        <tr key={token.id} className={tokenIdx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {token.name}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {token.address}
+                            {token.metadataURI}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {token.supply}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {token.type}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <div className="text-orange-600 hover:text-orange-900 cursor-pointer">

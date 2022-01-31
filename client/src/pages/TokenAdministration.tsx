@@ -1,15 +1,18 @@
-import React, { useEffect, useState } from 'react'
-import { ethers } from 'ethers'
 import {
   useAppDispatch,
   useAppSelector,
-  useEthers,
-  useFilter,
-  useTokenContractFilter,
+  useTokenFactoryFilter,
+  useTokenIdFilter,
+  useTokenQuery,
 } from '../app/Hooks'
-import { selectTokenContract, selectTokens, setTokens } from '../app/store/slices/TokensSlice'
+import {
+  selectTokenContract,
+  selectTokenIds,
+  selectTokens,
+  selectNumberFungibleTokens,
+  selectNumberNonFungibleTokens,
+} from '../app/store/slices/TokensSlice'
 import { selectAccountData } from '../app/store/slices/EthersSlice'
-import { ContractName } from '../app/chain/ContractMetadata'
 import TokenInput from '../components/TokenInput'
 import TokenTable from '../components/TokenTable'
 import EntityInput from '../components/EntityInput'
@@ -21,15 +24,14 @@ const TokenAdministration = (props: TokenAdministrationProps) => {
   const { primaryAccount } = useAppSelector(selectAccountData)
 
   const tokenContract = useAppSelector(selectTokenContract)
-  // const tokens = useAppSelector(selectTokens)
-  const tokens = [
-    {
-      uri: 'test',
-      address: 'test',
-    },
-  ]
+  const tokenIds = useAppSelector(selectTokenIds)
+  const tokens = useAppSelector(selectTokens)
+  const numberFungibleTokens = useAppSelector(selectNumberFungibleTokens)
+  const numberNonFungibleTokens = useAppSelector(selectNumberNonFungibleTokens)
 
-  useTokenContractFilter(primaryAccount, true)
+  useTokenFactoryFilter(primaryAccount)
+  useTokenIdFilter(primaryAccount, tokenContract?.address)
+  useTokenQuery(tokenIds, tokenContract?.address)
 
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -51,7 +53,17 @@ const TokenAdministration = (props: TokenAdministrationProps) => {
             )}
           </div>
         </div>
-        <div className="md:col-span-2">{tokenContract === null ? <EntityInput /> : <EntityStats />}</div>
+        <div className="md:col-span-2">
+          {tokenContract === null ? (
+            <EntityInput />
+          ) : (
+            <EntityStats
+              totalFungible={numberFungibleTokens}
+              totalNonFungible={numberNonFungibleTokens}
+              totalDividendLoad={0}
+            />
+          )}
+        </div>
         <div className="md:col-span-1 align-top">
           <div>
             {tokenContract === null ? (

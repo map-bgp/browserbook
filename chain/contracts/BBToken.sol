@@ -26,14 +26,12 @@ contract BBToken is ERC1155 {
     uint256 public tokenNonce;
     mapping(uint256 => string) public tokenNames;
     mapping(uint256 => uint256) public tokenSupply;
+    mapping(uint256 => string) public tokenMetadata;
     mapping(uint256 => bool) public isNonFungible;
     
     // Used for fungible dividends
     mapping(uint256 => itmap) private _fungibleHolderAmount;
     mapping(uint256 => itmap) public fungibleClaimableAmount;
-
-    // Non-fungible tokens
-    mapping(uint256 => string) public tokenMetadata;
 
     // Constants receiver callbacks
     bytes4 constant public ERC1155_RECEIVED       = 0xf23a6e61;
@@ -52,8 +50,8 @@ contract BBToken is ERC1155 {
     |             EVENTS                |
     |__________________________________*/
 
-    // event tokenCreation(address indexed, uint256);
-    event ownerCredited(uint256 indexed, uint256);
+    event TokenCreation(address indexed, uint256);
+    event OwnerCredited(address indexed, uint256);
 
     /***********************************|
     |             MODIFIERS             |
@@ -98,26 +96,31 @@ contract BBToken is ERC1155 {
     |             FUNCTIONS             |
     |__________________________________*/
 
-    function Owner() public view returns (address) {
+    function owner() public view returns (address) {
         return _contractOwner;
     }
 
-    function fungibleMint(address account, uint256 amount, string memory tokenName, bytes memory data) public onlyOwnerOrOperator() {
+    function fungibleMint(string memory tokenName, uint256 amount, string memory tokenMetadataURI, bytes memory data) public onlyOwnerOrOperator() {
         uint256 newTokenId = ++tokenNonce; 
 
-        super._mint(account, newTokenId, amount, data);
+        super._mint(owner(), newTokenId, amount, data);
         tokenNames[newTokenId] = tokenName;
         tokenSupply[newTokenId] += amount;
+        tokenMetadata[newTokenId] = tokenMetadataURI;
+
+        emit TokenCreation(_contractOwner , newTokenId);
     }
 
-    function nonFungibleMint(address account, string memory tokenName, string memory tokenMetadataURI, bytes memory data) public onlyOwnerOrOperator() {
+    function nonFungibleMint(string memory tokenName, string memory tokenMetadataURI, bytes memory data) public onlyOwnerOrOperator() {
         uint256 newTokenId = ++tokenNonce;
 
-        super._mint(account, newTokenId, 1, data);
+        super._mint(owner(), newTokenId, 1, data);
         tokenNames[newTokenId] = tokenName;
         tokenSupply[newTokenId] = 1;
-        isNonFungible[newTokenId] = true;
         tokenMetadata[newTokenId] = tokenMetadataURI;
+        isNonFungible[newTokenId] = true;
+
+        emit TokenCreation(_contractOwner , newTokenId);
     }
 
     function safeTransferFrom(address from, address to, uint256 id, uint256 amount, bytes memory data) public virtual override(ERC1155) isExchangeApproved(from) {

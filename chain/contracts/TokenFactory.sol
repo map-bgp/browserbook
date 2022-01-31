@@ -31,7 +31,7 @@ contract TokenFactory {
         tokenAddress[URI] = address(token);
 
         _createdToken[msg.sender] = true;
-        emit TokenContractCreated(token.Owner(), URI, address(token));
+        emit TokenContractCreated(token.owner(), URI, address(token));
         return address(token);
     }
 

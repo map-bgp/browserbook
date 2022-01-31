@@ -163,6 +163,44 @@ const Token: VariableContract = {
         {
           indexed: true,
           internalType: 'address',
+          name: '',
+          type: 'address',
+        },
+        {
+          indexed: false,
+          internalType: 'uint256',
+          name: '',
+          type: 'uint256',
+        },
+      ],
+      name: 'OwnerCredited',
+      type: 'event',
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          internalType: 'address',
+          name: '',
+          type: 'address',
+        },
+        {
+          indexed: false,
+          internalType: 'uint256',
+          name: '',
+          type: 'uint256',
+        },
+      ],
+      name: 'TokenCreation',
+      type: 'event',
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          internalType: 'address',
           name: 'operator',
           type: 'address',
         },
@@ -251,70 +289,26 @@ const Token: VariableContract = {
       type: 'event',
     },
     {
-      anonymous: false,
-      inputs: [
+      inputs: [],
+      name: 'ERC1155_BATCH_RECEIVED',
+      outputs: [
         {
-          indexed: true,
-          internalType: 'address',
+          internalType: 'bytes4',
           name: '',
-          type: 'address',
-        },
-        {
-          indexed: true,
-          internalType: 'uint256',
-          name: '',
-          type: 'uint256',
+          type: 'bytes4',
         },
       ],
-      name: 'nfTokenMint',
-      type: 'event',
-    },
-    {
-      anonymous: false,
-      inputs: [
-        {
-          indexed: true,
-          internalType: 'uint256',
-          name: '',
-          type: 'uint256',
-        },
-        {
-          indexed: false,
-          internalType: 'uint256',
-          name: '',
-          type: 'uint256',
-        },
-      ],
-      name: 'ownerCredited',
-      type: 'event',
-    },
-    {
-      anonymous: false,
-      inputs: [
-        {
-          indexed: true,
-          internalType: 'address',
-          name: '',
-          type: 'address',
-        },
-        {
-          indexed: false,
-          internalType: 'uint256',
-          name: '',
-          type: 'uint256',
-        },
-      ],
-      name: 'tokenCreation',
-      type: 'event',
+      stateMutability: 'view',
+      type: 'function',
     },
     {
       inputs: [],
-      name: 'Owner',
+      name: 'ERC1155_RECEIVED',
       outputs: [
         {
-          internalType: 'address',
+          internalType: 'bytes4',
           name: '',
-          type: 'address',
+          type: 'bytes4',
         },
       ],
       stateMutability: 'view',
@@ -384,25 +378,6 @@ const Token: VariableContract = {
     {
       inputs: [
         {
-          internalType: 'bool',
-          name: 'isNF',
-          type: 'bool',
-        },
-      ],
-      name: 'createTokenId',
-      outputs: [
-        {
-          internalType: 'uint256',
-          name: 'id',
-          type: 'uint256',
-        },
-      ],
-      stateMutability: 'nonpayable',
-      type: 'function',
-    },
-    {
-      inputs: [
-        {
           internalType: 'address',
           name: 'account',
           type: 'address',
@@ -421,48 +396,38 @@ const Token: VariableContract = {
     {
       inputs: [
         {
-          internalType: 'address',
-          name: 'account',
-          type: 'address',
-        },
-        {
           internalType: 'uint256',
-          name: 'id',
-          type: 'uint256',
-        },
-        {
-          internalType: 'uint256',
-          name: 'amount',
+          name: '',
           type: 'uint256',
         },
       ],
-      name: 'fungibleBurn',
+      name: 'fungibleClaimableAmount',
       outputs: [
         {
-          internalType: 'bool',
-          name: '',
-          type: 'bool',
+          internalType: 'uint256',
+          name: 'size',
+          type: 'uint256',
         },
       ],
-      stateMutability: 'nonpayable',
+      stateMutability: 'view',
       type: 'function',
     },
     {
       inputs: [
         {
-          internalType: 'address',
-          name: 'account',
-          type: 'address',
-        },
-        {
-          internalType: 'uint256',
-          name: 'id',
-          type: 'uint256',
+          internalType: 'string',
+          name: 'tokenName',
+          type: 'string',
         },
         {
           internalType: 'uint256',
           name: 'amount',
           type: 'uint256',
+        },
+        {
+          internalType: 'string',
+          name: 'tokenMetadataURI',
+          type: 'string',
         },
         {
           internalType: 'bytes',
@@ -471,33 +436,8 @@ const Token: VariableContract = {
         },
       ],
       name: 'fungibleMint',
-      outputs: [
-        {
-          internalType: 'bool',
-          name: '',
-          type: 'bool',
-        },
-      ],
+      outputs: [],
       stateMutability: 'nonpayable',
-      type: 'function',
-    },
-    {
-      inputs: [
-        {
-          internalType: 'uint256',
-          name: 'id',
-          type: 'uint256',
-        },
-      ],
-      name: 'getNfOwner',
-      outputs: [
-        {
-          internalType: 'address',
-          name: '',
-          type: 'address',
-        },
-      ],
-      stateMutability: 'view',
       type: 'function',
     },
     {
@@ -528,26 +468,7 @@ const Token: VariableContract = {
       inputs: [
         {
           internalType: 'uint256',
-          name: 'id',
-          type: 'uint256',
-        },
-      ],
-      name: 'isFungible',
-      outputs: [
-        {
-          internalType: 'bool',
           name: '',
-          type: 'bool',
-        },
-      ],
-      stateMutability: 'pure',
-      type: 'function',
-    },
-    {
-      inputs: [
-        {
-          internalType: 'uint256',
-          name: 'id',
           type: 'uint256',
         },
       ],
@@ -559,14 +480,81 @@ const Token: VariableContract = {
           type: 'bool',
         },
       ],
-      stateMutability: 'pure',
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
+          internalType: 'string',
+          name: 'tokenName',
+          type: 'string',
+        },
+        {
+          internalType: 'string',
+          name: 'tokenMetadataURI',
+          type: 'string',
+        },
+        {
+          internalType: 'bytes',
+          name: 'data',
+          type: 'bytes',
+        },
+      ],
+      name: 'nonFungibleMint',
+      outputs: [],
+      stateMutability: 'nonpayable',
       type: 'function',
     },
     {
       inputs: [
         {
           internalType: 'address',
-          name: 'account',
+          name: 'operator',
+          type: 'address',
+        },
+        {
+          internalType: 'address',
+          name: 'from',
+          type: 'address',
+        },
+        {
+          internalType: 'uint256[]',
+          name: 'ids',
+          type: 'uint256[]',
+        },
+        {
+          internalType: 'uint256[]',
+          name: 'values',
+          type: 'uint256[]',
+        },
+        {
+          internalType: 'bytes',
+          name: 'data',
+          type: 'bytes',
+        },
+      ],
+      name: 'onERC1155BatchReceived',
+      outputs: [
+        {
+          internalType: 'bytes4',
+          name: '',
+          type: 'bytes4',
+        },
+      ],
+      stateMutability: 'nonpayable',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
+          internalType: 'address',
+          name: 'operator',
+          type: 'address',
+        },
+        {
+          internalType: 'address',
+          name: 'from',
           type: 'address',
         },
         {
@@ -575,14 +563,38 @@ const Token: VariableContract = {
           type: 'uint256',
         },
         {
-          internalType: 'string',
-          name: 'tokenURI',
-          type: 'string',
+          internalType: 'uint256',
+          name: 'value',
+          type: 'uint256',
+        },
+        {
+          internalType: 'bytes',
+          name: 'data',
+          type: 'bytes',
         },
       ],
-      name: 'nonFungibleMint',
-      outputs: [],
+      name: 'onERC1155Received',
+      outputs: [
+        {
+          internalType: 'bytes4',
+          name: '',
+          type: 'bytes4',
+        },
+      ],
       stateMutability: 'nonpayable',
+      type: 'function',
+    },
+    {
+      inputs: [],
+      name: 'owner',
+      outputs: [
+        {
+          internalType: 'address',
+          name: '',
+          type: 'address',
+        },
+      ],
+      stateMutability: 'view',
       type: 'function',
     },
     {
@@ -709,7 +721,26 @@ const Token: VariableContract = {
           type: 'uint256',
         },
       ],
-      name: 'tokenName',
+      name: 'tokenMetadata',
+      outputs: [
+        {
+          internalType: 'string',
+          name: '',
+          type: 'string',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
+          internalType: 'uint256',
+          name: '',
+          type: 'uint256',
+        },
+      ],
+      name: 'tokenNames',
       outputs: [
         {
           internalType: 'string',
@@ -741,7 +772,7 @@ const Token: VariableContract = {
           type: 'uint256',
         },
       ],
-      name: 'tokenTotalSupply',
+      name: 'tokenSupply',
       outputs: [
         {
           internalType: 'uint256',
