@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { classNames } from './utils/utils'
 import { XCircleIcon } from '@heroicons/react/solid'
-import { useAppDispatch, useAppSelector, useEthers, useTokenFilter } from '../store/Hooks'
-import { selectTokens, setTokens } from '../store/slices/TokensSlice'
-import { selectAccountData } from '../store/slices/EthersSlice'
+import { useAppDispatch, useAppSelector, useEthers, useTokenFilter } from '../app/Hooks'
+import { selectTokens, setTokens } from '../app/store/slices/TokensSlice'
+import { selectAccountData } from '../app/store/slices/EthersSlice'
 import { ContractName } from '../chain/ContractMetadata'
 import { ethers } from 'ethers'
 import TokenTable from './elements/TokenTable'
@@ -17,6 +17,7 @@ const TokenAdministration = (props: TokenAdministrationProps) => {
   const { contract } = useEthers(ContractName.TokenFactory)
 
   const tokens = useAppSelector(selectTokens)
+
   const dispatchTokens = (events: Array<ethers.Event>) => {
     const tokens = events
       .filter((e) => e.args !== undefined)
@@ -112,15 +113,21 @@ const TokenAdministration = (props: TokenAdministrationProps) => {
             </div>
           </div>
         </div>
-        <div className="md:col-span-1 align-top">
-          <div>
-            <h3 className="text-lg font-medium leading-6 text-gray-900">Token Admin</h3>
-            <p className="mt-1 text-sm text-gray-600">See and administer already created tokens</p>
-          </div>
-        </div>
-        <div className="md:col-span-2">
-          <TokenTable wrapperStyle="" tokens={tokens} />
-        </div>
+        {tokens.length !== 0 ? (
+          <>
+            <div className="md:col-span-1 align-top">
+              <div>
+                <h3 className="text-lg font-medium leading-6 text-gray-900">Token Admin</h3>
+                <p className="mt-1 text-sm text-gray-600">See and administer already created tokens</p>
+              </div>
+            </div>
+            <div className="md:col-span-2">
+              <TokenTable wrapperStyle="" tokens={tokens} />
+            </div>
+          </>
+        ) : (
+          <></>
+        )}
       </div>
     </div>
   )

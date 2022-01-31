@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom'
-import { useAppSelector } from '../../store/Hooks'
-import { selectTokenByAddress } from '../../store/slices/TokensSlice'
+import { useAppSelector } from '../../app/Hooks'
+import { selectTokenByAddress } from '../../app/store/slices/TokensSlice'
 
 export type TokenProps = {
   uri: string

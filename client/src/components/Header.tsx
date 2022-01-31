@@ -3,9 +3,9 @@ import { Disclosure } from '@headlessui/react'
 import { MenuIcon, XIcon } from '@heroicons/react/outline'
 import { classNames } from './utils/utils'
 import { Navigation, NavPage } from './utils/constants'
-import { selectAccountData } from '../store/slices/EthersSlice'
-import { useAppSelector, useEthers } from '../store/Hooks'
-import { selectNumPeers } from '../store/slices/PeerSlice'
+import { selectAccountData } from '../app/store/slices/EthersSlice'
+import { useAppSelector, useEthers } from '../app/Hooks'
+import { selectNumPeers } from '../app/store/slices/PeerSlice'
 
 // import {classNames} from './utils/classNames'
 

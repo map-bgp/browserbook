@@ -3,16 +3,17 @@ import { useDispatch } from 'react-redux'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { ContractName } from '../chain/ContractMetadata'
 import { EtherStore } from '../chain/EtherStore'
-import { useAppSelector, useEthers } from '../store/Hooks'
-import { selectAccountData } from '../store/slices/EthersSlice'
+import { useAppSelector, useEthers } from '../app/Hooks'
+import { selectAccountData } from '../app/store/slices/EthersSlice'
 import {
   selectEncryptedSignerKey,
   setEncryptedSignerKey,
   setSignerAddress,
-} from '../store/slices/SignerSlice'
+} from '../app/store/slices/SignerSlice'
 
 import { AppContext } from './AppContext'
-import { Match, Order } from '../p2p/protocol_buffers/gossip_schema'
+import { Match, Order } from '../app/p2p/protocol_buffers/gossip_schema'
+import { IPeer } from '../app/p2p/db'
 
 const ControlPanel = () => {
   const dispatch = useDispatch()
@@ -157,8 +158,8 @@ const ControlPanel = () => {
           >
             Publish Test Match
           </button>
-          <p className="text-red-700">{peers?.map((peer) => peer.id)}</p>
-          <p className="text-green-700">{orders?.map((order) => order.id)}</p>
+          <p className="text-red-700">{peers?.map((peer: IPeer) => peer.id)}</p>
+          <p className="text-green-700">{orders?.map((order: Order) => order.id)}</p>
         </div>
       </div>
     </div>

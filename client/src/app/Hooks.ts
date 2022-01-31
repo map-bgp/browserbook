@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 import { ethers, EventFilter } from 'ethers'
 
-import type { AppDispatch, RootState } from './Store'
-import { setAccounts } from './slices/EthersSlice'
+import type { AppDispatch, RootState } from './store/Store'
+import { setAccounts } from './store/slices/EthersSlice'
 import { EtherStore } from '../chain/EtherStore'
 import { ContractName } from '../chain/ContractMetadata'
 

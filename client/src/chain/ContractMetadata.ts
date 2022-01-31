@@ -1,58 +1,9 @@
-const Greeter = {
-  address: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
-  abi: [
-    {
-      inputs: [
-        {
-          internalType: 'string',
-          name: '_greeting',
-          type: 'string',
-        },
-      ],
-      stateMutability: 'nonpayable',
-      type: 'constructor',
-    },
-    {
-      inputs: [],
-      name: 'greet',
-      outputs: [
-        {
-          internalType: 'string',
-          name: '',
-          type: 'string',
-        },
-      ],
-      stateMutability: 'view',
-      type: 'function',
-    },
-    {
-      inputs: [
-        {
-          internalType: 'string',
-          name: '_greeting',
-          type: 'string',
-        },
-      ],
-      name: 'setGreeting',
-      outputs: [],
-      stateMutability: 'nonpayable',
-      type: 'function',
-    },
-  ],
-}
-
 const TokenFactory = {
-  address: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
+  address: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
   abi: [
     {
       anonymous: false,
       inputs: [
-        {
-          indexed: true,
-          internalType: 'address',
-          name: '',
-          type: 'address',
-        },
         {
           indexed: true,
           internalType: 'address',
@@ -65,9 +16,34 @@ const TokenFactory = {
           name: '',
           type: 'string',
         },
+        {
+          indexed: true,
+          internalType: 'address',
+          name: '',
+          type: 'address',
+        },
       ],
       name: 'TokenCreated',
       type: 'event',
+    },
+    {
+      inputs: [
+        {
+          internalType: 'address',
+          name: '',
+          type: 'address',
+        },
+      ],
+      name: 'addressURI',
+      outputs: [
+        {
+          internalType: 'string',
+          name: '',
+          type: 'string',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
     },
     {
       inputs: [
@@ -107,16 +83,66 @@ const TokenFactory = {
       stateMutability: 'view',
       type: 'function',
     },
+    {
+      inputs: [
+        {
+          internalType: 'string',
+          name: '',
+          type: 'string',
+        },
+      ],
+      name: 'tokenAddress',
+      outputs: [
+        {
+          internalType: 'address',
+          name: '',
+          type: 'address',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
   ],
 }
 
 const Exchange = {
-  address: '0xe75411DC167f5369b93407A756e06ab1a65e2590',
+  address: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
   abi: [
     {
       inputs: [],
       stateMutability: 'nonpayable',
       type: 'constructor',
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          internalType: 'address',
+          name: '',
+          type: 'address',
+        },
+        {
+          indexed: true,
+          internalType: 'address',
+          name: '',
+          type: 'address',
+        },
+        {
+          indexed: false,
+          internalType: 'uint256',
+          name: '',
+          type: 'uint256',
+        },
+        {
+          indexed: false,
+          internalType: 'uint256',
+          name: '',
+          type: 'uint256',
+        },
+      ],
+      name: 'TokensExchangedAt',
+      type: 'event',
     },
     {
       inputs: [
@@ -213,13 +239,11 @@ const Exchange = {
 }
 
 export enum ContractName {
-  Greeter = 'Greeter',
   TokenFactory = 'TokenFactory',
   Exchange = 'Exchange',
 }
 
 export const ContractMetadata = {
-  [ContractName.Greeter]: Greeter,
   [ContractName.TokenFactory]: TokenFactory,
   [ContractName.Exchange]: Exchange,
 }

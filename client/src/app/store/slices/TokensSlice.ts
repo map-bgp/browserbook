@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../Store'
-import { Token } from '../types/Token'
+import { Token } from '../../types/Token'
 
 type TokensState = {
   tokens: Array<Token>

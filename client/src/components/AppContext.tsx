@@ -1,8 +1,8 @@
 import React, { useContext, useReducer } from 'react'
-import { P2PDB } from '../p2p/db'
+import { P2PDB } from '../app/p2p/db'
 import EventEmitter from 'events'
-import { getConfig } from '../p2p/Config'
-import { Peer } from '../p2p/Peer'
+import { getConfig } from '../app/p2p/Config'
+import { Peer } from '../app/p2p/Peer'
 
 interface IAppContext {
   peer: Peer

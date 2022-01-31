@@ -1,20 +1,16 @@
-import React from "react";
-import {Tokens} from "../store/types/constants";
+import React from 'react'
+import { Tokens } from '../app/types/constants'
 
 const Trade = () => {
-  const tokenSelection = Object.values(Tokens).map((val) =>  <option>{val}</option>);
+  const tokenSelection = Object.values(Tokens).map((val) => <option>{val}</option>)
 
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
       <div className="px-4 py-8 sm:px-0 flex flex-col sm:flex-none sm:grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-8">
         <div className="md:col-span-1 align-top">
           <div>
-            <h3 className="text-lg font-medium leading-6 text-gray-900">
-              New Order
-            </h3>
-            <p className="mt-1 text-sm text-gray-600">
-              Input your order details
-            </p>
+            <h3 className="text-lg font-medium leading-6 text-gray-900">New Order</h3>
+            <p className="mt-1 text-sm text-gray-600">Input your order details</p>
           </div>
         </div>
         <div className="mt-5 md:mt-0 md:col-span-2">
@@ -81,19 +77,28 @@ const Trade = () => {
                 </div>
 
                 <div className="col-span-6 sm:col-span-3">
-                  <div className="block text-sm font-medium text-gray-700 mb-2">
-                    Order Type
-                  </div>
+                  <div className="block text-sm font-medium text-gray-700 mb-2">Order Type</div>
                   <div className="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-5">
                     <div className="flex items-center">
-                      <input id="bid" name="order-type" type="radio" checked className="focus:ring-orange-500 h-4 w-4 text-orange-600 border-gray-300" />
+                      <input
+                        id="bid"
+                        name="order-type"
+                        type="radio"
+                        checked
+                        className="focus:ring-orange-500 h-4 w-4 text-orange-600 border-gray-300"
+                      />
                       <label htmlFor="bid" className="ml-3 block text-sm font-medium text-gray-700">
                         Bid
                       </label>
                     </div>
 
                     <div className="flex items-center">
-                      <input id="ask" name="order-type" type="radio" className="focus:ring-orange-500 h-4 w-4 text-orange-600 border-gray-300" />
+                      <input
+                        id="ask"
+                        name="order-type"
+                        type="radio"
+                        className="focus:ring-orange-500 h-4 w-4 text-orange-600 border-gray-300"
+                      />
                       <label htmlFor="ask" className="ml-3 block text-sm font-medium text-gray-700">
                         Ask
                       </label>
@@ -102,19 +107,28 @@ const Trade = () => {
                 </div>
 
                 <div className="col-span-6 sm:col-span-3">
-                  <div className="block text-sm font-medium text-gray-700 mb-2">
-                    Order Mechanism
-                  </div>
+                  <div className="block text-sm font-medium text-gray-700 mb-2">Order Mechanism</div>
                   <div className="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-5">
                     <div className="flex items-center">
-                      <input id="bid" name="order-mechanism" type="radio" checked className="focus:ring-orange-500 h-4 w-4 text-orange-600 border-gray-300" />
+                      <input
+                        id="bid"
+                        name="order-mechanism"
+                        type="radio"
+                        checked
+                        className="focus:ring-orange-500 h-4 w-4 text-orange-600 border-gray-300"
+                      />
                       <label htmlFor="bid" className="ml-3 block text-sm font-medium text-gray-700">
                         Market
                       </label>
                     </div>
 
                     <div className="flex items-center">
-                      <input id="ask" name="order-mechanism" type="radio" className="focus:ring-orange-500 h-4 w-4 text-orange-600 border-gray-300" />
+                      <input
+                        id="ask"
+                        name="order-mechanism"
+                        type="radio"
+                        className="focus:ring-orange-500 h-4 w-4 text-orange-600 border-gray-300"
+                      />
                       <label htmlFor="ask" className="ml-3 block text-sm font-medium text-gray-700">
                         Limit
                       </label>
@@ -135,12 +149,8 @@ const Trade = () => {
         </div>
         <div className="md:col-span-1 align-top">
           <div>
-            <h3 className="text-lg font-medium leading-6 text-gray-900">
-              Token Admin
-            </h3>
-            <p className="mt-1 text-sm text-gray-600">
-              See and administer already created tokens
-            </p>
+            <h3 className="text-lg font-medium leading-6 text-gray-900">Token Admin</h3>
+            <p className="mt-1 text-sm text-gray-600">See and administer already created tokens</p>
           </div>
         </div>
         <div className="md:col-span-2">

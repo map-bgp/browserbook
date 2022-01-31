@@ -1,5 +1,5 @@
 import { Link, Outlet, useParams } from 'react-router-dom'
-import { Token } from '../../store/types/Token'
+import { Token } from '../../app/types/Token'
 import { classNames } from '../utils/utils'
 
 export type TokenTableProps = {
@@ -57,7 +57,6 @@ export const TokenTable = (props: TokenTableProps) => {
           </div>
         </div>
       </div>
-      <Outlet />
     </div>
   )
 }
