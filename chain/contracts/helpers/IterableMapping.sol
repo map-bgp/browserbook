@@ -1,13 +1,13 @@
-pragma solidity >=0.6.8 <0.9.0;
+pragma solidity ^0.8.0;
 
-    struct IndexValue { uint keyIndex; uint value; }
-    struct KeyFlag { address key; bool exists; }
+struct IndexValue { uint keyIndex; uint value; }
+struct KeyFlag { address key; bool exists; }
 
-    struct itmap {
-        mapping(address => IndexValue) data;
-        KeyFlag[] keys;
-        uint size;
-    }
+struct itmap {
+    mapping(address => IndexValue) data;
+    KeyFlag[] keys;
+    uint size;
+}
 
 library IterableMapping {
     function insert(itmap storage self, address key, uint value) internal returns (bool inserted) {
