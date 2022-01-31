@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import { classNames } from './utils/utils'
+import { ethers } from 'ethers'
 import { XCircleIcon } from '@heroicons/react/solid'
-import { useAppDispatch, useAppSelector, useEthers, useTokenFilter } from '../app/Hooks'
-import { selectTokens, setTokens } from '../app/store/slices/TokensSlice'
+
+import { classNames } from './utils/utils'
+import {
+  useAppDispatch,
+  useAppSelector,
+  useEthers,
+  useFilter,
+  useTokenContractFilter,
+} from '../app/Hooks'
+import { selectTokenContract, selectTokens, setTokens } from '../app/store/slices/TokensSlice'
 import { selectAccountData } from '../app/store/slices/EthersSlice'
 import { ContractName } from '../chain/ContractMetadata'
-import { ethers } from 'ethers'
 import TokenTable from './elements/TokenTable'
 
 type TokenAdministrationProps = {}
@@ -16,22 +23,20 @@ const TokenAdministration = (props: TokenAdministrationProps) => {
   const { isConnected, accounts, primaryAccount } = useAppSelector(selectAccountData)
   const { contract } = useEthers(ContractName.TokenFactory)
 
+  const tokenContract = useAppSelector(selectTokenContract)
   const tokens = useAppSelector(selectTokens)
 
-  const dispatchTokens = (events: Array<ethers.Event>) => {
-    const tokens = events
-      .filter((e) => e.args !== undefined)
-      .map((e) => ({ address: e.args![1], uri: e.args![2] }))
-    dispatch(setTokens(tokens))
-  }
-
-  useTokenFilter(contract, 'TokenCreated', primaryAccount, dispatchTokens)
+  useTokenContractFilter(primaryAccount)
 
   const createToken = async (uri: string) => {
     if (contract === null) {
       throw new Error('Cannot call method on null contract')
     }
-    await contract.create(uri).then(() => console.log('Created token'))
+    try {
+      await contract.create(uri).then(() => console.log('Created token'))
+    } catch (error: any) {
+      console.log(error.data)
+    }
   }
 
   const [uri, setURI] = useState<string>('')
@@ -46,8 +51,14 @@ const TokenAdministration = (props: TokenAdministrationProps) => {
       setError(true)
       throw new Error('Submission form is not valid')
     }
+
     setError(false)
-    createToken(uri)
+
+    if (tokens.length == 0) {
+      createToken(uri)
+    } else {
+      throw new Error('Can only create one token per address')
+    }
   }
 
   return (

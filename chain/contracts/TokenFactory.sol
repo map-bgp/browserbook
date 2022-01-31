@@ -20,7 +20,7 @@ contract TokenFactory {
     
     // Event emission aids client-side discovery
     // (owner address, URI, token address)
-    event TokenCreated(address indexed, string, address indexed);
+    event TokenContractCreated(address indexed, string, address indexed);
 
     function create(string calldata URI) public returns (address) {
         require(_createdToken[msg.sender] == false, "CANNOT_CREATE_MULTIPLE_TOKENS_PER_ADDRESS");
@@ -31,7 +31,7 @@ contract TokenFactory {
         tokenAddress[URI] = address(token);
 
         _createdToken[msg.sender] = true;
-        emit TokenCreated(token.Owner(), URI, address(token));
+        emit TokenContractCreated(token.Owner(), URI, address(token));
         return address(token);
     }
 

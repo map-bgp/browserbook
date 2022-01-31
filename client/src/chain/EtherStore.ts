@@ -7,8 +7,28 @@ import { ContractMetadata, ContractName } from './ContractMetadata'
 import { encrypt } from './Encryption'
 
 const { ethereum } = window as any
-
 const dispatch = store.dispatch
+
+export class EtherContractWrapper {
+  provider: ethers.providers.Web3Provider
+  signer: ethers.providers.JsonRpcSigner
+
+  constructor() {
+    if (typeof ethereum === 'undefined') {
+      throw new Error('Ethereum object is not injected')
+    } else {
+      this.provider = new ethers.providers.Web3Provider(ethereum, 'any')
+      this.signer = this.provider.getSigner()
+    }
+  }
+
+  getContract = async (contract: ContractName) => {
+    const address = ContractMetadata[contract].address
+    const contractABI = ContractMetadata[contract].abi
+
+    return new ethers.Contract(address, contractABI, this.signer)
+  }
+}
 
 export class EtherStore {
   provider: ethers.providers.Web3Provider
@@ -70,7 +90,6 @@ export class EtherStore {
     }
     const queryFilter = async () => {
       const res = await EtherStore.queryFilter(contract, filter)
-      console.log('Result of nested query:', res)
       callback(res)
     }
 

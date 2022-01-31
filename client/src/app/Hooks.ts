@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
-import { ethers, EventFilter } from 'ethers'
+import { ethers } from 'ethers'
 
-import type { AppDispatch, RootState } from './store/Store'
+import { AppDispatch, RootState, store } from './store/Store'
 import { setAccounts } from './store/slices/EthersSlice'
-import { EtherStore } from '../chain/EtherStore'
+import { EtherContractWrapper, EtherStore } from '../chain/EtherStore'
 import { ContractName } from '../chain/ContractMetadata'
+import { setTokens } from './store/slices/TokensSlice'
 
 export const useAppDispatch = () => useDispatch<AppDispatch>()
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
@@ -33,47 +34,41 @@ export const useEthers = (contractName?: ContractName) => {
   return { ethers, signer, contract }
 }
 
-// export const useFilter = (
-//   contract: ethers.Contract | null,
-//   filterName: string,
-//   filterArgs: Array<string> | null,
-//   callback: (events: Array<ethers.Event>) => void,
-// ) => {
-//   useEffect(() => {
-//     console.log('Here are the filter args', filterArgs)
-
-//     const setupFilter = async () => {
-//       if (!!contract && !!filterArgs) {
-//         contract.removeAllListeners()
-
-//         const filter = EtherStore.getFilter(contract, filterName, filterArgs)
-//         EtherStore.setFilterHandler(contract, filter, callback)
-//       }
-//     }
-
-//     setupFilter()
-//   }, [contract, filterArgs])
-// }
-
-// Change to async thunk for integration into store?
-export const useTokenFilter = (
-  contract: ethers.Contract | null,
+const setupFilter = async (
+  contractName: ContractName,
   filterName: string,
-  ownerAddress: string | null,
+  filterArgs: Array<string>,
+  callback: (events: Array<ethers.Event>) => void,
+) => {
+  const contract = await new EtherContractWrapper().getContract(contractName)
+  const filter = EtherStore.getFilter(contract, filterName, filterArgs)
+  EtherStore.setFilterHandler(contract, filter, callback)
+}
+
+export const useFilter = (
+  contractName: ContractName,
+  filterName: string,
+  filterArgs: Array<string> | string | null,
   callback: (events: Array<ethers.Event>) => void,
 ) => {
   useEffect(() => {
-    console.log('Here are the filter args', ownerAddress)
-
-    const setupFilter = async () => {
-      if (!!contract && !!ownerAddress) {
-        contract.removeAllListeners()
-
-        const filter = EtherStore.getFilter(contract, filterName, [ownerAddress])
-        EtherStore.setFilterHandler(contract, filter, callback)
-      }
+    if (!!filterArgs) {
+      filterArgs = filterArgs instanceof Array ? filterArgs : [filterArgs]
+      setupFilter(contractName, filterName, filterArgs, callback)
     }
+  }, [filterArgs])
+}
 
-    setupFilter()
-  }, [contract, ownerAddress])
+export const useTokenContractFilter = (ownerAddress: string | null) => {
+  const contractName = ContractName.TokenFactory
+  const filterName = 'TokenContractCreated'
+
+  const dispatchTokens = (events: Array<ethers.Event>) => {
+    const tokens = events
+      .filter((e) => e.args !== undefined)
+      .map((e) => ({ uri: e.args![1], address: e.args![2] }))
+    store.dispatch(setTokens(tokens))
+  }
+
+  useFilter(contractName, filterName, ownerAddress, dispatchTokens)
 }

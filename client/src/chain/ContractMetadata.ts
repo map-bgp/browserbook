@@ -23,7 +23,7 @@ const TokenFactory = {
           type: 'address',
         },
       ],
-      name: 'TokenCreated',
+      name: 'TokenContractCreated',
       type: 'event',
     },
     {
