@@ -14,6 +14,7 @@
     "@headlessui/react": "^1.4.2",
     "@heroicons/react": "^1.0.5",
     "@reduxjs/toolkit": "^1.7.1",
+    "@tailwindcss/forms": "^0.4.0",
     "@types/ethereumjs-util": "^6.1.0",
     "autoprefixer": "^10.4.2",
     "d3": "^7.3.0",
