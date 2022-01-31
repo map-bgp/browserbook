@@ -1,5 +1,5 @@
 import React from 'react'
-import { Tokens } from '../app/types/constants'
+import { Tokens } from '../app/constants'
 
 const Trade = () => {
   const tokenSelection = Object.values(Tokens).map((val) => <option>{val}</option>)
