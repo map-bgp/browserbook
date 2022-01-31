@@ -3,8 +3,15 @@ import { ethers } from 'ethers'
 import { store } from '../store/Store'
 import { selectEncryptionKey, setAccounts, setEncryptionKey } from '../store/slices/EthersSlice'
 import { setEncryptedSignerKey } from '../store/slices/SignerSlice'
-import { ContractMetadata, ContractName } from './ContractMetadata'
+import { ContractName, ContractMetadata } from './ContractMetadata'
 import { encrypt } from './Encryption'
+
+const hasOwnProperty = <X extends {}, Y extends PropertyKey>(
+  obj: X,
+  prop: Y,
+): obj is X & Record<Y, unknown> => {
+  return obj.hasOwnProperty(prop)
+}
 
 const { ethereum } = window as any
 const dispatch = store.dispatch
@@ -22,11 +29,22 @@ export class EtherContractWrapper {
     }
   }
 
-  getContract = async (contract: ContractName) => {
-    const address = ContractMetadata[contract].address
-    const contractABI = ContractMetadata[contract].abi
+  getContract = async (contract: ContractName, address?: string) => {
+    const contractMetadata = ContractMetadata[contract]
 
-    return new ethers.Contract(address, contractABI, this.signer)
+    if (hasOwnProperty(contractMetadata, 'address')) {
+      const address = contractMetadata.address
+      const contractABI = contractMetadata.abi
+
+      return new ethers.Contract(address, contractABI, this.signer)
+    } else {
+      if (address === undefined) {
+        throw new Error('Cannot call variable address contract without providing an address parameter')
+      }
+
+      const contractABI = contractMetadata.abi
+      return new ethers.Contract(address, contractABI, this.signer)
+    }
   }
 }
 
@@ -50,11 +68,23 @@ export class EtherStore {
 
   getSigner = () => this.signer
   getAccounts = async () => await this.provider.listAccounts()
-  getContract = async (contract: ContractName) => {
-    const address = ContractMetadata[contract].address
-    const contractABI = ContractMetadata[contract].abi
 
-    return new ethers.Contract(address, contractABI, this.signer)
+  getContract = async (contract: ContractName, address?: string) => {
+    const contractMetadata = ContractMetadata[contract]
+
+    if (hasOwnProperty(contractMetadata, 'address')) {
+      const address = contractMetadata.address
+      const contractABI = contractMetadata.abi
+
+      return new ethers.Contract(address, contractABI, this.signer)
+    } else {
+      if (address === undefined) {
+        throw new Error('Cannot call variable address contract without providing an address parameter')
+      }
+
+      const contractABI = contractMetadata.abi
+      return new ethers.Contract(address, contractABI, this.signer)
+    }
   }
 
   static getFilter = (
@@ -84,11 +114,17 @@ export class EtherStore {
     contract: ethers.Contract,
     filter: ethers.EventFilter,
     callback: (events: Array<ethers.Event>) => void,
+    initialQuery: boolean = true,
   ): Promise<void> => {
     if (contract === null) {
       throw new Error('Cannot set handler on null contract')
     }
     const queryFilter = async () => {
+      const res = await EtherStore.queryFilter(contract, filter)
+      callback(res)
+    }
+
+    if (initialQuery === true) {
       const res = await EtherStore.queryFilter(contract, filter)
       callback(res)
     }

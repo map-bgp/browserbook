@@ -11,7 +11,22 @@ import { setTokenContract, setTokens } from './store/slices/TokensSlice'
 export const useAppDispatch = () => useDispatch<AppDispatch>()
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
 
-export const useEthers = (contractName?: ContractName) => {
+export const useContract = (contractName: ContractName, address?: string) => {
+  const [contract, setContract] = useState<ethers.Contract | null>(null)
+
+  useEffect(() => {
+    const getContract = async () => {
+      const contract = await new EtherContractWrapper().getContract(contractName, address)
+      setContract(contract)
+    }
+
+    getContract().then()
+  }, [])
+
+  return contract
+}
+
+export const useEthers = (contractName?: ContractName, address?: string) => {
   const dispatch = useAppDispatch()
 
   const [ethers, setEthers] = useState<EtherStore>(new EtherStore())
@@ -24,7 +39,7 @@ export const useEthers = (contractName?: ContractName) => {
       dispatch(setAccounts(await ethers.getAccounts()))
 
       if (contractName) {
-        const contract = await ethers.getContract(contractName)
+        const contract = await ethers.getContract(contractName, address)
         setContract(contract)
       }
     }
@@ -39,10 +54,11 @@ const setupFilter = async (
   filterName: string,
   filterArgs: Array<string>,
   callback: (events: Array<ethers.Event>) => void,
+  initialQuery: boolean,
 ) => {
   const contract = await new EtherContractWrapper().getContract(contractName)
   const filter = EtherStore.getFilter(contract, filterName, filterArgs)
-  EtherStore.setFilterHandler(contract, filter, callback)
+  EtherStore.setFilterHandler(contract, filter, callback, initialQuery)
 }
 
 export const useFilter = (
@@ -50,16 +66,17 @@ export const useFilter = (
   filterName: string,
   filterArgs: Array<string> | string | null,
   callback: (events: Array<ethers.Event>) => void,
+  initialQuery: boolean,
 ) => {
   useEffect(() => {
     if (!!filterArgs) {
       filterArgs = filterArgs instanceof Array ? filterArgs : [filterArgs]
-      setupFilter(contractName, filterName, filterArgs, callback)
+      setupFilter(contractName, filterName, filterArgs, callback, initialQuery)
     }
   }, [filterArgs])
 }
 
-export const useTokenContractFilter = (ownerAddress: string | null) => {
+export const useTokenContractFilter = (ownerAddress: string | null, initialQuery: boolean) => {
   const dispatch = useAppDispatch()
   const contractName = ContractName.TokenFactory
   const filterName = 'TokenContractCreated'
@@ -76,5 +93,5 @@ export const useTokenContractFilter = (ownerAddress: string | null) => {
     }
   }
 
-  useFilter(contractName, filterName, ownerAddress, dispatchTokens)
+  useFilter(contractName, filterName, ownerAddress, dispatchTokens, initialQuery)
 }

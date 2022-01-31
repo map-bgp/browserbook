@@ -10,8 +10,10 @@ import {
 import { selectTokenContract, selectTokens, setTokens } from '../app/store/slices/TokensSlice'
 import { selectAccountData } from '../app/store/slices/EthersSlice'
 import { ContractName } from '../app/chain/ContractMetadata'
+import TokenInput from '../components/TokenInput'
 import TokenTable from '../components/TokenTable'
-import ContractInput from '../components/ContractInput'
+import EntityInput from '../components/EntityInput'
+import EntityStats from '../components/EntityStats'
 
 type TokenAdministrationProps = {}
 
@@ -19,9 +21,15 @@ const TokenAdministration = (props: TokenAdministrationProps) => {
   const { primaryAccount } = useAppSelector(selectAccountData)
 
   const tokenContract = useAppSelector(selectTokenContract)
-  const tokens = useAppSelector(selectTokens)
+  // const tokens = useAppSelector(selectTokens)
+  const tokens = [
+    {
+      uri: 'test',
+      address: 'test',
+    },
+  ]
 
-  useTokenContractFilter(primaryAccount)
+  useTokenContractFilter(primaryAccount, true)
 
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -30,19 +38,49 @@ const TokenAdministration = (props: TokenAdministrationProps) => {
           <div>
             {tokenContract === null ? (
               <>
-                <h3 className="text-lg font-medium leading-6 text-gray-900">Commit Entity URI</h3>
-                <p className="mt-1 text-sm text-gray-600">Each address can link with exactly one URI</p>
+                <h3 className="text-lg font-medium leading-6 text-gray-900">Create Unique Identifier</h3>
+                <p className="mt-1 text-sm text-gray-600">
+                  Any string is allowed but we suggest <br /> an ENS name
+                </p>
               </>
             ) : (
               <>
-                <h3 className="text-lg font-medium leading-6 text-gray-900">Create Token</h3>
-                <p className="mt-1 text-sm text-gray-600">Create a new fungible or non-fungible token</p>
+                <h3 className="text-lg font-medium leading-6 text-gray-900">{tokenContract.uri}</h3>
+                <p className="mt-1 text-sm text-gray-600">See your general entity information here</p>
+              </>
+            )}
+          </div>
+        </div>
+        <div className="md:col-span-2">{tokenContract === null ? <EntityInput /> : <EntityStats />}</div>
+        <div className="md:col-span-1 align-top">
+          <div>
+            {tokenContract === null ? (
+              <></>
+            ) : (
+              <>
+                <h3 className="text-lg font-medium leading-6 text-gray-900">Create a New Token</h3>
+                <p className="mt-1 text-sm text-gray-600">Tokens may be fungible or non-fungible</p>
               </>
             )}
           </div>
         </div>
         <div className="md:col-span-2">
-          {tokenContract === null ? <ContractInput /> : <TokenTable wrapperStyle="" tokens={tokens} />}
+          {tokenContract === null ? <></> : <TokenInput tokenContract={tokenContract} />}
+        </div>
+        <div className="md:col-span-1 align-top">
+          <div>
+            {tokenContract === null ? (
+              <></>
+            ) : (
+              <>
+                <h3 className="text-lg font-medium leading-6 text-gray-900">Administer Your Tokens</h3>
+                <p className="mt-1 text-sm text-gray-600">Get an overview and issue dividends</p>
+              </>
+            )}
+          </div>
+        </div>
+        <div className="md:col-span-2">
+          {tokenContract === null ? <></> : <TokenTable tokens={tokens} />}
         </div>
       </div>
     </div>

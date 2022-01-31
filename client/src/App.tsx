@@ -7,6 +7,7 @@ import { getCurrent } from './components/utils/utils'
 import Header from './components/Header'
 import Content from './pages/Content'
 import { AppContext } from './components/AppContext'
+import { useEthers } from './app/Hooks'
 
 const AppError = () => (
   <>
@@ -19,6 +20,10 @@ const AppError = () => (
 const App = () => {
   const location: Location = useLocation()
   const { peer } = useContext(AppContext)
+
+  // Have to call this somewhere in the app to initialize ethers connection
+  // Could write an initialize hook
+  useEthers()
 
   useEffect(() => {
     const setup = async () => {
