@@ -1,214 +1,206 @@
 // @ts-nocheck
-import React, { useState, useEffect } from "react";
+import React, {useEffect, useState} from "react";
 import "tailwindcss/tailwind.css";
 
-import { Radio, RadioObject } from "./elements/inputs/Radio";
-import { SelectObject, Select } from "./elements/inputs/Select";
+import {ActionTypes, OrderTypes} from "../types/Order";
 
-import { ActionTypes, OrderTypes } from "../types/Order";
-
-import { useAppDispatch, useAppSelector } from "../store/Hooks";
-import { addOrder, selectOrders } from "../store/slices/OrdersSlice";
-import { Tokens } from "../types/Token";
-import { classNames } from "./utils/classNames";
-import { XCircleIcon } from "@heroicons/react/solid";
+import {useAppDispatch, useAppSelector, useEthers} from "../store/Hooks";
+import {addOrder, selectOrders} from "../store/slices/OrdersSlice";
+import {Tokens} from "../types/Token";
 import PubsubChat from "../p2p/messagehandler";
-import { useAppContext } from "./context/Store";
-import { useEthers } from "../store/Hooks";
-import { orderDB } from "../db";
-import { useWeb3React } from "@web3-react/core";
-import { mapTokenValuesToEnum, mapActionTypeToEnum } from "./utils/mapToEnum";
-import { domain } from '../constants';
-import { Token } from "./elements/Token";
+import {useAppContext} from "./context/Store";
+import {useWeb3React} from "@web3-react/core";
+import {mapActionTypeToEnum, mapTokenValuesToEnum} from "./utils/mapToEnum";
+
 //import uint8arrayToString from "uint8arrays/to-string";
 
 function OrderCreation() {
-  const dispatch = useAppDispatch();
-  const { state, setContext } = useAppContext();
-  const [tokenA, setTokenA] = useState(Tokens[0]);
-  const [tokenB, setTokenB] = useState(Tokens[1]);
+    const dispatch = useAppDispatch();
+    const {state, setContext} = useAppContext();
+    const [tokenA, setTokenA] = useState(Tokens[0]);
+    const [tokenB, setTokenB] = useState(Tokens[1]);
 
-  const [orderType, setOrderType] = useState(OrderTypes[0]);
-  const [actionType, setActionType] = useState(ActionTypes[0]);
+    const [orderType, setOrderType] = useState(OrderTypes[0]);
+    const [actionType, setActionType] = useState(ActionTypes[0]);
 
-  const [sellPrice, setSellPrice] = useState<number>(0.0);
-  const [buyPrice, setBuyPrice] = useState<number>(0.0);
+    const [sellPrice, setSellPrice] = useState<number>(0.0);
+    const [buyPrice, setBuyPrice] = useState<number>(0.0);
 
-  const [price, setPrice] = useState<number>(0.0);
-  const [quantity, setQuantity] = useState<number>(0.0);
+    const [price, setPrice] = useState<number>(0.0);
+    const [quantity, setQuantity] = useState<number>(0.0);
 
-  const dbStateOrders = useAppSelector(selectOrders);
+    const dbStateOrders = useAppSelector(selectOrders);
 
-  const [connected, address, contract, resolved, signer] = useEthers();
+    const [connected, address, contract, resolved, signer] = useEthers();
 
-  //Created while integration with Order
-  const [chatClient, setChatClient] = useState(null);
-  const TOPIC = "/libp2p/bbook/chat/1.0.0";
-  const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([]);
-  
-  //const [orderPeerID, setOrderPeerID] = useState('')
-  const { account, library } = useWeb3React<providers.Web3Provider>();
+    //Created while integration with Order
+    const [chatClient, setChatClient] = useState(null);
+    const TOPIC = "/libp2p/bbook/chat/1.0.0";
+    const [message, setMessage] = useState("");
+    const [messages, setMessages] = useState([]);
 
-  //const [orderObject, setOrderObject]= useState({TokenA: Tokens[0], TokenB: Tokens[1], OrderType: OrderTypes[0], ActionType: OrderActions[0], Price: '', Quantity: ''})
+    //const [orderPeerID, setOrderPeerID] = useState('')
+    const {account, library} = useWeb3React<providers.Web3Provider>();
 
-  const getPeerID = () => {
-    return state.peerId;
-  };
+    //const [orderObject, setOrderObject]= useState({TokenA: Tokens[0], TokenB: Tokens[1], OrderType: OrderTypes[0], ActionType: OrderActions[0], Price: '', Quantity: ''})
 
-  const getTotal = (): number => {
-    return price * quantity;
-  };
+    const getPeerID = () => {
+        return state.peerId;
+    };
 
-  const getTotalDisplay = (): string => {
-    return (price * quantity).toFixed(4);
-  };
+    const getTotal = (): number => {
+        return price * quantity;
+    };
 
-  const isValid = (): boolean => {
-    return tokenA !== tokenB;
-  };
+    const getTotalDisplay = (): string => {
+        return (price * quantity).toFixed(4);
+    };
 
-  const handleSubmit = (evt) => {
-    evt.preventDefault();
-    dispatch(
-      addOrder({
-        from: account,
-        status: "Open",
-        created: Date.now(),
-        tokenS: tokenA.name,
-        tokenB: tokenB.name,
-        actionType: actionType.name,
-        orderType: orderType.value,
-        amountB: buyPrice,
-        amountS: sellPrice,
-      })
-    );
-  };
+    const isValid = (): boolean => {
+        return tokenA !== tokenB;
+    };
 
-  const tokenSelection = Tokens.map((token) =>  <option>{token.name}</option>);
+    const handleSubmit = (evt) => {
+        evt.preventDefault();
+        dispatch(
+            addOrder({
+                from: account,
+                status: "Open",
+                created: Date.now(),
+                tokenS: tokenA.name,
+                tokenB: tokenB.name,
+                actionType: actionType.name,
+                orderType: orderType.value,
+                amountB: buyPrice,
+                amountS: sellPrice,
+            })
+        );
+    };
 
-  /**
-   * Sends the current message in the chat field
-   */
-  const sendOrderMessage = async () => {
-    try {
-      const id = (~~(Math.random() * 1e9)).toString(36) + Date.now();
-      const created = Date.now();
-      const status = "OPEN";
+    const tokenSelection = Tokens.map((token) => <option>{token.name}</option>);
 
-    console.log(``)
+    /**
+     * Sends the current message in the chat field
+     */
+    const sendOrderMessage = async () => {
+        try {
+            const id = (~~(Math.random() * 1e9)).toString(36) + Date.now();
+            const created = Date.now();
+            const status = "OPEN";
 
-      //console.log(`Send message function ${id} :${tokenA.name} : ${tokenB.name} : ${orderType.value} : ${actionType.name} : ${price} : ${quantity} : ${account} : ${created}`)
-      await chatClient.sendOrder(
-        id,
-        tokenA,
-        tokenB,
-        orderType,
-        actionType,
-        buyPrice,
-        sellPrice,
-        account,
-        status,
-        created
-      );
-      state.p2pDb
-        .transaction("rw", state.p2pDb.orders, async () => {
-          const order_id = await state.p2pDb.orders.add({
-            id: id,
-            tokenS: mapTokenValuesToEnum(tokenA.name),
-            tokenB: mapTokenValuesToEnum(tokenB.name),
-            orderType: orderType.value,
-            actionType: mapActionTypeToEnum(actionType.name),
-            amountB: buyPrice,
-            amountS: sellPrice,
-            orderFrom: account,
-            status: status,
-            created: created,
-          });
-          console.log(`Order ID is stored in ${order_id}`);
-        })
-        .catch((e) => {
-          console.log(e.stack || e);
-        });
+            console.log(``)
 
-      console.info("Publish done");
-    } catch (err) {
-      console.error("Could not send message", err);
-    }
-  };
+            //console.log(`Send message function ${id} :${tokenA.name} : ${tokenB.name} : ${orderType.value} : ${actionType.name} : ${price} : ${quantity} : ${account} : ${created}`)
+            await chatClient.sendOrder(
+                id,
+                tokenA,
+                tokenB,
+                orderType,
+                actionType,
+                buyPrice,
+                sellPrice,
+                account,
+                status,
+                created
+            );
+            state.p2pDb
+                .transaction("rw", state.p2pDb.orders, async () => {
+                    const order_id = await state.p2pDb.orders.add({
+                        id: id,
+                        tokenS: mapTokenValuesToEnum(tokenA.name),
+                        tokenB: mapTokenValuesToEnum(tokenB.name),
+                        orderType: orderType.value,
+                        actionType: mapActionTypeToEnum(actionType.name),
+                        amountB: buyPrice,
+                        amountS: sellPrice,
+                        orderFrom: account,
+                        status: status,
+                        created: created,
+                    });
+                    console.log(`Order ID is stored in ${order_id}`);
+                })
+                .catch((e) => {
+                    console.log(e.stack || e);
+                });
 
-  const randomPeers = async () => {
-    const peerArray = await state.p2pDb.peers.toArray();
-    const obj = peerArray[Math.floor(Math.random() * peerArray.length)];
-    //console.log(`Random Peers ${obj.peerId}`);
-    //setOrderPeerID(obj.peerId._idB58String);
+            console.info("Publish done");
+        } catch (err) {
+            console.error("Could not send message", err);
+        }
+    };
 
-  };
+    const randomPeers = async () => {
+        const peerArray = await state.p2pDb.peers.toArray();
+        const obj = peerArray[Math.floor(Math.random() * peerArray.length)];
+        //console.log(`Random Peers ${obj.peerId}`);
+        //setOrderPeerID(obj.peerId._idB58String);
 
-  /**
-   * Leverage use effect to act on state changes
-   */
-  useEffect(() => {
-    // Wait for libp2p
-    if (!state.node) return;
+    };
 
-    // Create the pubsub Client
-    if (!chatClient) {
-      const pubsubChat = new PubsubChat(state.node, TOPIC);
-      setChatClient(pubsubChat);
-    }
-  });
+    /**
+     * Leverage use effect to act on state changes
+     */
+    useEffect(() => {
+        // Wait for libp2p
+        if (!state.node) return;
 
-  return (
-    <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-      <div className="px-4 py-8 sm:px-0 flex flex-col sm:flex-none sm:grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-8">
-        <div className="md:col-span-1 align-top">
-          <h3 className="text-lg font-medium leading-6 text-gray-900">
-            New Order
-          </h3>
-          <p className="mt-1 text-sm text-gray-600">
-            Submit your order to the P2P exchange
-          </p>
-        </div>
-        <div className="md:col-span-2">
-          <form onSubmit={handleSubmit}>
-            <div className="shadow sm:rounded-md sm:overflow-hidden">
-              <div className="px-4 py-5 bg-white space-y-6 sm:p-6">
-                <div className="grid grid-cols-6 gap-6">
-                  <div className="col-span-6 sm:col-span-3">
-                    <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-2">
-                      I Have
-                    </label>
-                    <select
-                      id="token-a"
-                      name="token-a"
-                      onChange={(e) => setTokenA(e.target.value)}
-                      className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
-                    >
-                      {tokenSelection}
-                    </select>
-                  </div>
-                  <div className="col-span-6 sm:col-span-3">
-                    <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-2">
-                      I Want
-                    </label>
-                    <select
-                      id="token-b"
-                      name="token-b"
-                      onChange={(e) => setTokenB(e.target.value)}
-                      className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
-                    >
-                      {tokenSelection}
-                    </select>
-                  </div>
+        // Create the pubsub Client
+        if (!chatClient) {
+            const pubsubChat = new PubsubChat(state.node, TOPIC);
+            setChatClient(pubsubChat);
+        }
+    });
+
+    return (
+        <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div className="px-4 py-8 sm:px-0 flex flex-col sm:flex-none sm:grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-8">
+                <div className="md:col-span-1 align-top">
+                    <h3 className="text-lg font-medium leading-6 text-gray-900">
+                        New Order
+                    </h3>
+                    <p className="mt-1 text-sm text-gray-600">
+                        Submit your order to the P2P exchange
+                    </p>
                 </div>
-              </div>
+                <div className="md:col-span-2">
+                    <form onSubmit={handleSubmit}>
+                        <div className="shadow sm:rounded-md sm:overflow-hidden">
+                            <div className="px-4 py-5 bg-white space-y-6 sm:p-6">
+                                <div className="grid grid-cols-6 gap-6">
+                                    <div className="col-span-6 sm:col-span-3">
+                                        <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-2">
+                                            I Have
+                                        </label>
+                                        <select
+                                            id="token-a"
+                                            name="token-a"
+                                            onChange={(e) => setTokenA(e.target.value)}
+                                            className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+                                        >
+                                            {tokenSelection}
+                                        </select>
+                                    </div>
+                                    <div className="col-span-6 sm:col-span-3">
+                                        <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-2">
+                                            I Want
+                                        </label>
+                                        <select
+                                            id="token-b"
+                                            name="token-b"
+                                            onChange={(e) => setTokenB(e.target.value)}
+                                            className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+                                        >
+                                            {tokenSelection}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
-          </form>
         </div>
-      </div>
-    </div>
-  );
+    );
 }
 
 // <form className="h-full" onSubmit={handleSubmit}>
@@ -339,7 +331,9 @@ function OrderCreation() {
 //     >
 //       Submit Order
 //     </button>
-{/*   </div> */}
-{/* </form> */}
+{/*   </div> */
+}
+{/* </form> */
+}
 
 export default OrderCreation;
