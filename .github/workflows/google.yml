@@ -48,7 +48,7 @@ jobs:
       with:
         token_format: 'access_token'
         workload_identity_provider: 'projects/113314596815/locations/global/workloadIdentityPools/browserbook-new/providers/browserbook-new'
-        service_account: 'browserbook@tidal-tower-337920.iam.gserviceaccount.com'
+        service_account: 'browserbook-new@tidal-tower-337920.iam.gserviceaccount.com'
         access_token_lifetime: '300s'
 
     # Alternative option - authentication via credentials json
