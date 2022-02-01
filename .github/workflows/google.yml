@@ -25,6 +25,7 @@ env:
   DEPLOYMENT_NAME: gke-test # TODO: update to deployment name
   REPOSITORY: browserbook # TODO: update to Artifact Registry docker repository
   IMAGE: browserbookDocker
+  CLIENT: ./client
 
 jobs:
   setup-build-publish-deploy:
@@ -59,11 +60,16 @@ jobs:
       run: |-
         echo ${{steps.auth.outputs.access_token}} | docker login -u oauth2accesstoken --password-stdin https://$GAR_LOCATION-docker.pkg.dev
     # Get the GKE credentials so we can deploy to the cluster
+#    - name: Set up GKE credentials
+#      uses: google-github-actions/get-gke-credentials@v0
+#      with:
+#        cluster_name: ${{ env.GKE_CLUSTER }}
+#        location: ${{ env.GKE_ZONE }}
+
+    # Get the GKE credentials so we can deploy to the cluster
     - name: Set up GKE credentials
-      uses: google-github-actions/get-gke-credentials@v0
-      with:
-        cluster_name: ${{ env.GKE_CLUSTER }}
-        location: ${{ env.GKE_ZONE }}
+        run: |-
+          gcloud container clusters get-credentials "${{ env.GKE_CLUSTER }}" --zone "${{ env.GKE_ZONE }}"
 
     # Build the Docker image
     - name: Build
@@ -71,8 +77,9 @@ jobs:
         docker build \
           --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$GITHUB_SHA" \
           --build-arg GITHUB_SHA="$GITHUB_SHA" \
-          --build-arg GITHUB_REF="$GITHUB_REF" \
-          .
+          --build-arg GITHUB_REF="$GITHUB_REF" ./
+      working-directory: ${{ env.CLIENT }}
+
     # Push the Docker image to Google Artifact Registry
     - name: Publish
       run: |-
