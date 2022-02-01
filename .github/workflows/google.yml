@@ -56,11 +56,8 @@ jobs:
  #     with:
  #       credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
-#          # Get the GKE credentials so we can deploy to the cluster
-#          - name: Set up GKE credentials
-#            run: |-
-#              gcloud container clusters get-credentials "${{ env.GKE_CLUSTER }}" --zone "${{ env.GKE_ZONE }}"
 
+    # Get the GKE credentials so we can deploy to the cluster
     - name: Set up GKE credentials
       run: |-
         gcloud container clusters get-credentials "${{ env.GKE_CLUSTER }}" --zone "${{ env.GKE_ZONE }}"
