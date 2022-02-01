@@ -1,37 +1,33 @@
-import {
-  useAppDispatch,
-  useAppSelector,
-  useTokenFactoryFilter,
-  useTokenIdFilter,
-  useTokenQuery,
-} from '../app/Hooks'
+import { useAppDispatch, useAppSelector, useTokenFactoryFilter, useTokenIdFilter } from '../app/Hooks'
 import {
   selectTokenContract,
   selectTokenIds,
   selectTokens,
-  selectNumberFungibleTokens,
-  selectNumberNonFungibleTokens,
+  getTokens,
 } from '../app/store/slices/TokensSlice'
 import { selectAccountData } from '../app/store/slices/EthersSlice'
 import TokenInput from '../components/TokenInput'
 import TokenTable from '../components/TokenTable'
 import EntityInput from '../components/EntityInput'
 import EntityStats from '../components/EntityStats'
+import { useEffect } from 'react'
 
 type TokenAdministrationProps = {}
 
 const TokenAdministration = (props: TokenAdministrationProps) => {
+  const dispatch = useAppDispatch()
   const { primaryAccount } = useAppSelector(selectAccountData)
 
   const tokenContract = useAppSelector(selectTokenContract)
   const tokenIds = useAppSelector(selectTokenIds)
   const tokens = useAppSelector(selectTokens)
-  const numberFungibleTokens = useAppSelector(selectNumberFungibleTokens)
-  const numberNonFungibleTokens = useAppSelector(selectNumberNonFungibleTokens)
 
   useTokenFactoryFilter(primaryAccount)
   useTokenIdFilter(primaryAccount, tokenContract?.address)
-  useTokenQuery(tokenIds, tokenContract?.address)
+
+  useEffect(() => {
+    dispatch(getTokens())
+  }, [tokenIds])
 
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -53,17 +49,7 @@ const TokenAdministration = (props: TokenAdministrationProps) => {
             )}
           </div>
         </div>
-        <div className="md:col-span-2">
-          {tokenContract === null ? (
-            <EntityInput />
-          ) : (
-            <EntityStats
-              totalFungible={numberFungibleTokens}
-              totalNonFungible={numberNonFungibleTokens}
-              totalDividendLoad={0}
-            />
-          )}
-        </div>
+        <div className="md:col-span-2">{tokenContract === null ? <EntityInput /> : <EntityStats />}</div>
         <div className="md:col-span-1 align-top">
           <div>
             {tokenContract === null ? (
@@ -81,7 +67,7 @@ const TokenAdministration = (props: TokenAdministrationProps) => {
         </div>
         <div className="md:col-span-1 align-top">
           <div>
-            {tokenContract === null ? (
+            {tokenContract === null && tokens.length === 0 ? (
               <></>
             ) : (
               <>

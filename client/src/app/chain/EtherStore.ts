@@ -14,7 +14,6 @@ const hasOwnProperty = <X extends {}, Y extends PropertyKey>(
 }
 
 const { ethereum } = window as any
-const dispatch = store.dispatch
 
 export class EtherContractWrapper {
   provider: ethers.providers.Web3Provider
@@ -49,6 +48,7 @@ export class EtherContractWrapper {
 }
 
 export class EtherStore {
+  dispatch = store.dispatch
   provider: ethers.providers.Web3Provider
   signer: ethers.providers.JsonRpcSigner
 
@@ -60,7 +60,7 @@ export class EtherStore {
       this.signer = this.provider.getSigner()
 
       // If user has locked/logout from MetaMask, this resets the accounts array to empty
-      ethereum.on('accountsChanged', (accounts: Array<string>) => dispatch(setAccounts(accounts)))
+      ethereum.on('accountsChanged', (accounts: Array<string>) => this.dispatch(setAccounts(accounts)))
     }
   }
 
@@ -141,7 +141,7 @@ export class EtherStore {
     if (selectEncryptionKey(store.getState()) === null) {
       const encryptionKey = await this.provider.send('eth_getEncryptionPublicKey', [account])
 
-      dispatch(setEncryptionKey(encryptionKey))
+      this.dispatch(setEncryptionKey(encryptionKey))
       return encryptionKey
     } else {
       return selectEncryptionKey(store.getState())!

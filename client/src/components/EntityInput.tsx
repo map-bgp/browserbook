@@ -2,10 +2,12 @@ import { XCircleIcon } from '@heroicons/react/solid'
 import { useState } from 'react'
 import { ContractName } from '../app/chain/ContractMetadata'
 import { useAppSelector, useContract } from '../app/Hooks'
+import { selectAccountData } from '../app/store/slices/EthersSlice'
 import { selectTokenContract } from '../app/store/slices/TokensSlice'
 import { classNames } from './utils/utils'
 
 const EntityInput = () => {
+  const { isConnected } = useAppSelector(selectAccountData)
   const tokenContract = useAppSelector(selectTokenContract)
   const contract = useContract(ContractName.TokenFactory)
 
@@ -73,6 +75,20 @@ const EntityInput = () => {
         </div>
       </div>
       <div className="px-4 py-3 bg-gray-50 text-right sm:px-6 flex justify-end items-center">
+        {!isConnected && (
+          <div className="w-full">
+            <div className="flex mx-4 items-center">
+              <div className="flex-shrink-0">
+                <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
+              </div>
+              <div className="ml-3">
+                <h3 className="text-xs font-medium text-red-800">
+                  You must connect your wallet in order to proceed
+                </h3>
+              </div>
+            </div>
+          </div>
+        )}
         {error && (
           <div className="w-full">
             <div className="flex mx-4 items-center">
@@ -85,14 +101,25 @@ const EntityInput = () => {
             </div>
           </div>
         )}
-        <button
-          onClick={() => handleSubmit()}
-          className={
-            'block flex items-end px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 active:bg-orange-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500'
-          }
-        >
-          Create
-        </button>
+        {isConnected ? (
+          <button
+            onClick={() => handleSubmit()}
+            className={
+              'block flex items-end px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 active:bg-orange-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500'
+            }
+          >
+            Create
+          </button>
+        ) : (
+          <button
+            onClick={() => {}}
+            className={
+              'block cursor-not-allowed flex items-end px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500'
+            }
+          >
+            Create
+          </button>
+        )}
       </div>
     </div>
   )

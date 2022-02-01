@@ -155,22 +155,31 @@ export const useTokenIdFilter = (
   )
 }
 
-export const useTokenQuery = (tokenIds: Array<string>, contractAddress?: string) => {
-  const dispatch = useAppDispatch()
+// export const useTokenQuery = (tokenIds: Array<string>, contractAddress?: string) => {
+//   const dispatch = useAppDispatch()
 
-  useEffect(() => {
-    const mapTokens = async (contractAddress: string) => {
-      let tokens: Array<Token> = []
+//   useEffect(() => {
+//     const mapTokens = async (contractAddress: string) => {
+//       let tokens: Array<Token> = []
 
-      for (let i = 0; i < tokenIds.length; i++) {
-        let token = await queryToken(tokenIds[i], contractAddress)
-        tokens.push(token)
-      }
-      dispatch(setTokens(tokens))
-    }
+//       for (let i = 0; i < tokenIds.length; i++) {
+//         let token = await queryToken(tokenIds[i], contractAddress)
+//         tokens.push(token)
+//       }
+//       dispatch(setTokens(tokens))
+//     }
 
-    if (!!contractAddress) {
-      mapTokens(contractAddress)
-    }
-  }, [tokenIds, contractAddress])
-}
+//     if (!!contractAddress) {
+//       mapTokens(contractAddress)
+//     }
+//   }, [tokenIds, contractAddress])
+// }
+
+// export const useTokenQuery = (tokenIds: Array<string>, contractAddress?: string) => {
+//   useEffect(() => {
+//     if (!!contractAddress) {
+
+//     }
+
+//   }, [tokenIds, contractAddress])
+// }

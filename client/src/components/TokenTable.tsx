@@ -1,8 +1,10 @@
+import { useState } from 'react'
 import { Link, Outlet, useParams } from 'react-router-dom'
 import { ContractName } from '../app/chain/ContractMetadata'
 import { useAppSelector, useContract, useEthers } from '../app/Hooks'
 import { selectTokenContract } from '../app/store/slices/TokensSlice'
 import { Token, TokenContract } from '../app/Types'
+import Modal from './elements/TokenModal'
 import { classNames } from './utils/utils'
 
 export type TokenTableProps = {
@@ -10,11 +12,15 @@ export type TokenTableProps = {
 }
 
 export const TokenTable = (props: TokenTableProps) => {
-  const tokenContract = useAppSelector(selectTokenContract)
-  const contract = useContract(ContractName.TokenFactory)
+  // const tokenContract = useAppSelector(selectTokenContract)
+  // const contract = useContract(ContractName.TokenFactory)
+
+  const [activeTokenId, setActiveTokenId] = useState<string | null>(null)
+  const [modalOpen, setModalOpen] = useState<boolean>(false)
 
   return (
     <>
+      <Modal tokenId={activeTokenId} open={modalOpen} setOpen={setModalOpen} />
       {props.tokens.length !== 0 && (
         <div className="flex flex-col">
           <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -69,7 +75,13 @@ export const TokenTable = (props: TokenTableProps) => {
                             {token.type}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <div className="text-orange-600 hover:text-orange-900 cursor-pointer">
+                            <div
+                              onClick={() => {
+                                setActiveTokenId(token.id)
+                                setModalOpen(true)
+                              }}
+                              className="text-orange-600 hover:text-orange-900 cursor-pointer"
+                            >
                               View
                             </div>
                           </td>
