@@ -22,9 +22,9 @@ env:
   GAR_LOCATION: europe-central2 # TODO: update region of the Artifact Registry
   GKE_CLUSTER: browserbook-cluster    # TODO: update to cluster name
   GKE_ZONE: europe-central2-a   # TODO: update to cluster zone
-  #DEPLOYMENT_NAME: gke-test # TODO: update to deployment name
+  DEPLOYMENT_NAME: gke-test # TODO: update to deployment name
   REPOSITORY: browserbook # TODO: update to Artifact Registry docker repository
-  IMAGE: browserbookDockerImage
+  IMAGE: browserbookDocker
 
 jobs:
   setup-build-publish-deploy:
