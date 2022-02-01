@@ -30,7 +30,7 @@ jobs:
   setup-build-publish-deploy:
     name: Setup, Build, Publish, and Deploy
     runs-on: ubuntu-latest
-    environment: production
+    environment: development
 
     permissions:
       contents: 'read'
@@ -41,19 +41,19 @@ jobs:
       uses: actions/checkout@v2
 
     # Configure Workload Identity Federation and generate an access token.
-    - id: 'auth'
-      name: 'Authenticate to Google Cloud'
-      uses: 'google-github-actions/auth@v0'
-      with:
-        token_format: 'access_token'
-        workload_identity_provider: 'projects/113314596815/locations/global/workloadIdentityPools/browserbook-pool/providers/browserbook-provider'
-        service_account: '113314596815-compute@developer.gserviceaccount.com'
+#    - id: 'auth'
+#      name: 'Authenticate to Google Cloud'
+#      uses: 'google-github-actions/auth@v0'
+#      with:
+#        token_format: 'access_token'
+#        workload_identity_provider: 'projects/113314596815/locations/global/workloadIdentityPools/browserbook-pool/providers/browserbook-provider'
+#        service_account: 'browserbook@tidal-tower-337920.iam.gserviceaccount.com '
 
     # Alternative option - authentication via credentials json
-    # - id: 'auth'
-    #   uses: 'google-github-actions/auth@v0'
-    #   with:
-    #     credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+     - id: 'auth'
+       uses: 'google-github-actions/auth@v0'
+       with:
+         credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
     - name: Docker configuration
       run: |-
