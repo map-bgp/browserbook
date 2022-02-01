@@ -48,7 +48,7 @@ jobs:
       with:
         token_format: 'access_token'
         workload_identity_provider: 'projects/113314596815/locations/global/workloadIdentityPools/browserbook-pool/providers/browserbook-provider'
-        service_account: 'browserbook@tidal-tower-337920.iam.gserviceaccount.com '
+        service_account: 'browserbook@tidal-tower-337920.iam.gserviceaccount.com'
 
     # Alternative option - authentication via credentials json
  #   - id: 'auth'
