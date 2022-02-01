@@ -56,20 +56,18 @@ jobs:
  #     with:
  #       credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
+#          # Get the GKE credentials so we can deploy to the cluster
+#          - name: Set up GKE credentials
+#            run: |-
+#              gcloud container clusters get-credentials "${{ env.GKE_CLUSTER }}" --zone "${{ env.GKE_ZONE }}"
+
+    - name: Set up GKE credentials
+      run: |-
+        gcloud container clusters get-credentials "${{ env.GKE_CLUSTER }}" --zone "${{ env.GKE_ZONE }}"
+
     - name: Docker configuration
       run: |-
         echo ${{steps.auth.outputs.access_token}} | docker login -u oauth2accesstoken --password-stdin https://$GAR_LOCATION-docker.pkg.dev
-    # Get the GKE credentials so we can deploy to the cluster
-#    - name: Set up GKE credentials
-#      uses: google-github-actions/get-gke-credentials@v0
-#      with:
-#        cluster_name: ${{ env.GKE_CLUSTER }}
-#        location: ${{ env.GKE_ZONE }}
-
-    # Get the GKE credentials so we can deploy to the cluster
-    - name: Set up GKE credentials
-        run: |-
-          gcloud container clusters get-credentials "${{ env.GKE_CLUSTER }}" --zone "${{ env.GKE_ZONE }}"
 
     # Build the Docker image
     - name: Build
