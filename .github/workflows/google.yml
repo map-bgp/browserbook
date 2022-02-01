@@ -24,7 +24,7 @@ env:
   GKE_ZONE: europe-central2-a   # TODO: update to cluster zone
   DEPLOYMENT_NAME: gke-test # TODO: update to deployment name
   REPOSITORY: browserbook # TODO: update to Artifact Registry docker repository
-  IMAGE: browserbookDocker
+  IMAGE: browserbook
   CLIENT: ./client
 
 jobs:
