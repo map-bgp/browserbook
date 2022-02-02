@@ -1,23 +1,51 @@
-import { Token, TokenType } from '../Types'
+import { ethers } from 'ethers'
+import { Token, TokenContract, TokenType } from '../Types'
 import { ContractName } from './ContractMetadata'
-import { EtherContractWrapper } from './EtherStore'
+import { EtherContractWrapper, EtherStore } from './EtherStore'
 
-export const queryToken = async (id: string, contractAddress: string) => {
-  const contractName = ContractName.Token
+// This file is a mix of direct queries and event log queries
 
-  const contract = await new EtherContractWrapper().getContract(contractName, contractAddress)
-  const tokenName = await contract.tokenNames(id)
-  const tokenMetadataURI = await contract.tokenMetadata(id)
-  const tokenSupply = String(await contract.tokenSupply(id))
-  const isNonFungible = await contract.isNonFungible(id)
+export const queryTokenContractEvent = async (ownerAddress: string) => {
+  const filterName = 'TokenContractCreated'
 
-  const token: Token = {
-    id: id,
-    name: tokenName,
-    metadataURI: tokenMetadataURI,
-    supply: tokenSupply,
-    type: isNonFungible ? TokenType.NonFungible : TokenType.Fungible,
+  const contract = await new EtherContractWrapper().getContract(ContractName.TokenFactory)
+  const filter = EtherStore.getFilter(contract, filterName, [ownerAddress])
+  const queryResult = await EtherStore.queryFilter(contract, filter)
+
+  const tokenFactoryEvent = queryResult
+    .filter((e) => typeof e !== undefined)
+    .filter((e) => e.args !== undefined)
+    .shift()
+
+  if (!!tokenFactoryEvent && !!tokenFactoryEvent.args) {
+    return { uri: tokenFactoryEvent.args[1], address: tokenFactoryEvent.args[2] }
+  } else {
+    return null
+  }
+}
+
+export const queryTokens = async (contractAddress: string) => {
+  const contract = await new EtherContractWrapper().getContract(ContractName.Token, contractAddress)
+
+  let tokens: Array<Token> = []
+  const tokenNonce = await contract.tokenNonce().then((r: ethers.BigNumber) => r.toNumber())
+
+  for (let i = 1; i < tokenNonce + 1; i++) {
+    const tokenName = await contract.tokenNames(i)
+    const tokenMetadataURI = await contract.tokenMetadata(i)
+    const tokenSupply = String(await contract.tokenSupply(i))
+    const isNonFungible = await contract.isNonFungible(i)
+
+    const token: Token = {
+      id: i.toString(),
+      name: tokenName,
+      metadataURI: tokenMetadataURI,
+      supply: tokenSupply,
+      type: isNonFungible ? TokenType.NonFungible : TokenType.Fungible,
+    }
+
+    tokens.push(token)
   }
 
-  return token
+  return tokens
 }

@@ -1,36 +1,39 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { queryToken } from '../../chain/Queries'
+import { queryTokenContractEvent, queryTokens } from '../../chain/Queries'
 import { Token, TokenContract, TokenType } from '../../Types'
 import type { RootState } from '../Store'
 
 type TokensState = {
   status: 'idle' | 'loading' | 'failed'
   tokenContract: TokenContract | null
-  tokenIds: Array<string>
   tokens: Array<Token>
 }
 
 const initialState: TokensState = {
   status: 'idle',
   tokenContract: null,
-  tokenIds: [],
   tokens: [],
 }
 
-export const getTokens = createAsyncThunk('tokens/getTokens', async (options, thunkAPI: any) => {
-  const tokenIds = selectTokenIds(thunkAPI.getState())
-  const contractAddress = selectTokenContract(thunkAPI.getState())?.address
-  let tokens: Array<Token> = []
-  console.log('Token Ids', tokenIds)
+export const getTokenContract = createAsyncThunk(
+  'tokens/getTokenContract',
+  async (ownerAddress: string, thunkAPI: any): Promise<TokenContract | null> => {
+    return await queryTokenContractEvent(ownerAddress)
+  },
+)
 
-  if (!!contractAddress) {
-    for (let i = 0; i < tokenIds.length; i++) {
-      let token = await queryToken(tokenIds[i], contractAddress)
-      tokens.push(token)
+export const getTokens = createAsyncThunk(
+  'tokens/getTokens',
+  async (options, thunkAPI: any): Promise<Array<Token>> => {
+    const contractAddress = selectTokenContract(thunkAPI.getState())?.address
+
+    if (!!contractAddress) {
+      return await queryTokens(contractAddress)
+    } else {
+      return []
     }
-  }
-  return tokens
-})
+  },
+)
 
 export const tokensSlice = createSlice({
   name: 'tokens',
@@ -39,15 +42,19 @@ export const tokensSlice = createSlice({
     setTokenContract: (state, action: PayloadAction<TokenContract>) => {
       state.tokenContract = action.payload
     },
-    setTokenIds: (state, action: PayloadAction<Array<string>>) => {
-      state.tokenIds = action.payload
-    },
     setTokens: (state, action: PayloadAction<Array<Token>>) => {
       state.tokens = action.payload
     },
   },
   extraReducers: (builder) => {
     builder
+      .addCase(getTokenContract.pending, (state) => {
+        state.status = 'loading'
+      })
+      .addCase(getTokenContract.fulfilled, (state, action) => {
+        state.status = 'idle'
+        state.tokenContract = action.payload
+      })
       .addCase(getTokens.pending, (state) => {
         state.status = 'loading'
       })
@@ -58,10 +65,11 @@ export const tokensSlice = createSlice({
   },
 })
 
-export const { setTokenContract, setTokenIds, setTokens } = tokensSlice.actions
+export const { setTokenContract, setTokens } = tokensSlice.actions
 
 export const selectTokenContract = (state: RootState): TokenContract | null => state.tokens.tokenContract
-export const selectTokenIds = (state: RootState): Array<string> => state.tokens.tokenIds
+export const selectTokenIds = (state: RootState): Array<string> =>
+  state.tokens.tokens.map((token: Token) => token.id)
 export const selectTokens = (state: RootState): Array<Token> => state.tokens.tokens
 export const selectTokenById = (state: RootState, tokenId: string): Token | null => {
   const token = state.tokens.tokens.find((token) => token.id === tokenId)

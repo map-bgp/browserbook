@@ -6,9 +6,7 @@ import { AppDispatch, RootState, store } from './store/Store'
 import { setAccounts } from './store/slices/EthersSlice'
 import { EtherContractWrapper, EtherStore } from './chain/EtherStore'
 import { ContractName } from './chain/ContractMetadata'
-import { setTokenContract, setTokens, setTokenIds } from './store/slices/TokensSlice'
-import { Token } from './Types'
-import { queryToken } from './chain/Queries'
+import { setTokenContract, setTokens, getTokens, getTokenContract } from './store/slices/TokensSlice'
 
 export const useAppDispatch = () => useDispatch<AppDispatch>()
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
@@ -112,22 +110,14 @@ export const useTokenFactoryFilter = (ownerAddress: string | null, initialQuery?
   const contractName = ContractName.TokenFactory
   const filterName = 'TokenContractCreated'
 
-  const dispatchTokenContract = (events: Array<ethers.Event>) => {
-    const tokenFactoryEvent = events
-      .filter((e) => typeof e !== undefined)
-      .filter((e) => e.args !== undefined)
-      .shift()
-
-    if (!!tokenFactoryEvent && !!tokenFactoryEvent.args) {
-      const tokenContract = { uri: tokenFactoryEvent.args[1], address: tokenFactoryEvent.args[2] }
-      dispatch(setTokenContract(tokenContract))
-    }
+  const getTokenContractThunk = (events: Array<ethers.Event>) => {
+    dispatch(getTokenContract(ownerAddress!))
   }
 
-  useFilter(contractName, filterName, ownerAddress, dispatchTokenContract, initialQuery)
+  useFilter(contractName, filterName, ownerAddress, getTokenContractThunk, initialQuery)
 }
 
-export const useTokenIdFilter = (
+export const useTokenFilter = (
   ownerAddress: string | null,
   contractAddress?: string,
   initialQuery?: boolean,
@@ -136,20 +126,15 @@ export const useTokenIdFilter = (
   const contractName = ContractName.Token
   const filterName = 'TokenCreation'
 
-  const dispatchTokenIds = (events: Array<ethers.Event>) => {
-    const tokenIds: Array<string> = events
-      .filter((e) => typeof e !== undefined)
-      .filter((e) => e.args !== undefined)
-      .map((e) => e.args![1].toString())
-
-    dispatch(setTokenIds(tokenIds))
+  const getTokensThunk = (events: Array<ethers.Event>) => {
+    dispatch(getTokens())
   }
 
   useVariableFilter(
     contractName,
     filterName,
     ownerAddress,
-    dispatchTokenIds,
+    getTokensThunk,
     contractAddress,
     initialQuery,
   )

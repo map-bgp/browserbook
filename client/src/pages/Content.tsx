@@ -3,10 +3,9 @@ import { Routes, Route, Outlet } from 'react-router-dom'
 import { NavPage } from '../components/utils/constants'
 import Dashboard from '../components/Dashboard'
 import TokenAdministration from './TokenAdministration'
-import OrderCreation from '../components/OrderCreation'
 import OrderBook from '../components/OrderMatching'
 import ControlPanel from '../components/ControlPanel'
-import Token from '../components/elements/Token'
+import Trade from './Trade'
 
 type ContentProps = {
   current: NavPage
@@ -27,7 +26,7 @@ const Content = (props: ContentProps) => {
           <Route path="token-administration" element={<Outlet />}>
             <Route index element={<TokenAdministration />} />
           </Route>
-          <Route path="trade" element={<OrderCreation />} />
+          <Route path="trade" element={<Trade />} />
           <Route path="order-book" element={<OrderBook />} />
           <Route path="control-panel" element={<ControlPanel />} />
         </Routes>

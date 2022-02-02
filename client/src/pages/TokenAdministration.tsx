@@ -1,4 +1,4 @@
-import { useAppDispatch, useAppSelector, useTokenFactoryFilter, useTokenIdFilter } from '../app/Hooks'
+import { useAppDispatch, useAppSelector, useTokenFactoryFilter, useTokenFilter } from '../app/Hooks'
 import {
   selectTokenContract,
   selectTokenIds,
@@ -15,19 +15,13 @@ import { useEffect } from 'react'
 type TokenAdministrationProps = {}
 
 const TokenAdministration = (props: TokenAdministrationProps) => {
-  const dispatch = useAppDispatch()
   const { primaryAccount } = useAppSelector(selectAccountData)
 
   const tokenContract = useAppSelector(selectTokenContract)
-  const tokenIds = useAppSelector(selectTokenIds)
   const tokens = useAppSelector(selectTokens)
 
   useTokenFactoryFilter(primaryAccount)
-  useTokenIdFilter(primaryAccount, tokenContract?.address)
-
-  useEffect(() => {
-    dispatch(getTokens())
-  }, [tokenIds])
+  useTokenFilter(primaryAccount, tokenContract?.address)
 
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -67,7 +61,7 @@ const TokenAdministration = (props: TokenAdministrationProps) => {
         </div>
         <div className="md:col-span-1 align-top">
           <div>
-            {tokenContract === null && tokens.length === 0 ? (
+            {tokenContract === null || tokens.length === 0 ? (
               <></>
             ) : (
               <>
