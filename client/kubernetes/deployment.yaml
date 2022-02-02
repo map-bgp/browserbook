@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gke-browserbook
+  labels:
+    app: gke-browserbook
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: gke-browserbook
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: gke-browserbook
+    spec:
+      containers:
+        - name: gke-browserbook
+          image: LOCATION-docker.pkg.dev/PROJECT_ID/REPOSITORY/IMAGE:TAG
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
