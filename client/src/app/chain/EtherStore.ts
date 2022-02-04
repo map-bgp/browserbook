@@ -113,23 +113,12 @@ export class EtherStore {
   static setFilterHandler = async (
     contract: ethers.Contract,
     filter: ethers.EventFilter,
-    callback: (events: Array<ethers.Event>) => void,
-    initialQuery: boolean = true,
+    callback: () => void,
   ): Promise<void> => {
     if (contract === null) {
       throw new Error('Cannot set handler on null contract')
     }
-    const queryFilter = async () => {
-      const res = await EtherStore.queryFilter(contract, filter)
-      callback(res)
-    }
-
-    if (initialQuery === true) {
-      const res = await EtherStore.queryFilter(contract, filter)
-      callback(res)
-    }
-
-    contract.on(filter, () => queryFilter())
+    contract.on(filter, () => callback())
   }
 
   // TODO Don't forget to reset this somewhere when needed

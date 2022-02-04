@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 import { ethers } from 'ethers'
 
@@ -7,6 +7,7 @@ import { setAccounts } from './store/slices/EthersSlice'
 import { EtherContractWrapper, EtherStore } from './chain/EtherStore'
 import { ContractName } from './chain/ContractMetadata'
 import { setTokenContract, setTokens, getTokens, getTokenContract } from './store/slices/TokensSlice'
+import { AppContext } from '../components/AppContext'
 
 export const useAppDispatch = () => useDispatch<AppDispatch>()
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
@@ -28,8 +29,8 @@ export const useContract = (contractName: ContractName, address?: string) => {
 
 export const useEthers = (contractName?: ContractName, address?: string) => {
   const dispatch = useAppDispatch()
+  const { ethers } = useContext(AppContext)
 
-  const [ethers, setEthers] = useState<EtherStore>(new EtherStore())
   const [signer, setSigner] = useState<ethers.providers.JsonRpcSigner | null>(null)
   const [contract, setContract] = useState<ethers.Contract | null>(null)
 
@@ -49,122 +50,56 @@ export const useEthers = (contractName?: ContractName, address?: string) => {
   return { ethers, signer, contract }
 }
 
-const setupFilter = async (
-  contractName: ContractName,
-  filterName: string,
-  filterArgs: Array<string>,
-  callback: (events: Array<ethers.Event>) => void,
-  initialQuery?: boolean,
-) => {
-  const contract = await new EtherContractWrapper().getContract(contractName)
-  const filter = EtherStore.getFilter(contract, filterName, filterArgs)
-  EtherStore.setFilterHandler(contract, filter, callback, initialQuery)
-}
-
-export const useFilter = (
-  contractName: ContractName,
-  filterName: string,
-  filterArgs: Array<string> | string | null,
-  callback: (events: Array<ethers.Event>) => void,
-  initialQuery?: boolean,
-) => {
-  useEffect(() => {
-    if (!!filterArgs) {
-      filterArgs = filterArgs instanceof Array ? filterArgs : [filterArgs]
-      setupFilter(contractName, filterName, filterArgs, callback, initialQuery)
-    }
-  }, [filterArgs])
-}
-
-const setupVariableFilter = async (
-  contractName: ContractName,
-  filterName: string,
-  filterArgs: Array<string>,
-  callback: (events: Array<ethers.Event>) => void,
-  contractAddress: string,
-  initialQuery?: boolean,
-) => {
-  const contract = await new EtherContractWrapper().getContract(contractName, contractAddress)
-  const filter = EtherStore.getFilter(contract, filterName, filterArgs)
-  EtherStore.setFilterHandler(contract, filter, callback, initialQuery)
-}
-
-export const useVariableFilter = (
-  contractName: ContractName,
-  filterName: string,
-  filterArgs: Array<string> | string | null,
-  callback: (events: Array<ethers.Event>) => void,
-  contractAddress?: string,
-  initialQuery?: boolean,
-) => {
-  useEffect(() => {
-    if (!!filterArgs && !!contractAddress) {
-      filterArgs = filterArgs instanceof Array ? filterArgs : [filterArgs]
-      setupVariableFilter(contractName, filterName, filterArgs, callback, contractAddress, initialQuery)
-    }
-  }, [filterArgs, contractAddress])
-}
-
-export const useTokenFactoryFilter = (ownerAddress: string | null, initialQuery?: boolean) => {
+export const useTokenFactoryFilter = (ownerAddress: string | null) => {
   const dispatch = useAppDispatch()
   const contractName = ContractName.TokenFactory
   const filterName = 'TokenContractCreated'
 
-  const getTokenContractThunk = (events: Array<ethers.Event>) => {
-    dispatch(getTokenContract(ownerAddress!))
+  const setupFilter = async () => {
+    if (!!ownerAddress) {
+      // Setup the thunk
+      const getTokenContractThunk = () => {
+        dispatch(getTokenContract(ownerAddress))
+      }
+
+      // Call the thunk initially
+      getTokenContractThunk()
+
+      // Set it on the handler
+      const contract = await new EtherContractWrapper().getContract(contractName)
+      const filter = EtherStore.getFilter(contract, filterName, [ownerAddress])
+      EtherStore.setFilterHandler(contract, filter, getTokenContractThunk)
+    }
   }
 
-  useFilter(contractName, filterName, ownerAddress, getTokenContractThunk, initialQuery)
+  useEffect(() => {
+    setupFilter()
+  }, [ownerAddress])
 }
 
-export const useTokenFilter = (
-  ownerAddress: string | null,
-  contractAddress?: string,
-  initialQuery?: boolean,
-) => {
+export const useTokenFilter = (ownerAddress: string | null, contractAddress: string | null) => {
   const dispatch = useAppDispatch()
   const contractName = ContractName.Token
   const filterName = 'TokenCreation'
 
-  const getTokensThunk = (events: Array<ethers.Event>) => {
-    dispatch(getTokens())
+  const setupFilter = async () => {
+    if (!!ownerAddress && !!contractAddress) {
+      // Setup the thunk
+      const getTokensThunk = () => {
+        dispatch(getTokens())
+      }
+
+      // Call the thunk initially
+      getTokensThunk()
+
+      // Set it on the handler
+      const contract = await new EtherContractWrapper().getContract(contractName, contractAddress)
+      const filter = EtherStore.getFilter(contract, filterName, [ownerAddress])
+      EtherStore.setFilterHandler(contract, filter, getTokensThunk)
+    }
   }
 
-  useVariableFilter(
-    contractName,
-    filterName,
-    ownerAddress,
-    getTokensThunk,
-    contractAddress,
-    initialQuery,
-  )
+  useEffect(() => {
+    setupFilter()
+  }, [ownerAddress, contractAddress])
 }
-
-// export const useTokenQuery = (tokenIds: Array<string>, contractAddress?: string) => {
-//   const dispatch = useAppDispatch()
-
-//   useEffect(() => {
-//     const mapTokens = async (contractAddress: string) => {
-//       let tokens: Array<Token> = []
-
-//       for (let i = 0; i < tokenIds.length; i++) {
-//         let token = await queryToken(tokenIds[i], contractAddress)
-//         tokens.push(token)
-//       }
-//       dispatch(setTokens(tokens))
-//     }
-
-//     if (!!contractAddress) {
-//       mapTokens(contractAddress)
-//     }
-//   }, [tokenIds, contractAddress])
-// }
-
-// export const useTokenQuery = (tokenIds: Array<string>, contractAddress?: string) => {
-//   useEffect(() => {
-//     if (!!contractAddress) {
-
-//     }
-
-//   }, [tokenIds, contractAddress])
-// }

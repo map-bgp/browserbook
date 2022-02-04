@@ -20,13 +20,12 @@ const ControlPanel = () => {
 
   const { isConnected, accounts, primaryAccount } = useAppSelector(selectAccountData)
   const { ethers, signer, contract } = useEthers(ContractName.TokenFactory)
-  const { peer, db, eventBus } = useContext(AppContext)
+  const { peer, db } = useContext(AppContext)
 
   const encryptedSignerKey = useAppSelector(selectEncryptedSignerKey)
 
   const log = () => {
     console.log('Ethers', ethers, 'Signer', signer, 'Contract', contract)
-    console.log('Peer', peer, 'DB', db, 'EventBus', eventBus)
     console.log('Filter function', EtherStore.getFilter(contract!, 'TokenCreated', []))
   }
 

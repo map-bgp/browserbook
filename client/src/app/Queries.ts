@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
-import { Token, TokenContract, TokenType } from '../Types'
-import { ContractName } from './ContractMetadata'
-import { EtherContractWrapper, EtherStore } from './EtherStore'
+import { Token, TokenContract, TokenType } from './Types'
+import { ContractName } from './chain/ContractMetadata'
+import { EtherContractWrapper, EtherStore } from './chain/EtherStore'
 
 // This file is a mix of direct queries and event log queries
 

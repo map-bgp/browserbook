@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { queryTokenContractEvent, queryTokens } from '../../chain/Queries'
+import { queryTokenContractEvent, queryTokens } from '../../Queries'
 import { Token, TokenContract, TokenType } from '../../Types'
 import type { RootState } from '../Store'
 
@@ -68,6 +68,9 @@ export const tokensSlice = createSlice({
 export const { setTokenContract, setTokens } = tokensSlice.actions
 
 export const selectTokenContract = (state: RootState): TokenContract | null => state.tokens.tokenContract
+export const selectTokenContractAddress = (state: RootState): string | null =>
+  !!state.tokens.tokenContract ? state.tokens.tokenContract.address : null
+
 export const selectTokenIds = (state: RootState): Array<string> =>
   state.tokens.tokens.map((token: Token) => token.id)
 export const selectTokens = (state: RootState): Array<Token> => state.tokens.tokens
@@ -81,7 +84,6 @@ export const selectTokenById = (state: RootState, tokenId: string): Token | null
 
 export const selectNumberFungibleTokens = (state: RootState): number =>
   state.tokens.tokens.filter((token) => token.type === TokenType.Fungible).length
-
 export const selectNumberNonFungibleTokens = (state: RootState): number =>
   state.tokens.tokens.filter((token) => token.type === TokenType.NonFungible).length
 

@@ -1,16 +1,14 @@
-import { useAppDispatch, useAppSelector, useTokenFactoryFilter, useTokenFilter } from '../app/Hooks'
+import { useAppSelector, useTokenFactoryFilter, useTokenFilter } from '../app/Hooks'
 import {
   selectTokenContract,
-  selectTokenIds,
   selectTokens,
-  getTokens,
+  selectTokenContractAddress,
 } from '../app/store/slices/TokensSlice'
 import { selectAccountData } from '../app/store/slices/EthersSlice'
 import TokenInput from '../components/TokenInput'
 import TokenTable from '../components/TokenTable'
 import EntityInput from '../components/EntityInput'
 import EntityStats from '../components/EntityStats'
-import { useEffect } from 'react'
 
 type TokenAdministrationProps = {}
 
@@ -18,10 +16,11 @@ const TokenAdministration = (props: TokenAdministrationProps) => {
   const { primaryAccount } = useAppSelector(selectAccountData)
 
   const tokenContract = useAppSelector(selectTokenContract)
+  const tokenContractAddress = useAppSelector(selectTokenContractAddress)
   const tokens = useAppSelector(selectTokens)
 
   useTokenFactoryFilter(primaryAccount)
-  useTokenFilter(primaryAccount, tokenContract?.address)
+  useTokenFilter(primaryAccount, tokenContractAddress)
 
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
