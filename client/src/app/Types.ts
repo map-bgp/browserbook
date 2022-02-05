@@ -4,6 +4,7 @@ export type TokenContract = {
 }
 
 export type Token = {
+  contract: TokenContract
   id: string
   name: string
   metadataURI: string

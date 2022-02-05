@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Token } from '../../app/Types'
-import Modal from '../elements/TokenModal'
+import TokenInputModal from '../elements/TokenInputModal'
 
 export type TokenTableProps = {
   tokens: Array<Token>
@@ -12,7 +12,7 @@ export const TokenTable = (props: TokenTableProps) => {
 
   return (
     <>
-      <Modal tokenId={activeTokenId} open={modalOpen} setOpen={setModalOpen} />
+      <TokenInputModal tokenId={activeTokenId} open={modalOpen} setOpen={setModalOpen} />
       {props.tokens.length !== 0 && (
         <div className="flex flex-col">
           <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">

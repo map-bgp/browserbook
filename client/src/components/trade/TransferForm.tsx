@@ -83,8 +83,6 @@ const TransferForm = () => {
                   type="text"
                   name="recipient"
                   id="recipient"
-                  min="0"
-                  step="0.000000001"
                   value={recipient}
                   onChange={(e) => {
                     setRecipient(e.target.value)

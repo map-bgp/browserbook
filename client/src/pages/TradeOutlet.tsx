@@ -2,6 +2,7 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import {
   ChevronDoubleRightIcon,
   GlobeAltIcon,
+  CollectionIcon,
   BookOpenIcon,
   BriefcaseIcon,
 } from '@heroicons/react/outline'
@@ -12,16 +13,18 @@ import { selectAccountData } from '../app/store/slices/EthersSlice'
 
 enum ActiveSection {
   Trade = 'Trade',
+  MyOrders = 'My Orders',
   Transfer = 'Transfer',
-  MyTokens = 'My Tokens',
-  MyDividends = 'My Dividends',
+  MyTokens = 'Tokens',
+  MyDividends = 'Dividends',
 }
 
 const navigation = [
   { name: ActiveSection.Trade, url: 'trade', icon: GlobeAltIcon },
+  { name: ActiveSection.MyOrders, url: 'my-orders', icon: CollectionIcon },
   { name: ActiveSection.Transfer, url: 'transfer', icon: ChevronDoubleRightIcon },
-  { name: ActiveSection.MyTokens, url: 'my-tokens', icon: BookOpenIcon },
-  { name: ActiveSection.MyDividends, url: 'my-dividends', icon: BriefcaseIcon },
+  { name: ActiveSection.MyTokens, url: 'tokens', icon: BookOpenIcon },
+  { name: ActiveSection.MyDividends, url: 'dividends', icon: BriefcaseIcon },
 ]
 
 const TradeOutlet = () => {

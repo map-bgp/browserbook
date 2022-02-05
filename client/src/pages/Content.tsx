@@ -8,6 +8,7 @@ import ControlPanel from './ControlPanel'
 import TradeForm from '../components/trade/TradeForm'
 import TransferForm from '../components/trade/TransferForm'
 import TradeOutlet from './TradeOutlet'
+import Tokens from '../components/trade/Tokens'
 
 type ContentProps = {
   current: NavPage
@@ -31,9 +32,10 @@ const Content = (props: ContentProps) => {
           <Route path="trade" element={<TradeOutlet />}>
             <Route index element={<TradeForm />} />
             <Route path="trade" element={<TradeForm />} />
+            <Route path="my-orders" element={<></>} />
             <Route path="transfer" element={<TransferForm />} />
-            <Route path="my-tokens" element={<></>} />
-            <Route path="my-dividends" element={<></>} />
+            <Route path="tokens" element={<Tokens />} />
+            <Route path="dividends" element={<></>} />
           </Route>
           <Route path="order-book" element={<OrderBook />} />
           <Route path="control-panel" element={<ControlPanel />} />

@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
-import { Token, TokenContract, TokenType } from './Types'
-import { ContractName } from './chain/ContractMetadata'
-import { EtherContractWrapper, EtherStore } from './chain/EtherStore'
+import { Token, TokenContract, TokenType } from '../Types'
+import { ContractName } from '../chain/ContractMetadata'
+import { EtherContractWrapper, EtherStore } from '../chain/EtherStore'
 
 // This file is a mix of direct queries and event log queries
 
@@ -26,6 +26,7 @@ export const queryTokenContractEvent = async (ownerAddress: string) => {
 
 export const queryTokens = async (contractAddress: string) => {
   const contract = await new EtherContractWrapper().getContract(ContractName.Token, contractAddress)
+  const contractURI = await contract.contractURI()
 
   let tokens: Array<Token> = []
   const tokenNonce = await contract.tokenNonce().then((r: ethers.BigNumber) => r.toNumber())
@@ -37,6 +38,10 @@ export const queryTokens = async (contractAddress: string) => {
     const isNonFungible = await contract.isNonFungible(i)
 
     const token: Token = {
+      contract: {
+        uri: contractURI,
+        address: contractAddress,
+      },
       id: i.toString(),
       name: tokenName,
       metadataURI: tokenMetadataURI,

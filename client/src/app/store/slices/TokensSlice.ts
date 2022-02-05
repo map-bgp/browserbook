@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { queryTokenContractEvent, queryTokens } from '../../Queries'
+import { queryTokenContractEvent, queryTokens } from '../../oms/Queries'
 import { Token, TokenContract, TokenType } from '../../Types'
 import type { RootState } from '../Store'
 
