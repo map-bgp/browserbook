@@ -1,12 +1,12 @@
 import { SelectorIcon, XCircleIcon } from '@heroicons/react/outline'
 import { ethers } from 'ethers'
 import { useEffect, useState } from 'react'
-import { useAppSelector } from '../app/Hooks'
-import { transferToken } from '../app/oms/TokenService'
-import { selectAccountData } from '../app/store/slices/EthersSlice'
-import { selectTokenContractAddress, selectTokens } from '../app/store/slices/TokensSlice'
-import { Token } from '../app/Types'
-import TokenSelect from './elements/TokenSelect'
+import { useAppSelector } from '../../app/Hooks'
+import { transferToken } from '../../app/oms/TokenService'
+import { selectAccountData } from '../../app/store/slices/EthersSlice'
+import { selectTokenContractAddress, selectTokens } from '../../app/store/slices/TokensSlice'
+import { Token } from '../../app/Types'
+import TokenSelect from '../elements/TokenSelect'
 
 const TransferForm = () => {
   const { isConnected } = useAppSelector(selectAccountData)
