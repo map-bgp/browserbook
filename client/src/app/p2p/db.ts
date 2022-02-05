@@ -1,4 +1,5 @@
 import Dexie from 'dexie'
+import { Token } from '../Types'
 import { Match, Order } from './protocol_buffers/gossip_schema'
 
 export interface IPeer {
@@ -6,10 +7,18 @@ export interface IPeer {
   joinedTime: number
 }
 
+export interface IToken {
+  id?: string
+  uri: string
+  contractAddress: string // Remember these are ERC-1155 contracts (multitoken)
+  tokenId: number
+}
+
 export class P2PDB extends Dexie {
   static instance: P2PDB
 
   peers: Dexie.Table<IPeer>
+  tokens: Dexie.Table<IToken> // Can be our local type as this is not shared over the gossip protocol
   orders: Dexie.Table<Order>
   matches: Dexie.Table<Match>
 
@@ -18,11 +27,13 @@ export class P2PDB extends Dexie {
 
     this.version(1).stores({
       peers: 'id',
+      tokens: '++id,uri,contractAddress,tokenId',
       orders: 'id,tokenS,tokenT,from,status',
       matches: 'id,makerId,takerId,makerOrderId,takerOrderId,status',
     })
 
     this.peers = this.table('peers')
+    this.tokens = this.table('tokens')
     this.orders = this.table('orders')
     this.matches = this.table('matches')
   }

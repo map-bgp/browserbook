@@ -1,8 +1,7 @@
 import { Fragment, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { selectTokenById } from '../../app/store/slices/TokensSlice'
-import { store } from '../../app/store/Store'
 import { XCircleIcon } from '@heroicons/react/outline'
+import { importToken } from '../../app/oms/TokenService'
 
 type TokenModalProps = {
   open: boolean
@@ -55,7 +54,7 @@ const TokenModalContent = (props: TokenModalProps) => {
   const [tokenId, setTokenId] = useState<string>('')
   const [error, setError] = useState<string>('')
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setError('')
 
     if (issuerURI.length === 0) {
@@ -64,6 +63,13 @@ const TokenModalContent = (props: TokenModalProps) => {
       setError('Token ID cannot be blank')
     } else {
       console.log('Valid')
+    }
+
+    try {
+      await importToken(issuerURI, Number(tokenId))
+      props.setOpen(false)
+    } catch (error: unknown) {
+      setError("We couldn't find that contract, please double check the submission")
     }
   }
 

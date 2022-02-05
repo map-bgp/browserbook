@@ -10,6 +10,7 @@ export type Token = {
   metadataURI: string
   supply: string
   type: TokenType
+  holdings: string
 }
 
 export enum TokenType {

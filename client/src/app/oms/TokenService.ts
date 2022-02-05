@@ -48,7 +48,7 @@ export const transferToken = async (
   const amount = ethers.utils.parseEther(quantity)
 
   if (!!senderAddress) {
-    contract.safeTransferFrom(
+    await contract.safeTransferFrom(
       senderAddress,
       recipientAddress,
       tokenId,
@@ -56,4 +56,24 @@ export const transferToken = async (
       ethers.utils.toUtf8Bytes(''),
     )
   }
+}
+
+export const importToken = async (uri: string, tokenId: number) => {
+  const peer = Globals.peer
+
+  const factoryContractName = ContractName.TokenFactory
+  const factoryContract = await Globals.ethers.getContract(factoryContractName)
+  const tokenContractAddress = await factoryContract.tokenAddress(uri)
+
+  if (tokenContractAddress === ethers.constants.AddressZero) {
+    throw new Error('Token contract from uri not found')
+  }
+
+  const importedToken = {
+    uri: uri,
+    contractAddress: tokenContractAddress,
+    tokenId: tokenId,
+  }
+
+  await peer.addToken(importedToken)
 }

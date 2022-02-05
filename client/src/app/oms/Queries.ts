@@ -24,7 +24,7 @@ export const queryTokenContractEvent = async (ownerAddress: string) => {
   }
 }
 
-export const queryTokens = async (contractAddress: string) => {
+export const queryTokens = async (accountAddress: string, contractAddress: string) => {
   const contract = await new EtherContractWrapper().getContract(ContractName.Token, contractAddress)
   const contractURI = await contract.contractURI()
 
@@ -36,6 +36,7 @@ export const queryTokens = async (contractAddress: string) => {
     const tokenMetadataURI = await contract.tokenMetadata(i)
     const tokenSupply = ethers.utils.formatEther(String(await contract.tokenSupply(i)))
     const isNonFungible = await contract.isNonFungible(i)
+    const holdings = ethers.utils.formatEther(String(await contract.balanceOf(accountAddress, i)))
 
     const token: Token = {
       contract: {
@@ -47,6 +48,7 @@ export const queryTokens = async (contractAddress: string) => {
       metadataURI: tokenMetadataURI,
       supply: tokenSupply,
       type: isNonFungible ? TokenType.NonFungible : TokenType.Fungible,
+      holdings: holdings,
     }
 
     tokens.push(token)

@@ -2,7 +2,8 @@ import Libp2p, { Libp2pOptions } from 'libp2p'
 import { store } from '../store/Store'
 import { decrementPeers, incrementPeers, setPeerId } from '../store/slices/PeerSlice'
 import { Order, Match } from './protocol_buffers/gossip_schema'
-import { P2PDB } from './db'
+import { IToken, P2PDB } from './db'
+import { Token } from '../Types'
 
 const dispatch = store.dispatch
 
@@ -107,6 +108,14 @@ export class Peer {
 
   async removePeer(id: string) {
     await Peer.DB.peers.delete(id)
+  }
+
+  async addToken(token: IToken) {
+    await Peer.DB.tokens.add(token)
+  }
+
+  async removeToken(id: Token) {
+    await Peer.DB.tokens.delete(id)
   }
 
   async addOrder(order: Order) {

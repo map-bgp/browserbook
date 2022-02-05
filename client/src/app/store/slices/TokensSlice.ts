@@ -1,7 +1,9 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { useAppSelector } from '../../Hooks'
 import { queryTokenContractEvent, queryTokens } from '../../oms/Queries'
 import { Token, TokenContract, TokenType } from '../../Types'
 import type { RootState } from '../Store'
+import { selectAccountData } from './EthersSlice'
 
 type TokensState = {
   status: 'idle' | 'loading' | 'failed'
@@ -25,10 +27,11 @@ export const getTokenContract = createAsyncThunk(
 export const getTokens = createAsyncThunk(
   'tokens/getTokens',
   async (options, thunkAPI: any): Promise<Array<Token>> => {
+    const { primaryAccount } = selectAccountData(thunkAPI.getState())
     const contractAddress = selectTokenContract(thunkAPI.getState())?.address
 
-    if (!!contractAddress) {
-      return await queryTokens(contractAddress)
+    if (!!primaryAccount && !!contractAddress) {
+      return await queryTokens(primaryAccount, contractAddress)
     } else {
       return []
     }
