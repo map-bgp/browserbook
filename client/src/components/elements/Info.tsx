@@ -1,12 +1,11 @@
-import React from "react";
-import {InformationCircleIcon} from '@heroicons/react/solid'
+import React from 'react'
+import { InformationCircleIcon } from '@heroicons/react/solid'
 
 type InfoProps = {
-  message: string,
+  message: string
 }
 
 const Info = (props: InfoProps) => {
-
   return (
     <div>
       <div className="mt-4 rounded-md bg-blue-50 inline-flex p-4">
