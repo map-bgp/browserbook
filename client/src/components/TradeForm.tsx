@@ -1,18 +1,15 @@
 import { RadioGroup } from '@headlessui/react'
-import { InformationCircleIcon, SelectorIcon } from '@heroicons/react/outline'
+import { InformationCircleIcon, SelectorIcon, XCircleIcon } from '@heroicons/react/outline'
 import { ethers } from 'ethers'
 import { useEffect, useState } from 'react'
+import { OrderType } from '../app/constants'
 import { useAppSelector, useEthers } from '../app/Hooks'
+import { submitOrder } from '../app/oms/OrderService'
 import { Order } from '../app/p2p/protocol_buffers/gossip_schema'
 import { selectTokens } from '../app/store/slices/TokensSlice'
 import { Token, TokenType } from '../app/Types'
 import TokenSelect from './elements/TokenSelect'
 import { classNames } from './utils/utils'
-
-enum OrderType {
-  Buy = 'buy',
-  Sell = 'sell',
-}
 
 const InfoPanel = (props: { message: string; link: string }) => {
   return (
@@ -35,8 +32,6 @@ const InfoPanel = (props: { message: string; link: string }) => {
 }
 
 const TradeForm = () => {
-  const { signer } = useEthers()
-
   const tokens = useAppSelector(selectTokens)
   const [selected, setSelected] = useState<Token>(tokens[0])
   const [orderType, setOrderType] = useState<OrderType>(OrderType.Buy)
@@ -45,6 +40,7 @@ const TradeForm = () => {
   const [quantity, setQuantity] = useState<string>('')
   const [expiryHours, setExpiryHours] = useState<string>('')
   const [expiryMinutes, setExpiryMinutes] = useState<string>('')
+  const [error, setError] = useState<string>('')
 
   useEffect(() => {
     setSelected(tokens[0])
@@ -63,47 +59,24 @@ const TradeForm = () => {
     return `${date.getDay()}-${date.getMonth()}-${date.getFullYear()} at ${date.getUTCHours()}:${date.getUTCMinutes()} UTC`
   }
 
-  const submitOrder = async () => {
-    console.log('Signer', signer)
-    const expiry = new Date()
+  const handleSubmit = () => {
+    setError('')
 
-    expiry.setHours(expiry.getHours() + Number(expiryHours))
-    expiry.setHours(expiry.getMinutes() + Number(expiryMinutes))
-
-    const expiryMS = Math.floor(expiry.getTime() / 1000).toString()
-
-    // Will be refactored to service method
-    const domain = {
-      name: 'BB Order',
-      version: '1',
-      chainId: 31337,
-      verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
+    if (Number(price) === 0) {
+      setError('Cannot offer a price of 0')
+    } else if (Number(limitPrice) === 0) {
+      setError('Cannot have a limit price of 0')
+    } else if (orderType === OrderType.Buy && Number(limitPrice) < Number(price)) {
+      setError('Limit price must be greater than price for BUY order')
+    } else if (orderType === OrderType.Sell && Number(limitPrice) > Number(price)) {
+      setError('Limit price must be lesser than price for SELL order')
+    } else if (Number(quantity) === 0) {
+      setError('Quantity cannot be 0')
+    } else if (Number(expiryHours) === 0) {
+      setError('Expiry must be at least one hour')
+    } else {
+      submitOrder(selected, orderType, price, limitPrice, quantity, expiryHours, expiryMinutes)
     }
-
-    const types = {
-      Order: [
-        { name: 'tokenId', type: 'string' },
-        { name: 'type', type: 'string' },
-        { name: 'price', type: 'string' },
-        { name: 'limitPrice', type: 'string' },
-        { name: 'quantity', type: 'string' },
-        { name: 'expiry', type: 'string' },
-      ],
-    }
-
-    const order = {
-      tokenId: selected.id,
-      type: orderType,
-      price: price,
-      limitPrice: limitPrice,
-      quantity: quantity,
-      expiry: expiryMS,
-    }
-
-    console.log(order)
-
-    const signature = await signer?._signTypedData(domain, types, order)
-    console.log('Signature', signature)
   }
 
   return (
@@ -120,14 +93,9 @@ const TradeForm = () => {
               {!!selected ? (
                 <TokenSelect tokens={tokens} selected={selected} setSelected={setSelected} />
               ) : (
-                <>
-                  <div className="flex items-center">
-                    <span className="block truncate text-gray-500 italic">No tokens found to trade</span>
-                  </div>
-                  <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                    <SelectorIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                  </span>
-                </>
+                <div className="flex items-center pt-6">
+                  <span className="block text-gray-500 italic">No tokens found to trade</span>
+                </div>
               )}
             </div>
             <div className="col-span-3 sm:col-span-1">
@@ -179,7 +147,7 @@ const TradeForm = () => {
               </div>
               <div className="text-sm text-gray-500 -mt-2">for</div>
               <div className="text-4xl text-gray-700 whitespace-nowrap">
-                Ξ
+                Ξ{' '}
                 {!!price && !!quantity
                   ? (Number(price) * Number(quantity)).toString().length >= 9
                     ? (Number(price) * Number(quantity)).toPrecision(9)
@@ -287,13 +255,38 @@ const TradeForm = () => {
             </div>
           </div>
         </div>
-        <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
-          <button
-            onClick={() => submitOrder()}
-            className="bg-orange-600 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-          >
-            Submit
-          </button>
+        <div className="px-4 py-3 bg-gray-50 text-right sm:px-6 flex justify-end items-center">
+          {error && (
+            <div className="w-full">
+              <div className="flex mx-4 items-center">
+                <div className="flex-shrink-0">
+                  <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-xs font-medium text-red-800">{error}</h3>
+                </div>
+              </div>
+            </div>
+          )}
+          {!!selected ? (
+            <button
+              onClick={() => handleSubmit()}
+              className={
+                'block flex items-end px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 active:bg-orange-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500'
+              }
+            >
+              Submit
+            </button>
+          ) : (
+            <button
+              onClick={() => {}}
+              className={
+                'block cursor-not-allowed flex items-end px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500'
+              }
+            >
+              Submit
+            </button>
+          )}
         </div>
       </div>
     </div>

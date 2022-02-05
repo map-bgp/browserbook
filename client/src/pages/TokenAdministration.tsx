@@ -7,8 +7,8 @@ import {
 import { selectAccountData } from '../app/store/slices/EthersSlice'
 import TokenInput from '../components/TokenInput'
 import TokenTable from '../components/TokenTable'
-import EntityInput from '../components/EntityInput'
-import EntityStats from '../components/EntityStats'
+import ContractInput from '../components/ContractInput'
+import ContractStats from '../components/ContractStats'
 
 type TokenAdministrationProps = {}
 
@@ -42,7 +42,9 @@ const TokenAdministration = (props: TokenAdministrationProps) => {
             )}
           </div>
         </div>
-        <div className="md:col-span-2">{tokenContract === null ? <EntityInput /> : <EntityStats />}</div>
+        <div className="md:col-span-2">
+          {tokenContract === null ? <ContractInput /> : <ContractStats />}
+        </div>
         <div className="md:col-span-1 align-top">
           <div>
             {tokenContract === null ? (

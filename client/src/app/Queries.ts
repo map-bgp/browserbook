@@ -33,7 +33,7 @@ export const queryTokens = async (contractAddress: string) => {
   for (let i = 1; i < tokenNonce + 1; i++) {
     const tokenName = await contract.tokenNames(i)
     const tokenMetadataURI = await contract.tokenMetadata(i)
-    const tokenSupply = String(await contract.tokenSupply(i))
+    const tokenSupply = ethers.utils.formatEther(String(await contract.tokenSupply(i)))
     const isNonFungible = await contract.isNonFungible(i)
 
     const token: Token = {

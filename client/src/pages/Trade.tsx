@@ -10,6 +10,7 @@ import { useAppSelector, useTokenFactoryFilter, useTokenFilter } from '../app/Ho
 import { selectTokenContractAddress } from '../app/store/slices/TokensSlice'
 import { selectAccountData } from '../app/store/slices/EthersSlice'
 import TradeForm from '../components/TradeForm'
+import TransferForm from '../components/TransferForm'
 
 enum ActiveSection {
   Trade = 'Trade',
@@ -66,6 +67,9 @@ const Trade = () => {
           </nav>
         </aside>
         {activeSection === ActiveSection.Trade ? <TradeForm /> : <></>}
+        {activeSection === ActiveSection.Transfer ? <TransferForm /> : <></>}
+        {activeSection === ActiveSection.MyTokens ? <div>My Tokens</div> : <></>}
+        {activeSection === ActiveSection.MyDividends ? <div>My Dividends</div> : <></>}
       </div>
     </div>
   )

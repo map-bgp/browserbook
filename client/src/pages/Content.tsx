@@ -6,6 +6,9 @@ import TokenAdministration from './TokenAdministration'
 import OrderBook from '../components/OrderMatching'
 import ControlPanel from '../components/ControlPanel'
 import Trade from './Trade'
+import TradeForm from '../components/TradeForm'
+import TransferForm from '../components/TransferForm'
+import TradeOutlet from './TradeOutlet'
 
 type ContentProps = {
   current: NavPage
@@ -26,7 +29,13 @@ const Content = (props: ContentProps) => {
           <Route path="token-administration" element={<Outlet />}>
             <Route index element={<TokenAdministration />} />
           </Route>
-          <Route path="trade" element={<Trade />} />
+          <Route path="trade" element={<TradeOutlet />}>
+            <Route index element={<TradeForm />} />
+            <Route path="trade" element={<TradeForm />} />
+            <Route path="transfer" element={<TransferForm />} />
+            <Route path="my-tokens" element={<></>} />
+            <Route path="my-dividends" element={<></>} />
+          </Route>
           <Route path="order-book" element={<OrderBook />} />
           <Route path="control-panel" element={<ControlPanel />} />
         </Routes>

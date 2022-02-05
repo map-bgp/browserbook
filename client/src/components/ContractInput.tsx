@@ -1,46 +1,25 @@
 import { XCircleIcon } from '@heroicons/react/solid'
 import { useState } from 'react'
-import { ContractName } from '../app/chain/ContractMetadata'
-import { useAppSelector, useContract } from '../app/Hooks'
+import { useAppSelector } from '../app/Hooks'
+import { createTokenContract } from '../app/oms/TokenService'
 import { selectAccountData } from '../app/store/slices/EthersSlice'
 import { selectTokenContract } from '../app/store/slices/TokensSlice'
 import { classNames } from './utils/utils'
 
-const EntityInput = () => {
+const ContractInput = () => {
   const { isConnected } = useAppSelector(selectAccountData)
   const tokenContract = useAppSelector(selectTokenContract)
-  const contract = useContract(ContractName.TokenFactory)
-
-  const createToken = async (uri: string) => {
-    if (contract === null) {
-      throw new Error('Cannot call method on null contract')
-    }
-    try {
-      await contract.create(uri).then(() => console.log('Created token'))
-    } catch (error: any) {
-      console.log(error.data)
-    }
-  }
 
   const [uri, setURI] = useState<string>('')
-  const [error, setError] = useState<boolean>(false)
-
-  const formIsValid = (): boolean => {
-    return uri !== ''
-  }
+  const [error, setError] = useState<string>('')
 
   const handleSubmit = () => {
-    if (!formIsValid()) {
-      setError(true)
-      throw new Error('Submission form is not valid')
-    }
+    setError('')
 
-    setError(false)
-
-    if (tokenContract === null) {
-      createToken(uri)
+    if (uri.length === 0) {
+      setError('Token URI may not be empty')
     } else {
-      throw new Error('Can only create one token per address')
+      createTokenContract(uri)
     }
   }
 
@@ -61,7 +40,6 @@ const EntityInput = () => {
                 name="uri"
                 id="uri"
                 onChange={(event) => {
-                  setError(false)
                   setURI(event.target.value)
                 }}
                 className={classNames(
@@ -96,7 +74,7 @@ const EntityInput = () => {
                 <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
               </div>
               <div className="ml-3">
-                <h3 className="text-xs font-medium text-red-800">Token URI may not be empty</h3>
+                <h3 className="text-xs font-medium text-red-800">{error}</h3>
               </div>
             </div>
           </div>
@@ -125,4 +103,4 @@ const EntityInput = () => {
   )
 }
 
-export default EntityInput
+export default ContractInput

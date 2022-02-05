@@ -1,6 +1,6 @@
 import React from 'react'
+import Globals from '../app/Globals'
 import { P2PDB } from '../app/p2p/db'
-import { getConfig } from '../app/p2p/Config'
 import { Peer } from '../app/p2p/Peer'
 import { EtherStore } from '../app/chain/EtherStore'
 
@@ -10,11 +10,9 @@ interface IAppContext {
   db: P2PDB
 }
 
-const peerConfig = getConfig()
-
-const ethers = new EtherStore()
-const peer = new Peer(peerConfig)
-const db = P2PDB.initialize()
+const ethers = Globals.ethers
+const peer = Globals.peer
+const db = Globals.db
 
 export const AppContext = React.createContext<IAppContext>({
   ethers: ethers,

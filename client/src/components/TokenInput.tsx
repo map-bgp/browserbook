@@ -1,9 +1,6 @@
-import { ethers } from 'ethers'
-import { useEffect, useState } from 'react'
-import { Link, Outlet, useParams } from 'react-router-dom'
-import { ContractName } from '../app/chain/ContractMetadata'
-import { useAppSelector, useContract, useEthers } from '../app/Hooks'
-import { selectTokenContract } from '../app/store/slices/TokensSlice'
+import { XCircleIcon } from '@heroicons/react/outline'
+import { useState } from 'react'
+import { createToken } from '../app/oms/TokenService'
 import { TokenContract, TokenType } from '../app/Types'
 import { classNames } from './utils/utils'
 
@@ -17,33 +14,23 @@ const tokenTypes = [
 ]
 
 export const TokenInput = (props: TokenInputProps) => {
-  const contract = useContract(ContractName.Token, props.tokenContract.address)
   const [tokenIdentifier, setTokenIdentifier] = useState<string>('')
   const [tokenMetadataURI, setTokenMetadataURI] = useState<string>('')
   const [tokenType, setTokenType] = useState<TokenType>(TokenType.Fungible)
-  const [tokenSupply, setTokenSupply] = useState<number>(0)
+  const [tokenSupply, setTokenSupply] = useState<string>('')
+  const [error, setError] = useState<string>('')
 
-  const onSubmit = async () => {
-    await createToken()
+  const handleSubmit = () => {
+    setError('')
 
-    setTokenIdentifier('')
-    setTokenMetadataURI('')
-    setTokenType(TokenType.Fungible)
-    setTokenSupply(0)
-  }
-
-  const createToken = async () => {
-    if (!!contract) {
-      if (tokenType === TokenType.Fungible) {
-        await contract.fungibleMint(
-          tokenIdentifier,
-          tokenSupply,
-          tokenMetadataURI,
-          ethers.utils.toUtf8Bytes(''),
-        )
-      } else {
-        await contract.nonFungibleMint(tokenIdentifier, tokenMetadataURI, ethers.utils.toUtf8Bytes(''))
-      }
+    if (tokenIdentifier.length === 0) {
+      setError('Cannot have empty identifier')
+    } else if (tokenMetadataURI.length === 0) {
+      setError('Cannot have empty metadata uri')
+    } else if (Number(tokenSupply) === 0) {
+      setError('Cannot have token with 0 supply')
+    } else {
+      createToken(props.tokenContract.address, tokenType, tokenSupply, tokenIdentifier, tokenMetadataURI)
     }
   }
 
@@ -111,9 +98,9 @@ export const TokenInput = (props: TokenInputProps) => {
                         onChange={(e) => {
                           setTokenType(e.target.id as TokenType)
                           if (e.target.id === TokenType.NonFungible) {
-                            setTokenSupply(1)
+                            setTokenSupply('1')
                           } else {
-                            setTokenSupply(0)
+                            setTokenSupply('')
                           }
                         }}
                         defaultChecked={tokenType === type.id}
@@ -141,7 +128,7 @@ export const TokenInput = (props: TokenInputProps) => {
                     value={tokenSupply.toString()}
                     onChange={(e) => {
                       {
-                        setTokenSupply(Number(e.target.value))
+                        setTokenSupply(e.target.value)
                       }
                     }}
                     className={classNames(
@@ -173,8 +160,20 @@ export const TokenInput = (props: TokenInputProps) => {
           </div>
         </div>
         <div className="px-4 py-3 bg-gray-50 text-right sm:px-6 flex justify-end items-center">
+          {error && (
+            <div className="w-full">
+              <div className="flex mx-4 items-center">
+                <div className="flex-shrink-0">
+                  <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-xs font-medium text-red-800">{error}</h3>
+                </div>
+              </div>
+            </div>
+          )}
           <button
-            onClick={() => onSubmit()}
+            onClick={() => handleSubmit()}
             className={
               'block flex items-end px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 active:bg-orange-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500'
             }

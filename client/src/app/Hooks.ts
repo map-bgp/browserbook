@@ -27,7 +27,7 @@ export const useContract = (contractName: ContractName, address?: string) => {
   return contract
 }
 
-export const useEthers = (contractName?: ContractName, address?: string) => {
+export const useEthers = (contractName?: ContractName, contractAddress?: string) => {
   const dispatch = useAppDispatch()
   const { ethers } = useContext(AppContext)
 
@@ -40,7 +40,7 @@ export const useEthers = (contractName?: ContractName, address?: string) => {
       dispatch(setAccounts(await ethers.getAccounts()))
 
       if (contractName) {
-        const contract = await ethers.getContract(contractName, address)
+        const contract = await ethers.getContract(contractName, contractAddress)
         setContract(contract)
       }
     }
