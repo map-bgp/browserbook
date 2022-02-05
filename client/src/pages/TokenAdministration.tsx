@@ -5,9 +5,9 @@ import {
   selectTokenContractAddress,
 } from '../app/store/slices/TokensSlice'
 import { selectAccountData } from '../app/store/slices/EthersSlice'
-import TokenInput from '../components/TokenInput'
+import TokenInput from '../components/token-administration/TokenInput'
 import TokenTable from '../components/TokenTable'
-import ContractInput from '../components/ContractInput'
+import ContractInput from '../components/token-administration/ContractInput'
 import ContractStats from '../components/ContractStats'
 
 type TokenAdministrationProps = {}

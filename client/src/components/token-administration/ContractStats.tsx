@@ -1,8 +1,8 @@
-import { useAppSelector } from '../app/Hooks'
+import { useAppSelector } from '../../app/Hooks'
 import {
   selectNumberFungibleTokens,
   selectNumberNonFungibleTokens,
-} from '../app/store/slices/TokensSlice'
+} from '../../app/store/slices/TokensSlice'
 
 const EntityStats = () => {
   const numberFungibleTokens = useAppSelector(selectNumberFungibleTokens)

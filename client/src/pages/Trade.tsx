@@ -9,7 +9,7 @@ import { classNames } from '../components/utils/utils'
 import { useAppSelector, useTokenFactoryFilter, useTokenFilter } from '../app/Hooks'
 import { selectTokenContractAddress } from '../app/store/slices/TokensSlice'
 import { selectAccountData } from '../app/store/slices/EthersSlice'
-import TradeForm from '../components/TradeForm'
+import TradeForm from '../components/trade/TradeForm'
 import TransferForm from '../components/TransferForm'
 
 enum ActiveSection {

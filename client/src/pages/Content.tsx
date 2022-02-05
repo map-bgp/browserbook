@@ -1,13 +1,13 @@
 import { Routes, Route, Outlet } from 'react-router-dom'
 
 import { NavPage } from '../components/utils/constants'
-import Dashboard from '../components/Dashboard'
+import Dashboard from './Dashboard'
 import TokenAdministration from './TokenAdministration'
-import OrderBook from '../components/OrderMatching'
-import ControlPanel from '../components/ControlPanel'
+import OrderBook from './OrderMatching'
+import ControlPanel from './ControlPanel'
 import Trade from './Trade'
-import TradeForm from '../components/TradeForm'
-import TransferForm from '../components/TransferForm'
+import TradeForm from '../components/trade/TradeForm'
+import TransferForm from '../components/trade/TransferForm'
 import TradeOutlet from './TradeOutlet'
 
 type ContentProps = {

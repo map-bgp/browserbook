@@ -11,7 +11,7 @@ import {
   setSignerAddress,
 } from '../app/store/slices/SignerSlice'
 
-import { AppContext } from './AppContext'
+import { AppContext } from '../components/AppContext'
 import { Match, Order } from '../app/p2p/protocol_buffers/gossip_schema'
 import { IPeer } from '../app/p2p/db'
 

@@ -1,20 +1,12 @@
 import { useState } from 'react'
-import { Link, Outlet, useParams } from 'react-router-dom'
-import { ContractName } from '../app/chain/ContractMetadata'
-import { useAppSelector, useContract, useEthers } from '../app/Hooks'
-import { selectTokenContract } from '../app/store/slices/TokensSlice'
-import { Token, TokenContract } from '../app/Types'
-import Modal from './elements/TokenModal'
-import { classNames } from './utils/utils'
+import { Token } from '../../app/Types'
+import Modal from '../elements/TokenModal'
 
 export type TokenTableProps = {
   tokens: Array<Token>
 }
 
 export const TokenTable = (props: TokenTableProps) => {
-  // const tokenContract = useAppSelector(selectTokenContract)
-  // const contract = useContract(ContractName.TokenFactory)
-
   const [activeTokenId, setActiveTokenId] = useState<string | null>(null)
   const [modalOpen, setModalOpen] = useState<boolean>(false)
 

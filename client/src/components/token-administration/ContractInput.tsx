@@ -1,10 +1,10 @@
 import { XCircleIcon } from '@heroicons/react/solid'
 import { useState } from 'react'
-import { useAppSelector } from '../app/Hooks'
-import { createTokenContract } from '../app/oms/TokenService'
-import { selectAccountData } from '../app/store/slices/EthersSlice'
-import { selectTokenContract } from '../app/store/slices/TokensSlice'
-import { classNames } from './utils/utils'
+import { useAppSelector } from '../../app/Hooks'
+import { createTokenContract } from '../../app/oms/TokenService'
+import { selectAccountData } from '../../app/store/slices/EthersSlice'
+import { selectTokenContract } from '../../app/store/slices/TokensSlice'
+import { classNames } from '../utils/utils'
 
 const ContractInput = () => {
   const { isConnected } = useAppSelector(selectAccountData)

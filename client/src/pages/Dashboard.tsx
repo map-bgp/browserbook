@@ -1,12 +1,12 @@
-import React from "react";
+import React from 'react'
 // import OrderBook from "./OrderBook";
 // import OrdersTable from "./elements/OrdersTable";
 // import { useAppDispatch, useAppSelector } from "../store/Hooks";
 // import { useAppContext } from "./context/Store";
 // import { selectOrders } from "../store/slices/OrdersSlice";
 
-import Info from "./elements/Info";
-import Chart from "./elements/Chart";
+import Info from '../components/elements/Info'
+import Chart from '../components/elements/Chart'
 
 const Dashboard = () => {
   //   const { state, setContext } = useAppContext();
@@ -27,7 +27,7 @@ const Dashboard = () => {
 
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-      <Info message={"Here is your Peer ID: 12345"} />
+      <Info message={'Here is your Peer ID: 12345'} />
       <div className="px-4 py-4 sm:px-0 grid grid-cols-12 gap-x-8 gap-y-8">
         <div className="flex justify-around h-[30rem] col-span-6 md:col-span-7">
           <Chart />
@@ -42,6 +42,7 @@ const Dashboard = () => {
         Here is the order table
       </div>
     </div>
-  )};
+  )
+}
 
-export default Dashboard;
+export default Dashboard

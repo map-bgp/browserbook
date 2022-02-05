@@ -1,8 +1,8 @@
 import { XCircleIcon } from '@heroicons/react/outline'
 import { useState } from 'react'
-import { createToken } from '../app/oms/TokenService'
-import { TokenContract, TokenType } from '../app/Types'
-import { classNames } from './utils/utils'
+import { createToken } from '../../app/oms/TokenService'
+import { TokenContract, TokenType } from '../../app/Types'
+import { classNames } from '../utils/utils'
 
 export type TokenInputProps = {
   tokenContract: TokenContract
