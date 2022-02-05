@@ -6,6 +6,7 @@ export type TokenContract = {
 export type Token = {
   contract: TokenContract
   id: string
+  own: boolean
   name: string
   metadataURI: string
   supply: string

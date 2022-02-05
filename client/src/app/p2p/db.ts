@@ -1,5 +1,4 @@
 import Dexie from 'dexie'
-import { Token } from '../Types'
 import { Match, Order } from './protocol_buffers/gossip_schema'
 
 export interface IPeer {

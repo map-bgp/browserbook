@@ -3,6 +3,7 @@ import {
   selectTokenContract,
   selectTokens,
   selectTokenContractAddress,
+  selectOwnTokens,
 } from '../app/store/slices/TokensSlice'
 import { selectAccountData } from '../app/store/slices/EthersSlice'
 import TokenInput from '../components/token-administration/TokenInput'
@@ -17,7 +18,7 @@ const TokenAdministration = (props: TokenAdministrationProps) => {
 
   const tokenContract = useAppSelector(selectTokenContract)
   const tokenContractAddress = useAppSelector(selectTokenContractAddress)
-  const tokens = useAppSelector(selectTokens)
+  const tokens = useAppSelector(selectOwnTokens)
 
   useTokenFactoryFilter(primaryAccount)
   useTokenFilter(primaryAccount, tokenContractAddress)

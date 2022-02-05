@@ -1,6 +1,6 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { useAppSelector } from '../../Hooks'
-import { queryTokenContractEvent, queryTokens } from '../../oms/Queries'
+import { AsyncThunkPayloadCreator, createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { queryImportedTokens, queryTokenContractEvent, queryTokens } from '../../oms/Queries'
+import { IToken } from '../../p2p/db'
 import { Token, TokenContract, TokenType } from '../../Types'
 import type { RootState } from '../Store'
 import { selectAccountData } from './EthersSlice'
@@ -27,11 +27,15 @@ export const getTokenContract = createAsyncThunk(
 export const getTokens = createAsyncThunk(
   'tokens/getTokens',
   async (options, thunkAPI: any): Promise<Array<Token>> => {
+    const tokens: Array<Token> = []
     const { primaryAccount } = selectAccountData(thunkAPI.getState())
     const contractAddress = selectTokenContract(thunkAPI.getState())?.address
 
     if (!!primaryAccount && !!contractAddress) {
-      return await queryTokens(primaryAccount, contractAddress)
+      const importedTokens = await queryImportedTokens(primaryAccount)
+      const ownTokens = await queryTokens(primaryAccount, contractAddress)
+
+      return [...ownTokens, ...importedTokens]
     } else {
       return []
     }
@@ -77,6 +81,8 @@ export const selectTokenContractAddress = (state: RootState): string | null =>
 export const selectTokenIds = (state: RootState): Array<string> =>
   state.tokens.tokens.map((token: Token) => token.id)
 export const selectTokens = (state: RootState): Array<Token> => state.tokens.tokens
+export const selectOwnTokens = (state: RootState): Array<Token> =>
+  state.tokens.tokens.filter((token) => token.own === true)
 export const selectTokenById = (state: RootState, tokenId: string): Token | null => {
   const token = state.tokens.tokens.find((token) => token.id === tokenId)
   if (token === undefined) {

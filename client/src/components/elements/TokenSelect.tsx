@@ -1,7 +1,7 @@
 import { Listbox, Transition } from '@headlessui/react'
 import { CheckIcon, SelectorIcon } from '@heroicons/react/outline'
-import { Fragment, useState } from 'react'
-import { Token, TokenType } from '../../app/Types'
+import { Fragment } from 'react'
+import { Token } from '../../app/Types'
 import { classNames } from '../utils/utils'
 
 type TokenSelectProps = {
@@ -29,7 +29,7 @@ const TokenSelect = (props: TokenSelectProps) => {
                 <div className="flex items-center">
                   <span
                     className={classNames(
-                      props.selected !== undefined && props.selected.type == TokenType.Fungible
+                      props.selected !== undefined && props.selected.own === true
                         ? 'bg-green-400'
                         : 'bg-gray-200',
                       'flex-shrink-0 inline-block h-2 w-2 rounded-full',
@@ -70,7 +70,7 @@ const TokenSelect = (props: TokenSelectProps) => {
                           <div className="flex items-center">
                             <span
                               className={classNames(
-                                token.type === TokenType.Fungible ? 'bg-green-400' : 'bg-gray-200',
+                                token.own === true ? 'bg-green-400' : 'bg-gray-200',
                                 'flex-shrink-0 inline-block h-2 w-2 rounded-full',
                               )}
                               aria-hidden="true"

@@ -1,7 +1,7 @@
-import { ethers } from 'ethers'
+import { ethers as ethersLib } from 'ethers'
 import { OrderType } from '../constants'
-import Globals from '../Globals'
 import { Token } from '../Types'
+import { ethers } from '../store/globals/ethers'
 
 const OrderDomain = {
   name: 'BB Order',
@@ -39,14 +39,14 @@ export const submitOrder = async (
   expiryHours: string,
   expiryMinutes: string,
 ) => {
-  const signer = Globals.ethers.getSigner()
+  const signer = ethers.getSigner()
 
   const order = {
     tokenId: Number(selected.id),
     type: orderType,
-    price: ethers.utils.parseEther(price),
-    limitPrice: ethers.utils.parseEther(limitPrice),
-    quantity: ethers.utils.parseEther(quantity),
+    price: ethersLib.utils.parseEther(price),
+    limitPrice: ethersLib.utils.parseEther(limitPrice),
+    quantity: ethersLib.utils.parseEther(quantity),
     expiry: getDateExpiryInMs(expiryHours, expiryMinutes),
   }
 

@@ -1,13 +1,16 @@
-import { BigNumber, ethers, FixedNumber } from 'ethers'
-import Globals from '../../app/Globals'
+import { BigNumber, ethers as ethersLib, FixedNumber } from 'ethers'
+import { ethers } from '../store/globals/ethers'
+import { peer } from '../store/globals/peer'
 import { ContractName } from '../chain/ContractMetadata'
 import { selectAccountData } from '../store/slices/EthersSlice'
 import { store } from '../store/Store'
 import { Token, TokenType } from '../Types'
 
+const dispatch = store.dispatch
+
 export const createTokenContract = async (uri: string) => {
   const contractName = ContractName.TokenFactory
-  const contract = await Globals.ethers.getContract(contractName)
+  const contract = await ethers.getContract(contractName)
 
   await contract.create(uri)
 }
@@ -20,17 +23,17 @@ export const createToken = async (
   tokenMetadataURI: string,
 ) => {
   const contractName = ContractName.Token
-  const contract = await Globals.ethers.getContract(contractName, contractAddress)
+  const contract = await ethers.getContract(contractName, contractAddress)
 
   if (tokenType === TokenType.Fungible) {
     await contract.fungibleMint(
       tokenIdentifier,
-      ethers.utils.parseEther(tokenSupply),
+      ethersLib.utils.parseEther(tokenSupply),
       tokenMetadataURI,
-      ethers.utils.toUtf8Bytes(''),
+      ethersLib.utils.toUtf8Bytes(''),
     )
   } else {
-    await contract.nonFungibleMint(tokenIdentifier, tokenMetadataURI, ethers.utils.toUtf8Bytes(''))
+    await contract.nonFungibleMint(tokenIdentifier, tokenMetadataURI, ethersLib.utils.toUtf8Bytes(''))
   }
 }
 
@@ -41,11 +44,11 @@ export const transferToken = async (
   quantity: string,
 ) => {
   const contractName = ContractName.Token
-  const contract = await Globals.ethers.getContract(contractName, contractAddress)
+  const contract = await ethers.getContract(contractName, contractAddress)
 
   const senderAddress = selectAccountData(store.getState()).primaryAccount
   const tokenId = token.id
-  const amount = ethers.utils.parseEther(quantity)
+  const amount = ethersLib.utils.parseEther(quantity)
 
   if (!!senderAddress) {
     await contract.safeTransferFrom(
@@ -53,19 +56,17 @@ export const transferToken = async (
       recipientAddress,
       tokenId,
       amount,
-      ethers.utils.toUtf8Bytes(''),
+      ethersLib.utils.toUtf8Bytes(''),
     )
   }
 }
 
 export const importToken = async (uri: string, tokenId: number) => {
-  const peer = Globals.peer
-
   const factoryContractName = ContractName.TokenFactory
-  const factoryContract = await Globals.ethers.getContract(factoryContractName)
+  const factoryContract = await ethers.getContract(factoryContractName)
   const tokenContractAddress = await factoryContract.tokenAddress(uri)
 
-  if (tokenContractAddress === ethers.constants.AddressZero) {
+  if (tokenContractAddress === ethersLib.constants.AddressZero) {
     throw new Error('Token contract from uri not found')
   }
 

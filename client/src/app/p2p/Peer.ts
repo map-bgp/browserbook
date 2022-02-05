@@ -118,6 +118,10 @@ export class Peer {
     await Peer.DB.tokens.delete(id)
   }
 
+  async getTokens() {
+    return await Peer.DB.tokens.toArray()
+  }
+
   async addOrder(order: Order) {
     await Peer.DB.orders.add(order)
   }

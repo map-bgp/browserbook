@@ -53,7 +53,10 @@ export const TokenTable = (props: TokenTableProps) => {
                   <tbody>
                     {props.tokens &&
                       props.tokens.map((token, tokenIdx) => (
-                        <tr key={token.id} className={tokenIdx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                        <tr
+                          key={`${token.contract.uri}${token.id}`}
+                          className={tokenIdx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
+                        >
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             {token.name}
                           </td>

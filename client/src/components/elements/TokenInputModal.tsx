@@ -66,6 +66,10 @@ const TokenForm = (props: TokenModalProps) => {
               <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{token?.name}</dd>
             </div>
             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
+              <dt className="text-sm font-medium text-gray-500">Token ID</dt>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{token?.id}</dd>
+            </div>
+            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
               <dt className="text-sm font-medium text-gray-500">Type</dt>
               <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{token?.type}</dd>
             </div>
@@ -120,7 +124,7 @@ const TokenForm = (props: TokenModalProps) => {
             onClick={() => props.setOpen(false)}
             className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
           >
-            Cancel
+            Close
           </button>
           <button
             type="submit"
