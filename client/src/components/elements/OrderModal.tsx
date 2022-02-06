@@ -1,10 +1,10 @@
 import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { Order, OrderType } from '../../app/p2p/protocol_buffers/gossip_schema'
-import { Token } from '../../app/Types'
+import { Token, WithStatus } from '../../app/Types'
 
 type OrderModalProps = {
-  order: Order | null
+  order: WithStatus<Order> | null
   orderToken: Token | null
   open: boolean
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
@@ -100,6 +100,10 @@ const TokenModalContent = (props: OrderModalProps) => {
               <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                 {!!props.order ? new Date(props.order?.expiry * 1000).toUTCString() : ''}
               </dd>
+            </div>
+            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
+              <dt className="text-sm font-medium text-gray-500">Status</dt>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{props.order?.status}</dd>
             </div>
           </dl>
         </div>

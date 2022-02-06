@@ -3,8 +3,6 @@ import { Token } from '../Types'
 import { ethers } from '../store/globals/ethers'
 import { peer } from '../store/globals/peer'
 import { OrderType, Order } from '../p2p/protocol_buffers/gossip_schema'
-import { store } from '../store/Store'
-import { getOrders } from '../store/slices/PeerSlice'
 
 const OrderDomain = {
   name: 'BB Order',
@@ -49,7 +47,7 @@ export const submitOrder = async (
   const signer = ethers.getSigner()
 
   const unsignedOrder: Omit<Order, 'signature'> = {
-    id: Math.random().toString(),
+    id: (~~(Math.random() * 1e9)).toString(36) + Date.now(),
     from: fromAddress,
     tokenAddress: token.contract.address,
     tokenId: token.id,

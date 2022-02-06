@@ -1,10 +1,9 @@
 import Libp2p, { Libp2pOptions } from 'libp2p'
 import { store } from '../store/Store'
-import { decrementPeers, incrementPeers, setPeerId } from '../store/slices/PeerSlice'
+import { decrementPeers, incrementPeers, setOrderStatus, setPeerId } from '../store/slices/PeerSlice'
 import { Order, Match } from './protocol_buffers/gossip_schema'
 import { IToken, P2PDB } from './db'
 import { OrderStatus, Token } from '../Types'
-import { useAppSelector } from '../Hooks'
 import { selectAccountData } from '../store/slices/EthersSlice'
 
 const dispatch = store.dispatch
@@ -130,7 +129,7 @@ export class Peer {
 
   private async getMatchingOrder(match: Match) {
     const { primaryAccount } = selectAccountData(store.getState())
-    if (!!primaryAccount) {
+    if (primaryAccount === null) {
       throw new Error('Cannot query matching orders when ethers account is undefined')
     }
 
@@ -144,6 +143,7 @@ export class Peer {
       id: match.takerId,
     })
 
+    console.log('Here are the orders we found', matchedMakerOrder, matchedTakerOrder)
     return matchedMakerOrder !== undefined ? matchedMakerOrder : matchedTakerOrder
   }
 
@@ -152,7 +152,10 @@ export class Peer {
     const orderToUpdate = await this.getMatchingOrder(match)
 
     if (!!orderToUpdate) {
-      await Peer.DB.orders.update(orderToUpdate.id, { status: OrderStatus.Matched })
+      const { id, from, status } = orderToUpdate
+
+      await Peer.DB.orders.update(id, { status: OrderStatus.Matched })
+      dispatch(setOrderStatus({ id, from, status: OrderStatus.Matched }))
     }
   }
 }

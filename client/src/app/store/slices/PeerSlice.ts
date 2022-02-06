@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { ethers as ethersLib } from 'ethers'
 import { queryOrders } from '../../oms/Queries'
 import { Order } from '../../p2p/protocol_buffers/gossip_schema'
-import { WithStatus } from '../../Types'
+import { OrderStatus, WithStatus } from '../../Types'
 import type { RootState } from '../Store'
 
 // Define a type for the slice state
@@ -63,6 +63,18 @@ export const peerSlice = createSlice({
     decrementPeers: (state) => {
       state.numPeers -= 1
     },
+    setOrderStatus: (
+      state,
+      action: PayloadAction<{ id: string; from: string; status: OrderStatus }>,
+    ) => {
+      const order = state.orders.find(
+        ({ id, from }) => id === action.payload.id && from === action.payload.from,
+      )
+
+      if (!!order) {
+        order.status = action.payload.status
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -83,7 +95,7 @@ export const peerSlice = createSlice({
   },
 })
 
-export const { setPeerId, incrementPeers, decrementPeers } = peerSlice.actions
+export const { setPeerId, incrementPeers, decrementPeers, setOrderStatus } = peerSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectPeerId = (state: RootState) => state.peer.peerID

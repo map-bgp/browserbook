@@ -77,20 +77,25 @@ const ControlPanel = () => {
   //   await peer.publishOrderMessage(order)
   // }
 
-  const publishTestMatch = async () => {
+  const matchAllOrders = async () => {
     if (!peer.isValidator) {
       peer.setMatcher(true)
     }
 
     if (!!primaryAccount) {
-      const match: Match = {
-        id: '1',
-        validatorAddress: primaryAccount,
-        makerId: '0.7011807626282754',
-        takerId: '3',
-        status: 'Hello',
+      const orders: Array<Order> = await db.orders.toArray()
+
+      for (const order of orders) {
+        const match: Match = {
+          id: Math.random().toString(),
+          validatorAddress: primaryAccount,
+          makerId: order.id,
+          takerId: 'test',
+          status: 'test',
+        }
+
+        await peer.publishMatchMessage(match)
       }
-      await peer.publishMatchMessage(match)
     }
   }
 
@@ -103,7 +108,7 @@ const ControlPanel = () => {
             <p className="mt-1 text-sm text-gray-600">All the buttons and knobs you need</p>
           </div>
         </div>
-        <div className="md:col-span-2">
+        <div className="md:col-span-1">
           <button
             type="button"
             className="w-36 my-4 block flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
@@ -131,15 +136,6 @@ const ControlPanel = () => {
           >
             Decrypt Signer
           </button>
-          <button
-            type="button"
-            className="w-36 my-4 block flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-            onClick={() => {
-              joinChannel()
-            }}
-          >
-            Join Channel
-          </button>
           {/* <button
             type="button"
             className="w-36 my-4 block flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
@@ -153,13 +149,19 @@ const ControlPanel = () => {
             type="button"
             className="w-36 my-4 block flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
             onClick={() => {
-              publishTestMatch()
+              matchAllOrders()
             }}
           >
-            Publish Test Match
+            Match All Orders
           </button>
-          <p className="text-red-700">{peers?.map((peer: IPeer) => peer.id)}</p>
-          <p className="text-green-700">{orders?.map((order: Order) => order.id)}</p>
+        </div>
+        <div className="md:col-span-1 py-4">
+          <h3>The Orderbook</h3>
+          <ul>
+            {orders?.map((order: Order) => (
+              <li>{order.id}</li>
+            ))}
+          </ul>
         </div>
       </div>
     </div>
