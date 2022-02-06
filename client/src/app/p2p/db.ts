@@ -29,7 +29,7 @@ export class P2PDB extends Dexie {
       peers: 'id',
       tokens: '++id,uri,contractAddress,tokenId',
       orders: 'id,from,[tokenAddress+tokenId],orderType,status',
-      matches: 'id,makerId,takerId,makerOrderId,takerOrderId,status',
+      matches: 'id,validatorAddress,makerId,takerId,status',
     })
 
     this.peers = this.table('peers')

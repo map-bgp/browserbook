@@ -60,37 +60,38 @@ const ControlPanel = () => {
   }
 
   const joinChannel = async () => {
-    await peer.join()
+    peer.join()
   }
 
-  const publishTestOrder = async () => {
-    const order: Order = {
-      id: (Math.random() * 1000000).toString(),
-      tokenS: '1',
-      tokenT: '2',
-      amountS: 100,
-      amountT: 100,
-      from: 'a',
-      status: 'good',
-      created: 1234,
-    }
-    await peer.publishOrderMessage(order)
-  }
+  // const publishTestOrder = async () => {
+  //   const order: Order = {
+  //     id: (Math.random() * 1000000).toString(),
+  //     tokenS: '1',
+  //     tokenT: '2',
+  //     amountS: 100,
+  //     amountT: 100,
+  //     from: 'a',
+  //     status: 'good',
+  //     created: 1234,
+  //   }
+  //   await peer.publishOrderMessage(order)
+  // }
 
   const publishTestMatch = async () => {
-    if (!peer.isMatcher) {
+    if (!peer.isValidator) {
       peer.setMatcher(true)
     }
 
-    const match: Match = {
-      id: '1',
-      makerId: '1',
-      takerId: '1',
-      makerOrderId: '1',
-      takerOrderId: '1',
-      status: '1',
+    if (!!primaryAccount) {
+      const match: Match = {
+        id: '1',
+        validatorAddress: primaryAccount,
+        makerId: '0.7011807626282754',
+        takerId: '3',
+        status: 'Hello',
+      }
+      await peer.publishMatchMessage(match)
     }
-    await peer.publishMatchMessage(match)
   }
 
   return (
@@ -139,7 +140,7 @@ const ControlPanel = () => {
           >
             Join Channel
           </button>
-          <button
+          {/* <button
             type="button"
             className="w-36 my-4 block flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
             onClick={() => {
@@ -147,7 +148,7 @@ const ControlPanel = () => {
             }}
           >
             Publish Test Order
-          </button>
+          </button> */}
           <button
             type="button"
             className="w-36 my-4 block flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"

@@ -3,7 +3,9 @@ import { store } from '../store/Store'
 import { decrementPeers, incrementPeers, setPeerId } from '../store/slices/PeerSlice'
 import { Order, Match } from './protocol_buffers/gossip_schema'
 import { IToken, P2PDB } from './db'
-import { OrderStatus, Token, WithStatus } from '../Types'
+import { OrderStatus, Token } from '../Types'
+import { useAppSelector } from '../Hooks'
+import { selectAccountData } from '../store/slices/EthersSlice'
 
 const dispatch = store.dispatch
 
@@ -14,7 +16,7 @@ export class Peer {
 
   config: Libp2pOptions
   node: Libp2p | null = null
-  isMatcher: boolean = false
+  isValidator: boolean = false
 
   constructor(config: Libp2pOptions) {
     this.config = config
@@ -42,8 +44,8 @@ export class Peer {
     await this.node.start()
   }
 
-  setMatcher(isMatcher: boolean) {
-    this.isMatcher = isMatcher
+  setMatcher(isValidator: boolean) {
+    this.isValidator = isValidator
   }
 
   join() {
@@ -94,7 +96,7 @@ export class Peer {
       throw new Error('Cannot send pubsub message before Peer is initialized')
     }
 
-    if (!this.isMatcher) {
+    if (!this.isValidator) {
       throw new Error('Can only publish a matcher message if the node is a valid matcher')
     }
 
@@ -126,7 +128,31 @@ export class Peer {
     await Peer.DB.orders.add({ ...order, status: OrderStatus.Pending })
   }
 
+  private async getMatchingOrder(match: Match) {
+    const { primaryAccount } = selectAccountData(store.getState())
+    if (!!primaryAccount) {
+      throw new Error('Cannot query matching orders when ethers account is undefined')
+    }
+
+    const matchedMakerOrder = await Peer.DB.orders.get({
+      from: primaryAccount,
+      id: match.makerId,
+    })
+
+    const matchedTakerOrder = await Peer.DB.orders.get({
+      from: primaryAccount,
+      id: match.takerId,
+    })
+
+    return matchedMakerOrder !== undefined ? matchedMakerOrder : matchedTakerOrder
+  }
+
   async addMatch(match: Match) {
     await Peer.DB.matches.add(match)
+    const orderToUpdate = await this.getMatchingOrder(match)
+
+    if (!!orderToUpdate) {
+      await Peer.DB.orders.update(orderToUpdate.id, { status: OrderStatus.Matched })
+    }
   }
 }

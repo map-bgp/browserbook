@@ -21,9 +21,8 @@ message Order {
 
 message Match {
   string id = 1;
-  string makerId = 2;
-  string takerId = 3;
-  string makerOrderId = 4;
-  string takerOrderId = 5;
-  string status = 6;
+  string validatorAddress = 2;
+  string makerId = 3;
+  string takerId = 4;
+  string status = 5;
 }
