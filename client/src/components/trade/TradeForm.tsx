@@ -1,9 +1,10 @@
 import { RadioGroup } from '@headlessui/react'
 import { InformationCircleIcon, XCircleIcon } from '@heroicons/react/outline'
 import { useEffect, useState } from 'react'
-import { OrderType } from '../../app/constants'
 import { useAppSelector } from '../../app/Hooks'
 import { submitOrder } from '../../app/oms/OrderService'
+import { OrderType } from '../../app/p2p/protocol_buffers/gossip_schema'
+import { selectAccountData } from '../../app/store/slices/EthersSlice'
 import { selectTokens } from '../../app/store/slices/TokensSlice'
 import { Token, TokenType } from '../../app/Types'
 import TokenSelect from '../elements/TokenSelect'
@@ -30,9 +31,10 @@ const InfoPanel = (props: { message: string; link: string }) => {
 }
 
 const TradeForm = () => {
+  const { primaryAccount } = useAppSelector(selectAccountData)
   const tokens = useAppSelector(selectTokens)
   const [selected, setSelected] = useState<Token>(tokens[0])
-  const [orderType, setOrderType] = useState<OrderType>(OrderType.Buy)
+  const [orderType, setOrderType] = useState<OrderType>(OrderType.BUY)
   const [price, setPrice] = useState<string>('')
   const [limitPrice, setLimitPrice] = useState<string>('')
   const [quantity, setQuantity] = useState<string>('')
@@ -64,16 +66,28 @@ const TradeForm = () => {
       setError('Cannot offer a price of 0')
     } else if (Number(limitPrice) === 0) {
       setError('Cannot have a limit price of 0')
-    } else if (orderType === OrderType.Buy && Number(limitPrice) < Number(price)) {
+    } else if (orderType === OrderType.BUY && Number(limitPrice) < Number(price)) {
       setError('Limit price must be greater than price for BUY order')
-    } else if (orderType === OrderType.Sell && Number(limitPrice) > Number(price)) {
+    } else if (orderType === OrderType.SELL && Number(limitPrice) > Number(price)) {
       setError('Limit price must be lesser than price for SELL order')
     } else if (Number(quantity) === 0) {
       setError('Quantity cannot be 0')
     } else if (Number(expiryHours) === 0) {
       setError('Expiry must be at least one hour')
+    } else if (primaryAccount === null) {
+      setError('Could not find your account. Is your wallet connected?')
+      throw new Error('Trying to submit order without accompanying address')
     } else {
-      submitOrder(selected, orderType, price, limitPrice, quantity, expiryHours, expiryMinutes)
+      submitOrder(
+        primaryAccount,
+        selected,
+        orderType,
+        price,
+        limitPrice,
+        quantity,
+        expiryHours,
+        expiryMinutes,
+      )
     }
   }
 
@@ -102,8 +116,8 @@ const TradeForm = () => {
                 <RadioGroup value={orderType} onChange={setOrderType} className="mt-2">
                   <div className="flex items-center justify-between gap-4">
                     <RadioGroup.Option
-                      key={OrderType.Buy}
-                      value={OrderType.Buy}
+                      key={OrderType.BUY}
+                      value={OrderType.BUY}
                       className={({ active, checked }) =>
                         classNames(
                           active ? 'ring-2 ring-offset-2 ring-orange-500' : '',
@@ -114,11 +128,11 @@ const TradeForm = () => {
                         )
                       }
                     >
-                      <RadioGroup.Label as="p">{OrderType.Buy}</RadioGroup.Label>
+                      <RadioGroup.Label as="p">Buy</RadioGroup.Label>
                     </RadioGroup.Option>
                     <RadioGroup.Option
-                      key={OrderType.Sell}
-                      value={OrderType.Sell}
+                      key={OrderType.SELL}
+                      value={OrderType.SELL}
                       className={({ active, checked }) =>
                         classNames(
                           active ? 'ring-2 ring-offset-2 ring-orange-500' : '',
@@ -129,7 +143,7 @@ const TradeForm = () => {
                         )
                       }
                     >
-                      <RadioGroup.Label as="p">{OrderType.Sell}</RadioGroup.Label>
+                      <RadioGroup.Label as="p">Sell</RadioGroup.Label>
                     </RadioGroup.Option>
                   </div>
                 </RadioGroup>
@@ -137,7 +151,9 @@ const TradeForm = () => {
             </div>
             <div className="hidden sm:flex sm:col-span-1 sm:row-span-3 flex flex-col items-center justify-between pt-5 text-center">
               <div className="text-sm text-gray-500">You are offering to</div>
-              <div className="text-4xl text-gray-700">{orderType.toUpperCase()}</div>
+              <div className="text-4xl text-gray-700">
+                {orderType === OrderType.BUY ? 'BUY' : 'SELL'}
+              </div>
               <div className="text-sm text-gray-500">
                 <div className="text-center">
                   {quantity} {!!selected && selected.name}

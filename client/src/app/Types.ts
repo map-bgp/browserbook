@@ -14,13 +14,26 @@ export type Token = {
   holdings: string
 }
 
+export type WithStatus<T> = T & { status: OrderStatus }
+
 export enum TokenType {
   Fungible = 'FUNGIBLE',
   NonFungible = 'NONFUNGIBLE',
 }
 
-export enum Tokens {
-  TOKEN_A = 'Token A',
-  TOKEN_B = 'Token B',
-  TOKEN_C = 'Token C',
+export enum OrderStatus {
+  Pending = 'PENDING',
+  Matched = 'MATCHED',
+  Expired = 'Expired',
+}
+
+export const ensure = <T>(
+  argument: T | undefined | null,
+  message: string = 'This value was promised to be present.',
+): T => {
+  if (argument === undefined || argument === null) {
+    throw new TypeError(message)
+  }
+
+  return argument
 }

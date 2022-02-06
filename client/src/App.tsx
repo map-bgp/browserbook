@@ -28,6 +28,7 @@ const App = () => {
   useEffect(() => {
     const setup = async () => {
       await peer.init()
+      peer.join()
     }
     setup()
   }, [])

@@ -21,7 +21,7 @@ enum ActiveSection {
 
 const navigation = [
   { name: ActiveSection.Trade, url: 'trade', icon: GlobeAltIcon },
-  { name: ActiveSection.MyOrders, url: 'my-orders', icon: CollectionIcon },
+  { name: ActiveSection.MyOrders, url: 'orders', icon: CollectionIcon },
   { name: ActiveSection.Transfer, url: 'transfer', icon: ChevronDoubleRightIcon },
   { name: ActiveSection.MyTokens, url: 'tokens', icon: BookOpenIcon },
   { name: ActiveSection.MyDividends, url: 'dividends', icon: BriefcaseIcon },

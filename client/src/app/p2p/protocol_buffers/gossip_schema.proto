@@ -1,15 +1,22 @@
 syntax = "proto3";
 package browserbook;
 
+enum OrderType {
+  BUY = 0;
+  SELL = 1;
+}
+
 message Order {
   string id = 1;
-  string tokenS = 2;
-  string tokenT = 3;
-  int32 amountS = 4;
-  int32 amountT = 5;
-  string from = 6;
-  string status = 7;
-  int32 created = 8;
+  string from = 2;
+  string tokenAddress = 3;
+  string tokenId = 4;
+  OrderType orderType = 5;
+  string price = 6;
+  string limitPrice = 7;
+  string quantity = 8;
+  int32 expiry = 9;
+  string signature = 10; // Signature of all previous fields
 }
 
 message Match {

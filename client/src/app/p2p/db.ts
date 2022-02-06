@@ -1,4 +1,5 @@
 import Dexie from 'dexie'
+import { WithStatus } from '../Types'
 import { Match, Order } from './protocol_buffers/gossip_schema'
 
 export interface IPeer {
@@ -18,7 +19,7 @@ export class P2PDB extends Dexie {
 
   peers: Dexie.Table<IPeer>
   tokens: Dexie.Table<IToken> // Can be our local type as this is not shared over the gossip protocol
-  orders: Dexie.Table<Order>
+  orders: Dexie.Table<WithStatus<Order>>
   matches: Dexie.Table<Match>
 
   private constructor() {
@@ -27,7 +28,7 @@ export class P2PDB extends Dexie {
     this.version(1).stores({
       peers: 'id',
       tokens: '++id,uri,contractAddress,tokenId',
-      orders: 'id,tokenS,tokenT,from,status',
+      orders: 'id,from,[tokenAddress+tokenId],orderType,status',
       matches: 'id,makerId,takerId,makerOrderId,takerOrderId,status',
     })
 

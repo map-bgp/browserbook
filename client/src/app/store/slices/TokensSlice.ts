@@ -1,9 +1,10 @@
-import { AsyncThunkPayloadCreator, createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { queryImportedTokens, queryTokenContractEvent, queryTokens } from '../../oms/Queries'
-import { IToken } from '../../p2p/db'
-import { Token, TokenContract, TokenType } from '../../Types'
-import type { RootState } from '../Store'
+import { Order } from '../../p2p/protocol_buffers/gossip_schema'
+import { ensure, Token, TokenContract, TokenType } from '../../Types'
+import { RootState, store } from '../Store'
 import { selectAccountData } from './EthersSlice'
+import { selectOrders } from './PeerSlice'
 
 type TokensState = {
   status: 'idle' | 'loading' | 'failed'
@@ -83,12 +84,29 @@ export const selectTokenIds = (state: RootState): Array<string> =>
 export const selectTokens = (state: RootState): Array<Token> => state.tokens.tokens
 export const selectOwnTokens = (state: RootState): Array<Token> =>
   state.tokens.tokens.filter((token) => token.own === true)
+
+// This needs to be refactored immediately, as returns third party tokens as well
 export const selectTokenById = (state: RootState, tokenId: string): Token | null => {
   const token = state.tokens.tokens.find((token) => token.id === tokenId)
   if (token === undefined) {
     return null
   }
   return token
+}
+export const selectTokensFromCurrentOrders = (state: RootState): Map<string, Token> => {
+  const tokens = new Map<string, Token>()
+  const orders = selectOrders(state)
+
+  for (const order of orders) {
+    const token = state.tokens.tokens.find(
+      (token) => token.id === order.tokenId && token.contract.address === order.tokenAddress,
+    )
+
+    if (!!token) {
+      tokens.set(order.id, token)
+    }
+  }
+  return tokens
 }
 
 export const selectNumberFungibleTokens = (state: RootState): number =>

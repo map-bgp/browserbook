@@ -3,7 +3,7 @@ import { store } from '../store/Store'
 import { decrementPeers, incrementPeers, setPeerId } from '../store/slices/PeerSlice'
 import { Order, Match } from './protocol_buffers/gossip_schema'
 import { IToken, P2PDB } from './db'
-import { Token } from '../Types'
+import { OrderStatus, Token, WithStatus } from '../Types'
 
 const dispatch = store.dispatch
 
@@ -36,7 +36,7 @@ export class Peer {
       await this.removePeer(connection.id)
     })
 
-    this.processOrderMessage = this.processOrderMessage.bind(this)
+    this.processOrder = this.processOrder.bind(this)
     this.processMatchMessage = this.processMatchMessage.bind(this)
 
     await this.node.start()
@@ -50,7 +50,7 @@ export class Peer {
     if (!this.node) {
       throw new Error('Cannot join pubsub network before Peer is initialized')
     }
-    this.node.pubsub.on(Peer.ORDER_TOPIC, this.processOrderMessage)
+    this.node.pubsub.on(Peer.ORDER_TOPIC, this.processOrder)
     this.node.pubsub.subscribe(Peer.ORDER_TOPIC)
 
     this.node.pubsub.on(Peer.MATCH_TOPIC, this.processMatchMessage)
@@ -61,26 +61,26 @@ export class Peer {
     if (!this.node) {
       throw new Error('Cannot leave pubsub network before Peer is initialized')
     }
-    this.node.pubsub.removeListener(Peer.ORDER_TOPIC, this.processOrderMessage)
+    this.node.pubsub.removeListener(Peer.ORDER_TOPIC, this.processOrder)
     this.node.pubsub.unsubscribe(Peer.ORDER_TOPIC)
 
     this.node.pubsub.removeListener(Peer.MATCH_TOPIC, this.processMatchMessage)
     this.node.pubsub.unsubscribe(Peer.MATCH_TOPIC)
   }
 
-  // Send to redux?
-  async processOrderMessage(encodedOrder: any) {
+  async processOrder(encodedOrder: any) {
     const decodedOrder = Order.decode(encodedOrder.data)
     await this.addOrder(decodedOrder)
   }
 
-  async publishOrderMessage(order: Order) {
+  async publishOrder(order: Order) {
     if (!this.node) {
       throw new Error('Cannot send pubsub message before Peer is initialized')
     }
 
     const encodedOrder = Order.encode(order).finish()
     await this.node.pubsub.publish(Peer.ORDER_TOPIC, encodedOrder)
+    await this.addOrder(order)
   }
 
   async processMatchMessage(encodedMatch: any) {
@@ -123,7 +123,7 @@ export class Peer {
   }
 
   async addOrder(order: Order) {
-    await Peer.DB.orders.add(order)
+    await Peer.DB.orders.add({ ...order, status: OrderStatus.Pending })
   }
 
   async addMatch(match: Match) {

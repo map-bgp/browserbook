@@ -1,7 +1,10 @@
 import { ethers as ethersLib } from 'ethers'
-import { OrderType } from '../constants'
 import { Token } from '../Types'
 import { ethers } from '../store/globals/ethers'
+import { peer } from '../store/globals/peer'
+import { OrderType, Order } from '../p2p/protocol_buffers/gossip_schema'
+import { store } from '../store/Store'
+import { getOrders } from '../store/slices/PeerSlice'
 
 const OrderDomain = {
   name: 'BB Order',
@@ -12,12 +15,15 @@ const OrderDomain = {
 
 const OrderTypes = {
   Order: [
-    { name: 'tokenId', type: 'int256' },
-    { name: 'type', type: 'string' },
-    { name: 'price', type: 'int256' },
-    { name: 'limitPrice', type: 'int256' },
-    { name: 'quantity', type: 'int256' },
-    { name: 'expiry', type: 'int256' },
+    { name: 'id', type: 'string' },
+    { name: 'from', type: 'address' },
+    { name: 'tokenAddress', type: 'address' },
+    { name: 'tokenId', type: 'string' },
+    { name: 'orderType', type: 'int32' },
+    { name: 'price', type: 'string' },
+    { name: 'limitPrice', type: 'string' },
+    { name: 'quantity', type: 'string' },
+    { name: 'expiry', type: 'int32' },
   ],
 }
 
@@ -27,11 +33,12 @@ const getDateExpiryInMs = (expiryHours: string, expiryMinutes: string) => {
   expiry.setHours(expiry.getHours() + Number(expiryHours))
   expiry.setHours(expiry.getMinutes() + Number(expiryMinutes))
 
-  return Math.floor(expiry.getTime() / 1000).toString()
+  return Math.floor(expiry.getTime() / 1000)
 }
 
 export const submitOrder = async (
-  selected: Token,
+  fromAddress: string,
+  token: Token,
   orderType: OrderType,
   price: string,
   limitPrice: string,
@@ -41,16 +48,19 @@ export const submitOrder = async (
 ) => {
   const signer = ethers.getSigner()
 
-  const order = {
-    tokenId: Number(selected.id),
-    type: orderType,
-    price: ethersLib.utils.parseEther(price),
-    limitPrice: ethersLib.utils.parseEther(limitPrice),
-    quantity: ethersLib.utils.parseEther(quantity),
+  const unsignedOrder: Omit<Order, 'signature'> = {
+    id: Math.random().toString(),
+    from: fromAddress,
+    tokenAddress: token.contract.address,
+    tokenId: token.id,
+    orderType: orderType,
+    price: ethersLib.utils.parseEther(price).toString(),
+    limitPrice: ethersLib.utils.parseEther(limitPrice).toString(),
+    quantity: ethersLib.utils.parseEther(quantity).toString(),
     expiry: getDateExpiryInMs(expiryHours, expiryMinutes),
   }
 
-  console.log(order)
-  const signature = await signer?._signTypedData(OrderDomain, OrderTypes, order)
-  console.log('Signature', signature)
+  const signature = await signer?._signTypedData(OrderDomain, OrderTypes, unsignedOrder)
+  const signedOrder = { ...unsignedOrder, signature }
+  await peer.publishOrder(signedOrder)
 }

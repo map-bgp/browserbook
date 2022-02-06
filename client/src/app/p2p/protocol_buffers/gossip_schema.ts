@@ -4,15 +4,50 @@ import * as Long from 'long'
 
 export const protobufPackage = 'browserbook'
 
+export enum OrderType {
+  BUY = 0,
+  SELL = 1,
+  UNRECOGNIZED = -1,
+}
+
+export function orderTypeFromJSON(object: any): OrderType {
+  switch (object) {
+    case 0:
+    case 'BUY':
+      return OrderType.BUY
+    case 1:
+    case 'SELL':
+      return OrderType.SELL
+    case -1:
+    case 'UNRECOGNIZED':
+    default:
+      return OrderType.UNRECOGNIZED
+  }
+}
+
+export function orderTypeToJSON(object: OrderType): string {
+  switch (object) {
+    case OrderType.BUY:
+      return 'BUY'
+    case OrderType.SELL:
+      return 'SELL'
+    default:
+      return 'UNKNOWN'
+  }
+}
+
 export interface Order {
   id: string
-  tokenS: string
-  tokenT: string
-  amountS: number
-  amountT: number
   from: string
-  status: string
-  created: number
+  tokenAddress: string
+  tokenId: string
+  orderType: OrderType
+  price: string
+  limitPrice: string
+  quantity: string
+  expiry: number
+  /** Signature of all previous fields */
+  signature: string
 }
 
 export interface Match {
@@ -25,7 +60,18 @@ export interface Match {
 }
 
 function createBaseOrder(): Order {
-  return { id: '', tokenS: '', tokenT: '', amountS: 0, amountT: 0, from: '', status: '', created: 0 }
+  return {
+    id: '',
+    from: '',
+    tokenAddress: '',
+    tokenId: '',
+    orderType: 0,
+    price: '',
+    limitPrice: '',
+    quantity: '',
+    expiry: 0,
+    signature: '',
+  }
 }
 
 export const Order = {
@@ -33,26 +79,32 @@ export const Order = {
     if (message.id !== '') {
       writer.uint32(10).string(message.id)
     }
-    if (message.tokenS !== '') {
-      writer.uint32(18).string(message.tokenS)
-    }
-    if (message.tokenT !== '') {
-      writer.uint32(26).string(message.tokenT)
-    }
-    if (message.amountS !== 0) {
-      writer.uint32(32).int32(message.amountS)
-    }
-    if (message.amountT !== 0) {
-      writer.uint32(40).int32(message.amountT)
-    }
     if (message.from !== '') {
-      writer.uint32(50).string(message.from)
+      writer.uint32(18).string(message.from)
     }
-    if (message.status !== '') {
-      writer.uint32(58).string(message.status)
+    if (message.tokenAddress !== '') {
+      writer.uint32(26).string(message.tokenAddress)
     }
-    if (message.created !== 0) {
-      writer.uint32(64).int32(message.created)
+    if (message.tokenId !== '') {
+      writer.uint32(34).string(message.tokenId)
+    }
+    if (message.orderType !== 0) {
+      writer.uint32(40).int32(message.orderType)
+    }
+    if (message.price !== '') {
+      writer.uint32(50).string(message.price)
+    }
+    if (message.limitPrice !== '') {
+      writer.uint32(58).string(message.limitPrice)
+    }
+    if (message.quantity !== '') {
+      writer.uint32(66).string(message.quantity)
+    }
+    if (message.expiry !== 0) {
+      writer.uint32(72).int32(message.expiry)
+    }
+    if (message.signature !== '') {
+      writer.uint32(82).string(message.signature)
     }
     return writer
   },
@@ -68,25 +120,31 @@ export const Order = {
           message.id = reader.string()
           break
         case 2:
-          message.tokenS = reader.string()
-          break
-        case 3:
-          message.tokenT = reader.string()
-          break
-        case 4:
-          message.amountS = reader.int32()
-          break
-        case 5:
-          message.amountT = reader.int32()
-          break
-        case 6:
           message.from = reader.string()
           break
+        case 3:
+          message.tokenAddress = reader.string()
+          break
+        case 4:
+          message.tokenId = reader.string()
+          break
+        case 5:
+          message.orderType = reader.int32() as any
+          break
+        case 6:
+          message.price = reader.string()
+          break
         case 7:
-          message.status = reader.string()
+          message.limitPrice = reader.string()
           break
         case 8:
-          message.created = reader.int32()
+          message.quantity = reader.string()
+          break
+        case 9:
+          message.expiry = reader.int32()
+          break
+        case 10:
+          message.signature = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -99,39 +157,45 @@ export const Order = {
   fromJSON(object: any): Order {
     return {
       id: isSet(object.id) ? String(object.id) : '',
-      tokenS: isSet(object.tokenS) ? String(object.tokenS) : '',
-      tokenT: isSet(object.tokenT) ? String(object.tokenT) : '',
-      amountS: isSet(object.amountS) ? Number(object.amountS) : 0,
-      amountT: isSet(object.amountT) ? Number(object.amountT) : 0,
       from: isSet(object.from) ? String(object.from) : '',
-      status: isSet(object.status) ? String(object.status) : '',
-      created: isSet(object.created) ? Number(object.created) : 0,
+      tokenAddress: isSet(object.tokenAddress) ? String(object.tokenAddress) : '',
+      tokenId: isSet(object.tokenId) ? String(object.tokenId) : '',
+      orderType: isSet(object.orderType) ? orderTypeFromJSON(object.orderType) : 0,
+      price: isSet(object.price) ? String(object.price) : '',
+      limitPrice: isSet(object.limitPrice) ? String(object.limitPrice) : '',
+      quantity: isSet(object.quantity) ? String(object.quantity) : '',
+      expiry: isSet(object.expiry) ? Number(object.expiry) : 0,
+      signature: isSet(object.signature) ? String(object.signature) : '',
     }
   },
 
   toJSON(message: Order): unknown {
     const obj: any = {}
     message.id !== undefined && (obj.id = message.id)
-    message.tokenS !== undefined && (obj.tokenS = message.tokenS)
-    message.tokenT !== undefined && (obj.tokenT = message.tokenT)
-    message.amountS !== undefined && (obj.amountS = Math.round(message.amountS))
-    message.amountT !== undefined && (obj.amountT = Math.round(message.amountT))
     message.from !== undefined && (obj.from = message.from)
-    message.status !== undefined && (obj.status = message.status)
-    message.created !== undefined && (obj.created = Math.round(message.created))
+    message.tokenAddress !== undefined && (obj.tokenAddress = message.tokenAddress)
+    message.tokenId !== undefined && (obj.tokenId = message.tokenId)
+    message.orderType !== undefined && (obj.orderType = orderTypeToJSON(message.orderType))
+    message.price !== undefined && (obj.price = message.price)
+    message.limitPrice !== undefined && (obj.limitPrice = message.limitPrice)
+    message.quantity !== undefined && (obj.quantity = message.quantity)
+    message.expiry !== undefined && (obj.expiry = Math.round(message.expiry))
+    message.signature !== undefined && (obj.signature = message.signature)
     return obj
   },
 
   fromPartial<I extends Exact<DeepPartial<Order>, I>>(object: I): Order {
     const message = createBaseOrder()
     message.id = object.id ?? ''
-    message.tokenS = object.tokenS ?? ''
-    message.tokenT = object.tokenT ?? ''
-    message.amountS = object.amountS ?? 0
-    message.amountT = object.amountT ?? 0
     message.from = object.from ?? ''
-    message.status = object.status ?? ''
-    message.created = object.created ?? 0
+    message.tokenAddress = object.tokenAddress ?? ''
+    message.tokenId = object.tokenId ?? ''
+    message.orderType = object.orderType ?? 0
+    message.price = object.price ?? ''
+    message.limitPrice = object.limitPrice ?? ''
+    message.quantity = object.quantity ?? ''
+    message.expiry = object.expiry ?? 0
+    message.signature = object.signature ?? ''
     return message
   },
 }
