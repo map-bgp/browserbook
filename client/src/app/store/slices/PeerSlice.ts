@@ -21,10 +21,23 @@ const initialState: PeerState = {
   orders: [],
 }
 
+export const getAllOrders = createAsyncThunk(
+  'peer/getAllOrders',
+  async (): Promise<Array<WithStatus<Order>>> => {
+    const orders = await queryOrders()
+    return orders.map((order) => ({
+      ...order,
+      price: ethersLib.utils.formatEther(order.price),
+      limitPrice: ethersLib.utils.formatEther(order.limitPrice),
+      quantity: ethersLib.utils.formatEther(order.quantity),
+    }))
+  },
+)
+
 // filterAddress is not an optional parameter as we need to ensure
 // clients are only looking at their own orders, or at least on
 // the actual screen
-export const getOrders = createAsyncThunk(
+export const getOwnOrders = createAsyncThunk(
   'peer/getOwnOrders',
   async (filterAddress: string): Promise<Array<WithStatus<Order>>> => {
     const orders = await queryOrders(filterAddress)
@@ -53,10 +66,17 @@ export const peerSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getOrders.pending, (state) => {
+      .addCase(getOwnOrders.pending, (state) => {
         state.status = 'loading'
       })
-      .addCase(getOrders.fulfilled, (state, action) => {
+      .addCase(getOwnOrders.fulfilled, (state, action) => {
+        state.status = 'idle'
+        state.orders = action.payload
+      })
+      .addCase(getAllOrders.pending, (state) => {
+        state.status = 'loading'
+      })
+      .addCase(getAllOrders.fulfilled, (state, action) => {
         state.status = 'idle'
         state.orders = action.payload
       })

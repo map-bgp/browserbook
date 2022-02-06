@@ -3,7 +3,7 @@ export enum NavKey {
   TOKEN_ADMINISTRATION = 'token-administration',
   TRADE = 'trade',
   ORDER_BOOK = 'order-book',
-  // ORDER_VALIDATION = "order-validation",
+  ORDER_VALIDATION = 'order-validation',
   CONTROL_PANEL = 'control-panel',
 }
 
@@ -14,7 +14,7 @@ export enum NavPage {
   TOKEN_ADMINISTRATION = 'Token Administration',
   TRADE = 'Trade',
   ORDER_BOOK = 'Order Book',
-  // ORDER_VALIDATION = "Order Validation",
+  ORDER_VALIDATION = 'Order Validation',
   CONTROL_PANEL = 'Control Panel',
 }
 
@@ -25,6 +25,6 @@ export const Navigation: NavRecord = {
   [NavKey.TOKEN_ADMINISTRATION]: NavPage.TOKEN_ADMINISTRATION,
   [NavKey.TRADE]: NavPage.TRADE,
   [NavKey.ORDER_BOOK]: NavPage.ORDER_BOOK,
-  // [NavKey.ORDER_VALIDATION]: NavPage.ORDER_VALIDATION,
+  [NavKey.ORDER_VALIDATION]: NavPage.ORDER_VALIDATION,
   [NavKey.CONTROL_PANEL]: NavPage.CONTROL_PANEL,
 }

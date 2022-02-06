@@ -106,8 +106,8 @@ export const queryImportedTokens = async (accountAddress: string) => {
 
 export const queryOrders = async (addressFilter?: string) => {
   if (addressFilter !== undefined) {
-    return await db.orders.where('from').equals(addressFilter).toArray()
+    return await db.orders.where('from').equals(addressFilter).reverse().toArray()
   } else {
-    return await db.orders.toArray()
+    return await db.orders.reverse().toArray()
   }
 }

@@ -4,11 +4,13 @@ import { useAppSelector } from '../../app/Hooks'
 import { selectTokens } from '../../app/store/slices/TokensSlice'
 import TokenModal from '../elements/TokenModal'
 import NewTokenModal from '../elements/NewTokenModal'
+import { classNames } from '../utils/utils'
+import { Token } from '../../app/Types'
 
 const Tokens = () => {
   const tokens = useAppSelector(selectTokens)
 
-  const [activeTokenId, setActiveTokenId] = useState<string | null>(null)
+  const [activeToken, setActiveToken] = useState<Token | null>(null)
   const [newTokenModalOpen, setNewTokenModalOpen] = useState<boolean>(false)
   const [tokenModalOpen, setTokenModalOpen] = useState<boolean>(false)
 
@@ -33,11 +35,11 @@ const Tokens = () => {
           </div>
         </div>
         <NewTokenModal open={newTokenModalOpen} setOpen={setNewTokenModalOpen} />
-        <TokenModal tokenId={activeTokenId} open={tokenModalOpen} setOpen={setTokenModalOpen} />
-        {tokens.length !== 0 && (
-          <div className="flex flex-col">
-            <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-              <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+        <TokenModal token={activeToken} open={tokenModalOpen} setOpen={setTokenModalOpen} />
+        <div className="flex flex-col">
+          <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+              {tokens.length !== 0 ? (
                 <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
@@ -72,44 +74,51 @@ const Tokens = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {tokens &&
-                        tokens.map((token, tokenIdx) => (
-                          <tr
-                            key={`${token.contract.uri}${token.id}`}
-                            className={tokenIdx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
+                      {tokens.map((token, tokenIdx) => (
+                        <tr
+                          key={`${token.contract.uri}${token.id}`}
+                          className={tokenIdx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
+                        >
+                          <td
+                            className={classNames(
+                              token.own ? 'text-gray-700 font-medium' : 'text-gray-500',
+                              'px-6 py-4 whitespace-nowrap text-sm',
+                            )}
                           >
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {token.name}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {token.contract.uri}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {token.type}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {token.holdings}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                              <div
-                                onClick={() => {
-                                  setActiveTokenId(token.id)
-                                  setTokenModalOpen(true)
-                                }}
-                                className="text-orange-600 hover:text-orange-900 cursor-pointer"
-                              >
-                                View
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
+                            {token.name}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {token.contract.uri}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {token.type}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {token.holdings}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <div
+                              onClick={() => {
+                                console.log('Clicked', token.id)
+                                setActiveToken(token)
+                                setTokenModalOpen(true)
+                              }}
+                              className="text-orange-600 hover:text-orange-900 cursor-pointer"
+                            >
+                              View
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
                 </div>
-              </div>
+              ) : (
+                <div>It seems you don't have any tokens</div>
+              )}
             </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   )

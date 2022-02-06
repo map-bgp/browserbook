@@ -1,10 +1,11 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../../app/Hooks'
 import { Order, OrderType } from '../../app/p2p/protocol_buffers/gossip_schema'
 import { selectAccountData } from '../../app/store/slices/EthersSlice'
-import { getOrders, selectOrders } from '../../app/store/slices/PeerSlice'
+import { getOwnOrders, selectOrders } from '../../app/store/slices/PeerSlice'
 import { selectTokensFromCurrentOrders } from '../../app/store/slices/TokensSlice'
-import { OrderStatus } from '../../app/Types'
+import { OrderStatus, Token } from '../../app/Types'
+import OrderModal from '../elements/OrderModal'
 import { classNames } from '../utils/utils'
 
 export const MyOrders = () => {
@@ -13,9 +14,13 @@ export const MyOrders = () => {
   const orders = useAppSelector(selectOrders)
   const orderToTokenMap = useAppSelector(selectTokensFromCurrentOrders)
 
+  const [activeOrder, setActiveOrder] = useState<Order | null>(null)
+  const [activeOrderToken, setActiveOrderToken] = useState<Token | null>(null)
+  const [orderModalOpen, setOrderModalOpen] = useState<boolean>(false)
+
   useEffect(() => {
     if (!!primaryAccount) {
-      dispatch(getOrders(primaryAccount))
+      dispatch(getOwnOrders(primaryAccount))
     }
   }, [primaryAccount])
 
@@ -25,6 +30,12 @@ export const MyOrders = () => {
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg leading-6 font-medium text-gray-900">My Orders</h3>
         </div>
+        <OrderModal
+          order={activeOrder}
+          orderToken={activeOrderToken}
+          open={orderModalOpen}
+          setOpen={setOrderModalOpen}
+        />
         <div className="flex flex-col">
           <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
@@ -37,7 +48,7 @@ export const MyOrders = () => {
                           scope="col"
                           className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                         >
-                          Name
+                          Asset
                         </th>
                         <th
                           scope="col"
@@ -77,7 +88,6 @@ export const MyOrders = () => {
                     <tbody>
                       {orders.map((order, orderIdx) => {
                         const orderToken = orderToTokenMap.get(order.id)
-
                         return (
                           <tr
                             key={`${order.id}`}
@@ -124,8 +134,9 @@ export const MyOrders = () => {
                             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                               <div
                                 onClick={() => {
-                                  // setActiveTokenId(token.id)
-                                  // setTokenModalOpen(true)
+                                  setActiveOrder(order)
+                                  setActiveOrderToken(!!orderToken ? orderToken : null)
+                                  setOrderModalOpen(true)
                                 }}
                                 className="text-orange-600 hover:text-orange-900 cursor-pointer"
                               >

@@ -1,16 +1,16 @@
 import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { selectTokenById } from '../../app/store/slices/TokensSlice'
-import { store } from '../../app/store/Store'
+import { Order, OrderType } from '../../app/p2p/protocol_buffers/gossip_schema'
 import { Token } from '../../app/Types'
 
-type TokenModalProps = {
-  token: Token | null
+type OrderModalProps = {
+  order: Order | null
+  orderToken: Token | null
   open: boolean
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const TokenModal = (props: TokenModalProps) => {
+const OrderModal = (props: OrderModalProps) => {
   return (
     <Transition.Root show={props.open} as={Fragment}>
       <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" onClose={props.setOpen}>
@@ -42,7 +42,12 @@ const TokenModal = (props: TokenModalProps) => {
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full sm:p-6">
-              <TokenModalContent token={props.token} open={props.open} setOpen={props.setOpen} />
+              <TokenModalContent
+                order={props.order}
+                orderToken={props.orderToken}
+                open={props.open}
+                setOpen={props.setOpen}
+              />
             </div>
           </Transition.Child>
         </div>
@@ -51,38 +56,50 @@ const TokenModal = (props: TokenModalProps) => {
   )
 }
 
-const TokenModalContent = (props: TokenModalProps) => {
-  const token = props.token
-
+const TokenModalContent = (props: OrderModalProps) => {
   return (
     <form className="space-y-8 divide-y divide-gray-200">
       <div className="w-11/12 space-y-8 divide-y divide-gray-200">
         <div>
-          <h3 className="text-xl leading-6 font-semibold text-gray-700">Token Information</h3>
+          <h3 className="text-xl leading-6 font-semibold text-gray-700">Order Information</h3>
           <dl className="sm:divide-y sm:divide-gray-200 mt-4 -mb-8">
             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
-              <dt className="text-sm font-medium text-gray-500">Name</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{token?.name}</dd>
+              <dt className="text-sm font-medium text-gray-500">Asset</dt>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                {props.orderToken?.name}
+              </dd>
             </div>
             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
-              <dt className="text-sm font-medium text-gray-500">Token ID</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{token?.id}</dd>
-            </div>
-            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
-              <dt className="text-sm font-medium text-gray-500">Issuer</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{token?.contract.uri}</dd>
+              <dt className="text-sm font-medium text-gray-500">Asset Issuer</dt>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{`${props.orderToken?.contract.uri}`}</dd>
             </div>
             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
               <dt className="text-sm font-medium text-gray-500">Type</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{token?.type}</dd>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                {props.order?.orderType === OrderType.BUY ? 'Buy' : 'Sell'}
+              </dd>
             </div>
             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
-              <dt className="text-sm font-medium text-gray-500">Total Supply</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{token?.supply}</dd>
+              <dt className="text-sm font-medium text-gray-500">Price</dt>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{props.order?.price}</dd>
             </div>
             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
-              <dt className="text-sm font-medium text-gray-500">Metadata URI</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{token?.metadataURI}</dd>
+              <dt className="text-sm font-medium text-gray-500">Limit Price</dt>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                {props.order?.limitPrice}
+              </dd>
+            </div>
+            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
+              <dt className="text-sm font-medium text-gray-500">Quantity</dt>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                {props.order?.quantity}
+              </dd>
+            </div>
+            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
+              <dt className="text-sm font-medium text-gray-500">Expiry</dt>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                {!!props.order ? new Date(props.order?.expiry * 1000).toUTCString() : ''}
+              </dd>
             </div>
           </dl>
         </div>
@@ -109,4 +126,4 @@ const TokenModalContent = (props: TokenModalProps) => {
   )
 }
 
-export default TokenModal
+export default OrderModal

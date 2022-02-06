@@ -7,8 +7,8 @@ import { OrderType } from '../../app/p2p/protocol_buffers/gossip_schema'
 import { selectAccountData } from '../../app/store/slices/EthersSlice'
 import { selectTokens } from '../../app/store/slices/TokensSlice'
 import { Token, TokenType } from '../../app/Types'
+import { classNames, getDateAtInterval } from '../utils/utils'
 import TokenSelect from '../elements/TokenSelect'
-import { classNames } from '../utils/utils'
 
 const InfoPanel = (props: { message: string; link: string }) => {
   return (
@@ -51,13 +51,6 @@ const TradeForm = () => {
       setQuantity('1')
     }
   }, [selected])
-
-  const getDateAtInterval = (hours: number, minutes: number) => {
-    const date = new Date()
-    date.setHours(date.getHours() + hours)
-    date.setMinutes(date.getMinutes() + minutes)
-    return `${date.getDay()}-${date.getMonth()}-${date.getFullYear()} at ${date.getUTCHours()}:${date.getUTCMinutes()} UTC`
-  }
 
   const handleSubmit = () => {
     setError('')

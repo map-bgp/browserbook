@@ -3,13 +3,14 @@ import { Routes, Route, Outlet } from 'react-router-dom'
 import { NavPage } from '../components/utils/constants'
 import Dashboard from './Dashboard'
 import TokenAdministration from './TokenAdministration'
-import OrderBook from './OrderMatching'
+import OrderBook from './OrderBook'
 import ControlPanel from './ControlPanel'
 import TradeForm from '../components/trade/TradeForm'
 import TransferForm from '../components/trade/TransferForm'
 import TradeOutlet from './TradeOutlet'
 import Tokens from '../components/trade/Tokens'
 import Orders from '../components/trade/Orders'
+import OrderValidation from './OrderValidation'
 
 type ContentProps = {
   current: NavPage
@@ -39,6 +40,7 @@ const Content = (props: ContentProps) => {
             <Route path="dividends" element={<></>} />
           </Route>
           <Route path="order-book" element={<OrderBook />} />
+          <Route path="order-validation" element={<OrderValidation />} />
           <Route path="control-panel" element={<ControlPanel />} />
         </Routes>
       </main>

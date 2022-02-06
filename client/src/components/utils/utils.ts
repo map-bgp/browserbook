@@ -1,8 +1,8 @@
-import {Location} from "react-router-dom";
-import {isNavKey, NavKey, NavPage, NavRecord} from "./constants";
+import { Location } from 'react-router-dom'
+import { isNavKey, NavKey, NavPage, NavRecord } from './constants'
 
 export const classNames = (...classes: any[]) => {
-  return classes.filter(Boolean).join(" ")
+  return classes.filter(Boolean).join(' ')
 }
 
 export const getCurrent = (location: Location, navigation: NavRecord) => {
@@ -10,9 +10,16 @@ export const getCurrent = (location: Location, navigation: NavRecord) => {
   let indices: Array<number> = []
 
   for (let i = 0; i < path.length; i++) {
-    if (path[i] === "/") indices.push(i)
+    if (path[i] === '/') indices.push(i)
   }
   let derivedPath = location.pathname.substring(indices[0] + 1, indices[1]) as NavKey
 
   return isNavKey(derivedPath) ? navigation[derivedPath] : NavPage.DASHBOARD
+}
+
+export const getDateAtInterval = (hours: number, minutes: number) => {
+  const date = new Date()
+  date.setHours(date.getHours() + hours)
+  date.setMinutes(date.getMinutes() + minutes)
+  return `${date.getDay()}-${date.getMonth()}-${date.getFullYear()} at ${date.getUTCHours()}:${date.getUTCMinutes()} UTC`
 }

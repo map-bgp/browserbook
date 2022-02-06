@@ -2,11 +2,11 @@ import { useContext, useEffect, useState } from 'react'
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 import { ethers } from 'ethers'
 
-import { AppDispatch, RootState, store } from './store/Store'
+import { AppDispatch, RootState } from './store/Store'
 import { setAccounts } from './store/slices/EthersSlice'
 import { EtherContractWrapper, EtherStore } from './chain/EtherStore'
 import { ContractName } from './chain/ContractMetadata'
-import { setTokenContract, setTokens, getTokens, getTokenContract } from './store/slices/TokensSlice'
+import { getTokens, getTokenContract } from './store/slices/TokensSlice'
 import { AppContext } from '../components/AppContext'
 
 export const useAppDispatch = () => useDispatch<AppDispatch>()
