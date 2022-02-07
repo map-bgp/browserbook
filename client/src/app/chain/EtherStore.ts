@@ -2,7 +2,7 @@ import { ethers } from 'ethers'
 
 import { store } from '../store/Store'
 import { selectEncryptionKey, setAccounts, setEncryptionKey } from '../store/slices/EthersSlice'
-import { setEncryptedSignerKey } from '../store/slices/SignerSlice'
+import { setEncryptedSignerKey } from '../store/slices/ValidatorSlice'
 import { ContractName, ContractMetadata } from './ContractMetadata'
 import { encrypt } from './Encryption'
 
@@ -15,6 +15,8 @@ const hasOwnProperty = <X extends {}, Y extends PropertyKey>(
 
 const { ethereum } = window as any
 
+// A thin wrapper class that doesn't call any store methods
+// We avoid the circular scope problems this way
 export class EtherContractWrapper {
   provider: ethers.providers.Web3Provider
   signer: ethers.providers.JsonRpcSigner
@@ -45,6 +47,33 @@ export class EtherContractWrapper {
       return new ethers.Contract(address, contractABI, this.signer)
     }
   }
+
+  getEncryptionKey = async (account: string): Promise<string> => {
+    if (account === '') {
+      throw new Error('Malformed account')
+    }
+
+    return await this.provider.send('eth_getEncryptionPublicKey', [account])
+  }
+
+  encryptDelegatedSigner = async (account: string) => {
+    const encryptionKey = await this.getEncryptionKey(account)
+    const { address: signerAddress, privateKey } = ethers.Wallet.createRandom()
+
+    const encryptedSignerKey = ethers.utils.hexlify(
+      ethers.utils.toUtf8Bytes(
+        JSON.stringify(
+          encrypt({
+            publicKey: encryptionKey,
+            data: privateKey,
+            version: 'x25519-xsalsa20-poly1305',
+          }),
+        ),
+      ),
+    )
+
+    return [signerAddress, encryptedSignerKey]
+  }
 }
 
 export class EtherStore {
@@ -66,6 +95,7 @@ export class EtherStore {
 
   connect = async () => await this.provider.send('eth_requestAccounts', [])
 
+  getProvider = () => this.provider
   getSigner = () => this.signer
   getAccounts = async () => await this.provider.listAccounts()
 

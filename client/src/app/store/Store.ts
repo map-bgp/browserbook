@@ -1,13 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit'
 import ethersReducer from './slices/EthersSlice'
-import signerReducer from './slices/SignerSlice'
+import validatorReducer from './slices/ValidatorSlice'
 import tokenReducer from './slices/TokensSlice'
 import peerReducer from './slices/PeerSlice'
 
 export const store = configureStore({
   reducer: {
     ethers: ethersReducer,
-    signer: signerReducer,
+    validator: validatorReducer,
     tokens: tokenReducer,
     peer: peerReducer,
   },

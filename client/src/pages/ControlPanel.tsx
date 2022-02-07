@@ -9,7 +9,7 @@ import {
   selectEncryptedSignerKey,
   setEncryptedSignerKey,
   setSignerAddress,
-} from '../app/store/slices/SignerSlice'
+} from '../app/store/slices/ValidatorSlice'
 
 import { AppContext } from '../components/AppContext'
 import { Match, Order } from '../app/p2p/protocol_buffers/gossip_schema'

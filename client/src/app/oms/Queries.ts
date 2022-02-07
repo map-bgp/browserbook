@@ -111,3 +111,17 @@ export const queryOrders = async (addressFilter?: string) => {
     return await db.orders.reverse().toArray()
   }
 }
+
+export const queryValidatorSigner = async (address: string) => {
+  const wrapper = new EtherContractWrapper()
+  const provider = wrapper.provider
+
+  const contractName = ContractName.Exchange
+  const contract = await wrapper.getContract(contractName)
+
+  const signerAddress = await contract.signerAddresses(address)
+  const encryptedSignerKey = await contract.encryptedSignerKeys(signerAddress)
+  const signerBalance = await provider.getBalance(signerAddress)
+
+  return { signerAddress, encryptedSignerKey, signerBalance: ethersLib.utils.formatEther(signerBalance) }
+}

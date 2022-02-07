@@ -8,7 +8,6 @@ import { classNames } from '../utils/utils'
 
 const ContractInput = () => {
   const { isConnected } = useAppSelector(selectAccountData)
-  const tokenContract = useAppSelector(selectTokenContract)
 
   const [uri, setURI] = useState<string>('')
   const [error, setError] = useState<string>('')

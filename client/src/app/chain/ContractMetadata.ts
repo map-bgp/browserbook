@@ -845,67 +845,53 @@ const Exchange: Contract = {
       type: 'event',
     },
     {
-      inputs: [
+      inputs: [],
+      name: 'DOMAIN_SEPARATOR',
+      outputs: [
         {
-          internalType: 'address',
-          name: 'tokenOneAddress',
-          type: 'address',
-        },
-        {
-          internalType: 'address',
-          name: 'tokenTwoAddress',
-          type: 'address',
-        },
-        {
-          internalType: 'address',
-          name: 'tokenOneOwner',
-          type: 'address',
-        },
-        {
-          internalType: 'address',
-          name: 'tokenTwoOwner',
-          type: 'address',
-        },
-        {
-          internalType: 'uint256',
-          name: 'tokenOneId',
-          type: 'uint256',
-        },
-        {
-          internalType: 'uint256',
-          name: 'tokenTwoId',
-          type: 'uint256',
-        },
-        {
-          internalType: 'uint256',
-          name: 'tokenOneAmount',
-          type: 'uint256',
-        },
-        {
-          internalType: 'uint256',
-          name: 'tokenTwoAmount',
-          type: 'uint256',
-        },
-        {
-          internalType: 'bytes',
-          name: 'data',
-          type: 'bytes',
+          internalType: 'bytes32',
+          name: '',
+          type: 'bytes32',
         },
       ],
-      name: 'executeOrder',
-      outputs: [],
-      stateMutability: 'nonpayable',
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      inputs: [],
+      name: 'EIP712DOMAIN_TYPEHASH',
+      outputs: [
+        {
+          internalType: 'bytes32',
+          name: '',
+          type: 'bytes32',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      inputs: [],
+      name: 'ORDERS_TYPEHASH',
+      outputs: [
+        {
+          internalType: 'bytes32',
+          name: '',
+          type: 'bytes32',
+        },
+      ],
+      stateMutability: 'view',
       type: 'function',
     },
     {
       inputs: [
         {
           internalType: 'address',
-          name: 'addr',
+          name: '',
           type: 'address',
         },
       ],
-      name: 'getPass',
+      name: 'encryptedSignerKeys',
       outputs: [
         {
           internalType: 'string',
@@ -919,20 +905,38 @@ const Exchange: Contract = {
     {
       inputs: [
         {
+          internalType: 'address',
+          name: 'signerAddress',
+          type: 'address',
+        },
+        {
           internalType: 'string',
-          name: 'authorizationKey',
+          name: 'encryptedSignerKey',
           type: 'string',
         },
       ],
-      name: 'setPass',
-      outputs: [
+      name: 'setSigner',
+      outputs: [],
+      stateMutability: 'nonpayable',
+      type: 'function',
+    },
+    {
+      inputs: [
         {
-          internalType: 'bool',
+          internalType: 'address',
           name: '',
-          type: 'bool',
+          type: 'address',
         },
       ],
-      stateMutability: 'nonpayable',
+      name: 'signerAddresses',
+      outputs: [
+        {
+          internalType: 'address',
+          name: '',
+          type: 'address',
+        },
+      ],
+      stateMutability: 'view',
       type: 'function',
     },
   ],
