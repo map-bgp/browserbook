@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { queryImportedTokens, queryTokenContractEvent, queryTokens } from '../../oms/Queries'
-import { Order } from '../../p2p/protocol_buffers/gossip_schema'
-import { ensure, Token, TokenContract, TokenType } from '../../Types'
-import { RootState, store } from '../Store'
+import { createTokenContract } from '../../oms/Chain'
+import { Token, TokenContract, TokenType } from '../../Types'
+import { RootState } from '../Store'
 import { selectAccountData } from './EthersSlice'
 import { selectOrders } from './PeerSlice'
 
@@ -17,6 +17,13 @@ const initialState: TokensState = {
   tokenContract: null,
   tokens: [],
 }
+
+export const createTokenContractThunk = createAsyncThunk(
+  'tokens/createTokenContract',
+  async (uri: string, thunkAPI: any): Promise<void> => {
+    await createTokenContract(uri)
+  },
+)
 
 export const getTokenContract = createAsyncThunk(
   'tokens/getTokenContract',
@@ -69,6 +76,15 @@ export const tokensSlice = createSlice({
       .addCase(getTokens.fulfilled, (state, action) => {
         state.status = 'idle'
         state.tokens = action.payload
+      })
+      .addCase(createTokenContractThunk.pending, (state) => {
+        state.status = 'loading'
+      })
+      .addCase(createTokenContractThunk.fulfilled, (state) => {
+        state.status = 'idle'
+      })
+      .addCase(createTokenContractThunk.rejected, (state) => {
+        state.status = 'idle'
       })
   },
 })

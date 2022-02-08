@@ -26,6 +26,8 @@ export const ethersSlice = createSlice({
 
 export const { setAccounts, setEncryptionKey } = ethersSlice.actions
 
+export const selectTokenStatus = (state: RootState) => state.tokens.status
+
 export const selectIsConnected = (state: RootState): boolean => state.ethers.accounts.length !== 0
 export const selectAccounts = (state: RootState): Array<string> => state.ethers.accounts
 // Would like to use the optional type here

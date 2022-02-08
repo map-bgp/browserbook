@@ -1,19 +1,22 @@
-import { BigNumber, ethers as ethersLib, FixedNumber } from 'ethers'
+import { ethers as ethersLib, FixedNumber } from 'ethers'
 import { ethers } from '../store/globals/ethers'
 import { peer } from '../store/globals/peer'
 import { ContractName } from '../chain/ContractMetadata'
 import { selectAccountData } from '../store/slices/EthersSlice'
 import { store } from '../store/Store'
 import { Token, TokenType } from '../Types'
+import { EtherContractWrapper } from '../chain/EtherStore'
 
-const dispatch = store.dispatch
+// export const createTokenContract = async (uri: string) => {
+//   const wrapper = new EtherContractWrapper()
+//   const provider = wrapper.provider
+//   const signer = wrapper.signer
 
-export const createTokenContract = async (uri: string) => {
-  const contractName = ContractName.TokenFactory
-  const contract = await ethers.getContract(contractName)
-
-  await contract.create(uri)
-}
+//   const contractName = ContractName.TokenFactory
+//   const contract = await wrapper.getContract(contractName)
+//   const tx = await contract.create(uri)
+//   await tx.wait()
+// }
 
 export const createToken = async (
   contractAddress: string,
@@ -22,8 +25,12 @@ export const createToken = async (
   tokenIdentifier: string,
   tokenMetadataURI: string,
 ) => {
+  const wrapper = new EtherContractWrapper()
+  const provider = wrapper.provider
+  const signer = wrapper.signer
+
   const contractName = ContractName.Token
-  const contract = await ethers.getContract(contractName, contractAddress)
+  const contract = await wrapper.getContract(contractName, contractAddress)
 
   if (tokenType === TokenType.Fungible) {
     await contract.fungibleMint(
@@ -43,8 +50,12 @@ export const transferToken = async (
   token: Token,
   quantity: string,
 ) => {
+  const wrapper = new EtherContractWrapper()
+  const provider = wrapper.provider
+  const signer = wrapper.signer
+
   const contractName = ContractName.Token
-  const contract = await ethers.getContract(contractName, contractAddress)
+  const contract = await wrapper.getContract(contractName, contractAddress)
 
   const senderAddress = selectAccountData(store.getState()).primaryAccount
   const tokenId = token.id

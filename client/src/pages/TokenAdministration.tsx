@@ -1,7 +1,6 @@
 import { useAppSelector, useTokenFactoryFilter, useTokenFilter } from '../app/Hooks'
 import {
   selectTokenContract,
-  selectTokens,
   selectTokenContractAddress,
   selectOwnTokens,
 } from '../app/store/slices/TokensSlice'

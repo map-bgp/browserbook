@@ -1,13 +1,15 @@
 import { XCircleIcon } from '@heroicons/react/solid'
 import { useState } from 'react'
-import { useAppSelector } from '../../app/Hooks'
-import { createTokenContract } from '../../app/oms/TokenService'
-import { selectAccountData } from '../../app/store/slices/EthersSlice'
-import { selectTokenContract } from '../../app/store/slices/TokensSlice'
+import { useAppDispatch, useAppSelector } from '../../app/Hooks'
+import { selectAccountData, selectTokenStatus } from '../../app/store/slices/EthersSlice'
+import { createTokenContractThunk } from '../../app/store/slices/TokensSlice'
+import { Spinner } from '../elements/Spinner'
 import { classNames } from '../utils/utils'
 
 const ContractInput = () => {
+  const dispatch = useAppDispatch()
   const { isConnected } = useAppSelector(selectAccountData)
+  const status = useAppSelector(selectTokenStatus)
 
   const [uri, setURI] = useState<string>('')
   const [error, setError] = useState<string>('')
@@ -18,7 +20,7 @@ const ContractInput = () => {
     if (uri.length === 0) {
       setError('Token URI may not be empty')
     } else {
-      createTokenContract(uri)
+      dispatch(createTokenContractThunk(uri))
     }
   }
 
@@ -52,6 +54,20 @@ const ContractInput = () => {
         </div>
       </div>
       <div className="px-4 py-3 bg-gray-50 text-right sm:px-6 flex justify-end items-center">
+        {status == 'loading' && (
+          <div className="w-full">
+            <div className="flex mx-4 items-center">
+              <div className="flex-shrink-0">
+                <Spinner />
+              </div>
+              <div className="ml-1">
+                <h3 className="text-xs font-medium text-blue-800">
+                  Processing. Please wait and confirm the prompted transactions
+                </h3>
+              </div>
+            </div>
+          </div>
+        )}
         {!isConnected && (
           <div className="w-full">
             <div className="flex mx-4 items-center">
