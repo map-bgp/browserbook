@@ -62,7 +62,7 @@ const ContractInput = () => {
               </div>
               <div className="ml-1">
                 <h3 className="text-xs font-medium text-blue-800">
-                  Processing. Please wait and confirm the prompted transactions
+                  Processing. Please wait and confirm any prompted transactions
                 </h3>
               </div>
             </div>

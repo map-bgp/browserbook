@@ -37,3 +37,19 @@ export const ensure = <T>(
 
   return argument
 }
+
+export type CreateTokenOptions = {
+  contractAddress: string
+  tokenType: TokenType
+  tokenSupply: string
+  tokenIdentifier: string
+  tokenMetadataURI: string
+}
+
+export type TransferTokenOptions = {
+  senderAddress: string
+  recipientAddress: string
+  contractAddress: string
+  token: Token
+  quantity: string
+}

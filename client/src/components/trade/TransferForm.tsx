@@ -1,15 +1,21 @@
-import { SelectorIcon, XCircleIcon } from '@heroicons/react/outline'
+import { XCircleIcon } from '@heroicons/react/outline'
 import { ethers } from 'ethers'
 import { useEffect, useState } from 'react'
-import { useAppSelector } from '../../app/Hooks'
-import { transferToken } from '../../app/oms/TokenService'
-import { selectAccountData } from '../../app/store/slices/EthersSlice'
-import { selectTokenContractAddress, selectTokens } from '../../app/store/slices/TokensSlice'
+import { useAppDispatch, useAppSelector } from '../../app/Hooks'
+import { selectAccountData, selectTokenStatus } from '../../app/store/slices/EthersSlice'
+import {
+  selectTokenContractAddress,
+  selectTokens,
+  transferTokenThunk,
+} from '../../app/store/slices/TokensSlice'
 import { Token } from '../../app/Types'
+import { Spinner } from '../elements/Spinner'
 import TokenSelect from '../elements/TokenSelect'
 
 const TransferForm = () => {
-  const { isConnected } = useAppSelector(selectAccountData)
+  const dispatch = useAppDispatch()
+  const { primaryAccount, isConnected } = useAppSelector(selectAccountData)
+  const status = useAppSelector(selectTokenStatus)
   // This will have to be refactored to use the new token DB
   const tokenContractAddress = useAppSelector(selectTokenContractAddress)
   const tokens = useAppSelector(selectTokens)
@@ -32,8 +38,21 @@ const TransferForm = () => {
       setError('Invalid recipient address provided')
     } else if (tokenContractAddress === null) {
       throw new Error('Token Contract not found')
+    } else if (!primaryAccount) {
+      throw new Error('Account not initialized')
     } else {
-      transferToken(tokenContractAddress, recipient, selected, quantity)
+      dispatch(
+        transferTokenThunk({
+          senderAddress: primaryAccount,
+          recipientAddress: recipient,
+          contractAddress: tokenContractAddress,
+          token: selected,
+          quantity: quantity,
+        }),
+      )
+
+      setQuantity('')
+      setRecipient('')
     }
   }
 
@@ -104,6 +123,20 @@ const TransferForm = () => {
                 <div className="ml-3">
                   <h3 className="text-xs font-medium text-red-800">
                     You must connect your wallet in order to proceed
+                  </h3>
+                </div>
+              </div>
+            </div>
+          )}
+          {status == 'loading' && (
+            <div className="w-full">
+              <div className="flex mx-4 items-center">
+                <div className="flex-shrink-0">
+                  <Spinner />
+                </div>
+                <div className="ml-1">
+                  <h3 className="text-xs font-medium text-blue-800">
+                    Processing. Please wait and confirm any prompted transactions
                   </h3>
                 </div>
               </div>

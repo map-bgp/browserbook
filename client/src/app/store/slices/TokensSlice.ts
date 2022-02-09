@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { queryImportedTokens, queryTokenContractEvent, queryTokens } from '../../oms/Queries'
-import { createTokenContract } from '../../oms/Chain'
-import { Token, TokenContract, TokenType } from '../../Types'
+import { createToken, createTokenContract, transferToken } from '../../oms/Chain'
+import { CreateTokenOptions, Token, TokenContract, TokenType, TransferTokenOptions } from '../../Types'
 import { RootState } from '../Store'
 import { selectAccountData } from './EthersSlice'
 import { selectOrders } from './PeerSlice'
@@ -32,6 +32,13 @@ export const getTokenContract = createAsyncThunk(
   },
 )
 
+export const createTokenThunk = createAsyncThunk(
+  'tokens/createToken',
+  async (options: CreateTokenOptions, thunkAPI: any): Promise<void> => {
+    await createToken(options)
+  },
+)
+
 export const getTokens = createAsyncThunk(
   'tokens/getTokens',
   async (options, thunkAPI: any): Promise<Array<Token>> => {
@@ -50,6 +57,13 @@ export const getTokens = createAsyncThunk(
   },
 )
 
+export const transferTokenThunk = createAsyncThunk(
+  'tokens/transferToken',
+  async (options: TransferTokenOptions, thunkAPI: any): Promise<void> => {
+    await transferToken(options)
+  },
+)
+
 export const tokensSlice = createSlice({
   name: 'tokens',
   initialState,
@@ -63,18 +77,10 @@ export const tokensSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getTokenContract.pending, (state) => {
-        state.status = 'loading'
-      })
       .addCase(getTokenContract.fulfilled, (state, action) => {
-        state.status = 'idle'
         state.tokenContract = action.payload
       })
-      .addCase(getTokens.pending, (state) => {
-        state.status = 'loading'
-      })
       .addCase(getTokens.fulfilled, (state, action) => {
-        state.status = 'idle'
         state.tokens = action.payload
       })
       .addCase(createTokenContractThunk.pending, (state) => {
@@ -84,6 +90,24 @@ export const tokensSlice = createSlice({
         state.status = 'idle'
       })
       .addCase(createTokenContractThunk.rejected, (state) => {
+        state.status = 'idle'
+      })
+      .addCase(createTokenThunk.pending, (state) => {
+        state.status = 'loading'
+      })
+      .addCase(createTokenThunk.fulfilled, (state) => {
+        state.status = 'idle'
+      })
+      .addCase(createTokenThunk.rejected, (state) => {
+        state.status = 'idle'
+      })
+      .addCase(transferTokenThunk.pending, (state) => {
+        state.status = 'loading'
+      })
+      .addCase(transferTokenThunk.fulfilled, (state) => {
+        state.status = 'idle'
+      })
+      .addCase(transferTokenThunk.rejected, (state) => {
         state.status = 'idle'
       })
   },

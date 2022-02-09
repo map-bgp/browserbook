@@ -4,7 +4,7 @@ import { Order, OrderType } from '../../app/p2p/protocol_buffers/gossip_schema'
 import { selectAccountData } from '../../app/store/slices/EthersSlice'
 import { getOwnOrders, selectOrders } from '../../app/store/slices/PeerSlice'
 import { selectTokensFromCurrentOrders } from '../../app/store/slices/TokensSlice'
-import { OrderStatus, Token } from '../../app/Types'
+import { OrderStatus, Token, WithStatus } from '../../app/Types'
 import OrderModal from '../elements/OrderModal'
 import { classNames } from '../utils/utils'
 
@@ -14,7 +14,7 @@ export const MyOrders = () => {
   const orders = useAppSelector(selectOrders)
   const orderToTokenMap = useAppSelector(selectTokensFromCurrentOrders)
 
-  const [activeOrder, setActiveOrder] = useState<Order | null>(null)
+  const [activeOrder, setActiveOrder] = useState<WithStatus<Order> | null>(null)
   const [activeOrderToken, setActiveOrderToken] = useState<Token | null>(null)
   const [orderModalOpen, setOrderModalOpen] = useState<boolean>(false)
 

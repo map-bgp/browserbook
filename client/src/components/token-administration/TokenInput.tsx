@@ -1,7 +1,10 @@
 import { XCircleIcon } from '@heroicons/react/outline'
 import { useState } from 'react'
-import { createToken } from '../../app/oms/TokenService'
+import { useAppDispatch, useAppSelector } from '../../app/Hooks'
+import { selectTokenStatus } from '../../app/store/slices/EthersSlice'
+import { createTokenThunk } from '../../app/store/slices/TokensSlice'
 import { TokenContract, TokenType } from '../../app/Types'
+import { Spinner } from '../elements/Spinner'
 import { classNames } from '../utils/utils'
 
 export type TokenInputProps = {
@@ -14,6 +17,9 @@ const tokenTypes = [
 ]
 
 export const TokenInput = (props: TokenInputProps) => {
+  const dispatch = useAppDispatch()
+  const status = useAppSelector(selectTokenStatus)
+
   const [tokenIdentifier, setTokenIdentifier] = useState<string>('')
   const [tokenMetadataURI, setTokenMetadataURI] = useState<string>('')
   const [tokenType, setTokenType] = useState<TokenType>(TokenType.Fungible)
@@ -30,7 +36,15 @@ export const TokenInput = (props: TokenInputProps) => {
     } else if (Number(tokenSupply) === 0) {
       setError('Cannot have token with 0 supply')
     } else {
-      createToken(props.tokenContract.address, tokenType, tokenSupply, tokenIdentifier, tokenMetadataURI)
+      dispatch(
+        createTokenThunk({
+          contractAddress: props.tokenContract.address,
+          tokenType,
+          tokenSupply,
+          tokenIdentifier,
+          tokenMetadataURI,
+        }),
+      )
     }
   }
 
@@ -160,6 +174,20 @@ export const TokenInput = (props: TokenInputProps) => {
           </div>
         </div>
         <div className="px-4 py-3 bg-gray-50 text-right sm:px-6 flex justify-end items-center">
+          {status == 'loading' && (
+            <div className="w-full">
+              <div className="flex mx-4 items-center">
+                <div className="flex-shrink-0">
+                  <Spinner />
+                </div>
+                <div className="ml-1">
+                  <h3 className="text-xs font-medium text-blue-800">
+                    Processing. Please wait and confirm any prompted transactions
+                  </h3>
+                </div>
+              </div>
+            </div>
+          )}
           {error && (
             <div className="w-full">
               <div className="flex mx-4 items-center">

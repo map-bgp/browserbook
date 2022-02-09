@@ -7,7 +7,6 @@ import { db } from '../store/globals/db'
 // This file is a mix of direct queries and event log queries
 // Be careful what you import here as this file is called directly in the redux store on initialization
 // So watch out for circular dependencies
-
 export const queryTokenContractEvent = async (ownerAddress: string) => {
   const filterName = 'TokenContractCreated'
 
