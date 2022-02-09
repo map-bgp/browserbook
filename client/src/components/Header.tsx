@@ -24,10 +24,10 @@ const Header = (props: HeaderProps) => {
       <Disclosure as="nav" className="bg-white shadow-sm">
         {({ open }) => (
           <>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="flex justify-between h-16">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              <div className="flex h-16 justify-between">
                 <div className="flex">
-                  <div className="flex-shrink-0 flex items-center">
+                  <div className="flex flex-shrink-0 items-center">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-12 w-12"
@@ -51,8 +51,8 @@ const Header = (props: HeaderProps) => {
                         className={classNames(
                           props.current === name
                             ? 'border-orange-500 text-gray-900'
-                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
-                          'inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium',
+                            : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
+                          'inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium',
                         )}
                         aria-current={props.current === name ? 'page' : undefined}
                       >
@@ -61,20 +61,20 @@ const Header = (props: HeaderProps) => {
                     ))}
                   </div>
                 </div>
-                <div className="flex items-center justify-end mr-4">
-                  <div className="px-4 flex items-center justify-around mr-4">
+                <div className="mr-4 flex items-center justify-end">
+                  <div className="mr-4 flex items-center justify-around px-4">
                     {isConnected ? (
                       <>
-                        <div className="mr-2 my-4 py-2 text-gray-500 text-sm font-medium">Connected</div>
+                        <div className="my-4 mr-2 py-2 text-sm font-medium text-gray-500">Connected</div>
                         <div className="flex h-3 w-3">
-                          <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-green-400 opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                          <span className="absolute inline-flex h-3 w-3 animate-ping rounded-full bg-green-400 opacity-75"></span>
+                          <span className="relative inline-flex h-3 w-3 rounded-full bg-green-500"></span>
                         </div>
                       </>
                     ) : (
                       <button
                         type="button"
-                        className="mr-0 ml-auto my-4 block flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                        className="my-4 mr-0 ml-auto block flex items-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
                         onClick={() => {
                           ethers.connect().then()
                         }}
@@ -83,14 +83,14 @@ const Header = (props: HeaderProps) => {
                       </button>
                     )}
                   </div>
-                  <div className="mr-8 my-4 py-2 text-gray-500 text-sm font-medium">
+                  <div className="my-4 mr-8 py-2 text-sm font-medium text-gray-500">
                     Peer Count: {numPeers}
                   </div>
                 </div>
 
                 <div className="-mr-2 flex items-center sm:hidden">
                   {/* Mobile menu button */}
-                  <Disclosure.Button className="bg-white inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+                  <Disclosure.Button className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2">
                     <span className="sr-only">Open main menu</span>
                     {open ? (
                       <XIcon className="block h-6 w-6" aria-hidden="true" />
@@ -103,7 +103,7 @@ const Header = (props: HeaderProps) => {
             </div>
 
             <Disclosure.Panel className="sm:hidden">
-              <div className="pt-2 pb-3 space-y-1 flex flex-col items-center">
+              <div className="flex flex-col items-center space-y-1 pt-2 pb-3">
                 {Object.entries(Navigation).map(([key, name]) => (
                   <Link
                     to={key}
@@ -111,8 +111,8 @@ const Header = (props: HeaderProps) => {
                     className={classNames(
                       props.current === name
                         ? 'border-orange-500 text-gray-900'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
-                      'inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium',
+                        : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
+                      'inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium',
                     )}
                     aria-current={props.current === name ? 'page' : undefined}
                   >

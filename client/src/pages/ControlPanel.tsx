@@ -13,7 +13,6 @@ import {
 
 import { AppContext } from '../components/AppContext'
 import { Match, Order } from '../app/p2p/protocol_buffers/gossip_schema'
-import { IPeer } from '../app/p2p/db'
 
 const ControlPanel = () => {
   const dispatch = useDispatch()
@@ -100,9 +99,9 @@ const ControlPanel = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-      <div className="px-4 py-8 sm:px-0 flex flex-col sm:flex-none sm:grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-8">
-        <div className="md:col-span-1 align-top">
+    <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+      <div className="flex flex-col gap-x-8 gap-y-8 px-4 py-8 sm:grid sm:flex-none sm:grid-cols-2 sm:px-0 md:grid-cols-3">
+        <div className="align-top md:col-span-1">
           <div>
             <h3 className="text-lg font-medium leading-6 text-gray-900">System Control</h3>
             <p className="mt-1 text-sm text-gray-600">All the buttons and knobs you need</p>
@@ -111,7 +110,7 @@ const ControlPanel = () => {
         <div className="md:col-span-1">
           <button
             type="button"
-            className="w-36 my-4 block flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+            className="my-4 block flex w-36 items-center justify-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
             onClick={() => {
               log()
             }}
@@ -120,7 +119,7 @@ const ControlPanel = () => {
           </button>
           <button
             type="button"
-            className="w-36 my-4 block flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+            className="my-4 block flex w-36 items-center justify-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
             onClick={() => {
               encryptSigner()
             }}
@@ -129,7 +128,7 @@ const ControlPanel = () => {
           </button>
           <button
             type="button"
-            className="w-36 my-4 block flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+            className="my-4 block flex w-36 items-center justify-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
             onClick={() => {
               decryptSigner()
             }}
@@ -147,7 +146,7 @@ const ControlPanel = () => {
           </button> */}
           <button
             type="button"
-            className="w-36 my-4 block flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+            className="my-4 block flex w-36 items-center justify-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
             onClick={() => {
               matchAllOrders()
             }}
@@ -155,7 +154,7 @@ const ControlPanel = () => {
             Match All Orders
           </button>
         </div>
-        <div className="md:col-span-1 py-4">
+        <div className="py-4 md:col-span-1">
           <h3>The Orderbook</h3>
           <ul>
             {orders?.map((order: Order) => (

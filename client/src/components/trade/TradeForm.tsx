@@ -85,11 +85,11 @@ const TradeForm = () => {
   }
 
   return (
-    <div className="space-y-6 sm:px-6 lg:px-0 lg:col-span-9">
-      <div className="shadow sm:rounded-md sm:overflow-hidden">
-        <div className="bg-white py-6 px-4 space-y-6 sm:p-6">
+    <div className="space-y-6 sm:px-6 lg:col-span-9 lg:px-0">
+      <div className="shadow sm:overflow-hidden sm:rounded-md">
+        <div className="space-y-6 bg-white py-6 px-4 sm:p-6">
           <div>
-            <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Submit New Trade</h3>
+            <h3 className="mb-4 text-lg font-medium leading-6 text-gray-900">Submit New Trade</h3>
             <InfoPanel message='Please be sure to read the "How it Works" before trading' link="" />
           </div>
 
@@ -99,7 +99,7 @@ const TradeForm = () => {
                 <TokenSelect tokens={tokens} selected={selected} setSelected={setSelected} />
               ) : (
                 <div className="flex items-center pt-6">
-                  <span className="block text-gray-500 italic">No tokens found to trade</span>
+                  <span className="block italic text-gray-500">No tokens found to trade</span>
                 </div>
               )}
             </div>
@@ -113,11 +113,11 @@ const TradeForm = () => {
                       value={OrderType.BUY}
                       className={({ active, checked }) =>
                         classNames(
-                          active ? 'ring-2 ring-offset-2 ring-orange-500' : '',
+                          active ? 'ring-2 ring-orange-500 ring-offset-2' : '',
                           checked
-                            ? 'bg-orange-600 border-transparent text-white hover:bg-orange-700'
-                            : 'bg-white border-gray-200 text-gray-900 hover:bg-gray-50',
-                          'cursor-pointer rounded-md shadow-sm  border rounded-md py-2 px-2 flex items-center justify-center text-sm font-medium uppercase sm:flex-1',
+                            ? 'border-transparent bg-orange-600 text-white hover:bg-orange-700'
+                            : 'border-gray-200 bg-white text-gray-900 hover:bg-gray-50',
+                          'flex cursor-pointer items-center  justify-center rounded-md rounded-md border py-2 px-2 text-sm font-medium uppercase shadow-sm sm:flex-1',
                         )
                       }
                     >
@@ -128,11 +128,11 @@ const TradeForm = () => {
                       value={OrderType.SELL}
                       className={({ active, checked }) =>
                         classNames(
-                          active ? 'ring-2 ring-offset-2 ring-orange-500' : '',
+                          active ? 'ring-2 ring-orange-500 ring-offset-2' : '',
                           checked
-                            ? 'bg-orange-600 border-transparent text-white hover:bg-orange-700'
-                            : 'bg-white border-gray-200 text-gray-900 hover:bg-gray-50',
-                          'cursor-pointer rounded-md shadow-sm  border rounded-md py-2 px-2 flex items-center justify-center text-sm font-medium uppercase sm:flex-1',
+                            ? 'border-transparent bg-orange-600 text-white hover:bg-orange-700'
+                            : 'border-gray-200 bg-white text-gray-900 hover:bg-gray-50',
+                          'flex cursor-pointer items-center  justify-center rounded-md rounded-md border py-2 px-2 text-sm font-medium uppercase shadow-sm sm:flex-1',
                         )
                       }
                     >
@@ -142,7 +142,7 @@ const TradeForm = () => {
                 </RadioGroup>
               </div>
             </div>
-            <div className="hidden sm:flex sm:col-span-1 sm:row-span-3 flex flex-col items-center justify-between pt-5 text-center">
+            <div className="flex hidden flex-col items-center justify-between pt-5 text-center sm:col-span-1 sm:row-span-3 sm:flex">
               <div className="text-sm text-gray-500">You are offering to</div>
               <div className="text-4xl text-gray-700">
                 {orderType === OrderType.BUY ? 'BUY' : 'SELL'}
@@ -152,8 +152,8 @@ const TradeForm = () => {
                   {quantity} {!!selected && selected.name}
                 </div>
               </div>
-              <div className="text-sm text-gray-500 -mt-2">for</div>
-              <div className="text-4xl text-gray-700 whitespace-nowrap">
+              <div className="-mt-2 text-sm text-gray-500">for</div>
+              <div className="whitespace-nowrap text-4xl text-gray-700">
                 Ξ{' '}
                 {!!price && !!quantity
                   ? (Number(price) * Number(quantity)).toString().length >= 9
@@ -169,8 +169,8 @@ const TradeForm = () => {
               <label htmlFor="price" className="block text-sm font-medium text-gray-700">
                 Unit Price
               </label>
-              <div className="mt-1 relative rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <div className="relative mt-1 rounded-md shadow-sm">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                   <span className="text-gray-500 sm:text-sm">Ξ</span>
                 </div>
                 <input
@@ -183,7 +183,7 @@ const TradeForm = () => {
                   onChange={(e) => {
                     setPrice(e.target.value)
                   }}
-                  className="focus:ring-orange-500 focus:border-orange-500 block w-full pl-7 pr-3 sm:text-sm border-gray-300 rounded-md"
+                  className="block w-full rounded-md border-gray-300 pl-7 pr-3 focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
                   placeholder="0.00"
                 />
               </div>
@@ -192,8 +192,8 @@ const TradeForm = () => {
               <label htmlFor="price" className="block text-sm font-medium text-gray-700">
                 Limit Price
               </label>
-              <div className="mt-1 relative rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <div className="relative mt-1 rounded-md shadow-sm">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                   <span className="text-gray-500 sm:text-sm">Ξ</span>
                 </div>
                 <input
@@ -204,7 +204,7 @@ const TradeForm = () => {
                   step="0.000000001"
                   value={limitPrice}
                   onChange={(e) => setLimitPrice(e.target.value)}
-                  className="focus:ring-orange-500 focus:border-orange-500 block w-full pl-7 pr-3 sm:text-sm border-gray-300 rounded-md"
+                  className="block w-full rounded-md border-gray-300 pl-7 pr-3 focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
                   placeholder="0.00"
                 />
               </div>
@@ -213,7 +213,7 @@ const TradeForm = () => {
               <label htmlFor="price" className="block text-sm font-medium text-gray-700">
                 Quantity
               </label>
-              <div className="mt-1 relative rounded-md shadow-sm">
+              <div className="relative mt-1 rounded-md shadow-sm">
                 <input
                   type="number"
                   name="quantity"
@@ -222,16 +222,16 @@ const TradeForm = () => {
                   step="0.0000000001"
                   value={quantity}
                   onChange={(e) => setQuantity(e.target.value)}
-                  className="focus:ring-orange-500 focus:border-orange-500 block w-full pr-3 sm:text-sm border-gray-300 rounded-md"
+                  className="block w-full rounded-md border-gray-300 pr-3 focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
                   placeholder="0.00"
                 />
               </div>
             </div>
             <div className="col-span-3 sm:col-span-1">
               <legend className="mb-1 block text-sm font-medium text-gray-700">Expiry</legend>
-              <div className="bg-white rounded-md shadow-sm -space-y-px">
+              <div className="-space-y-px rounded-md bg-white shadow-sm">
                 <div className="flex -space-x-px">
-                  <div className="w-1/2 flex-1 min-w-0 relative">
+                  <div className="relative w-1/2 min-w-0 flex-1">
                     <input
                       type="number"
                       name="expiry-hours"
@@ -240,11 +240,11 @@ const TradeForm = () => {
                       max="48"
                       value={expiryHours}
                       onChange={(e) => setExpiryHours(e.target.value)}
-                      className="focus:ring-orange-500 focus:border-orange-500 relative block w-full rounded-none rounded-bl-md rounded-tl-md bg-transparent focus:z-10 sm:text-sm border-gray-300"
+                      className="relative block w-full rounded-none rounded-bl-md rounded-tl-md border-gray-300 bg-transparent focus:z-10 focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
                       placeholder="In Hours"
                     />
                   </div>
-                  <div className="flex-1 min-w-0 relative">
+                  <div className="relative min-w-0 flex-1">
                     <input
                       type="number"
                       name="expiry-minutes"
@@ -253,7 +253,7 @@ const TradeForm = () => {
                       max="60"
                       value={expiryMinutes}
                       onChange={(e) => setExpiryMinutes(e.target.value)}
-                      className="focus:ring-orange-500 focus:border-orange-500 relative block w-full rounded-none rounded-br-md rounded-tr-md bg-transparent focus:z-10 sm:text-sm border-gray-300"
+                      className="relative block w-full rounded-none rounded-br-md rounded-tr-md border-gray-300 bg-transparent focus:z-10 focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
                       placeholder="and Minutes"
                     />
                   </div>
@@ -262,10 +262,10 @@ const TradeForm = () => {
             </div>
           </div>
         </div>
-        <div className="px-4 py-3 bg-gray-50 text-right sm:px-6 flex justify-end items-center">
+        <div className="flex items-center justify-end bg-gray-50 px-4 py-3 text-right sm:px-6">
           {error && (
             <div className="w-full">
-              <div className="flex mx-4 items-center">
+              <div className="mx-4 flex items-center">
                 <div className="flex-shrink-0">
                   <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
                 </div>
@@ -279,7 +279,7 @@ const TradeForm = () => {
             <button
               onClick={() => handleSubmit()}
               className={
-                'block flex items-end px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 active:bg-orange-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500'
+                'block flex items-end rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 active:bg-orange-900'
               }
             >
               Submit
@@ -288,7 +288,7 @@ const TradeForm = () => {
             <button
               onClick={() => {}}
               className={
-                'block cursor-not-allowed flex items-end px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500'
+                'block flex cursor-not-allowed items-end rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2'
               }
             >
               Submit

@@ -23,9 +23,9 @@ const TokenAdministration = (props: TokenAdministrationProps) => {
   useTokenFilter(primaryAccount, tokenContractAddress)
 
   return (
-    <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-      <div className="px-4 py-8 sm:px-0 flex flex-col sm:flex-none sm:grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-8">
-        <div className="md:col-span-1 align-top">
+    <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+      <div className="flex flex-col gap-x-8 gap-y-8 px-4 py-8 sm:grid sm:flex-none sm:grid-cols-2 sm:px-0 md:grid-cols-3">
+        <div className="align-top md:col-span-1">
           <div>
             {tokenContract === null ? (
               <>
@@ -45,7 +45,7 @@ const TokenAdministration = (props: TokenAdministrationProps) => {
         <div className="md:col-span-2">
           {tokenContract === null ? <ContractInput /> : <ContractStats />}
         </div>
-        <div className="md:col-span-1 align-top">
+        <div className="align-top md:col-span-1">
           <div>
             {tokenContract === null ? (
               <></>
@@ -60,7 +60,7 @@ const TokenAdministration = (props: TokenAdministrationProps) => {
         <div className="md:col-span-2">
           {tokenContract === null ? <></> : <TokenInput tokenContract={tokenContract} />}
         </div>
-        <div className="md:col-span-1 align-top">
+        <div className="align-top md:col-span-1">
           <div>
             {tokenContract === null || tokens.length === 0 ? (
               <></>

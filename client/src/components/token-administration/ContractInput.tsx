@@ -25,15 +25,15 @@ const ContractInput = () => {
   }
 
   return (
-    <div className="shadow sm:rounded-md sm:overflow-hidden">
-      <div className="px-4 py-5 bg-white space-y-6 sm:p-6">
+    <div className="shadow sm:overflow-hidden sm:rounded-md">
+      <div className="space-y-6 bg-white px-4 py-5 sm:p-6">
         <div className="grid grid-cols-3 gap-6">
           <div className="col-span-3 sm:col-span-2">
-            <label htmlFor="uri" className="block text-sm font-medium text-gray-700 my-2">
+            <label htmlFor="uri" className="my-2 block text-sm font-medium text-gray-700">
               Unique Entity Identifier
             </label>
             <div className="mt-1 flex rounded-md shadow-sm">
-              <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
+              <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm">
                 URI:
               </span>
               <input
@@ -45,7 +45,7 @@ const ContractInput = () => {
                 }}
                 className={classNames(
                   'focus:border-orange-500 focus:ring-orange-500',
-                  'flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md focus:outline-none sm:text-sm border border-l-1 border-gray-300',
+                  'border-l-1 block w-full min-w-0 flex-1 rounded-none rounded-r-md border border-gray-300 px-3 py-2 focus:outline-none sm:text-sm',
                 )}
                 placeholder="example.eth"
               />
@@ -53,10 +53,10 @@ const ContractInput = () => {
           </div>
         </div>
       </div>
-      <div className="px-4 py-3 bg-gray-50 text-right sm:px-6 flex justify-end items-center">
+      <div className="flex items-center justify-end bg-gray-50 px-4 py-3 text-right sm:px-6">
         {status == 'loading' && (
           <div className="w-full">
-            <div className="flex mx-4 items-center">
+            <div className="mx-4 flex items-center">
               <div className="flex-shrink-0">
                 <Spinner />
               </div>
@@ -70,7 +70,7 @@ const ContractInput = () => {
         )}
         {!isConnected && (
           <div className="w-full">
-            <div className="flex mx-4 items-center">
+            <div className="mx-4 flex items-center">
               <div className="flex-shrink-0">
                 <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
               </div>
@@ -84,7 +84,7 @@ const ContractInput = () => {
         )}
         {error && (
           <div className="w-full">
-            <div className="flex mx-4 items-center">
+            <div className="mx-4 flex items-center">
               <div className="flex-shrink-0">
                 <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
               </div>
@@ -98,7 +98,7 @@ const ContractInput = () => {
           <button
             onClick={() => handleSubmit()}
             className={
-              'block flex items-end px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 active:bg-orange-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500'
+              'block flex items-end rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 active:bg-orange-900'
             }
           >
             Create
@@ -107,7 +107,7 @@ const ContractInput = () => {
           <button
             onClick={() => {}}
             className={
-              'block cursor-not-allowed flex items-end px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500'
+              'block flex cursor-not-allowed items-end rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2'
             }
           >
             Create

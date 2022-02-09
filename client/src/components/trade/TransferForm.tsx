@@ -57,11 +57,11 @@ const TransferForm = () => {
   }
 
   return (
-    <div className="space-y-6 sm:px-6 lg:px-0 lg:col-span-9">
-      <div className="shadow sm:rounded-md sm:overflow-hidden">
-        <div className="bg-white py-6 px-4 space-y-6 sm:p-6">
+    <div className="space-y-6 sm:px-6 lg:col-span-9 lg:px-0">
+      <div className="shadow sm:overflow-hidden sm:rounded-md">
+        <div className="space-y-6 bg-white py-6 px-4 sm:p-6">
           <div>
-            <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Transfer Tokens</h3>
+            <h3 className="mb-4 text-lg font-medium leading-6 text-gray-900">Transfer Tokens</h3>
           </div>
           <div className="grid grid-cols-3 gap-6">
             <div className="col-span-3 sm:col-span-1">
@@ -69,7 +69,7 @@ const TransferForm = () => {
                 <TokenSelect tokens={tokens} selected={selected} setSelected={setSelected} />
               ) : (
                 <div className="flex items-center pt-6">
-                  <span className="block text-gray-500 italic">No tokens found to trade</span>
+                  <span className="block italic text-gray-500">No tokens found to trade</span>
                 </div>
               )}
             </div>
@@ -77,7 +77,7 @@ const TransferForm = () => {
               <label htmlFor="price" className="block text-sm font-medium text-gray-700">
                 Quantity
               </label>
-              <div className="mt-1 relative rounded-md shadow-sm">
+              <div className="relative mt-1 rounded-md shadow-sm">
                 <input
                   type="number"
                   name="quantity"
@@ -88,7 +88,7 @@ const TransferForm = () => {
                   onChange={(e) => {
                     setQuantity(e.target.value)
                   }}
-                  className="focus:ring-orange-500 focus:border-orange-500 block w-full pl-3 pr-3 sm:text-sm border-gray-300 rounded-md"
+                  className="block w-full rounded-md border-gray-300 pl-3 pr-3 focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
                   placeholder="0.00"
                 />
               </div>
@@ -97,7 +97,7 @@ const TransferForm = () => {
               <label htmlFor="price" className="block text-sm font-medium text-gray-700">
                 Recipient Address
               </label>
-              <div className="mt-1 relative rounded-md shadow-sm">
+              <div className="relative mt-1 rounded-md shadow-sm">
                 <input
                   type="text"
                   name="recipient"
@@ -107,16 +107,16 @@ const TransferForm = () => {
                     setRecipient(e.target.value)
                   }}
                   placeholder="i.e. 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
-                  className="focus:ring-orange-500 focus:border-orange-500 block w-full pl-3 pr-3 sm:text-sm border-gray-300 rounded-md"
+                  className="block w-full rounded-md border-gray-300 pl-3 pr-3 focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
                 />
               </div>
             </div>
           </div>
         </div>
-        <div className="px-4 py-3 bg-gray-50 text-right sm:px-6 flex justify-end items-center">
+        <div className="flex items-center justify-end bg-gray-50 px-4 py-3 text-right sm:px-6">
           {!isConnected && (
             <div className="w-full">
-              <div className="flex mx-4 items-center">
+              <div className="mx-4 flex items-center">
                 <div className="flex-shrink-0">
                   <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
                 </div>
@@ -130,7 +130,7 @@ const TransferForm = () => {
           )}
           {status == 'loading' && (
             <div className="w-full">
-              <div className="flex mx-4 items-center">
+              <div className="mx-4 flex items-center">
                 <div className="flex-shrink-0">
                   <Spinner />
                 </div>
@@ -144,7 +144,7 @@ const TransferForm = () => {
           )}
           {error && (
             <div className="w-full">
-              <div className="flex mx-4 items-center">
+              <div className="mx-4 flex items-center">
                 <div className="flex-shrink-0">
                   <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
                 </div>
@@ -158,7 +158,7 @@ const TransferForm = () => {
             <button
               onClick={() => handleSubmit()}
               className={
-                'block flex items-end px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 active:bg-orange-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500'
+                'block flex items-end rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 active:bg-orange-900'
               }
             >
               Submit
@@ -167,7 +167,7 @@ const TransferForm = () => {
             <button
               onClick={() => {}}
               className={
-                'block cursor-not-allowed flex items-end px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500'
+                'block flex cursor-not-allowed items-end rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2'
               }
             >
               Submit

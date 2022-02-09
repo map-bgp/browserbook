@@ -37,9 +37,9 @@ const TradeOutlet = () => {
   useTokenFilter(primaryAccount, tokenContractAddress)
 
   return (
-    <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-      <div className="lg:grid lg:grid-cols-12 lg:gap-x-5 py-8">
-        <aside className="py-6 px-2 sm:px-6 lg:py-0 lg:px-0 lg:col-span-3">
+    <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+      <div className="py-8 lg:grid lg:grid-cols-12 lg:gap-x-5">
+        <aside className="py-6 px-2 sm:px-6 lg:col-span-3 lg:py-0 lg:px-0">
           <nav className="space-y-1">
             {navigation.map((item) => (
               <NavLink
@@ -48,9 +48,9 @@ const TradeOutlet = () => {
                 className={({ isActive }) =>
                   classNames(
                     isActive || (location.pathname === '/trade' && item.name === ActiveSection.Trade)
-                      ? 'bg-gray-50 text-orange-700 hover:text-orange-700 hover:bg-white'
-                      : 'text-gray-900 hover:text-gray-900 hover:bg-gray-50',
-                    'group rounded-md px-3 py-2 flex items-center text-sm font-medium cursor-pointer',
+                      ? 'bg-gray-50 text-orange-700 hover:bg-white hover:text-orange-700'
+                      : 'text-gray-900 hover:bg-gray-50 hover:text-gray-900',
+                    'group flex cursor-pointer items-center rounded-md px-3 py-2 text-sm font-medium',
                   )
                 }
               >
@@ -61,7 +61,7 @@ const TradeOutlet = () => {
                         isActive || (location.pathname === '/trade' && item.name === ActiveSection.Trade)
                           ? 'text-orange-500 group-hover:text-orange-500'
                           : 'text-gray-400 group-hover:text-gray-500',
-                        'flex-shrink-0 -ml-1 mr-3 h-6 w-6',
+                        '-ml-1 mr-3 h-6 w-6 flex-shrink-0',
                       )}
                       aria-hidden="true"
                     />

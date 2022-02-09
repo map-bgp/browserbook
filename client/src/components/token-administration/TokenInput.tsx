@@ -50,11 +50,11 @@ export const TokenInput = (props: TokenInputProps) => {
 
   return (
     <>
-      <div className="shadow sm:rounded-md sm:overflow-hidden">
-        <div className="px-4 py-5 bg-white space-y-6 sm:p-6">
+      <div className="shadow sm:overflow-hidden sm:rounded-md">
+        <div className="space-y-6 bg-white px-4 py-5 sm:p-6">
           <div className="grid grid-cols-5 gap-6">
             <div className="col-span-5 md:col-span-4">
-              <label htmlFor="uri" className="block text-sm font-medium text-gray-700 my-2">
+              <label htmlFor="uri" className="my-2 block text-sm font-medium text-gray-700">
                 Token Identifier
               </label>
               <div className="mt-1 flex rounded-md shadow-sm">
@@ -70,14 +70,14 @@ export const TokenInput = (props: TokenInputProps) => {
                   }}
                   className={classNames(
                     'focus:border-orange-500 focus:ring-orange-500',
-                    'flex-1 min-w-0 block w-full px-3 py-2 rounded-md focus:outline-none sm:text-sm border border-l-1 border-gray-300',
+                    'border-l-1 block w-full min-w-0 flex-1 rounded-md border border-gray-300 px-3 py-2 focus:outline-none sm:text-sm',
                   )}
                   placeholder="'Slurpee Labs Common A'"
                 />
               </div>
             </div>
             <div className="col-span-5 md:col-span-4">
-              <label htmlFor="uri" className="block text-sm font-medium text-gray-700 my-2">
+              <label htmlFor="uri" className="my-2 block text-sm font-medium text-gray-700">
                 Metadata URI
               </label>
               <div className="mt-1 flex rounded-md shadow-sm">
@@ -93,14 +93,14 @@ export const TokenInput = (props: TokenInputProps) => {
                   }}
                   className={classNames(
                     'focus:border-orange-500 focus:ring-orange-500',
-                    'flex-1 min-w-0 block w-full px-3 py-2 rounded-md focus:outline-none sm:text-sm border border-l-1 border-gray-300',
+                    'border-l-1 block w-full min-w-0 flex-1 rounded-md border border-gray-300 px-3 py-2 focus:outline-none sm:text-sm',
                   )}
                   placeholder="slurpeelabs.eth/common-a"
                 />
               </div>
             </div>
             <div className="col-span-4 lg:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 my-2">Token Type</label>
+              <label className="my-2 block text-sm font-medium text-gray-700">Token Type</label>
               <fieldset className="mt-4">
                 <div className="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-10">
                   {tokenTypes.map((type) => (
@@ -118,7 +118,7 @@ export const TokenInput = (props: TokenInputProps) => {
                           }
                         }}
                         defaultChecked={tokenType === type.id}
-                        className="focus:ring-orange-500 h-4 w-4 text-orange-600 border-gray-300"
+                        className="h-4 w-4 border-gray-300 text-orange-600 focus:ring-orange-500"
                       />
                       <label htmlFor={type.id} className="ml-3 block text-sm font-medium text-gray-700">
                         {type.title}
@@ -129,7 +129,7 @@ export const TokenInput = (props: TokenInputProps) => {
               </fieldset>
             </div>
             <div className="col-span-4 lg:col-span-2">
-              <label htmlFor="supply" className="block text-sm font-medium text-gray-700 my-2">
+              <label htmlFor="supply" className="my-2 block text-sm font-medium text-gray-700">
                 Token Supply
               </label>
               {tokenType === TokenType.Fungible ? (
@@ -147,7 +147,7 @@ export const TokenInput = (props: TokenInputProps) => {
                     }}
                     className={classNames(
                       'focus:border-orange-500 focus:ring-orange-500',
-                      'flex-1 min-w-0 block w-full px-3 py-2 rounded-md focus:outline-none sm:text-sm border border-l-1 border-gray-300',
+                      'border-l-1 block w-full min-w-0 flex-1 rounded-md border border-gray-300 px-3 py-2 focus:outline-none sm:text-sm',
                     )}
                     placeholder="0"
                   />
@@ -162,9 +162,9 @@ export const TokenInput = (props: TokenInputProps) => {
                     id="supply"
                     value={tokenSupply.toString()}
                     className={classNames(
-                      'bg-gray-200 cursor-not-allowed',
+                      'cursor-not-allowed bg-gray-200',
                       'focus:border-orange-500 focus:ring-orange-500',
-                      'flex-1 min-w-0 block w-full px-3 py-2 rounded-md focus:outline-none sm:text-sm border border-l-1 border-gray-300',
+                      'border-l-1 block w-full min-w-0 flex-1 rounded-md border border-gray-300 px-3 py-2 focus:outline-none sm:text-sm',
                     )}
                     placeholder="1"
                   />
@@ -173,10 +173,10 @@ export const TokenInput = (props: TokenInputProps) => {
             </div>
           </div>
         </div>
-        <div className="px-4 py-3 bg-gray-50 text-right sm:px-6 flex justify-end items-center">
+        <div className="flex items-center justify-end bg-gray-50 px-4 py-3 text-right sm:px-6">
           {status == 'loading' && (
             <div className="w-full">
-              <div className="flex mx-4 items-center">
+              <div className="mx-4 flex items-center">
                 <div className="flex-shrink-0">
                   <Spinner />
                 </div>
@@ -190,7 +190,7 @@ export const TokenInput = (props: TokenInputProps) => {
           )}
           {error && (
             <div className="w-full">
-              <div className="flex mx-4 items-center">
+              <div className="mx-4 flex items-center">
                 <div className="flex-shrink-0">
                   <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
                 </div>
@@ -203,7 +203,7 @@ export const TokenInput = (props: TokenInputProps) => {
           <button
             onClick={() => handleSubmit()}
             className={
-              'block flex items-end px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 active:bg-orange-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500'
+              'block flex items-end rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 active:bg-orange-900'
             }
           >
             Create

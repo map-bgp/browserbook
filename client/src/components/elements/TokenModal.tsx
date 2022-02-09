@@ -13,8 +13,8 @@ type TokenModalProps = {
 const TokenModal = (props: TokenModalProps) => {
   return (
     <Transition.Root show={props.open} as={Fragment}>
-      <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" onClose={props.setOpen}>
-        <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+      <Dialog as="div" className="fixed inset-0 z-10 overflow-y-auto" onClose={props.setOpen}>
+        <div className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -28,7 +28,7 @@ const TokenModal = (props: TokenModalProps) => {
           </Transition.Child>
 
           {/* Tricks the browser to center */}
-          <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
+          <span className="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">
             &#8203;
           </span>
 
@@ -41,7 +41,7 @@ const TokenModal = (props: TokenModalProps) => {
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full sm:p-6">
+            <div className="inline-block transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6 sm:align-middle">
               <TokenModalContent token={props.token} open={props.open} setOpen={props.setOpen} />
             </div>
           </Transition.Child>
@@ -58,31 +58,31 @@ const TokenModalContent = (props: TokenModalProps) => {
     <form className="space-y-8 divide-y divide-gray-200">
       <div className="w-11/12 space-y-8 divide-y divide-gray-200">
         <div>
-          <h3 className="text-xl leading-6 font-semibold text-gray-700">Token Information</h3>
-          <dl className="sm:divide-y sm:divide-gray-200 mt-4 -mb-8">
-            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
+          <h3 className="text-xl font-semibold leading-6 text-gray-700">Token Information</h3>
+          <dl className="mt-4 -mb-8 sm:divide-y sm:divide-gray-200">
+            <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
               <dt className="text-sm font-medium text-gray-500">Name</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{token?.name}</dd>
+              <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{token?.name}</dd>
             </div>
-            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
+            <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
               <dt className="text-sm font-medium text-gray-500">Token ID</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{token?.id}</dd>
+              <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{token?.id}</dd>
             </div>
-            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
+            <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
               <dt className="text-sm font-medium text-gray-500">Issuer</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{token?.contract.uri}</dd>
+              <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{token?.contract.uri}</dd>
             </div>
-            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
+            <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
               <dt className="text-sm font-medium text-gray-500">Type</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{token?.type}</dd>
+              <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{token?.type}</dd>
             </div>
-            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
+            <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
               <dt className="text-sm font-medium text-gray-500">Total Supply</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{token?.supply}</dd>
+              <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{token?.supply}</dd>
             </div>
-            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
+            <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
               <dt className="text-sm font-medium text-gray-500">Metadata URI</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{token?.metadataURI}</dd>
+              <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{token?.metadataURI}</dd>
             </div>
           </dl>
         </div>
@@ -93,7 +93,7 @@ const TokenModalContent = (props: TokenModalProps) => {
           <button
             type="button"
             onClick={() => props.setOpen(false)}
-            className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-offset-2 focus:ring-gray-500"
+            className="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring focus:ring-gray-500 focus:ring-offset-2"
           >
             Close
           </button>

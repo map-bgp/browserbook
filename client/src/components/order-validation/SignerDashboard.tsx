@@ -19,20 +19,20 @@ const Slider = (props: {
       onChange={props.setEnabled}
       className={classNames(
         props.enabled ? 'bg-orange-600' : 'bg-gray-200',
-        'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500',
+        'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2',
       )}
     >
       <span className="sr-only">Use setting</span>
       <span
         className={classNames(
           props.enabled ? 'translate-x-5' : 'translate-x-0',
-          'pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200',
+          'pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
         )}
       >
         <span
           className={classNames(
-            props.enabled ? 'opacity-0 ease-out duration-100' : 'opacity-100 ease-in duration-200',
-            'absolute inset-0 h-full w-full flex items-center justify-center transition-opacity',
+            props.enabled ? 'opacity-0 duration-100 ease-out' : 'opacity-100 duration-200 ease-in',
+            'absolute inset-0 flex h-full w-full items-center justify-center transition-opacity',
           )}
           aria-hidden="true"
         >
@@ -48,8 +48,8 @@ const Slider = (props: {
         </span>
         <span
           className={classNames(
-            props.enabled ? 'opacity-100 ease-in duration-200' : 'opacity-0 ease-out duration-100',
-            'absolute inset-0 h-full w-full flex items-center justify-center transition-opacity',
+            props.enabled ? 'opacity-100 duration-200 ease-in' : 'opacity-0 duration-100 ease-out',
+            'absolute inset-0 flex h-full w-full items-center justify-center transition-opacity',
           )}
           aria-hidden="true"
         >
@@ -66,7 +66,7 @@ const SignerDashboard = (props: SignerDashboardProps) => {
   const [enabled, setEnabled] = useState<boolean>(false)
 
   return (
-    <div className="rounded-lg bg-white overflow-hidden shadow">
+    <div className="overflow-hidden rounded-lg bg-white shadow">
       <h2 className="sr-only" id="profile-overview-title">
         Profile Overview
       </h2>
@@ -87,17 +87,17 @@ const SignerDashboard = (props: SignerDashboardProps) => {
           </div>
         </div>
       </div>
-      <div className="border-t border-gray-200 bg-gray-50 grid grid-cols-1 divide-y divide-gray-200 sm:grid-cols-3 sm:divide-y-0 sm:divide-x">
-        <div className="px-6 py-5 flex items-center justify-between">
-          <span className="text-sm font-medium text-gray-500 truncate">Signer Balance</span>{' '}
+      <div className="grid grid-cols-1 divide-y divide-gray-200 border-t border-gray-200 bg-gray-50 sm:grid-cols-3 sm:divide-y-0 sm:divide-x">
+        <div className="flex items-center justify-between px-6 py-5">
+          <span className="truncate text-sm font-medium text-gray-500">Signer Balance</span>{' '}
           <span className="text-xl font-medium text-gray-900">Ξ {props.signerBalance}</span>
         </div>
-        <div className="px-6 py-5 flex items-center justify-between">
-          <span className="text-sm font-medium text-gray-500 truncate">Commission Balance</span>{' '}
+        <div className="flex items-center justify-between px-6 py-5">
+          <span className="truncate text-sm font-medium text-gray-500">Commission Balance</span>{' '}
           <span className="text-xl font-medium text-gray-900">Ξ {props.commissionBalance}</span>
         </div>
-        <div className="px-6 py-5 flex items-center justify-between">
-          <span className="text-sm font-medium text-gray-500 truncate">Transactions per Second</span>{' '}
+        <div className="flex items-center justify-between px-6 py-5">
+          <span className="truncate text-sm font-medium text-gray-500">Transactions per Second</span>{' '}
           <span className="text-xl font-medium text-gray-900">{props.transactionsPerSecond}</span>
         </div>
       </div>

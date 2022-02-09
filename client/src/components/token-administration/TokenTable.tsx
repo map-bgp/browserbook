@@ -16,32 +16,32 @@ export const TokenTable = (props: TokenTableProps) => {
       {props.tokens.length !== 0 && (
         <div className="flex flex-col">
           <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-            <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-              <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+            <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+              <div className="overflow-hidden border-b border-gray-200 shadow sm:rounded-lg">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
                       <th
                         scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                       >
                         Name
                       </th>
                       <th
                         scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                       >
                         Metadata URI
                       </th>
                       <th
                         scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                       >
                         Supply
                       </th>
                       <th
                         scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                       >
                         Type
                       </th>
@@ -57,25 +57,25 @@ export const TokenTable = (props: TokenTableProps) => {
                           key={`${token.contract.uri}${token.id}`}
                           className={tokenIdx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
                         >
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                             {token.name}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                             {token.metadataURI}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                             {token.supply}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                             {token.type}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                             <div
                               onClick={() => {
                                 setActiveTokenId(token.id)
                                 setModalOpen(true)
                               }}
-                              className="text-orange-600 hover:text-orange-900 cursor-pointer"
+                              className="cursor-pointer text-orange-600 hover:text-orange-900"
                             >
                               View
                             </div>

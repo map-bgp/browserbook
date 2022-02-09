@@ -15,11 +15,11 @@ const Tokens = () => {
   const [tokenModalOpen, setTokenModalOpen] = useState<boolean>(false)
 
   return (
-    <div className="space-y-6 sm:px-6 lg:px-0 lg:col-span-9">
-      <div className="py-6 px-4 space-y-6 sm:p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg leading-6 font-medium text-gray-900">My Tokens</h3>
-          <div className="group flex items-center cursor-pointer">
+    <div className="space-y-6 sm:px-6 lg:col-span-9 lg:px-0">
+      <div className="space-y-6 py-6 px-4 sm:p-6">
+        <div className="mb-4 flex items-center justify-between">
+          <h3 className="text-lg font-medium leading-6 text-gray-900">My Tokens</h3>
+          <div className="group flex cursor-pointer items-center">
             <div
               onClick={() => {
                 setNewTokenModalOpen(true)
@@ -38,33 +38,33 @@ const Tokens = () => {
         <TokenModal token={activeToken} open={tokenModalOpen} setOpen={setTokenModalOpen} />
         <div className="flex flex-col">
           <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-            <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+            <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
               {tokens.length !== 0 ? (
-                <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+                <div className="overflow-hidden border-b border-gray-200 shadow sm:rounded-lg">
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
                         <th
                           scope="col"
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                         >
                           Name
                         </th>
                         <th
                           scope="col"
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                         >
                           Issuer
                         </th>
                         <th
                           scope="col"
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                         >
                           Type
                         </th>
                         <th
                           scope="col"
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                         >
                           My Holdings
                         </th>
@@ -81,29 +81,29 @@ const Tokens = () => {
                         >
                           <td
                             className={classNames(
-                              token.own ? 'text-gray-700 font-medium' : 'text-gray-500',
-                              'px-6 py-4 whitespace-nowrap text-sm',
+                              token.own ? 'font-medium text-gray-700' : 'text-gray-500',
+                              'whitespace-nowrap px-6 py-4 text-sm',
                             )}
                           >
                             {token.name}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                             {token.contract.uri}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                             {token.type}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                             {token.holdings}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                             <div
                               onClick={() => {
                                 console.log('Clicked', token.id)
                                 setActiveToken(token)
                                 setTokenModalOpen(true)
                               }}
-                              className="text-orange-600 hover:text-orange-900 cursor-pointer"
+                              className="cursor-pointer text-orange-600 hover:text-orange-900"
                             >
                               View
                             </div>
