@@ -7,6 +7,11 @@ import { OrderStatus, Token } from '../Types'
 import { selectAccountData } from '../store/slices/EthersSlice'
 
 const dispatch = store.dispatch
+const worker = new Worker(new URL('./../oms/Oms.ts', import.meta.url), { type: 'module' })
+
+worker.onmessage = (e) => {
+  console.log('Got message from worker', e.data)
+}
 
 export class Peer {
   static ORDER_TOPIC: string = '/bb/order/1.0.0'
@@ -157,5 +162,10 @@ export class Peer {
       await Peer.DB.orders.update(id, { status: OrderStatus.Matched })
       dispatch(setOrderStatus({ id, from, status: OrderStatus.Matched }))
     }
+  }
+
+  post() {
+    worker.postMessage([])
+    console.log('Message posted to worker')
   }
 }

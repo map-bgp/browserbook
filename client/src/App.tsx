@@ -44,10 +44,10 @@ const App = () => {
 
   return (
     <>
-      <Transition.Root show={animating} as={Fragment}>
-        <Dialog as="div" className="fixed inset-0 z-10 overflow-y-auto" onClose={() => {}}>
-          <div className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <Transition.Child
+      {/* <Transition.Root show={animating} as={Fragment}> */}
+      {/* <Dialog as="div" className="fixed inset-0 z-10 overflow-y-auto" onClose={() => {}}> */}
+      {/* <div className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0"> */}
+      {/* <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0"
@@ -57,14 +57,14 @@ const App = () => {
               leaveTo="opacity-0"
             >
               <Dialog.Overlay className="fixed inset-0 bg-white bg-opacity-100 transition-opacity" />
-            </Transition.Child>
+            </Transition.Child> */}
 
-            {/* Tricks the browser to center */}
-            <span className="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">
+      {/* Tricks the browser to center */}
+      {/* <span className="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">
               &#8203;
-            </span>
+            </span> */}
 
-            <Transition.Child
+      {/* <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
@@ -78,16 +78,20 @@ const App = () => {
                   <Lottie animationData={blocks} loop={true} />
                 </div>
               </div>
-            </Transition.Child>
-          </div>
-        </Dialog>
-      </Transition.Root>
-      {!animating && (
+            </Transition.Child> */}
+      {/* </div> */}
+      {/* </Dialog> */}
+      {/* </Transition.Root> */}
+      {/* {!animating && (
         <div className="min-h-screen bg-gray-100">
           <Header current={getCurrent(location, Navigation)} />
           <Content current={getCurrent(location, Navigation)} />
         </div>
-      )}
+      )} */}
+      <div className="min-h-screen bg-gray-100">
+        <Header current={getCurrent(location, Navigation)} />
+        <Content current={getCurrent(location, Navigation)} />
+      </div>
     </>
   )
 }

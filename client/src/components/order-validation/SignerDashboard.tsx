@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { Switch } from '@headlessui/react'
 import { classNames } from '../utils/utils'
+import { Peer } from '../../app/p2p/Peer'
 
 type SignerDashboardProps = {
+  peer: Peer
   signerAddress: string
   signerBalance: string
   commissionBalance: string
@@ -10,13 +12,17 @@ type SignerDashboardProps = {
 }
 
 const Slider = (props: {
+  action: () => void
   enabled: boolean
   setEnabled: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   return (
     <Switch
       checked={props.enabled}
-      onChange={props.setEnabled}
+      onChange={(e) => {
+        props.action()
+        props.setEnabled(e.valueOf())
+      }}
       className={classNames(
         props.enabled ? 'bg-orange-600' : 'bg-gray-200',
         'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2',
@@ -65,6 +71,10 @@ const Slider = (props: {
 const SignerDashboard = (props: SignerDashboardProps) => {
   const [enabled, setEnabled] = useState<boolean>(false)
 
+  const startOms = () => {
+    props.peer.post()
+  }
+
   return (
     <div className="overflow-hidden rounded-lg bg-white shadow">
       <h2 className="sr-only" id="profile-overview-title">
@@ -83,7 +93,7 @@ const SignerDashboard = (props: SignerDashboardProps) => {
             </div>
           </div>
           <div className="mt-5 flex justify-center sm:mt-0">
-            <Slider enabled={enabled} setEnabled={setEnabled} />
+            <Slider action={startOms} enabled={enabled} setEnabled={setEnabled} />
           </div>
         </div>
       </div>

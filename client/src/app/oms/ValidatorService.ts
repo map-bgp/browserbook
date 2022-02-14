@@ -10,7 +10,6 @@ export const createAndLoadEncryptedSigner = async (
     throw new Error('Cannot retrieve encryption key from empty account')
   }
   const wrapper = new EtherContractWrapper()
-  const provider = wrapper.provider
   const signer = wrapper.signer
 
   const contractName = ContractName.Exchange

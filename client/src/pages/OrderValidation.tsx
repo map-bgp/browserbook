@@ -1,7 +1,8 @@
-import { useEffect } from 'react'
+import { useContext, useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '../app/Hooks'
 import { selectAccountData } from '../app/store/slices/EthersSlice'
 import { getValidatorSigner, selectSignerData } from '../app/store/slices/ValidatorSlice'
+import { AppContext } from '../components/AppContext'
 import CreateAndLoadSigner from '../components/order-validation/CreateAndLoadSinger'
 import SignerDashboard from '../components/order-validation/SignerDashboard'
 
@@ -9,6 +10,7 @@ type OrderValidationPros = {}
 
 const OrderValidation = (props: OrderValidationPros) => {
   const dispatch = useAppDispatch()
+  const { peer } = useContext(AppContext)
 
   const { primaryAccount } = useAppSelector(selectAccountData)
   const { signerAddress, encryptedSignerKey, signerBalance } = useAppSelector(selectSignerData)
@@ -45,6 +47,7 @@ const OrderValidation = (props: OrderValidationPros) => {
           {!!signerAddress ? (
             <>
               <SignerDashboard
+                peer={peer}
                 signerAddress={signerAddress}
                 signerBalance={signerBalance !== null ? signerBalance : ''}
                 commissionBalance={'0'}

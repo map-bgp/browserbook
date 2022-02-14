@@ -3392,6 +3392,11 @@ hashlru@^2.3.0:
   resolved "https://registry.yarnpkg.com/hashlru/-/hashlru-2.3.0.tgz#5dc15928b3f6961a2056416bb3a4910216fdfb51"
   integrity sha512-0cMsjjIC8I+D3M44pOQdsy0OHXGLVz6Z0beRuufhKa0KfaD2wGwAev6jILzXsd3/vpnNQJmWyZtIILqM1N+n5A==
 
+heapify@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/heapify/-/heapify-0.6.0.tgz#d226094f57821c998dcbc5f2e7faab91fbcfe3fc"
+  integrity sha512-TeTASfpsbj7CndSUiFHHAcFLV1vbHkpBzoWT7Eonxq8Jxv5O0KQqv9P9sWF6h+R5vZ8126+pxB1EX8CZtOPduw==
+
 highlight.js@~10.4.0:
   version "10.4.1"
   resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-10.4.1.tgz#d48fbcf4a9971c4361b3f95f302747afe19dbad0"
