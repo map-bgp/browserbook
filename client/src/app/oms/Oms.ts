@@ -1,10 +1,22 @@
 // @ts-ignore
 import { MinQueue } from 'heapify'
 
-onmessage = (e: Event) => {
-  // console.log('Message received from main script')
-  setTimeout(() => postMessage({ transactions: 100, commited: 50 }), 5000)
-  const queue = new MinQueue(32)
+const queue = new MinQueue()
 
-  postMessage(queue)
+onmessage = (e: MessageEvent) => {
+  if (e.data === 'start') {
+    console.log('Starting')
+    queue.push(1, 10)
+    setInterval(validate, 500)
+  }
+
+  if (e.data === 'push') {
+    queue.push(1, 10)
+  }
+
+  // if (e.data === 'stop')
+}
+
+const validate = () => {
+  console.log('Reading Queue', queue.size)
 }

@@ -12,7 +12,7 @@ type SignerDashboardProps = {
 }
 
 const Slider = (props: {
-  action: () => void
+  action: (on: boolean) => void
   enabled: boolean
   setEnabled: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
@@ -20,7 +20,7 @@ const Slider = (props: {
     <Switch
       checked={props.enabled}
       onChange={(e) => {
-        props.action()
+        props.action(e.valueOf())
         props.setEnabled(e.valueOf())
       }}
       className={classNames(
@@ -71,8 +71,12 @@ const Slider = (props: {
 const SignerDashboard = (props: SignerDashboardProps) => {
   const [enabled, setEnabled] = useState<boolean>(false)
 
-  const startOms = () => {
-    props.peer.post()
+  const actionValidation = (on: boolean) => {
+    if (on) {
+      props.peer.startValidation()
+    } else {
+      props.peer.stopValidation()
+    }
   }
 
   return (
@@ -93,7 +97,7 @@ const SignerDashboard = (props: SignerDashboardProps) => {
             </div>
           </div>
           <div className="mt-5 flex justify-center sm:mt-0">
-            <Slider action={startOms} enabled={enabled} setEnabled={setEnabled} />
+            <Slider action={actionValidation} enabled={enabled} setEnabled={setEnabled} />
           </div>
         </div>
       </div>

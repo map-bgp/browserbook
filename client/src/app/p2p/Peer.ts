@@ -7,9 +7,9 @@ import { OrderStatus, Token } from '../Types'
 import { selectAccountData } from '../store/slices/EthersSlice'
 
 const dispatch = store.dispatch
-const worker = new Worker(new URL('./../oms/Oms.ts', import.meta.url), { type: 'module' })
+const worker: Worker = new Worker(new URL('./../oms/Oms.ts', import.meta.url), { type: 'module' })
 
-worker.onmessage = (e) => {
+worker.onmessage = (e: MessageEvent) => {
   console.log('Got message from worker', e.data)
 }
 
@@ -164,8 +164,14 @@ export class Peer {
     }
   }
 
-  post() {
-    worker.postMessage([])
-    console.log('Message posted to worker')
+  startValidation() {
+    this.isValidator = true
+    worker.postMessage('start')
+    setTimeout(() => worker.postMessage('push'), 5000)
+  }
+
+  stopValidation() {
+    this.isValidator = false
+    worker.terminate()
   }
 }
