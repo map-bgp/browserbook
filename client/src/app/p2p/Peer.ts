@@ -167,11 +167,10 @@ export class Peer {
   startValidation() {
     this.isValidator = true
     worker.postMessage('start')
-    setTimeout(() => worker.postMessage('push'), 5000)
   }
 
   stopValidation() {
     this.isValidator = false
-    worker.terminate()
+    worker.postMessage('stop')
   }
 }
