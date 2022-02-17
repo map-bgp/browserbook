@@ -42,18 +42,15 @@ export const createTokenThunk = createAsyncThunk(
 export const getTokens = createAsyncThunk(
   'tokens/getTokens',
   async (options, thunkAPI: any): Promise<Array<Token>> => {
-    const tokens: Array<Token> = []
     const { primaryAccount } = selectAccountData(thunkAPI.getState())
     const contractAddress = selectTokenContract(thunkAPI.getState())?.address
 
-    if (!!primaryAccount && !!contractAddress) {
-      const importedTokens = await queryImportedTokens(primaryAccount)
-      const ownTokens = await queryTokens(primaryAccount, contractAddress)
+    const importedTokens = !!primaryAccount ? await queryImportedTokens(primaryAccount) : []
 
-      return [...ownTokens, ...importedTokens]
-    } else {
-      return []
-    }
+    const ownTokens =
+      !!primaryAccount && !!contractAddress ? await queryTokens(primaryAccount, contractAddress) : []
+
+    return [...ownTokens, ...importedTokens]
   },
 )
 

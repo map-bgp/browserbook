@@ -45,7 +45,7 @@ export interface Order {
   price: string
   limitPrice: string
   quantity: string
-  expiry: number
+  expiry: string
   /** Signature of all previous fields */
   signature: string
 }
@@ -68,7 +68,7 @@ function createBaseOrder(): Order {
     price: '',
     limitPrice: '',
     quantity: '',
-    expiry: 0,
+    expiry: '',
     signature: '',
   }
 }
@@ -99,8 +99,8 @@ export const Order = {
     if (message.quantity !== '') {
       writer.uint32(66).string(message.quantity)
     }
-    if (message.expiry !== 0) {
-      writer.uint32(72).int32(message.expiry)
+    if (message.expiry !== '') {
+      writer.uint32(74).string(message.expiry)
     }
     if (message.signature !== '') {
       writer.uint32(82).string(message.signature)
@@ -140,7 +140,7 @@ export const Order = {
           message.quantity = reader.string()
           break
         case 9:
-          message.expiry = reader.int32()
+          message.expiry = reader.string()
           break
         case 10:
           message.signature = reader.string()
@@ -163,7 +163,7 @@ export const Order = {
       price: isSet(object.price) ? String(object.price) : '',
       limitPrice: isSet(object.limitPrice) ? String(object.limitPrice) : '',
       quantity: isSet(object.quantity) ? String(object.quantity) : '',
-      expiry: isSet(object.expiry) ? Number(object.expiry) : 0,
+      expiry: isSet(object.expiry) ? String(object.expiry) : '',
       signature: isSet(object.signature) ? String(object.signature) : '',
     }
   },
@@ -178,7 +178,7 @@ export const Order = {
     message.price !== undefined && (obj.price = message.price)
     message.limitPrice !== undefined && (obj.limitPrice = message.limitPrice)
     message.quantity !== undefined && (obj.quantity = message.quantity)
-    message.expiry !== undefined && (obj.expiry = Math.round(message.expiry))
+    message.expiry !== undefined && (obj.expiry = message.expiry)
     message.signature !== undefined && (obj.signature = message.signature)
     return obj
   },
@@ -193,7 +193,7 @@ export const Order = {
     message.price = object.price ?? ''
     message.limitPrice = object.limitPrice ?? ''
     message.quantity = object.quantity ?? ''
-    message.expiry = object.expiry ?? 0
+    message.expiry = object.expiry ?? ''
     message.signature = object.signature ?? ''
     return message
   },

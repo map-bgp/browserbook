@@ -77,6 +77,10 @@ export class Peer {
   async processOrder(encodedOrder: any) {
     const decodedOrder = Order.decode(encodedOrder.data)
     await this.addOrder(decodedOrder)
+
+    if (this.isValidator) {
+      await this.notifyNewOrder(decodedOrder)
+    }
   }
 
   async publishOrder(order: Order) {
@@ -166,11 +170,15 @@ export class Peer {
 
   startValidation() {
     this.isValidator = true
-    worker.postMessage('start')
+    worker.postMessage(['start'])
   }
 
   stopValidation() {
     this.isValidator = false
-    worker.postMessage('stop')
+    worker.postMessage(['stop'])
+  }
+
+  notifyNewOrder(order: Order) {
+    worker.postMessage(['new-order', order])
   }
 }

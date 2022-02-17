@@ -2,6 +2,8 @@ import { Fragment, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { XCircleIcon } from '@heroicons/react/outline'
 import { importToken } from '../../app/oms/TokenService'
+import { useAppDispatch } from '../../app/Hooks'
+import { getTokens } from '../../app/store/slices/TokensSlice'
 
 type TokenModalProps = {
   open: boolean
@@ -50,6 +52,8 @@ const TokenModal = (props: TokenModalProps) => {
 }
 
 const TokenModalContent = (props: TokenModalProps) => {
+  const dispatch = useAppDispatch()
+
   const [issuerURI, setIssuerURI] = useState<string>('')
   const [tokenId, setTokenId] = useState<string>('')
   const [error, setError] = useState<string>('')
@@ -67,6 +71,7 @@ const TokenModalContent = (props: TokenModalProps) => {
 
     try {
       await importToken(issuerURI, Number(tokenId))
+      dispatch(getTokens())
       props.setOpen(false)
     } catch (error: unknown) {
       setError("We couldn't find that contract, please double check the submission")

@@ -21,7 +21,7 @@ const OrderTypes = {
     { name: 'price', type: 'string' },
     { name: 'limitPrice', type: 'string' },
     { name: 'quantity', type: 'string' },
-    { name: 'expiry', type: 'int32' },
+    { name: 'expiry', type: 'int256' },
   ],
 }
 
@@ -31,7 +31,7 @@ const getDateExpiryInMs = (expiryHours: string, expiryMinutes: string) => {
   expiry.setHours(expiry.getHours() + Number(expiryHours))
   expiry.setHours(expiry.getMinutes() + Number(expiryMinutes))
 
-  return Math.floor(expiry.getTime() / 1000)
+  return Math.floor(expiry.getTime()).toString()
 }
 
 export const submitOrder = async (

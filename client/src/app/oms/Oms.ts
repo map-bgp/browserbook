@@ -11,19 +11,35 @@ const setRunning = (running: boolean) => {
   RUNNING = running
 }
 
+const getTokenIdentifier = (order: Order) => `${order.tokenAddress}/${order.tokenId}`
+
+const orderExpired = (order: Order) => {
+  return Number(order.expiry) < Date.now()
+}
+
+const logOrderbook = () => {
+  console.log('The orderbook')
+  for (const [key, val] of orderBook) {
+    console.log(val.bid.size())
+    console.log(val.ask.size())
+  }
+}
+
+const bidComparator = (a: Order, b: Order) => (a.price > b.price ? -1 : 1)
+const askComparator = (a: Order, b: Order) => (a.price < b.price ? -1 : 1)
+
 onmessage = (e: MessageEvent) => {
-  if (e.data === 'start') {
-    console.log('Starting')
+  if (e.data[0] === 'start') {
     start().then(() => console.log('Started order validation'))
   }
 
   // If the worker is started, the peer pushes new orders here
   // and adds them to the DB
-  if (e.data === 'new-order') {
-    console.log('Received new order')
+  if (e.data[0] === 'new-order') {
+    addNewOrder(e.data[1])
   }
 
-  if (e.data === 'stop') {
+  if (e.data[0] === 'stop') {
     RUNNING = false
   }
 }
@@ -35,30 +51,12 @@ onmessage = (e: MessageEvent) => {
 const start = async () => {
   setRunning(true)
 
-  syncOrderBook()
+  await syncOrderBook()
   setInterval(() => {
-    if (RUNNING) console.log('Running')
+    if (RUNNING) {
+      matchOrders()
+    }
   }, 10)
-}
-
-const syncTokenOrders = async (tokenAddress: string, tokenId: string) => {
-  const bid: PriorityQueue<Order> = new PriorityQueue((a, b) => (a.price > b.price ? -1 : 1))
-  const ask: PriorityQueue<Order> = new PriorityQueue((a, b) => (a.price < b.price ? -1 : 1))
-
-  const tokenOrders = await db.orders.where({ tokenAddress: tokenAddress, tokenId: tokenId }).toArray()
-
-  tokenOrders
-    .filter((order) => order.orderType === OrderType.BUY && order.status === OrderStatus.Pending)
-    .forEach((order) => bid.enqueue(order))
-
-  tokenOrders
-    .filter((order) => order.orderType === OrderType.SELL && order.status === OrderStatus.Pending)
-    .forEach((order) => ask.enqueue(order))
-
-  return {
-    bid,
-    ask,
-  }
 }
 
 const syncOrderBook = async () => {
@@ -78,12 +76,77 @@ const syncOrderBook = async () => {
       await syncTokenOrders(tokenIdentifier.tokenAddress, tokenIdentifier.tokenId),
     )
   }
+}
 
-  console.log('Initial Order Book', orderBook)
+const syncTokenOrders = async (tokenAddress: string, tokenId: string) => {
+  const bid: PriorityQueue<Order> = new PriorityQueue(bidComparator)
+  const ask: PriorityQueue<Order> = new PriorityQueue(askComparator)
+
+  const tokenOrders = await db.orders.where({ tokenAddress: tokenAddress, tokenId: tokenId }).toArray()
+
+  tokenOrders
+    .filter(
+      (order) =>
+        order.orderType === OrderType.BUY &&
+        order.status === OrderStatus.Pending &&
+        !orderExpired(order),
+    )
+    .forEach((order) => bid.enqueue(order))
+
+  tokenOrders
+    .filter(
+      (order) =>
+        order.orderType === OrderType.SELL &&
+        order.status === OrderStatus.Pending &&
+        !orderExpired(order),
+    )
+    .forEach((order) => ask.enqueue(order))
+
+  return {
+    bid,
+    ask,
+  }
+}
+
+const addNewOrder = async (order: Order) => {
+  if (!orderExpired(order)) {
+    const tokenIdentifer = getTokenIdentifier(order)
+
+    if (!orderBook.get(tokenIdentifer)) {
+      orderBook.set(tokenIdentifer, {
+        bid: new PriorityQueue(bidComparator),
+        ask: new PriorityQueue(askComparator),
+      })
+    }
+
+    if (order.orderType === OrderType.BUY) {
+      orderBook.get(getTokenIdentifier(order))!.bid.enqueue(order)
+    } else {
+      orderBook.get(getTokenIdentifier(order))!.ask.enqueue(order)
+    }
+  }
+}
+
+const matchOrders = async () => {
+  for (const [tokenIdentifier, { bid, ask }] of orderBook) {
+    if (bid.peek() === undefined || ask.peek() === undefined) {
+      console.log('No liquidity')
+      continue
+    }
+
+    const highestBid = bid.peek()
+    const lowestAsk = ask.peek()
+
+    console.log('Highest Bid and Lowest Ask', highestBid, lowestAsk)
+  }
 }
 
 // Get the initial Orders [X]
 // Organize by token id [X]
 // Sort and then match up queues [X]
-// Match the orders if they are not already matched - add filter [X]
-// Notify the peer process which sends them to the chain? Or send here perhaps
+// Prune the orderbook upon receiving a match message from 'another' validator [ ]
+// Determine if orders are a valid match [1/2]
+// If they are, match them
+// If they aren't send one/both to an overflow buffer where they can be temporarily stored
+// If there is a match, send it to the chain
+// Send a message to the peer that a match has been achieved

@@ -15,7 +15,7 @@ message Order {
   string price = 6;
   string limitPrice = 7;
   string quantity = 8;
-  int32 expiry = 9;
+  string expiry = 9;
   string signature = 10; // Signature of all previous fields
 }
 

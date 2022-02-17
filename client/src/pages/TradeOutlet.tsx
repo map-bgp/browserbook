@@ -7,9 +7,10 @@ import {
   BriefcaseIcon,
 } from '@heroicons/react/outline'
 import { classNames } from '../components/utils/utils'
-import { useAppSelector, useTokenFactoryFilter, useTokenFilter } from '../app/Hooks'
-import { selectTokenContractAddress } from '../app/store/slices/TokensSlice'
+import { useAppDispatch, useAppSelector, useTokenFactoryFilter, useTokenFilter } from '../app/Hooks'
+import { getTokens, selectTokenContractAddress } from '../app/store/slices/TokensSlice'
 import { selectAccountData } from '../app/store/slices/EthersSlice'
+import { useEffect } from 'react'
 
 enum ActiveSection {
   Trade = 'Trade',
@@ -29,12 +30,20 @@ const navigation = [
 
 const TradeOutlet = () => {
   const location = useLocation()
+  const dispatch = useAppDispatch()
 
   const { primaryAccount } = useAppSelector(selectAccountData)
   const tokenContractAddress = useAppSelector(selectTokenContractAddress)
 
   useTokenFactoryFilter(primaryAccount)
   useTokenFilter(primaryAccount, tokenContractAddress)
+
+  // TODO async ui
+  useEffect(() => {
+    if (primaryAccount) {
+      dispatch(getTokens())
+    }
+  }, [primaryAccount])
 
   return (
     <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
