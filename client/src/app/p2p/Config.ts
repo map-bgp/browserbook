@@ -17,10 +17,11 @@ export const getConfig = (): Libp2pOptions => {
       // Add the signaling server address, along with our PeerId to our multiaddrs list
       // libp2p will automatically attempt to dial to the signaling server so that it can
       // receive inbound connections from other peers
-      //"/dns4/wrtc-star2.sjc.dwebops.pub/tcp/443/wss/p2p-webrtc-star",
+      //
       listen: [
+        '/ip4/0.0.0.0/tcp/0',
         '/dns4/simpleweb3.ch/tcp/443/wss/p2p-webrtc-star',
-        //'/dns4/wrtc-star2.sjc.dwebops.pub/tcp/443/wss/p2p-webrtc-star'
+        '/dns4/wrtc-star2.sjc.dwebops.pub/tcp/443/wss/p2p-webrtc-star'
       ],
     },
     modules: {

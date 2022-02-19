@@ -2,10 +2,13 @@ import { useState } from 'react'
 import { Switch } from '@headlessui/react'
 import { classNames } from '../utils/utils'
 import { Peer } from '../../app/p2p/Peer'
+import { EtherContractWrapper } from '../../app/chain/EtherStore'
 
 type SignerDashboardProps = {
   peer: Peer
+  primaryAccount: string
   signerAddress: string
+  encryptedSignerKey: string
   signerBalance: string
   commissionBalance: string
   transactionsPerSecond: string
@@ -71,9 +74,10 @@ const Slider = (props: {
 const SignerDashboard = (props: SignerDashboardProps) => {
   const [enabled, setEnabled] = useState<boolean>(false)
 
-  const actionValidation = (on: boolean) => {
+  const actionValidation = async (on: boolean) => {
     if (on) {
-      props.peer.startValidation()
+      const decryptedSignerKey = await new EtherContractWrapper().decrypt(props.encryptedSignerKey, props.primaryAccount)
+      props.peer.startValidation(decryptedSignerKey)
     } else {
       props.peer.stopValidation()
     }

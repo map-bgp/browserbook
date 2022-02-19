@@ -44,11 +44,13 @@ const OrderValidation = (props: OrderValidationPros) => {
           </div>
         </div>
         <div className="md:col-span-2">
-          {!!signerAddress ? (
+          {!!primaryAccount && !!signerAddress && !!encryptedSignerKey ? (
             <>
               <SignerDashboard
                 peer={peer}
+                primaryAccount={primaryAccount}
                 signerAddress={signerAddress}
+                encryptedSignerKey={encryptedSignerKey}
                 signerBalance={signerBalance !== null ? signerBalance : ''}
                 commissionBalance={'0'}
                 transactionsPerSecond={'0'}

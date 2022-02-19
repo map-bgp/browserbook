@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
 
 import { store } from '../store/Store'
-import { selectEncryptionKey, setAccounts, setEncryptionKey } from '../store/slices/EthersSlice'
+import { ethersSlice, selectEncryptionKey, setAccounts, setEncryptionKey } from '../store/slices/EthersSlice'
 import { setEncryptedSignerKey } from '../store/slices/ValidatorSlice'
 import { ContractName, ContractMetadata } from './ContractMetadata'
 import { encrypt } from './Encryption'
@@ -73,6 +73,31 @@ export class EtherContractWrapper {
     )
 
     return [signerAddress, encryptedSignerKey]
+  }
+
+  decrypt = async (cipherText: string, address: string) =>
+  await this.provider.send('eth_decrypt', [cipherText, address])
+
+  getDelegatedExchangeSigner = async (account: string, encryptedSignerKey: string): Promise<ethers.Contract> => {
+    if (account === '') {
+      throw new Error('Malformed account')
+    }
+
+    if (encryptedSignerKey === '') {
+      throw new Error('Malformed encrypted signer key')
+    }
+
+    const signer = new ethers.Wallet(await this.decrypt(encryptedSignerKey, account))
+    const contractMetadata = ContractMetadata[ContractName.Exchange]
+    
+    if (hasOwnProperty(contractMetadata, 'address')) {
+      const address = contractMetadata.address
+      const contractABI = contractMetadata.abi
+
+      return new ethers.Contract(address, contractABI, signer)
+    } else {
+      throw new Error('Could not get address of exchange contract')
+    }
   }
 }
 

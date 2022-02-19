@@ -809,136 +809,273 @@ const Exchange: Contract = {
   address: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
   abi: [
     {
-      inputs: [],
-      stateMutability: 'nonpayable',
-      type: 'constructor',
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
     },
     {
-      anonymous: false,
-      inputs: [
+      "anonymous": false,
+      "inputs": [
         {
-          indexed: true,
-          internalType: 'address',
-          name: '',
-          type: 'address',
+          "indexed": true,
+          "internalType": "address",
+          "name": "",
+          "type": "address"
         },
         {
-          indexed: true,
-          internalType: 'address',
-          name: '',
-          type: 'address',
+          "indexed": true,
+          "internalType": "address",
+          "name": "",
+          "type": "address"
         },
         {
-          indexed: false,
-          internalType: 'uint256',
-          name: '',
-          type: 'uint256',
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
         },
         {
-          indexed: false,
-          internalType: 'uint256',
-          name: '',
-          type: 'uint256',
-        },
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
       ],
-      name: 'TokensExchangedAt',
-      type: 'event',
+      "name": "TokensExchangedAt",
+      "type": "event"
     },
     {
-      inputs: [],
-      name: 'DOMAIN_SEPARATOR',
-      outputs: [
+      "inputs": [],
+      "name": "DOMAIN_SEPARATOR",
+      "outputs": [
         {
-          internalType: 'bytes32',
-          name: '',
-          type: 'bytes32',
-        },
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
       ],
-      stateMutability: 'view',
-      type: 'function',
+      "stateMutability": "view",
+      "type": "function"
     },
     {
-      inputs: [],
-      name: 'EIP712DOMAIN_TYPEHASH',
-      outputs: [
+      "inputs": [],
+      "name": "EIP712DOMAIN_TYPEHASH",
+      "outputs": [
         {
-          internalType: 'bytes32',
-          name: '',
-          type: 'bytes32',
-        },
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
       ],
-      stateMutability: 'view',
-      type: 'function',
+      "stateMutability": "view",
+      "type": "function"
     },
     {
-      inputs: [],
-      name: 'ORDERS_TYPEHASH',
-      outputs: [
+      "inputs": [],
+      "name": "ORDERS_TYPEHASH",
+      "outputs": [
         {
-          internalType: 'bytes32',
-          name: '',
-          type: 'bytes32',
-        },
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
       ],
-      stateMutability: 'view',
-      type: 'function',
+      "stateMutability": "view",
+      "type": "function"
     },
     {
-      inputs: [
+      "inputs": [
         {
-          internalType: 'address',
-          name: '',
-          type: 'address',
-        },
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
       ],
-      name: 'encryptedSignerKeys',
-      outputs: [
+      "name": "encryptedSignerKeys",
+      "outputs": [
         {
-          internalType: 'string',
-          name: '',
-          type: 'string',
-        },
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
       ],
-      stateMutability: 'view',
-      type: 'function',
+      "stateMutability": "view",
+      "type": "function"
     },
     {
-      inputs: [
+      "inputs": [
         {
-          internalType: 'address',
-          name: 'signerAddress',
-          type: 'address',
+          "components": [
+            {
+              "internalType": "string",
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "tokenAddress",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "tokenId",
+              "type": "string"
+            },
+            {
+              "internalType": "enum Exchange.OrderType",
+              "name": "orderType",
+              "type": "uint8"
+            },
+            {
+              "internalType": "int256",
+              "name": "price",
+              "type": "int256"
+            },
+            {
+              "internalType": "int256",
+              "name": "limitPrice",
+              "type": "int256"
+            },
+            {
+              "internalType": "int256",
+              "name": "quantity",
+              "type": "int256"
+            },
+            {
+              "internalType": "int32",
+              "name": "expiry",
+              "type": "int32"
+            }
+          ],
+          "internalType": "struct Exchange.Order",
+          "name": "bidOrder",
+          "type": "tuple"
         },
         {
-          internalType: 'string',
-          name: 'encryptedSignerKey',
-          type: 'string',
-        },
+          "components": [
+            {
+              "internalType": "string",
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "tokenAddress",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "tokenId",
+              "type": "string"
+            },
+            {
+              "internalType": "enum Exchange.OrderType",
+              "name": "orderType",
+              "type": "uint8"
+            },
+            {
+              "internalType": "int256",
+              "name": "price",
+              "type": "int256"
+            },
+            {
+              "internalType": "int256",
+              "name": "limitPrice",
+              "type": "int256"
+            },
+            {
+              "internalType": "int256",
+              "name": "quantity",
+              "type": "int256"
+            },
+            {
+              "internalType": "int32",
+              "name": "expiry",
+              "type": "int32"
+            }
+          ],
+          "internalType": "struct Exchange.Order",
+          "name": "askOrder",
+          "type": "tuple"
+        }
       ],
-      name: 'setSigner',
-      outputs: [],
-      stateMutability: 'nonpayable',
-      type: 'function',
+      "name": "executeOrder",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
     },
     {
-      inputs: [
+      "inputs": [
         {
-          internalType: 'address',
-          name: '',
-          type: 'address',
+          "internalType": "address",
+          "name": "signerAddress",
+          "type": "address"
         },
-      ],
-      name: 'signerAddresses',
-      outputs: [
         {
-          internalType: 'address',
-          name: '',
-          type: 'address',
-        },
+          "internalType": "string",
+          "name": "encryptedSignerKey",
+          "type": "string"
+        }
       ],
-      stateMutability: 'view',
-      type: 'function',
+      "name": "setSigner",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
     },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "signerAddresses",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "data",
+          "type": "bytes"
+        }
+      ],
+      "name": "toString",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    }
   ],
 }
 

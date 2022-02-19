@@ -5,6 +5,7 @@ import { Order, Match } from './protocol_buffers/gossip_schema'
 import { IToken, P2PDB } from './db'
 import { OrderStatus, Token } from '../Types'
 import { selectAccountData } from '../store/slices/EthersSlice'
+import { ethers } from 'ethers'
 
 const dispatch = store.dispatch
 const worker: Worker = new Worker(new URL('./../oms/Oms.ts', import.meta.url), { type: 'module' })
@@ -168,9 +169,9 @@ export class Peer {
     }
   }
 
-  startValidation() {
+  startValidation(decryptedSignerKey: string) {
     this.isValidator = true
-    worker.postMessage(['start'])
+    worker.postMessage(['start', decryptedSignerKey])
   }
 
   stopValidation() {
