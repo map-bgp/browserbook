@@ -917,14 +917,14 @@ const Exchange: Contract = {
               "type": "address"
             },
             {
-              "internalType": "string",
+              "internalType": "address",
               "name": "tokenAddress",
-              "type": "string"
+              "type": "address"
             },
             {
-              "internalType": "string",
+              "internalType": "int32",
               "name": "tokenId",
-              "type": "string"
+              "type": "int32"
             },
             {
               "internalType": "enum Exchange.OrderType",
@@ -950,6 +950,11 @@ const Exchange: Contract = {
               "internalType": "int32",
               "name": "expiry",
               "type": "int32"
+            },
+            {
+              "internalType": "bytes",
+              "name": "signature",
+              "type": "bytes"
             }
           ],
           "internalType": "struct Exchange.Order",
@@ -969,14 +974,14 @@ const Exchange: Contract = {
               "type": "address"
             },
             {
-              "internalType": "string",
+              "internalType": "address",
               "name": "tokenAddress",
-              "type": "string"
+              "type": "address"
             },
             {
-              "internalType": "string",
+              "internalType": "int32",
               "name": "tokenId",
-              "type": "string"
+              "type": "int32"
             },
             {
               "internalType": "enum Exchange.OrderType",
@@ -1002,6 +1007,11 @@ const Exchange: Contract = {
               "internalType": "int32",
               "name": "expiry",
               "type": "int32"
+            },
+            {
+              "internalType": "bytes",
+              "name": "signature",
+              "type": "bytes"
             }
           ],
           "internalType": "struct Exchange.Order",

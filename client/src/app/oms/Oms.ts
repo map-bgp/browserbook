@@ -209,9 +209,55 @@ const validMatch = (bidOrder: Order, askOrder: Order): MatchValidity => {
   return MatchValidity.Valid
 }
 
+// Chain
+// struct Order {
+//   string id;
+//   address from;
+//   string tokenAddress;
+//   int32 tokenId;
+//   OrderType orderType;
+//   int256 price;
+//   int256 limitPrice;
+//   int256 quantity;
+//   int32 expiry;
+// }
+
+// Client
+// export interface Order {
+//   id: string . 
+//   from: string .
+//   tokenAddress: string .
+//   tokenId: string x
+//   orderType: OrderType x convert to 0, 1
+//   price: string x 
+//   limitPrice: string x 
+//   quantity: string x 
+//   expiry: string x 
+//   /** Signature of all previous fields */
+//   signature: string
+// }
+
+const mapOrderToContractOrder = (order: Order) => {
+  return {
+    id: order.id,
+    from: order.from,
+    tokenAddress: order.tokenAddress,
+    tokenId: Number(order.tokenId),
+    orderType: order.orderType === OrderType.BUY ? 0 : 1,
+    price: ethers.BigNumber.from(order.price),
+    limitPrice: ethers.BigNumber.from(order.limitPrice),
+    quantity: ethers.BigNumber.from(order.quantity),
+    expiry: Number(order.expiry),
+    signature: order.signature
+  }
+}
+
 const matchOrder = async (delegatedExchangeContract: ethers.Contract, bidOrder: Order, askOrder: Order): Promise<void> => {
-  await delegatedExchangeContract.executeOrder(bidOrder, askOrder)
-  // console.log("Matching the following orders", bidOrder, askOrder)
+  const bidContractOrder = mapOrderToContractOrder(bidOrder)
+  const askContractOrder = mapOrderToContractOrder(askOrder)
+
+  console.log("Matching the following orders", bidContractOrder, askContractOrder)
+  await delegatedExchangeContract.executeOrder(bidContractOrder, askContractOrder)
 }
 
 const sendToOverflow = (order: Order): void => {

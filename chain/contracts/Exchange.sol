@@ -23,13 +23,14 @@ contract Exchange {
   struct Order {
     string id;
     address from;
-    string tokenAddress;
-    string tokenId;
+    address tokenAddress;
+    int32 tokenId;
     OrderType orderType;
     int256 price;
     int256 limitPrice;
     int256 quantity;
     int32 expiry;
+    bytes signature;
   }
 
   event TokensExchangedAt(address indexed, address indexed, uint256, uint256);
