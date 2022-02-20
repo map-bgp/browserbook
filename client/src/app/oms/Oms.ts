@@ -1,4 +1,4 @@
-import { ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import { NonceManager } from '@ethersproject/experimental'
 import { PriorityQueue } from 'typescript-collections'
 import { ContractMetadata, ContractName } from '../chain/ContractMetadata'
@@ -214,7 +214,7 @@ const mapOrderToContractOrder = (order: Order) => {
     id: order.id,
     from: order.from,
     tokenAddress: order.tokenAddress,
-    tokenId: Number(order.tokenId),
+    tokenId: ethers.BigNumber.from(order.tokenId),
     orderType: order.orderType === OrderType.BUY ? 0 : 1,
     price: ethers.BigNumber.from(order.price),
     limitPrice: ethers.BigNumber.from(order.limitPrice),
@@ -236,9 +236,15 @@ const matchOrder = async (
   const nonce = oms.signerNonce
   oms.signerNonce += 1
 
-  const tx = await delegatedExchangeContract.executeOrder(bidContractOrder, askContractOrder, {
-    nonce: nonce,
-  })
+  const tx = await delegatedExchangeContract.executeOrder(
+    bidContractOrder,
+    askContractOrder,
+    bidContractOrder.quantity,
+    ethers.utils.randomBytes(32),
+    {
+      nonce: nonce,
+    },
+  )
   await tx.wait()
 
   postMessage(['order-match', bidOrder.id, askOrder.id])

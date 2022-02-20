@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { ethers as ethersLib } from 'ethers'
-import { queryOrders } from '../../oms/Queries'
+import { depositEther } from '../../oms/Chain'
+import { queryBalance, queryOrders } from '../../oms/Queries'
 import { Order } from '../../p2p/protocol_buffers/gossip_schema'
 import { OrderStatus, WithStatus } from '../../Types'
 import type { RootState } from '../Store'
@@ -11,6 +12,7 @@ type PeerState = {
   peerID: string | null
   numPeers: number
   orders: Array<WithStatus<Order>>
+  balance: string
 }
 
 // Define the initial state using that type
@@ -19,6 +21,7 @@ const initialState: PeerState = {
   peerID: null,
   numPeers: 0,
   orders: [],
+  balance: '0',
 }
 
 export const getAllOrders = createAsyncThunk(
@@ -47,6 +50,21 @@ export const getOwnOrders = createAsyncThunk(
       limitPrice: ethersLib.utils.formatEther(order.limitPrice),
       quantity: ethersLib.utils.formatEther(order.quantity),
     }))
+  },
+)
+
+export const getBalance = createAsyncThunk(
+  'peer/getBalance',
+  async (address: string): Promise<string> => {
+    return await queryBalance(address)
+  },
+)
+
+export const depositEtherThunk = createAsyncThunk(
+  'peer/depositEther',
+  async (options: { amount: string; address: string }, thunkAPI: any): Promise<void> => {
+    await depositEther(options.amount)
+    thunkAPI.dispatch(getBalance(options.address))
   },
 )
 
@@ -92,6 +110,18 @@ export const peerSlice = createSlice({
         state.status = 'idle'
         state.orders = action.payload
       })
+      .addCase(getBalance.fulfilled, (state, action) => {
+        ;(state.status = 'idle'), (state.balance = action.payload)
+      })
+      .addCase(depositEtherThunk.pending, (state) => {
+        state.status = 'loading'
+      })
+      .addCase(depositEtherThunk.fulfilled, (state) => {
+        state.status = 'idle'
+      })
+      .addCase(depositEtherThunk.rejected, (state) => {
+        state.status = 'idle'
+      })
   },
 })
 
@@ -101,5 +131,6 @@ export const { setPeerId, incrementPeers, decrementPeers, setOrderStatus } = pee
 export const selectPeerId = (state: RootState) => state.peer.peerID
 export const selectNumPeers = (state: RootState) => state.peer.numPeers
 export const selectOrders = (state: RootState) => state.peer.orders
+export const selectBalance = (state: RootState) => state.peer.balance
 
 export default peerSlice.reducer

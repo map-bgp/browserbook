@@ -111,6 +111,18 @@ export const queryOrders = async (addressFilter?: string) => {
   }
 }
 
+export const queryBalance = async (address: string) => {
+  const wrapper = new EtherContractWrapper()
+  const provider = wrapper.provider
+
+  const contractName = ContractName.Exchange
+  const contract = await wrapper.getContract(contractName)
+
+  const addressBalance = await contract.balances(address)
+
+  return Number(ethersLib.utils.formatEther(addressBalance)).toFixed(2).toString()
+}
+
 export const queryValidatorSigner = async (address: string) => {
   const wrapper = new EtherContractWrapper()
   const provider = wrapper.provider

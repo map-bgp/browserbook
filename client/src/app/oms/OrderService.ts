@@ -3,12 +3,22 @@ import { Token } from '../Types'
 import { ethers } from '../store/globals/ethers'
 import { peer } from '../store/globals/peer'
 import { OrderType, Order } from '../p2p/protocol_buffers/gossip_schema'
+import { setExchangeApprovalForTokenContract } from './Chain'
+import { ContractMetadata, ContractName } from '../chain/ContractMetadata'
+import { hasOwnProperty } from '../chain/helpers'
+
+const exchangeContract = ContractMetadata[ContractName.Exchange]
+
+let exchangeAddress
+if (hasOwnProperty(exchangeContract, 'address')) {
+  exchangeAddress = exchangeContract.address
+}
 
 const OrderDomain = {
-  name: 'BB Order',
+  name: 'BrowserBook',
   version: '1',
   chainId: 31337,
-  verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
+  verifyingContract: exchangeAddress,
 }
 
 const OrderTypes = {
@@ -17,11 +27,11 @@ const OrderTypes = {
     { name: 'from', type: 'address' },
     { name: 'tokenAddress', type: 'address' },
     { name: 'tokenId', type: 'string' },
-    { name: 'orderType', type: 'int32' },
+    { name: 'orderType', type: 'uint' },
     { name: 'price', type: 'string' },
     { name: 'limitPrice', type: 'string' },
     { name: 'quantity', type: 'string' },
-    { name: 'expiry', type: 'int256' },
+    { name: 'expiry', type: 'string' },
   ],
 }
 
@@ -45,6 +55,10 @@ export const submitOrder = async (
   expiryMinutes: string,
 ) => {
   const signer = ethers.getSigner()
+
+  if (orderType === OrderType.SELL) {
+    await setExchangeApprovalForTokenContract(fromAddress, token.contract.address)
+  }
 
   const unsignedOrder: Omit<Order, 'signature'> = {
     id: (~~(Math.random() * 1e9)).toString(36) + Date.now(),

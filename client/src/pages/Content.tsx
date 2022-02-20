@@ -11,6 +11,7 @@ import TradeOutlet from './TradeOutlet'
 import Tokens from '../components/trade/Tokens'
 import Orders from '../components/trade/Orders'
 import OrderValidation from './OrderValidation'
+import Balance from '../components/trade/Balance'
 
 type ContentProps = {
   current: NavPage
@@ -34,6 +35,7 @@ const Content = (props: ContentProps) => {
           <Route path="trade" element={<TradeOutlet />}>
             <Route index element={<TradeForm />} />
             <Route path="trade" element={<TradeForm />} />
+            <Route path="balance" element={<Balance />} />
             <Route path="orders" element={<Orders />} />
             <Route path="transfer" element={<TransferForm />} />
             <Route path="tokens" element={<Tokens />} />

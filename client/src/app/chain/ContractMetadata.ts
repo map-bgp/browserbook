@@ -891,6 +891,32 @@ const Exchange: Contract = {
           type: 'address',
         },
       ],
+      name: 'balances',
+      outputs: [
+        {
+          internalType: 'uint256',
+          name: '',
+          type: 'uint256',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      inputs: [],
+      name: 'depositEther',
+      outputs: [],
+      stateMutability: 'payable',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
+          internalType: 'address',
+          name: '',
+          type: 'address',
+        },
+      ],
       name: 'encryptedSignerKeys',
       outputs: [
         {
@@ -922,9 +948,9 @@ const Exchange: Contract = {
               type: 'address',
             },
             {
-              internalType: 'int32',
+              internalType: 'uint256',
               name: 'tokenId',
-              type: 'int32',
+              type: 'uint256',
             },
             {
               internalType: 'enum Exchange.OrderType',
@@ -932,24 +958,24 @@ const Exchange: Contract = {
               type: 'uint8',
             },
             {
-              internalType: 'int256',
+              internalType: 'uint256',
               name: 'price',
-              type: 'int256',
+              type: 'uint256',
             },
             {
-              internalType: 'int256',
+              internalType: 'uint256',
               name: 'limitPrice',
-              type: 'int256',
+              type: 'uint256',
             },
             {
-              internalType: 'int256',
+              internalType: 'uint256',
               name: 'quantity',
-              type: 'int256',
+              type: 'uint256',
             },
             {
-              internalType: 'int256',
+              internalType: 'uint256',
               name: 'expiry',
-              type: 'int256',
+              type: 'uint256',
             },
             {
               internalType: 'bytes',
@@ -979,9 +1005,9 @@ const Exchange: Contract = {
               type: 'address',
             },
             {
-              internalType: 'int32',
+              internalType: 'uint256',
               name: 'tokenId',
-              type: 'int32',
+              type: 'uint256',
             },
             {
               internalType: 'enum Exchange.OrderType',
@@ -989,24 +1015,24 @@ const Exchange: Contract = {
               type: 'uint8',
             },
             {
-              internalType: 'int256',
+              internalType: 'uint256',
               name: 'price',
-              type: 'int256',
+              type: 'uint256',
             },
             {
-              internalType: 'int256',
+              internalType: 'uint256',
               name: 'limitPrice',
-              type: 'int256',
+              type: 'uint256',
             },
             {
-              internalType: 'int256',
+              internalType: 'uint256',
               name: 'quantity',
-              type: 'int256',
+              type: 'uint256',
             },
             {
-              internalType: 'int256',
+              internalType: 'uint256',
               name: 'expiry',
-              type: 'int256',
+              type: 'uint256',
             },
             {
               internalType: 'bytes',
@@ -1018,10 +1044,20 @@ const Exchange: Contract = {
           name: 'askOrder',
           type: 'tuple',
         },
+        {
+          internalType: 'uint256',
+          name: 'quantity',
+          type: 'uint256',
+        },
+        {
+          internalType: 'bytes',
+          name: 'data',
+          type: 'bytes',
+        },
       ],
       name: 'executeOrder',
       outputs: [],
-      stateMutability: 'payable',
+      stateMutability: 'nonpayable',
       type: 'function',
     },
     {
@@ -1081,9 +1117,9 @@ const Exchange: Contract = {
           type: 'address',
         },
         {
-          internalType: 'int32',
+          internalType: 'uint256',
           name: 'tokenId',
-          type: 'int32',
+          type: 'uint256',
         },
         {
           internalType: 'enum Exchange.OrderType',
@@ -1091,24 +1127,24 @@ const Exchange: Contract = {
           type: 'uint8',
         },
         {
-          internalType: 'int256',
+          internalType: 'uint256',
           name: 'price',
-          type: 'int256',
+          type: 'uint256',
         },
         {
-          internalType: 'int256',
+          internalType: 'uint256',
           name: 'limitPrice',
-          type: 'int256',
+          type: 'uint256',
         },
         {
-          internalType: 'int256',
+          internalType: 'uint256',
           name: 'quantity',
-          type: 'int256',
+          type: 'uint256',
         },
         {
-          internalType: 'int256',
+          internalType: 'uint256',
           name: 'expiry',
-          type: 'int256',
+          type: 'uint256',
         },
         {
           internalType: 'bytes',
@@ -1120,22 +1156,10 @@ const Exchange: Contract = {
       type: 'function',
     },
     {
-      inputs: [
-        {
-          internalType: 'bytes',
-          name: 'data',
-          type: 'bytes',
-        },
-      ],
-      name: 'toString',
-      outputs: [
-        {
-          internalType: 'string',
-          name: '',
-          type: 'string',
-        },
-      ],
-      stateMutability: 'pure',
+      inputs: [],
+      name: 'withdrawEther',
+      outputs: [],
+      stateMutability: 'nonpayable',
       type: 'function',
     },
   ],

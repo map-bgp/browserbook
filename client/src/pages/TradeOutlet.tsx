@@ -1,6 +1,7 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import {
   ChevronDoubleRightIcon,
+  ScaleIcon,
   GlobeAltIcon,
   CollectionIcon,
   BookOpenIcon,
@@ -14,6 +15,7 @@ import { useEffect } from 'react'
 
 enum ActiveSection {
   Trade = 'Trade',
+  Balance = 'Balance',
   MyOrders = 'My Orders',
   Transfer = 'Transfer',
   MyTokens = 'Tokens',
@@ -22,6 +24,7 @@ enum ActiveSection {
 
 const navigation = [
   { name: ActiveSection.Trade, url: 'trade', icon: GlobeAltIcon },
+  { name: ActiveSection.Balance, url: 'balance', icon: ScaleIcon },
   { name: ActiveSection.MyOrders, url: 'orders', icon: CollectionIcon },
   { name: ActiveSection.Transfer, url: 'transfer', icon: ChevronDoubleRightIcon },
   { name: ActiveSection.MyTokens, url: 'tokens', icon: BookOpenIcon },

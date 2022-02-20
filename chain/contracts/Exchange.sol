@@ -1,8 +1,12 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract Exchange {
+  using ECDSA for bytes32;
+
   bytes32 public DOMAIN_SEPARATOR;
 
   bytes32 public constant EIP712DOMAIN_TYPEHASH =
@@ -10,11 +14,33 @@ contract Exchange {
       "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
     );
 
+  // const OrderDomain = {
+  //   name: 'BrowserBook',
+  //   version: '1',
+  //   chainId: 31337,
+  //   verifyingContract: exchangeAddress,
+  // }
+
+  // const OrderTypes = {
+  //   Order: [
+  //     { name: 'id', type: 'string' },
+  //     { name: 'from', type: 'address' },
+  //     { name: 'tokenAddress', type: 'address' },
+  //     { name: 'tokenId', type: 'string' },
+  //     { name: 'orderType', type: 'uint' },
+  //     { name: 'price', type: 'string' },
+  //     { name: 'limitPrice', type: 'string' },
+  //     { name: 'quantity', type: 'string' },
+  //     { name: 'expiry', type: 'string' },
+  //   ],
+  // }
+
   bytes32 public constant ORDERS_TYPEHASH =
     keccak256(
-      "Order(string id,string tokenFrom,string tokenTo,string orderType,string price,string quantity,address from,string created)"
+      "Order(string id,address from,address tokenAddress,string tokenId,uint orderType,string price,string limitPrice,string quantity,string expiry)"
     );
 
+  mapping(address => uint256) public balances;
   mapping(address => address) public signerAddresses;
   mapping(address => string) public encryptedSignerKeys;
 
@@ -27,12 +53,12 @@ contract Exchange {
     string id;
     address from;
     address tokenAddress;
-    int32 tokenId;
+    uint256 tokenId;
     OrderType orderType;
-    int256 price;
-    int256 limitPrice;
-    int256 quantity;
-    int256 expiry;
+    uint256 price;
+    uint256 limitPrice;
+    uint256 quantity;
+    uint256 expiry;
     bytes signature;
   }
 
@@ -41,7 +67,7 @@ contract Exchange {
   Order public testOrder;
 
   constructor() {
-    uint256 chainId = 1337;
+    uint256 chainId = 31337;
     DOMAIN_SEPARATOR = keccak256(
       abi.encode(
         EIP712DOMAIN_TYPEHASH,
@@ -62,93 +88,122 @@ contract Exchange {
     encryptedSignerKeys[signerAddress] = encryptedSignerKey;
   }
 
-  function toString(bytes memory data) public pure returns (string memory) {
-    bytes memory alphabet = "0123456789abcdef";
+  function depositEther() public payable {
+    balances[msg.sender] += msg.value;
+  }
 
-    bytes memory str = new bytes(2 + data.length * 2);
-    str[0] = "0";
-    str[1] = "x";
-    for (uint256 i = 0; i < data.length; i++) {
-      str[2 + i * 2] = alphabet[uint256(uint8(data[i] >> 4))];
-      str[3 + i * 2] = alphabet[uint256(uint8(data[i] & 0x0f))];
+  function withdrawEther() public {
+    (bool sent, bytes memory data) = msg.sender.call{
+      value: balances[msg.sender]
+    }("");
+    require(sent, "Failed to send Ether");
+  }
+
+  function verifyOrderSignatures(Order memory bidOrder, Order memory askOrder)
+    private
+    pure
+    returns (bool)
+  {}
+
+  function totalPrice(Order memory order) private pure returns (uint256) {
+    return order.price * order.quantity;
+  }
+
+  function exchangeTokens(
+    Order memory bidOrder,
+    Order memory askOrder,
+    uint256 quantity,
+    bytes memory transferData
+  ) private {
+    // Guard against re-entrancy
+    balances[bidOrder.from] -= totalPrice(askOrder);
+
+    (bool sent, bytes memory data) = askOrder.from.call{
+      value: totalPrice(askOrder)
+    }("");
+
+    if (!sent) {
+      balances[bidOrder.from] += askOrder.price;
     }
-    return string(str);
+
+    require(sent, "Failed to send Ether");
+
+    IERC1155(askOrder.tokenAddress).safeTransferFrom(
+      askOrder.from,
+      bidOrder.from,
+      bidOrder.tokenId,
+      quantity,
+      transferData
+    );
   }
 
-  function executeOrder(Order calldata bidOrder, Order calldata askOrder)
-    public
-    payable
+  function executeOrder(
+    Order calldata bidOrder,
+    Order calldata askOrder,
+    uint256 quantity,
+    bytes calldata data
+  ) public {
+    // Signatures
+    require(
+      verifySignature(bidOrder, bidOrder.signature),
+      "INVALID_SIGNATURE_FOR_BID_ORDER"
+    );
+    require(
+      verifySignature(askOrder, askOrder.signature),
+      "INVALID_SIGNATURE_FOR_ASK_ORDER"
+    );
+    // Quantity
+    // Check valid balance
+    // Verify expiry, funds, etc.
+
+    exchangeTokens(bidOrder, askOrder, quantity, data);
+  }
+
+  // const OrderDomain = {
+  //   name: 'BrowserBook',
+  //   version: '1',
+  //   chainId: 31337,
+  //   verifyingContract: exchangeAddress,
+  // }
+
+  // const OrderTypes = {
+  //   Order: [
+  //     { name: 'id', type: 'string' },
+  //     { name: 'from', type: 'address' },
+  //     { name: 'tokenAddress', type: 'address' },
+  //     { name: 'tokenId', type: 'string' },
+  //     { name: 'orderType', type: 'uint' },
+  //     { name: 'price', type: 'string' },
+  //     { name: 'limitPrice', type: 'string' },
+  //     { name: 'quantity', type: 'string' },
+  //     { name: 'expiry', type: 'string' },
+  //   ],
+  // }
+
+  function verifySignature(Order memory order, bytes memory signature)
+    internal
+    view
+    returns (bool)
   {
-    testOrder = bidOrder;
+    bytes32 orderHash = keccak256(
+      abi.encode(
+        ORDERS_TYPEHASH,
+        keccak256(bytes(order.id)),
+        order.from,
+        order.tokenAddress,
+        keccak256(bytes(Strings.toString(order.tokenId))),
+        order.tokenId,
+        keccak256(bytes(Strings.toString(order.price))),
+        keccak256(bytes(Strings.toString(order.limitPrice))),
+        keccak256(bytes(Strings.toString(order.quantity))),
+        keccak256(bytes(Strings.toString(order.expiry)))
+      )
+    );
+
+    bytes32 digest = keccak256(
+      abi.encodePacked("\x19\x01", DOMAIN_SEPARATOR, orderHash)
+    );
+
+    return digest.recover(signature) == order.from;
   }
-
-  // function executeOrder() public {
-
-  // }
-
-  // function verifySignature(
-  //   Order memory order,
-  //   uint8 v,
-  //   bytes32 r,
-  //   bytes32 s
-  // ) internal view returns (bool) {
-  //   bytes32 orderHash = keccak256(
-  //     abi.encode(
-  //       ORDERS_TYPEHASH,
-  //       keccak256(bytes(order.id)),
-  //       keccak256(bytes(order.tokenFrom)),
-  //       keccak256(bytes(order.tokenTo)),
-  //       keccak256(bytes(order.orderType)),
-  //       keccak256(bytes(order.price)),
-  //       keccak256(bytes(order.quantity)),
-  //       order.from,
-  //       keccak256(bytes(order.created))
-  //     )
-  //   );
-
-  //   bytes32 digest = keccak256(
-  //     abi.encodePacked("\x19\x01", DOMAIN_SEPARATOR, orderHash)
-  //   );
-
-  //   return ecrecover(digest, v, r, s) == order.from;
-  // }
-
-  // function executeOrder(
-  //   address tokenOneAddress,
-  //   address tokenTwoAddress,
-  //   address tokenOneOwner,
-  //   address tokenTwoOwner,
-  //   uint256 tokenOneId,
-  //   uint256 tokenTwoId,
-  //   uint256 tokenOneAmount,
-  //   uint256 tokenTwoAmount,
-  //   bytes calldata data
-  // ) public {
-  //   // Execute `safeBatchTransferFrom` call
-  //   // Either succeeds or throws
-  //   IERC1155(tokenOneAddress).safeTransferFrom(
-  //     tokenOneOwner,
-  //     tokenTwoOwner,
-  //     tokenOneId,
-  //     tokenOneAmount,
-  //     data
-  //   );
-
-  //   // Execute `safeBatchTransferFrom` call
-  //   // Either succeeds or throws
-  //   IERC1155(tokenTwoAddress).safeTransferFrom(
-  //     tokenTwoOwner,
-  //     tokenOneOwner,
-  //     tokenTwoId,
-  //     tokenTwoAmount,
-  //     data
-  //   );
-
-  //   emit TokensExchangedAt(
-  //     tokenOneAddress,
-  //     tokenTwoAddress,
-  //     tokenOneAmount,
-  //     tokenTwoAmount
-  //   );
-  // }
 }
