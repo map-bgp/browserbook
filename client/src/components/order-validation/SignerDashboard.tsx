@@ -76,8 +76,11 @@ const SignerDashboard = (props: SignerDashboardProps) => {
 
   const actionValidation = async (on: boolean) => {
     if (on) {
-      const decryptedSignerKey = await new EtherContractWrapper().decrypt(props.encryptedSignerKey, props.primaryAccount)
-      props.peer.startValidation(decryptedSignerKey)
+      const decryptedSignerKey = await new EtherContractWrapper().decrypt(
+        props.encryptedSignerKey,
+        props.primaryAccount,
+      )
+      props.peer.startValidation(props.signerAddress, decryptedSignerKey)
     } else {
       props.peer.stopValidation()
     }

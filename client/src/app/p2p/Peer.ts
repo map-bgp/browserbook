@@ -169,9 +169,9 @@ export class Peer {
     }
   }
 
-  startValidation(decryptedSignerKey: string) {
+  startValidation(signerAddress: string, decryptedSignerKey: string) {
     this.isValidator = true
-    worker.postMessage(['start', decryptedSignerKey])
+    worker.postMessage(['start', signerAddress, decryptedSignerKey])
   }
 
   stopValidation() {

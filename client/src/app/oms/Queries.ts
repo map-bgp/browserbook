@@ -122,5 +122,9 @@ export const queryValidatorSigner = async (address: string) => {
   const encryptedSignerKey = await contract.encryptedSignerKeys(signerAddress)
   const signerBalance = await provider.getBalance(signerAddress)
 
-  return { signerAddress, encryptedSignerKey, signerBalance: ethersLib.utils.formatEther(signerBalance) }
+  return {
+    signerAddress,
+    encryptedSignerKey,
+    signerBalance: Number(ethersLib.utils.formatEther(signerBalance)).toFixed(2).toString(),
+  }
 }

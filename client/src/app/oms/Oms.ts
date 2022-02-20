@@ -1,19 +1,24 @@
-// import { MinQueue } from 'heapify'
 import { ethers } from 'ethers'
+import { NonceManager } from '@ethersproject/experimental'
 import { PriorityQueue } from 'typescript-collections'
 import { ContractMetadata, ContractName } from '../chain/ContractMetadata'
-import { EtherContractWrapper } from '../chain/EtherStore'
 import { Order, OrderType } from '../p2p/protocol_buffers/gossip_schema'
 import { db } from '../store/globals/db'
 import { OrderStatus } from '../Types'
-
-/// Organize into some objects, (easily done)
 
 enum MatchValidity {
   Valid = 'VALID',
   BidUnvalid = 'BID_UNVALID',
   AskUnvalid = 'ASK_UNVALID',
   BidAndAskUnvalid = 'BID_AND_ASK_UNVALID',
+}
+
+type OMS = {
+  running: boolean
+  setRunning: (running: boolean) => void
+  orderbook: Map<string, { bid: PriorityQueue<Order>; ask: PriorityQueue<Order> }>
+  overflow: Array<Order>
+  signerNonce: number
 }
 
 const hasOwnProperty = <X extends {}, Y extends PropertyKey>(
@@ -23,34 +28,26 @@ const hasOwnProperty = <X extends {}, Y extends PropertyKey>(
   return obj.hasOwnProperty(prop)
 }
 
-const orderBook: Map<string, { bid: PriorityQueue<Order>; ask: PriorityQueue<Order> }> = new Map()
-const overflow: Array<Order> = []
-
-let RUNNING = false
-const setRunning = (running: boolean) => {
-  RUNNING = running
-}
-
 const getTokenIdentifier = (order: Order) => `${order.tokenAddress}/${order.tokenId}`
 
 const orderExpired = (order: Order) => {
   return Number(order.expiry) < Date.now()
 }
 
-const logOrderbook = () => {
-  console.log('The orderbook')
-  for (const [key, val] of orderBook) {
-    console.log(val.bid.size())
-    console.log(val.ask.size())
-  }
-}
-
 const bidComparator = (a: Order, b: Order) => (a.price > b.price ? -1 : 1)
 const askComparator = (a: Order, b: Order) => (a.price < b.price ? -1 : 1)
 
+const oms: OMS = {
+  running: false,
+  setRunning: (running: boolean) => (oms.running = running),
+  orderbook: new Map(),
+  overflow: [],
+  signerNonce: 0,
+}
+
 onmessage = (e: MessageEvent) => {
   if (e.data[0] === 'start') {
-    start(e.data[1]).then(() => console.log('Started order validation'))
+    start(e.data[1], e.data[2]).then(() => console.log('Started order validation'))
   }
 
   // If the worker is started, the peer pushes new orders here
@@ -60,36 +57,41 @@ onmessage = (e: MessageEvent) => {
   }
 
   if (e.data[0] === 'stop') {
-    RUNNING = false
+    oms.running = false
   }
 }
 
-// const validate = () => {
-//   console.log('Reading Queue', queue.size)
-// }
+const start = async (signerAddress: string, decryptedSignerKey: string) => {
+  oms.setRunning(true)
 
-const start = async (decryptedSignerKey: string) => {
-  setRunning(true)
+  const provider = ethers.getDefaultProvider('http://localhost:8545')
+  const signer = new ethers.Wallet(decryptedSignerKey, provider)
+  oms.signerNonce = await provider.getTransactionCount(signerAddress)
+  // const nonceManager = new NonceManager(signer)
 
-  const signer = new ethers.Wallet(decryptedSignerKey)
   const contractMetadata = ContractMetadata[ContractName.Exchange]
 
   if (!hasOwnProperty(contractMetadata, 'address')) {
-    throw new Error("Contract address not found")
+    throw new Error('Contract address not found')
   }
 
   const address = contractMetadata.address
   const contractABI = contractMetadata.abi
-
   const delegatedExchangeContract = new ethers.Contract(address, contractABI, signer)
 
   await syncOrderBook()
 
   setInterval(() => {
-    if (RUNNING) {
+    if (oms.running) {
       matchOrders(delegatedExchangeContract)
     }
   }, 10)
+
+  setInterval(() => {
+    if (oms.running) {
+      resetOverflow()
+    }
+  }, 30000)
 }
 
 const syncOrderBook = async () => {
@@ -104,7 +106,7 @@ const syncOrderBook = async () => {
   )
 
   for (const tokenIdentifier of tokenIdentifiers) {
-    orderBook.set(
+    oms.orderbook.set(
       `${tokenIdentifier.tokenAddress}/${tokenIdentifier.tokenId}`,
       await syncTokenOrders(tokenIdentifier.tokenAddress, tokenIdentifier.tokenId),
     )
@@ -145,27 +147,26 @@ const addNewOrder = async (order: Order) => {
   if (!orderExpired(order)) {
     const tokenIdentifer = getTokenIdentifier(order)
 
-    if (!orderBook.get(tokenIdentifer)) {
-      orderBook.set(tokenIdentifer, {
+    if (!oms.orderbook.get(tokenIdentifer)) {
+      oms.orderbook.set(tokenIdentifer, {
         bid: new PriorityQueue(bidComparator),
         ask: new PriorityQueue(askComparator),
       })
     }
 
     if (order.orderType === OrderType.BUY) {
-      orderBook.get(getTokenIdentifier(order))!.bid.enqueue(order)
+      oms.orderbook.get(getTokenIdentifier(order))!.bid.enqueue(order)
     } else {
-      orderBook.get(getTokenIdentifier(order))!.ask.enqueue(order)
+      oms.orderbook.get(getTokenIdentifier(order))!.ask.enqueue(order)
     }
   }
 }
 
 const matchOrders = async (delegatedExchangeContract: ethers.Contract) => {
-  for (const [tokenIdentifier, { bid, ask }] of orderBook) {
+  for (const [tokenIdentifier, { bid, ask }] of oms.orderbook) {
     if (bid.peek() === undefined || ask.peek() === undefined) {
-      console.log('No liquidity') // Send message to client
-      logOrderbook()
-      RUNNING = false
+      // console.log('No liquidity') // Send message to client
+      oms.running = false
       continue
     }
 
@@ -175,7 +176,7 @@ const matchOrders = async (delegatedExchangeContract: ethers.Contract) => {
     console.log('Highest Bid and Lowest Ask', highestBid, lowestAsk)
 
     if (validMatch(highestBid, lowestAsk) === MatchValidity.Valid) {
-      matchOrder(delegatedExchangeContract, bid.dequeue() as Order, ask.dequeue() as Order)
+      await matchOrder(delegatedExchangeContract, bid.dequeue() as Order, ask.dequeue() as Order) // Changed to dequeue when necessary
     } else if (validMatch(highestBid, lowestAsk) === MatchValidity.BidUnvalid) {
       sendToOverflow(bid.dequeue() as Order)
     } else if (validMatch(highestBid, lowestAsk) === MatchValidity.AskUnvalid) {
@@ -189,53 +190,24 @@ const matchOrders = async (delegatedExchangeContract: ethers.Contract) => {
 
 const validMatch = (bidOrder: Order, askOrder: Order): MatchValidity => {
   if (bidOrder.from === askOrder.from) {
-    console.log("Unvalid case 1: same origin")
+    console.log('Unvalid case 1: same origin')
     return MatchValidity.BidAndAskUnvalid
   }
   if (Number(bidOrder.limitPrice) < Number(askOrder.limitPrice)) {
-    console.log("Unvalid case 2: pricing invalid")
+    console.log('Unvalid case 2: pricing invalid')
     return MatchValidity.AskUnvalid // Favors buyers
   }
   if (orderExpired(bidOrder)) {
-    console.log("Unvalid case 3: bid expired")
+    console.log('Unvalid case 3: bid expired')
     return MatchValidity.BidUnvalid
   }
   if (orderExpired(askOrder)) {
-    console.log("Unvalid case 4: ask expired")
+    console.log('Unvalid case 4: ask expired')
     return MatchValidity.AskUnvalid
   }
 
-  console.log("Valid match")
   return MatchValidity.Valid
 }
-
-// Chain
-// struct Order {
-//   string id;
-//   address from;
-//   string tokenAddress;
-//   int32 tokenId;
-//   OrderType orderType;
-//   int256 price;
-//   int256 limitPrice;
-//   int256 quantity;
-//   int32 expiry;
-// }
-
-// Client
-// export interface Order {
-//   id: string . 
-//   from: string .
-//   tokenAddress: string .
-//   tokenId: string x
-//   orderType: OrderType x convert to 0, 1
-//   price: string x 
-//   limitPrice: string x 
-//   quantity: string x 
-//   expiry: string x 
-//   /** Signature of all previous fields */
-//   signature: string
-// }
 
 const mapOrderToContractOrder = (order: Order) => {
   return {
@@ -247,21 +219,46 @@ const mapOrderToContractOrder = (order: Order) => {
     price: ethers.BigNumber.from(order.price),
     limitPrice: ethers.BigNumber.from(order.limitPrice),
     quantity: ethers.BigNumber.from(order.quantity),
-    expiry: Number(order.expiry),
-    signature: order.signature
+    expiry: ethers.BigNumber.from(order.expiry),
+    signature: order.signature,
   }
 }
 
-const matchOrder = async (delegatedExchangeContract: ethers.Contract, bidOrder: Order, askOrder: Order): Promise<void> => {
+const matchOrder = async (
+  delegatedExchangeContract: ethers.Contract,
+  bidOrder: Order,
+  askOrder: Order,
+): Promise<void> => {
   const bidContractOrder = mapOrderToContractOrder(bidOrder)
   const askContractOrder = mapOrderToContractOrder(askOrder)
 
-  console.log("Matching the following orders", bidContractOrder, askContractOrder)
-  await delegatedExchangeContract.executeOrder(bidContractOrder, askContractOrder)
+  console.log('Matching Order with nonce', oms.signerNonce)
+  const nonce = oms.signerNonce
+  oms.signerNonce += 1
+
+  const tx = await delegatedExchangeContract.executeOrder(bidContractOrder, askContractOrder, {
+    nonce: nonce,
+  })
+  await tx.wait()
+
+  postMessage(['order-match', bidOrder.id, askOrder.id])
 }
 
 const sendToOverflow = (order: Order): void => {
-  overflow.push(order);
+  oms.overflow.push(order)
+}
+
+const resetOverflow = () => {
+  for (const order of oms.overflow) {
+    const tokenIdentifier = getTokenIdentifier(order)
+
+    switch (order.orderType) {
+      case OrderType.BUY:
+        oms.orderbook.get(tokenIdentifier)?.bid.enqueue(order)
+      case OrderType.SELL:
+        oms.orderbook.get(tokenIdentifier)?.ask.enqueue(order)
+    }
+  }
 }
 
 // Get the initial Orders [X]
@@ -271,5 +268,7 @@ const sendToOverflow = (order: Order): void => {
 // Determine if orders are a valid match [X]
 // If they are, match them [X]
 // If they aren't send one/both to an overflow buffer where they can be temporarily stored [X]
-// If there is a match, send it to the chain
-// Send a message to the peer that a match has been achieved
+// If there is a match, send it to the chain [X]
+// Send a message to the peer that a match has been achieved [ ]
+// Periodically re-incorporate overflow buffer orders [X]
+// Check signature validity [ ]

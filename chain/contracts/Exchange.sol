@@ -18,7 +18,10 @@ contract Exchange {
   mapping(address => address) public signerAddresses;
   mapping(address => string) public encryptedSignerKeys;
 
-  enum OrderType { BID, ASK }
+  enum OrderType {
+    BID,
+    ASK
+  }
 
   struct Order {
     string id;
@@ -29,11 +32,13 @@ contract Exchange {
     int256 price;
     int256 limitPrice;
     int256 quantity;
-    int32 expiry;
+    int256 expiry;
     bytes signature;
   }
 
   event TokensExchangedAt(address indexed, address indexed, uint256, uint256);
+
+  Order public testOrder;
 
   constructor() {
     uint256 chainId = 1337;
@@ -57,21 +62,24 @@ contract Exchange {
     encryptedSignerKeys[signerAddress] = encryptedSignerKey;
   }
 
-  function toString(bytes memory data) public pure returns(string memory) {
+  function toString(bytes memory data) public pure returns (string memory) {
     bytes memory alphabet = "0123456789abcdef";
 
     bytes memory str = new bytes(2 + data.length * 2);
     str[0] = "0";
     str[1] = "x";
-    for (uint i = 0; i < data.length; i++) {
-        str[2+i*2] = alphabet[uint(uint8(data[i] >> 4))];
-        str[3+i*2] = alphabet[uint(uint8(data[i] & 0x0f))];
+    for (uint256 i = 0; i < data.length; i++) {
+      str[2 + i * 2] = alphabet[uint256(uint8(data[i] >> 4))];
+      str[3 + i * 2] = alphabet[uint256(uint8(data[i] & 0x0f))];
     }
     return string(str);
-}
+  }
 
-  function executeOrder(Order calldata bidOrder, Order calldata askOrder) public pure returns (string memory) {
-    return toString((abi.encodePacked(bidOrder.from)));
+  function executeOrder(Order calldata bidOrder, Order calldata askOrder)
+    public
+    payable
+  {
+    testOrder = bidOrder;
   }
 
   // function executeOrder() public {
