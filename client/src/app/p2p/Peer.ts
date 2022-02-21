@@ -5,14 +5,10 @@ import { Order, Match } from './protocol_buffers/gossip_schema'
 import { IToken, P2PDB } from './db'
 import { OrderStatus, Token } from '../Types'
 import { selectAccountData } from '../store/slices/EthersSlice'
-import { ethers } from 'ethers'
 
 const dispatch = store.dispatch
-const worker: Worker = new Worker(new URL('./../oms/Oms.ts', import.meta.url), { type: 'module' })
 
-worker.onmessage = (e: MessageEvent) => {
-  console.log('Got message from worker', e.data)
-}
+const worker: Worker = new Worker(new URL('./../oms/Oms.ts', import.meta.url), { type: 'module' })
 
 export class Peer {
   static ORDER_TOPIC: string = '/bb/order/1.0.0'
@@ -22,9 +18,34 @@ export class Peer {
   config: Libp2pOptions
   node: Libp2p | null = null
   isValidator: boolean = false
+  signerAddress: string | null = null
 
   constructor(config: Libp2pOptions) {
     this.config = config
+
+    worker.onmessage = (e: MessageEvent) => {
+      if (e.data[0] === 'order-match') {
+        console.log('PEER: OMS matched the following orders', e.data[1], e.data[2])
+
+        console.log('Match Object', {
+          id: (~~(Math.random() * 1e9)).toString(36) + Date.now(),
+          validatorAddress: this.signerAddress, // Rename when appropriate
+          makerId: e.data[1],
+          takerId: e.data[2],
+          status: 'Matched',
+        })
+
+        if (this.isValidator && !!this.signerAddress) {
+          this.publishMatchMessage({
+            id: (~~(Math.random() * 1e9)).toString(36) + Date.now(),
+            validatorAddress: this.signerAddress, // Rename when appropriate
+            makerId: e.data[1],
+            takerId: e.data[2],
+            status: 'Matched',
+          })
+        }
+      }
+    }
   }
 
   async init() {
@@ -110,6 +131,7 @@ export class Peer {
     }
 
     const encodedMatch = Match.encode(match).finish()
+    console.log('Publishing match message', encodedMatch)
     await this.node.pubsub.publish(Peer.MATCH_TOPIC, encodedMatch)
   }
 
@@ -155,6 +177,7 @@ export class Peer {
 
     console.log('Here are the orders we found', matchedMakerOrder, matchedTakerOrder)
     return matchedMakerOrder !== undefined ? matchedMakerOrder : matchedTakerOrder
+    // This should probably be refactored one day
   }
 
   async addMatch(match: Match) {
@@ -171,6 +194,7 @@ export class Peer {
 
   startValidation(signerAddress: string, decryptedSignerKey: string) {
     this.isValidator = true
+    this.signerAddress = signerAddress
     worker.postMessage(['start', signerAddress, decryptedSignerKey])
   }
 

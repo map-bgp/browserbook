@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { Fragment, useEffect } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { Order, OrderType } from '../../app/p2p/protocol_buffers/gossip_schema'
 import { Token, WithStatus } from '../../app/Types'
@@ -9,6 +9,10 @@ type OrderModalProps = {
   open: boolean
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
+
+const expiry = new Date()
+expiry.setHours(expiry.getHours() + 10)
+expiry.setHours(expiry.getMinutes() + 30)
 
 const OrderModal = (props: OrderModalProps) => {
   return (
@@ -98,7 +102,7 @@ const TokenModalContent = (props: OrderModalProps) => {
             <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
               <dt className="text-sm font-medium text-gray-500">Expiry</dt>
               <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                {!!props.order ? new Date(props.order?.expiry * 1000).toUTCString() : ''}
+                {!!props.order ? new Date(Number(props.order?.expiry)).toUTCString() : ''}
               </dd>
             </div>
             <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">

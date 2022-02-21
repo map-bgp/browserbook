@@ -92,14 +92,14 @@ contract Exchange {
     bytes memory transferData
   ) private {
     // Guard against re-entrancy
-    balances[bidOrder.from] -= (price * quantity);
+    balances[bidOrder.from] -= ((price / 1 ether) * quantity);
 
     (bool sent, bytes memory data) = askOrder.from.call{
-      value: (price * quantity)
+      value: ((price / 1 ether) * quantity)
     }("");
 
     if (!sent) {
-      balances[bidOrder.from] += (price * quantity);
+      balances[bidOrder.from] += ((price / 1 ether) * quantity);
     }
 
     require(sent, "Failed to send Ether");
@@ -218,7 +218,8 @@ contract Exchange {
     uint256 price,
     uint256 quantity
   ) private view returns (bool) {
-    return balances[buyer] >= (price * quantity);
+    // Both quantity and price are in wei terms from the client
+    return balances[buyer] >= ((price / 1 ether) * quantity);
   }
 
   function verifySellerLiquidity(

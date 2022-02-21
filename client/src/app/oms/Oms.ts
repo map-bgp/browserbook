@@ -237,24 +237,32 @@ const matchOrder = async (
   oms.signerNonce += 1
 
   console.log(
-    'Signature Verification: Bid',
-    await delegatedExchangeContract.verifySignature(bidContractOrder),
+    'Buyer Balance',
+    ethers.utils.formatEther(
+      (await delegatedExchangeContract.balances(bidContractOrder.from)).toString(),
+    ),
   )
 
   console.log(
-    'Signature Verification: Ask',
-    await delegatedExchangeContract.verifySignature(askContractOrder),
+    'Total payment',
+    ethers.utils.formatEther(
+      bidContractOrder.price
+        .mul(bidContractOrder.quantity)
+        .div(ethers.BigNumber.from('1000000000000000000')),
+    ),
   )
-  // const tx = await delegatedExchangeContract.executeOrder(
-  //   bidContractOrder,
-  //   askContractOrder,
-  //   bidContractOrder.quantity,
-  //   ethers.utils.randomBytes(32),
-  //   {
-  //     nonce: nonce,
-  //   },
-  // )
-  // await tx.wait()
+
+  const tx = await delegatedExchangeContract.executeOrder(
+    bidContractOrder,
+    askContractOrder,
+    bidContractOrder.price,
+    bidContractOrder.quantity,
+    ethers.utils.randomBytes(32),
+    {
+      nonce: nonce,
+    },
+  )
+  await tx.wait()
 
   postMessage(['order-match', bidOrder.id, askOrder.id])
 }
@@ -284,6 +292,6 @@ const resetOverflow = () => {
 // If they are, match them [X]
 // If they aren't send one/both to an overflow buffer where they can be temporarily stored [X]
 // If there is a match, send it to the chain [X]
-// Send a message to the peer that a match has been achieved [ ]
+// Send a message to the peer that a match has been achieved [X]
 // Periodically re-incorporate overflow buffer orders [X]
 // Check signature validity [ ]
