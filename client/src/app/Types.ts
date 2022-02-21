@@ -1,3 +1,5 @@
+import { ethers as ethersLib } from 'ethers'
+
 export type TokenContract = {
   uri: string
   address: string
@@ -52,4 +54,17 @@ export type TransferTokenOptions = {
   contractAddress: string
   token: Token
   quantity: string
+}
+
+export type ChainOrder = {
+  id: string
+  from: string
+  tokenAddress: string
+  tokenId: ethersLib.BigNumber
+  orderType: number
+  price: ethersLib.BigNumber
+  limitPrice: ethersLib.BigNumber
+  quantity: ethersLib.BigNumber
+  expiry: ethersLib.BigNumber
+  signature: string
 }

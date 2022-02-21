@@ -1156,6 +1156,77 @@ const Exchange: Contract = {
       type: 'function',
     },
     {
+      inputs: [
+        {
+          components: [
+            {
+              internalType: 'string',
+              name: 'id',
+              type: 'string',
+            },
+            {
+              internalType: 'address',
+              name: 'from',
+              type: 'address',
+            },
+            {
+              internalType: 'address',
+              name: 'tokenAddress',
+              type: 'address',
+            },
+            {
+              internalType: 'uint256',
+              name: 'tokenId',
+              type: 'uint256',
+            },
+            {
+              internalType: 'enum Exchange.OrderType',
+              name: 'orderType',
+              type: 'uint8',
+            },
+            {
+              internalType: 'uint256',
+              name: 'price',
+              type: 'uint256',
+            },
+            {
+              internalType: 'uint256',
+              name: 'limitPrice',
+              type: 'uint256',
+            },
+            {
+              internalType: 'uint256',
+              name: 'quantity',
+              type: 'uint256',
+            },
+            {
+              internalType: 'uint256',
+              name: 'expiry',
+              type: 'uint256',
+            },
+            {
+              internalType: 'bytes',
+              name: 'signature',
+              type: 'bytes',
+            },
+          ],
+          internalType: 'struct Exchange.Order',
+          name: 'order',
+          type: 'tuple',
+        },
+      ],
+      name: 'verifySignature',
+      outputs: [
+        {
+          internalType: 'bool',
+          name: '',
+          type: 'bool',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
       inputs: [],
       name: 'withdrawEther',
       outputs: [],

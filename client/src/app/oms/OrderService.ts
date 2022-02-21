@@ -1,5 +1,5 @@
 import { ethers as ethersLib } from 'ethers'
-import { Token } from '../Types'
+import { ChainOrder, Token } from '../Types'
 import { ethers } from '../store/globals/ethers'
 import { peer } from '../store/globals/peer'
 import { OrderType, Order } from '../p2p/protocol_buffers/gossip_schema'
@@ -26,12 +26,12 @@ const OrderTypes = {
     { name: 'id', type: 'string' },
     { name: 'from', type: 'address' },
     { name: 'tokenAddress', type: 'address' },
-    { name: 'tokenId', type: 'string' },
+    { name: 'tokenId', type: 'uint256' },
     { name: 'orderType', type: 'uint' },
-    { name: 'price', type: 'string' },
-    { name: 'limitPrice', type: 'string' },
-    { name: 'quantity', type: 'string' },
-    { name: 'expiry', type: 'string' },
+    { name: 'price', type: 'uint256' },
+    { name: 'limitPrice', type: 'uint256' },
+    { name: 'quantity', type: 'uint256' },
+    { name: 'expiry', type: 'uint256' },
   ],
 }
 
@@ -41,7 +41,7 @@ const getDateExpiryInMs = (expiryHours: string, expiryMinutes: string) => {
   expiry.setHours(expiry.getHours() + Number(expiryHours))
   expiry.setHours(expiry.getMinutes() + Number(expiryMinutes))
 
-  return Math.floor(expiry.getTime()).toString()
+  return Math.floor(expiry.getTime())
 }
 
 export const submitOrder = async (
@@ -60,19 +60,33 @@ export const submitOrder = async (
     await setExchangeApprovalForTokenContract(fromAddress, token.contract.address)
   }
 
-  const unsignedOrder: Omit<Order, 'signature'> = {
+  const unsignedOrder: Omit<ChainOrder, 'signature'> = {
     id: (~~(Math.random() * 1e9)).toString(36) + Date.now(),
     from: fromAddress,
     tokenAddress: token.contract.address,
-    tokenId: token.id,
-    orderType: orderType,
-    price: ethersLib.utils.parseEther(price).toString(),
-    limitPrice: ethersLib.utils.parseEther(limitPrice).toString(),
-    quantity: ethersLib.utils.parseEther(quantity).toString(),
-    expiry: getDateExpiryInMs(expiryHours, expiryMinutes),
+    tokenId: ethersLib.BigNumber.from(token.id),
+    orderType: orderType === OrderType.BUY ? 0 : 1,
+    price: ethersLib.utils.parseEther(price),
+    limitPrice: ethersLib.utils.parseEther(limitPrice),
+    quantity: ethersLib.utils.parseEther(quantity),
+    expiry: ethersLib.BigNumber.from(getDateExpiryInMs(expiryHours, expiryMinutes)),
   }
 
   const signature = await signer?._signTypedData(OrderDomain, OrderTypes, unsignedOrder)
-  const signedOrder = { ...unsignedOrder, signature }
+  const signedOrder: Order = { ...chainOrderToPeerOrder(unsignedOrder), signature }
   await peer.publishOrder(signedOrder)
+}
+
+const chainOrderToPeerOrder = (chainOrder: Omit<ChainOrder, 'signature'>): Omit<Order, 'signature'> => {
+  return {
+    id: chainOrder.id,
+    from: chainOrder.from,
+    tokenAddress: chainOrder.tokenAddress,
+    tokenId: chainOrder.tokenId.toString(),
+    orderType: chainOrder.orderType === 0 ? OrderType.BUY : OrderType.SELL,
+    price: chainOrder.price.toString(),
+    limitPrice: chainOrder.limitPrice.toString(),
+    quantity: chainOrder.quantity.toString(),
+    expiry: chainOrder.expiry.toString(),
+  }
 }

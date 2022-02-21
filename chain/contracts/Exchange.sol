@@ -2,7 +2,6 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
-import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract Exchange {
   using ECDSA for bytes32;
@@ -14,35 +13,15 @@ contract Exchange {
       "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
     );
 
-  // const OrderDomain = {
-  //   name: 'BrowserBook',
-  //   version: '1',
-  //   chainId: 31337,
-  //   verifyingContract: exchangeAddress,
-  // }
-
-  // const OrderTypes = {
-  //   Order: [
-  //     { name: 'id', type: 'string' },
-  //     { name: 'from', type: 'address' },
-  //     { name: 'tokenAddress', type: 'address' },
-  //     { name: 'tokenId', type: 'string' },
-  //     { name: 'orderType', type: 'uint' },
-  //     { name: 'price', type: 'string' },
-  //     { name: 'limitPrice', type: 'string' },
-  //     { name: 'quantity', type: 'string' },
-  //     { name: 'expiry', type: 'string' },
-  //   ],
-  // }
-
   bytes32 public constant ORDERS_TYPEHASH =
     keccak256(
-      "Order(string id,address from,address tokenAddress,string tokenId,uint orderType,string price,string limitPrice,string quantity,string expiry)"
+      "Order(string id,address from,address tokenAddress,uint256 tokenId,uint orderType,uint256 price,uint256 limitPrice,uint256 quantity,uint256 expiry)"
     );
 
   mapping(address => uint256) public balances;
   mapping(address => address) public signerAddresses;
   mapping(address => string) public encryptedSignerKeys;
+  mapping(bytes => bool) private usedSignatures;
 
   enum OrderType {
     BID,
@@ -105,25 +84,22 @@ contract Exchange {
     returns (bool)
   {}
 
-  function totalPrice(Order memory order) private pure returns (uint256) {
-    return order.price * order.quantity;
-  }
-
   function exchangeTokens(
     Order memory bidOrder,
     Order memory askOrder,
+    uint256 price,
     uint256 quantity,
     bytes memory transferData
   ) private {
     // Guard against re-entrancy
-    balances[bidOrder.from] -= totalPrice(askOrder);
+    balances[bidOrder.from] -= (price * quantity);
 
     (bool sent, bytes memory data) = askOrder.from.call{
-      value: totalPrice(askOrder)
+      value: (price * quantity)
     }("");
 
     if (!sent) {
-      balances[bidOrder.from] += askOrder.price;
+      balances[bidOrder.from] += (price * quantity);
     }
 
     require(sent, "Failed to send Ether");
@@ -135,68 +111,138 @@ contract Exchange {
       quantity,
       transferData
     );
+
+    usedSignatures[bidOrder.signature] = true;
+    usedSignatures[askOrder.signature] = true;
   }
 
   function executeOrder(
     Order calldata bidOrder,
     Order calldata askOrder,
+    uint256 price,
     uint256 quantity,
     bytes calldata data
   ) public {
-    // Signatures
-    require(
-      verifySignature(bidOrder, bidOrder.signature),
-      "INVALID_SIGNATURE_FOR_BID_ORDER"
-    );
-    require(
-      verifySignature(askOrder, askOrder.signature),
-      "INVALID_SIGNATURE_FOR_ASK_ORDER"
-    );
-    // Quantity
-    // Check valid balance
-    // Verify expiry, funds, etc.
+    // Ensure we are trading the same tokens
+    require(verifyTokens(bidOrder, askOrder), "ORDER TOKENS DO NOT MATCH");
 
-    exchangeTokens(bidOrder, askOrder, quantity, data);
+    // Ensure orders are not expired (to some reasonable degree)
+    require(verifyExpiry(bidOrder), "ORDER_EXPIRED: BID");
+    require(verifyExpiry(askOrder), "ORDER_EXPIRED: ASK");
+
+    // Ensure the specified exchange price falls within limits
+    require(verifyBuyerPrice(price, bidOrder), "INVALID_PRICE: BID");
+    require(verifySellerPrice(price, askOrder), "INVALID_PRICE: ASK");
+
+    // Ensure the specified exchange quantity falls within limits
+    require(
+      verifyQuantity(quantity, bidOrder),
+      "INVALID_EXECUTION_AMOUNT: BID"
+    );
+    require(
+      verifyQuantity(quantity, askOrder),
+      "INVALID_EXECUTION_AMOUNT: ASK"
+    );
+
+    // Verify buyer has sufficient funds
+    require(
+      verifyBuyerLiquidity(bidOrder.from, price, quantity),
+      "INSUFFICIENT_FUNDS: BID"
+    );
+
+    // Verify seller has sufficient tokens
+    require(
+      verifySellerLiquidity(
+        askOrder.from,
+        askOrder.tokenAddress,
+        askOrder.tokenId,
+        quantity
+      ),
+      "INSUFFICIENT_FUNDS: ASK"
+    );
+
+    // Verify signatures
+    require(verifySignature(bidOrder), "INVALID_SIGNATURE: BID");
+    require(verifySignature(askOrder), "INVALID_SIGNATURE: ASK");
+
+    // Verify only used once
+    require(verifySignatureNotUsed(bidOrder.signature), "SIGNATURE_USED: BID");
+    require(verifySignatureNotUsed(askOrder.signature), "SIGNATURE_USED: ASK");
+
+    exchangeTokens(bidOrder, askOrder, price, quantity, data);
   }
 
-  // const OrderDomain = {
-  //   name: 'BrowserBook',
-  //   version: '1',
-  //   chainId: 31337,
-  //   verifyingContract: exchangeAddress,
-  // }
-
-  // const OrderTypes = {
-  //   Order: [
-  //     { name: 'id', type: 'string' },
-  //     { name: 'from', type: 'address' },
-  //     { name: 'tokenAddress', type: 'address' },
-  //     { name: 'tokenId', type: 'string' },
-  //     { name: 'orderType', type: 'uint' },
-  //     { name: 'price', type: 'string' },
-  //     { name: 'limitPrice', type: 'string' },
-  //     { name: 'quantity', type: 'string' },
-  //     { name: 'expiry', type: 'string' },
-  //   ],
-  // }
-
-  function verifySignature(Order memory order, bytes memory signature)
-    internal
-    view
+  function verifyTokens(Order memory bidOrder, Order memory askOrder)
+    private
+    pure
     returns (bool)
   {
+    return
+      bidOrder.tokenAddress == askOrder.tokenAddress &&
+      bidOrder.tokenId == askOrder.tokenId;
+  }
+
+  // Orders can be valid for up to 15 minutes past their expiry time in order to account for "block time shift" (CB words)
+  function verifyExpiry(Order memory order) private view returns (bool) {
+    return ((order.expiry / 1000) + 900) > block.timestamp;
+  }
+
+  // Buyers take
+  function verifyBuyerPrice(uint256 price, Order memory bidOrder)
+    private
+    pure
+    returns (bool)
+  {
+    return bidOrder.limitPrice >= price;
+  }
+
+  // Sellers make
+  function verifySellerPrice(uint256 price, Order memory askOrder)
+    private
+    pure
+    returns (bool)
+  {
+    return askOrder.price == price;
+  }
+
+  function verifyQuantity(uint256 quantity, Order memory order)
+    private
+    pure
+    returns (bool)
+  {
+    return quantity <= order.quantity;
+  }
+
+  function verifyBuyerLiquidity(
+    address buyer,
+    uint256 price,
+    uint256 quantity
+  ) private view returns (bool) {
+    return balances[buyer] >= (price * quantity);
+  }
+
+  function verifySellerLiquidity(
+    address seller,
+    address tokenAddress,
+    uint256 tokenId,
+    uint256 quantity
+  ) private view returns (bool) {
+    return IERC1155(tokenAddress).balanceOf(seller, tokenId) >= quantity;
+  }
+
+  function verifySignature(Order memory order) public view returns (bool) {
     bytes32 orderHash = keccak256(
       abi.encode(
         ORDERS_TYPEHASH,
         keccak256(bytes(order.id)),
         order.from,
         order.tokenAddress,
-        keccak256(bytes(Strings.toString(order.tokenId))),
         order.tokenId,
-        keccak256(bytes(Strings.toString(order.price))),
-        keccak256(bytes(Strings.toString(order.limitPrice))),
-        keccak256(bytes(Strings.toString(order.quantity))),
-        keccak256(bytes(Strings.toString(order.expiry)))
+        order.orderType,
+        order.price,
+        order.limitPrice,
+        order.quantity,
+        order.expiry
       )
     );
 
@@ -204,6 +250,14 @@ contract Exchange {
       abi.encodePacked("\x19\x01", DOMAIN_SEPARATOR, orderHash)
     );
 
-    return digest.recover(signature) == order.from;
+    return digest.recover(order.signature) == order.from;
+  }
+
+  function verifySignatureNotUsed(bytes memory signature)
+    private
+    view
+    returns (bool)
+  {
+    return !usedSignatures[signature];
   }
 }

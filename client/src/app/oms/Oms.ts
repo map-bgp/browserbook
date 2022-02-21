@@ -4,7 +4,7 @@ import { PriorityQueue } from 'typescript-collections'
 import { ContractMetadata, ContractName } from '../chain/ContractMetadata'
 import { Order, OrderType } from '../p2p/protocol_buffers/gossip_schema'
 import { db } from '../store/globals/db'
-import { OrderStatus } from '../Types'
+import { ChainOrder, OrderStatus } from '../Types'
 
 enum MatchValidity {
   Valid = 'VALID',
@@ -209,7 +209,7 @@ const validMatch = (bidOrder: Order, askOrder: Order): MatchValidity => {
   return MatchValidity.Valid
 }
 
-const mapOrderToContractOrder = (order: Order) => {
+const peerOrderToChainOrder = (order: Order): ChainOrder => {
   return {
     id: order.id,
     from: order.from,
@@ -229,23 +229,32 @@ const matchOrder = async (
   bidOrder: Order,
   askOrder: Order,
 ): Promise<void> => {
-  const bidContractOrder = mapOrderToContractOrder(bidOrder)
-  const askContractOrder = mapOrderToContractOrder(askOrder)
+  const bidContractOrder = peerOrderToChainOrder(bidOrder)
+  const askContractOrder = peerOrderToChainOrder(askOrder)
 
   console.log('Matching Order with nonce', oms.signerNonce)
   const nonce = oms.signerNonce
   oms.signerNonce += 1
 
-  const tx = await delegatedExchangeContract.executeOrder(
-    bidContractOrder,
-    askContractOrder,
-    bidContractOrder.quantity,
-    ethers.utils.randomBytes(32),
-    {
-      nonce: nonce,
-    },
+  console.log(
+    'Signature Verification: Bid',
+    await delegatedExchangeContract.verifySignature(bidContractOrder),
   )
-  await tx.wait()
+
+  console.log(
+    'Signature Verification: Ask',
+    await delegatedExchangeContract.verifySignature(askContractOrder),
+  )
+  // const tx = await delegatedExchangeContract.executeOrder(
+  //   bidContractOrder,
+  //   askContractOrder,
+  //   bidContractOrder.quantity,
+  //   ethers.utils.randomBytes(32),
+  //   {
+  //     nonce: nonce,
+  //   },
+  // )
+  // await tx.wait()
 
   postMessage(['order-match', bidOrder.id, askOrder.id])
 }
