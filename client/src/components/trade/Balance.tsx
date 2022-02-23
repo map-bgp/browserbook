@@ -2,7 +2,12 @@ import { XCircleIcon } from '@heroicons/react/outline'
 import { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../../app/Hooks'
 import { selectAccountData, selectTokenStatus } from '../../app/store/slices/EthersSlice'
-import { depositEtherThunk, getBalance, selectBalance } from '../../app/store/slices/PeerSlice'
+import {
+  depositEtherThunk,
+  getBalance,
+  selectBalance,
+  withdrawEtherThunk,
+} from '../../app/store/slices/PeerSlice'
 import { Spinner } from '../elements/Spinner'
 
 const Balance = () => {
@@ -21,13 +26,23 @@ const Balance = () => {
     }
   }, [primaryAccount])
 
-  const handleSubmit = () => {
+  const handleDepositSubmit = () => {
     setError('')
     setAmount('')
     if (!primaryAccount) {
       throw new Error('Cannot deposit ether without valid account')
     }
     dispatch(depositEtherThunk({ amount, address: primaryAccount }))
+  }
+
+  const handleWithdrawSubmit = () => {
+    setError('')
+    setAmount('')
+
+    if (!primaryAccount) {
+      throw new Error('Cannot deposit ether without valid account')
+    }
+    dispatch(withdrawEtherThunk({ amount, address: primaryAccount }))
   }
 
   return (
@@ -107,12 +122,20 @@ const Balance = () => {
             </div>
           )}
           <button
-            onClick={() => handleSubmit()}
+            onClick={() => handleWithdrawSubmit()}
+            className={
+              'mr-2 block flex items-end rounded-md border border-orange-600 bg-white px-4 py-2 text-sm font-medium text-orange-600 shadow-sm hover:bg-orange-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 active:bg-orange-900'
+            }
+          >
+            Withdraw All
+          </button>
+          <button
+            onClick={() => handleDepositSubmit()}
             className={
               'block flex items-end rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 active:bg-orange-900'
             }
           >
-            Submit
+            Deposit
           </button>
         </div>
       </div>

@@ -103,6 +103,15 @@ export const queryImportedTokens = async (accountAddress: string) => {
   return tokens
 }
 
+export const queryDividendLoad = async (contractAddress: string, tokenId: string) => {
+  const wrapper = new EtherContractWrapper()
+
+  const contractName = ContractName.Token
+  const contract = await wrapper.getContract(contractName, contractAddress)
+
+  return (await wrapper.provider.getBalance(contractAddress)).toString()
+}
+
 export const queryOrders = async (addressFilter?: string) => {
   if (addressFilter !== undefined) {
     return await db.orders.where('from').equals(addressFilter).reverse().toArray()

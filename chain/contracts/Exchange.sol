@@ -76,6 +76,7 @@ contract Exchange {
       value: balances[msg.sender]
     }("");
     require(sent, "Failed to send Ether");
+    balances[msg.sender] = 0;
   }
 
   function verifyOrderSignatures(Order memory bidOrder, Order memory askOrder)

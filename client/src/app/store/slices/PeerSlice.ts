@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { ethers as ethersLib } from 'ethers'
-import { depositEther } from '../../oms/Chain'
-import { queryBalance, queryOrders } from '../../oms/Queries'
+import { depositDividend, depositEther, withdrawEther } from '../../oms/Chain'
+import { queryBalance, queryDividendLoad, queryOrders } from '../../oms/Queries'
 import { Order } from '../../p2p/protocol_buffers/gossip_schema'
 import { OrderStatus, WithStatus } from '../../Types'
 import type { RootState } from '../Store'
@@ -60,10 +60,32 @@ export const getBalance = createAsyncThunk(
   },
 )
 
+// export const getDividendLoad = createAsyncThunk(
+//   'peer/getDividendLoad',
+//   async (contractAddress: string): Promise<string> => {
+//     return await queryDividendLoad(contractAddress, '0')
+//   },
+// )
+
+export const depositDividendThunk = createAsyncThunk(
+  'peer/depositDividendThunk',
+  async (options: { amount: string; contractAddress: string; tokenId: string }): Promise<void> => {
+    await depositDividend(options.amount, options.contractAddress, options.tokenId)
+  },
+)
+
 export const depositEtherThunk = createAsyncThunk(
   'peer/depositEther',
   async (options: { amount: string; address: string }, thunkAPI: any): Promise<void> => {
     await depositEther(options.amount)
+    thunkAPI.dispatch(getBalance(options.address))
+  },
+)
+
+export const withdrawEtherThunk = createAsyncThunk(
+  'peer/withdrawEther',
+  async (options: { amount: string; address: string }, thunkAPI: any): Promise<void> => {
+    await withdrawEther(options.amount)
     thunkAPI.dispatch(getBalance(options.address))
   },
 )
@@ -113,6 +135,9 @@ export const peerSlice = createSlice({
       .addCase(getBalance.fulfilled, (state, action) => {
         ;(state.status = 'idle'), (state.balance = action.payload)
       })
+      // .addCase(getDividendLoad.fulfilled, (state, action) => {
+      //   ;(state.status = 'idle'), (state.b = action.payload)
+      // })
       .addCase(depositEtherThunk.pending, (state) => {
         state.status = 'loading'
       })
@@ -120,6 +145,15 @@ export const peerSlice = createSlice({
         state.status = 'idle'
       })
       .addCase(depositEtherThunk.rejected, (state) => {
+        state.status = 'idle'
+      })
+      .addCase(withdrawEtherThunk.pending, (state) => {
+        state.status = 'loading'
+      })
+      .addCase(withdrawEtherThunk.fulfilled, (state) => {
+        state.status = 'idle'
+      })
+      .addCase(withdrawEtherThunk.rejected, (state) => {
         state.status = 'idle'
       })
   },
