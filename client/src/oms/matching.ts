@@ -18,7 +18,7 @@ export enum MatchingStatus {
 }
 
 export interface IOrders {
-  id?: string
+  id: string
   tokenS: Tokens
   tokenB: Tokens
   actionType: ActionType

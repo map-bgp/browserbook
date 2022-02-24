@@ -1,0 +1,3 @@
+[submodule "Browserbook"]
+	path = Browserbook
+	url = git@github.com:map-bgp/browserbook-subgraph.git
