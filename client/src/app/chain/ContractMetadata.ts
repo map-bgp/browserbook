@@ -378,11 +378,6 @@ const Token: VariableContract = {
     {
       inputs: [
         {
-          internalType: 'address',
-          name: 'account',
-          type: 'address',
-        },
-        {
           internalType: 'uint256',
           name: 'id',
           type: 'uint256',
@@ -390,26 +385,7 @@ const Token: VariableContract = {
       ],
       name: 'dividendClaim',
       outputs: [],
-      stateMutability: 'payable',
-      type: 'function',
-    },
-    {
-      inputs: [
-        {
-          internalType: 'uint256',
-          name: '',
-          type: 'uint256',
-        },
-      ],
-      name: 'fungibleClaimableAmount',
-      outputs: [
-        {
-          internalType: 'uint256',
-          name: 'size',
-          type: 'uint256',
-        },
-      ],
-      stateMutability: 'view',
+      stateMutability: 'nonpayable',
       type: 'function',
     },
     {
@@ -438,6 +414,30 @@ const Token: VariableContract = {
       name: 'fungibleMint',
       outputs: [],
       stateMutability: 'nonpayable',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
+          internalType: 'address',
+          name: 'account',
+          type: 'address',
+        },
+        {
+          internalType: 'uint256',
+          name: 'id',
+          type: 'uint256',
+        },
+      ],
+      name: 'getDividendAmount',
+      outputs: [
+        {
+          internalType: 'uint256',
+          name: '',
+          type: 'uint256',
+        },
+      ],
+      stateMutability: 'view',
       type: 'function',
     },
     {

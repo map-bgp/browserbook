@@ -103,6 +103,7 @@ export const queryImportedTokens = async (accountAddress: string) => {
   return tokens
 }
 
+// Needs to be fixed per token basis
 export const queryDividendLoad = async (contractAddress: string, tokenId: string) => {
   const wrapper = new EtherContractWrapper()
 
@@ -110,6 +111,15 @@ export const queryDividendLoad = async (contractAddress: string, tokenId: string
   const contract = await wrapper.getContract(contractName, contractAddress)
 
   return (await wrapper.provider.getBalance(contractAddress)).toString()
+}
+
+export const queryDividendClaim = async (contractAddress: string, tokenId: string, address: string) => {
+  const wrapper = new EtherContractWrapper()
+
+  const contractName = ContractName.Token
+  const contract = await wrapper.getContract(contractName, contractAddress)
+
+  return (await contract.getDividendAmount(address, tokenId)).toString()
 }
 
 export const queryOrders = async (addressFilter?: string) => {

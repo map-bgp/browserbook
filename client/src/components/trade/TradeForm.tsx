@@ -1,3 +1,4 @@
+import { ethers as ethersLib } from 'ethers'
 import { RadioGroup } from '@headlessui/react'
 import { InformationCircleIcon, XCircleIcon } from '@heroicons/react/outline'
 import { useEffect, useState } from 'react'
@@ -9,6 +10,7 @@ import { selectTokens } from '../../app/store/slices/TokensSlice'
 import { Token, TokenType } from '../../app/Types'
 import { classNames, getDateAtInterval } from '../utils/utils'
 import TokenSelect from '../elements/TokenSelect'
+import { selectBalance } from '../../app/store/slices/PeerSlice'
 
 const InfoPanel = (props: { message: string; link: string }) => {
   return (
@@ -33,6 +35,7 @@ const InfoPanel = (props: { message: string; link: string }) => {
 const TradeForm = () => {
   const { primaryAccount } = useAppSelector(selectAccountData)
   const tokens = useAppSelector(selectTokens)
+  const balance = useAppSelector(selectBalance)
   const [selected, setSelected] = useState<Token>(tokens[0])
   const [orderType, setOrderType] = useState<OrderType>(OrderType.BUY)
   const [price, setPrice] = useState<string>('')
@@ -67,6 +70,8 @@ const TradeForm = () => {
       setError('Quantity cannot be 0')
     } else if (Number(expiryHours) === 0) {
       setError('Expiry must be at least one hour')
+    } else if (Number(balance) < Number(limitPrice) * Number(quantity)) {
+      setError('Insufficient funds')
     } else if (primaryAccount === null) {
       setError('Could not find your account. Is your wallet connected?')
       throw new Error('Trying to submit order without accompanying address')

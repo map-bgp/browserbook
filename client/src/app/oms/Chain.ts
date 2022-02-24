@@ -96,6 +96,16 @@ export const depositDividend = async (amount: string, contractAddress: string, t
   await tx.wait()
 }
 
+export const withdrawDividend = async (contractAddress: string, tokenId: string) => {
+  const wrapper = new EtherContractWrapper()
+
+  const contractName = ContractName.Token
+  const contract = await wrapper.getContract(contractName, contractAddress)
+
+  const tx = await contract.dividendClaim(tokenId.toString())
+  await tx.wait()
+}
+
 export const depositEther = async (amount: string) => {
   const wrapper = new EtherContractWrapper()
 

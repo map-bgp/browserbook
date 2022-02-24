@@ -30,7 +30,7 @@ contract BBToken is ERC1155 {
 
   // Used for fungible dividends
   mapping(uint256 => itmap) private _fungibleHolderAmount;
-  mapping(uint256 => itmap) public fungibleClaimableAmount;
+  mapping(uint256 => itmap) private _fungibleClaims;
 
   // Constants receiver callbacks
   bytes4 public constant ERC1155_RECEIVED = 0xf23a6e61;
@@ -170,22 +170,38 @@ contract BBToken is ERC1155 {
     for (uint256 i = 1; _fungibleHolderAmount[id].valid(i); i += 1) {
       (account, value) = _fungibleHolderAmount[id].get(i);
       dividendShare = value.div(tokenSupply[id]).mul(dividend);
-      fungibleClaimableAmount[id].insert(account, dividendShare);
+      _fungibleClaims[id].insert(account, dividendShare);
     }
-
-    // emit ownerCredited(id, dividend);
   }
 
-  function dividendClaim(address account, uint256 id) public payable {
+  function dividendClaim(uint256 id) public {
     require(
       !isNonFungible[id],
       "TRIED_TO_CLAIM_DIVIDEND_FOR_NON_FUNGIBLE_TOKEN"
     );
 
-    uint256 keyIndex = fungibleClaimableAmount[id].getKeyIndex(account);
-    (, uint256 value) = fungibleClaimableAmount[id].get(keyIndex);
+    uint256 keyIndex = _fungibleClaims[id].getKeyIndex(msg.sender);
+    (, uint256 value) = _fungibleClaims[id].get(keyIndex);
 
-    fungibleClaimableAmount[id].reduce(account, value);
-    payable(account).transfer(value);
+    _fungibleClaims[id].reduce(msg.sender, value);
+    payable(msg.sender).transfer(value);
+  }
+
+  function getDividendAmount(address account, uint256 id)
+    public
+    view
+    returns (uint256)
+  {
+    address tmp;
+    uint256 value;
+
+    for (uint256 i = 1; _fungibleHolderAmount[id].valid(i); i += 1) {
+      (tmp, value) = _fungibleHolderAmount[id].get(i);
+      if (tmp == account) {
+        return value;
+      }
+    }
+
+    return 0;
   }
 }

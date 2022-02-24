@@ -1,8 +1,11 @@
-import { Fragment } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { selectTokenById } from '../../app/store/slices/TokensSlice'
 import { store } from '../../app/store/Store'
 import { Token } from '../../app/Types'
+import { queryDividendClaim } from '../../app/oms/Queries'
+import { useAppSelector } from '../../app/Hooks'
+import { selectAccountData } from '../../app/store/slices/EthersSlice'
 
 type TokenModalProps = {
   token: Token | null
@@ -52,7 +55,22 @@ const TokenModal = (props: TokenModalProps) => {
 }
 
 const TokenModalContent = (props: TokenModalProps) => {
+  const { primaryAccount } = useAppSelector(selectAccountData)
   const token = props.token
+  const [dividendClaimAmount, setDividendClaimAmount] = useState<string>('')
+
+  useEffect(() => {
+    const getDividendClaimAmount = async () => {
+      if (!!primaryAccount && !!token) {
+        console.log('Requesting')
+        const dividendLoad = await queryDividendClaim(token.contract.address, token.id, primaryAccount)
+        console.log('Dividend Load', dividendLoad)
+        setDividendClaimAmount(dividendLoad)
+      }
+    }
+
+    getDividendClaimAmount()
+  }, [primaryAccount, token])
 
   return (
     <form className="space-y-8 divide-y divide-gray-200">
@@ -83,6 +101,12 @@ const TokenModalContent = (props: TokenModalProps) => {
             <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
               <dt className="text-sm font-medium text-gray-500">Metadata URI</dt>
               <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{token?.metadataURI}</dd>
+            </div>
+            <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
+              <dt className="text-sm font-medium text-gray-500">Dividend Claim</dt>
+              <dd className="mt-1 text-sm text-orange-600 sm:col-span-2 sm:mt-0">
+                {dividendClaimAmount}
+              </dd>
             </div>
           </dl>
         </div>
