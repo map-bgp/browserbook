@@ -10,10 +10,6 @@ type OrderModalProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const expiry = new Date()
-expiry.setHours(expiry.getHours() + 10)
-expiry.setHours(expiry.getMinutes() + 30)
-
 const OrderModal = (props: OrderModalProps) => {
   return (
     <Transition.Root show={props.open} as={Fragment}>

@@ -126,7 +126,7 @@ export const MyOrders = () => {
                                 ></a>
                               ) : (
                                 <a
-                                  title="Order Expired"
+                                  title="Order Expired/Rejected"
                                   className="relative ml-5 inline-flex h-3 w-3 rounded-full bg-red-500"
                                 ></a>
                               )}

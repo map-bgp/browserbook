@@ -36,12 +36,9 @@ const OrderTypes = {
 }
 
 const getDateExpiryInMs = (expiryHours: string, expiryMinutes: string) => {
-  const expiry = new Date()
-
-  expiry.setHours(expiry.getHours() + Number(expiryHours))
-  expiry.setHours(expiry.getMinutes() + Number(expiryMinutes))
-
-  return Math.floor(expiry.getTime())
+  return new Date(
+    new Date().getTime() + Number(expiryHours) * 60 * 60000 + Number(expiryMinutes) * 60000,
+  ).valueOf()
 }
 
 export const submitOrder = async (

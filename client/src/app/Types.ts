@@ -26,7 +26,8 @@ export enum TokenType {
 export enum OrderStatus {
   Pending = 'PENDING',
   Matched = 'MATCHED',
-  Expired = 'Expired',
+  Expired = 'EXPIRED',
+  Rejected = 'REJECTED',
 }
 
 export const ensure = <T>(

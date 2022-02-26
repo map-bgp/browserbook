@@ -24,25 +24,30 @@ export class Peer {
     this.config = config
 
     worker.onmessage = (e: MessageEvent) => {
-      if (e.data[0] === 'order-match') {
-        console.log('PEER: OMS matched the following orders', e.data[1], e.data[2])
-
-        console.log('Match Object', {
-          id: (~~(Math.random() * 1e9)).toString(36) + Date.now(),
-          validatorAddress: this.signerAddress, // Rename when appropriate
-          makerId: e.data[1],
-          takerId: e.data[2],
-          status: 'Matched',
-        })
-
-        if (this.isValidator && !!this.signerAddress) {
-          this.publishMatchMessage({
+      if (this.isValidator && !!this.signerAddress) {
+        if (e.data[0] === 'order-match') {
+          const match = {
             id: (~~(Math.random() * 1e9)).toString(36) + Date.now(),
             validatorAddress: this.signerAddress, // Rename when appropriate
             makerId: e.data[1],
             takerId: e.data[2],
             status: 'Matched',
-          })
+          }
+
+          this.publishMatchMessage(match)
+          this.addMatch(match) // Match may be from own order
+        }
+        if (e.data[0] === 'order-rejection') {
+          const match = {
+            id: (~~(Math.random() * 1e9)).toString(36) + Date.now(),
+            validatorAddress: this.signerAddress,
+            makerId: e.data[1],
+            takerId: e.data[2],
+            status: 'Rejected',
+          }
+
+          this.publishMatchMessage(match)
+          this.addMatch(match) // Match may be from own order
         }
       }
     }
@@ -117,7 +122,11 @@ export class Peer {
 
   async processMatchMessage(encodedMatch: any) {
     const decodedMatch = Match.decode(encodedMatch.data)
-    console.log('Decoded match', decodedMatch)
+
+    if (decodedMatch.status === 'Matched') {
+      worker.postMessage(['matched-order', decodedMatch.makerId, decodedMatch.takerId])
+    }
+
     await this.addMatch(decodedMatch)
   }
 
@@ -131,7 +140,6 @@ export class Peer {
     }
 
     const encodedMatch = Match.encode(match).finish()
-    console.log('Publishing match message', encodedMatch)
     await this.node.pubsub.publish(Peer.MATCH_TOPIC, encodedMatch)
   }
 
@@ -175,9 +183,7 @@ export class Peer {
       id: match.takerId,
     })
 
-    console.log('Here are the orders we found', matchedMakerOrder, matchedTakerOrder)
     return matchedMakerOrder !== undefined ? matchedMakerOrder : matchedTakerOrder
-    // This should probably be refactored one day
   }
 
   async addMatch(match: Match) {
@@ -185,10 +191,15 @@ export class Peer {
     const orderToUpdate = await this.getMatchingOrder(match)
 
     if (!!orderToUpdate) {
-      const { id, from, status } = orderToUpdate
+      const { id, from } = orderToUpdate
 
-      await Peer.DB.orders.update(id, { status: OrderStatus.Matched })
-      dispatch(setOrderStatus({ id, from, status: OrderStatus.Matched }))
+      if (match.status === 'Matched') {
+        await Peer.DB.orders.update(id, { status: OrderStatus.Matched })
+        dispatch(setOrderStatus({ id, from, status: OrderStatus.Matched }))
+      } else if (match.status === 'Rejected') {
+        await Peer.DB.orders.update(id, { status: OrderStatus.Rejected })
+        dispatch(setOrderStatus({ id, from, status: OrderStatus.Rejected }))
+      }
     }
   }
 

@@ -1,5 +1,4 @@
-import { BigNumber, ethers } from 'ethers'
-import { NonceManager } from '@ethersproject/experimental'
+import { ethers } from 'ethers'
 import { PriorityQueue } from 'typescript-collections'
 import { ContractMetadata, ContractName } from '../chain/ContractMetadata'
 import { Order, OrderType } from '../p2p/protocol_buffers/gossip_schema'
@@ -18,6 +17,7 @@ type OMS = {
   setRunning: (running: boolean) => void
   orderbook: Map<string, { bid: PriorityQueue<Order>; ask: PriorityQueue<Order> }>
   overflow: Array<Order>
+  stale: Set<string>
   signerNonce: number
 }
 
@@ -42,6 +42,7 @@ const oms: OMS = {
   setRunning: (running: boolean) => (oms.running = running),
   orderbook: new Map(),
   overflow: [],
+  stale: new Set(),
   signerNonce: 0,
 }
 
@@ -56,6 +57,11 @@ onmessage = (e: MessageEvent) => {
     addNewOrder(e.data[1])
   }
 
+  if (e.data[0] === 'matched-order') {
+    removeOrder(e.data[1])
+    removeOrder(e.data[2])
+  }
+
   if (e.data[0] === 'stop') {
     oms.running = false
   }
@@ -67,7 +73,6 @@ const start = async (signerAddress: string, decryptedSignerKey: string) => {
   const provider = ethers.getDefaultProvider('http://localhost:8545')
   const signer = new ethers.Wallet(decryptedSignerKey, provider)
   oms.signerNonce = await provider.getTransactionCount(signerAddress)
-  // const nonceManager = new NonceManager(signer)
 
   const contractMetadata = ContractMetadata[ContractName.Exchange]
 
@@ -118,6 +123,7 @@ const syncTokenOrders = async (tokenAddress: string, tokenId: string) => {
   const ask: PriorityQueue<Order> = new PriorityQueue(askComparator)
 
   const tokenOrders = await db.orders.where({ tokenAddress: tokenAddress, tokenId: tokenId }).toArray()
+  // const tokenOrders = await db.orders.where({ tokenAddress: tokenAddress, tokenId: tokenId, status: OrderStatus.Pending }).toArray()
 
   tokenOrders
     .filter(
@@ -162,6 +168,10 @@ const addNewOrder = async (order: Order) => {
   }
 }
 
+const removeOrder = async (orderId: string) => {
+  oms.stale.add(orderId)
+}
+
 const matchOrders = async (delegatedExchangeContract: ethers.Contract) => {
   for (const [tokenIdentifier, { bid, ask }] of oms.orderbook) {
     if (bid.peek() === undefined || ask.peek() === undefined) {
@@ -172,8 +182,6 @@ const matchOrders = async (delegatedExchangeContract: ethers.Contract) => {
 
     const highestBid = bid.peek() as Order // Safe as we check the undefined case above
     const lowestAsk = ask.peek() as Order
-
-    console.log('Highest Bid and Lowest Ask', highestBid, lowestAsk)
 
     if (validMatch(highestBid, lowestAsk) === MatchValidity.Valid) {
       await matchOrder(delegatedExchangeContract, bid.dequeue() as Order, ask.dequeue() as Order) // Changed to dequeue when necessary
@@ -205,6 +213,14 @@ const validMatch = (bidOrder: Order, askOrder: Order): MatchValidity => {
     console.log('Unvalid case 4: ask expired')
     return MatchValidity.AskUnvalid
   }
+  if (oms.stale.has(bidOrder.id)) {
+    console.log('Unvalid case 5: bid stale')
+    return MatchValidity.BidUnvalid
+  }
+  if (oms.stale.has(askOrder.id)) {
+    console.log('Unvalid case 6: ask stale')
+    return MatchValidity.AskUnvalid
+  }
 
   return MatchValidity.Valid
 }
@@ -232,39 +248,27 @@ const matchOrder = async (
   const bidContractOrder = peerOrderToChainOrder(bidOrder)
   const askContractOrder = peerOrderToChainOrder(askOrder)
 
-  console.log('Matching Order with nonce', oms.signerNonce)
   const nonce = oms.signerNonce
   oms.signerNonce += 1
 
-  console.log(
-    'Buyer Balance',
-    ethers.utils.formatEther(
-      (await delegatedExchangeContract.balances(bidContractOrder.from)).toString(),
-    ),
-  )
-
-  console.log(
-    'Total payment',
-    ethers.utils.formatEther(
-      bidContractOrder.price
-        .mul(bidContractOrder.quantity)
-        .div(ethers.BigNumber.from('1000000000000000000')),
-    ),
-  )
-
-  const tx = await delegatedExchangeContract.executeOrder(
-    bidContractOrder,
-    askContractOrder,
-    bidContractOrder.price,
-    bidContractOrder.quantity,
-    ethers.utils.randomBytes(32),
-    {
-      nonce: nonce,
-    },
-  )
-  await tx.wait()
-
-  postMessage(['order-match', bidOrder.id, askOrder.id])
+  try {
+    const tx = await delegatedExchangeContract.executeOrder(
+      bidContractOrder,
+      askContractOrder,
+      bidContractOrder.price,
+      bidContractOrder.quantity,
+      ethers.utils.randomBytes(32),
+      {
+        nonce: nonce,
+      },
+    )
+    await tx.wait()
+    postMessage(['order-match', bidOrder.id, askOrder.id])
+  } catch (error) {
+    oms.stale.add(bidOrder.id)
+    oms.stale.add(askOrder.id)
+    postMessage(['order-rejection', bidOrder.id, askOrder.id])
+  }
 }
 
 const sendToOverflow = (order: Order): void => {
@@ -275,11 +279,13 @@ const resetOverflow = () => {
   for (const order of oms.overflow) {
     const tokenIdentifier = getTokenIdentifier(order)
 
-    switch (order.orderType) {
-      case OrderType.BUY:
-        oms.orderbook.get(tokenIdentifier)?.bid.enqueue(order)
-      case OrderType.SELL:
-        oms.orderbook.get(tokenIdentifier)?.ask.enqueue(order)
+    if (!orderExpired(order) && !oms.stale.has(order.id)) {
+      switch (order.orderType) {
+        case OrderType.BUY:
+          oms.orderbook.get(tokenIdentifier)?.bid.enqueue(order)
+        case OrderType.SELL:
+          oms.orderbook.get(tokenIdentifier)?.ask.enqueue(order)
+      }
     }
   }
 }
