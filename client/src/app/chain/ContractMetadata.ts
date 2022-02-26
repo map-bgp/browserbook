@@ -391,6 +391,73 @@ const Token: VariableContract = {
     {
       inputs: [
         {
+          internalType: 'uint256',
+          name: '',
+          type: 'uint256',
+        },
+        {
+          internalType: 'address',
+          name: '',
+          type: 'address',
+        },
+      ],
+      name: 'fungibleHolderAmount',
+      outputs: [
+        {
+          internalType: 'uint256',
+          name: '',
+          type: 'uint256',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
+          internalType: 'uint256',
+          name: '',
+          type: 'uint256',
+        },
+        {
+          internalType: 'address',
+          name: '',
+          type: 'address',
+        },
+      ],
+      name: 'fungibleHolderDividendClaim',
+      outputs: [
+        {
+          internalType: 'uint256',
+          name: '',
+          type: 'uint256',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
+          internalType: 'uint256',
+          name: '',
+          type: 'uint256',
+        },
+      ],
+      name: 'fungibleHolders',
+      outputs: [
+        {
+          internalType: 'address',
+          name: '',
+          type: 'address',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
           internalType: 'string',
           name: 'tokenName',
           type: 'string',
@@ -454,6 +521,25 @@ const Token: VariableContract = {
         },
       ],
       name: 'isApprovedForAll',
+      outputs: [
+        {
+          internalType: 'bool',
+          name: '',
+          type: 'bool',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
+          internalType: 'address',
+          name: '',
+          type: 'address',
+        },
+      ],
+      name: 'isHolder',
       outputs: [
         {
           internalType: 'bool',
@@ -602,6 +688,11 @@ const Token: VariableContract = {
         {
           internalType: 'uint256',
           name: 'id',
+          type: 'uint256',
+        },
+        {
+          internalType: 'uint256',
+          name: 'amountPerToken',
           type: 'uint256',
         },
       ],

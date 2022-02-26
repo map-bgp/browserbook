@@ -60,7 +60,7 @@ const TokenForm = (props: TokenModalProps) => {
   const token = props.tokenId !== null ? selectTokenById(store.getState(), props.tokenId) : null
 
   const [dividendLoad, setDividendLoad] = useState<string>('')
-  const [dividend, setDividend] = useState<string>('')
+  const [dividendPerToken, setDividendPerToken] = useState<string>('')
   const [error, setError] = useState<string>('')
 
   useEffect(() => {
@@ -76,16 +76,17 @@ const TokenForm = (props: TokenModalProps) => {
 
   const handleDividendSubmit = () => {
     setError('')
-    setDividend('')
+    setDividendPerToken('')
 
     if (!token) {
       throw new Error('Cannot add dividend to non-existant token')
     }
     dispatch(
       depositDividendThunk({
-        amount: dividend,
+        amountPerToken: dividendPerToken,
         contractAddress: token.contract.address,
         tokenId: token.id,
+        tokenSupply: token.supply,
       }),
     )
     props.setOpen(false)
@@ -130,15 +131,15 @@ const TokenForm = (props: TokenModalProps) => {
           <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
             <div className="sm:col-span-4">
               <label htmlFor="dividend" className="block text-sm font-medium text-gray-700">
-                Additional Dividend
+                Additional Dividend per Token
               </label>
               <div className="mt-1">
                 <input
                   id="dividend"
                   name="dividend"
-                  value={dividend}
+                  value={dividendPerToken}
                   onChange={(e) => {
-                    setDividend(e.target.value)
+                    setDividendPerToken(e.target.value)
                   }}
                   type="number"
                   min="0"

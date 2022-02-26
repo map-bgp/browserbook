@@ -1,4 +1,4 @@
-import { ethers as ethersLib } from 'ethers'
+import { ethers, ethers as ethersLib } from 'ethers'
 import { Token, TokenType } from '../Types'
 import { ContractName } from '../chain/ContractMetadata'
 import { EtherContractWrapper, EtherStore } from '../chain/EtherStore'
@@ -119,7 +119,7 @@ export const queryDividendClaim = async (contractAddress: string, tokenId: strin
   const contractName = ContractName.Token
   const contract = await wrapper.getContract(contractName, contractAddress)
 
-  return (await contract.getDividendAmount(address, tokenId)).toString()
+  return ethersLib.utils.formatEther((await contract.getDividendAmount(address, tokenId)).toString())
 }
 
 export const queryOrders = async (addressFilter?: string) => {

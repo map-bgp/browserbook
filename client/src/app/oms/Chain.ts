@@ -84,19 +84,31 @@ export const transferToken = async (options: TransferTokenOptions) => {
   await tx.wait()
 }
 
-export const depositDividend = async (amount: string, contractAddress: string, tokenId: string) => {
+export const depositDividend = async (
+  amountPerToken: string,
+  contractAddress: string,
+  tokenId: string,
+  tokenSupply: string,
+) => {
   const wrapper = new EtherContractWrapper()
 
   const contractName = ContractName.Token
   const contract = await wrapper.getContract(contractName, contractAddress)
 
-  const tx = await contract.provideDividend(tokenId.toString(), {
-    value: ethersLib.utils.parseEther(amount),
-  })
+  const tx = await contract.provideDividend(
+    tokenId.toString(),
+    ethersLib.BigNumber.from(Number(amountPerToken)),
+    {
+      value: ethersLib.utils
+        .parseEther(amountPerToken)
+        .mul(ethersLib.BigNumber.from(Number(tokenSupply))),
+    },
+  )
+
   await tx.wait()
 }
 
-export const withdrawDividend = async (contractAddress: string, tokenId: string) => {
+export const claimDividend = async (contractAddress: string, tokenId: string) => {
   const wrapper = new EtherContractWrapper()
 
   const contractName = ContractName.Token

@@ -29,8 +29,15 @@ contract BBToken is ERC1155 {
   mapping(uint256 => bool) public isNonFungible;
 
   // Used for fungible dividends
-  mapping(uint256 => itmap) private _fungibleHolderAmount;
-  mapping(uint256 => itmap) private _fungibleClaims;
+  address[] public fungibleHolders;
+  mapping(address => bool) public isHolder;
+
+  mapping(uint256 => mapping(address => uint256)) public fungibleHolderAmount;
+  mapping(uint256 => mapping(address => uint256))
+    public fungibleHolderDividendClaim;
+
+  // mapping(uint256 => itmap) private _fungibleHolderAmount;
+  // mapping(uint256 => itmap) private _fungibleClaims;
 
   // Constants receiver callbacks
   bytes4 public constant ERC1155_RECEIVED = 0xf23a6e61;
@@ -119,6 +126,10 @@ contract BBToken is ERC1155 {
     tokenSupply[newTokenId] += amount;
     tokenMetadata[newTokenId] = tokenMetadataURI;
 
+    isHolder[owner()] = true;
+    fungibleHolders.push(owner());
+    fungibleHolderAmount[newTokenId][owner()] += amount;
+
     emit TokenCreation(_contractOwner, newTokenId);
   }
 
@@ -150,27 +161,39 @@ contract BBToken is ERC1155 {
       super._safeTransferFrom(from, to, id, amount, data);
     } else {
       super._safeTransferFrom(from, to, id, amount, data);
-      _fungibleHolderAmount[id].reduce(from, amount);
-      _fungibleHolderAmount[id].increase(to, amount);
+      fungibleHolderAmount[id][from] -= amount;
+      fungibleHolderAmount[id][to] += amount;
+
+      if (!isHolder[to]) {
+        isHolder[to] = true;
+        fungibleHolders.push(to);
+      }
     }
   }
 
-  function provideDividend(uint256 id) public payable onlyOwnerOrOperator {
+  // Amount per token in wei
+  function provideDividend(uint256 id, uint256 amountPerToken)
+    public
+    payable
+    onlyOwnerOrOperator
+  {
     require(
       !isNonFungible[id],
       "TRIED_TO_PROVIDE_DIVIDEND_FOR_NON_FUNGIBLE_TOKEN"
     );
 
-    uint256 dividend = msg.value;
+    uint256 dividendPool = msg.value;
 
     address account;
-    uint256 value;
+    uint256 stake;
     uint256 dividendShare;
 
-    for (uint256 i = 1; _fungibleHolderAmount[id].valid(i); i += 1) {
-      (account, value) = _fungibleHolderAmount[id].get(i);
-      dividendShare = value.div(tokenSupply[id]).mul(dividend);
-      _fungibleClaims[id].insert(account, dividendShare);
+    for (uint256 i = 0; i < fungibleHolders.length; i++) {
+      account = fungibleHolders[i];
+      stake = fungibleHolderAmount[id][account];
+
+      dividendShare = amountPerToken * stake;
+      fungibleHolderDividendClaim[id][account] += dividendShare;
     }
   }
 
@@ -180,11 +203,10 @@ contract BBToken is ERC1155 {
       "TRIED_TO_CLAIM_DIVIDEND_FOR_NON_FUNGIBLE_TOKEN"
     );
 
-    uint256 keyIndex = _fungibleClaims[id].getKeyIndex(msg.sender);
-    (, uint256 value) = _fungibleClaims[id].get(keyIndex);
+    uint256 claimAmount = fungibleHolderDividendClaim[id][msg.sender];
+    fungibleHolderDividendClaim[id][msg.sender] = 0;
 
-    _fungibleClaims[id].reduce(msg.sender, value);
-    payable(msg.sender).transfer(value);
+    payable(msg.sender).transfer(claimAmount);
   }
 
   function getDividendAmount(address account, uint256 id)
@@ -192,16 +214,6 @@ contract BBToken is ERC1155 {
     view
     returns (uint256)
   {
-    address tmp;
-    uint256 value;
-
-    for (uint256 i = 1; _fungibleHolderAmount[id].valid(i); i += 1) {
-      (tmp, value) = _fungibleHolderAmount[id].get(i);
-      if (tmp == account) {
-        return value;
-      }
-    }
-
-    return 0;
+    return fungibleHolderDividendClaim[id][account];
   }
 }
