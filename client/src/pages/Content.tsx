@@ -39,7 +39,6 @@ const Content = (props: ContentProps) => {
             <Route path="orders" element={<Orders />} />
             <Route path="transfer" element={<TransferForm />} />
             <Route path="tokens" element={<Tokens />} />
-            <Route path="dividends" element={<></>} />
           </Route>
           <Route path="order-book" element={<OrderBook />} />
           <Route path="order-validation" element={<OrderValidation />} />

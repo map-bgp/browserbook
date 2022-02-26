@@ -79,17 +79,12 @@ export const withdrawEtherThunk = createAsyncThunk(
 export const depositDividendThunk = createAsyncThunk(
   'peer/depositDividendThunk',
   async (options: {
-    amountPerToken: string
+    amount: string
     contractAddress: string
     tokenId: string
     tokenSupply: string
   }): Promise<void> => {
-    await depositDividend(
-      options.amountPerToken,
-      options.contractAddress,
-      options.tokenId,
-      options.tokenSupply,
-    )
+    await depositDividend(options.amount, options.contractAddress, options.tokenId, options.tokenSupply)
   },
 )
 

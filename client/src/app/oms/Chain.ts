@@ -1,4 +1,5 @@
 import { ethers as ethersLib } from 'ethers'
+import { fromJSON } from 'postcss'
 import { ContractMetadata, ContractName } from '../chain/ContractMetadata'
 import { EtherContractWrapper } from '../chain/EtherStore'
 import { hasOwnProperty } from '../chain/helpers'
@@ -85,7 +86,7 @@ export const transferToken = async (options: TransferTokenOptions) => {
 }
 
 export const depositDividend = async (
-  amountPerToken: string,
+  amount: string,
   contractAddress: string,
   tokenId: string,
   tokenSupply: string,
@@ -95,15 +96,14 @@ export const depositDividend = async (
   const contractName = ContractName.Token
   const contract = await wrapper.getContract(contractName, contractAddress)
 
-  const tx = await contract.provideDividend(
-    tokenId.toString(),
-    ethersLib.BigNumber.from(Number(amountPerToken)),
-    {
-      value: ethersLib.utils
-        .parseEther(amountPerToken)
-        .mul(ethersLib.BigNumber.from(Number(tokenSupply))),
-    },
-  )
+  const amountPerToken = ethersLib.utils
+    .parseEther(amount)
+    .div(ethersLib.utils.parseEther(tokenSupply))
+    .toString()
+
+  const tx = await contract.provideDividend(tokenId.toString(), amountPerToken, {
+    value: ethersLib.utils.parseEther(amount),
+  })
 
   await tx.wait()
 }

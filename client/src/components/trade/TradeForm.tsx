@@ -4,7 +4,7 @@ import { InformationCircleIcon, XCircleIcon } from '@heroicons/react/outline'
 import { useEffect, useState } from 'react'
 import { useAppSelector } from '../../app/Hooks'
 import { submitOrder } from '../../app/oms/OrderService'
-import { OrderType } from '../../app/p2p/protocol_buffers/gossip_schema'
+import { Order, OrderType } from '../../app/p2p/protocol_buffers/gossip_schema'
 import { selectAccountData } from '../../app/store/slices/EthersSlice'
 import { selectTokens } from '../../app/store/slices/TokensSlice'
 import { Token, TokenType } from '../../app/Types'
@@ -70,7 +70,7 @@ const TradeForm = () => {
       setError('Quantity cannot be 0')
     } else if (Number(expiryHours) === 0) {
       setError('Expiry must be at least one hour')
-    } else if (Number(balance) < Number(limitPrice) * Number(quantity)) {
+    } else if (Number(balance) < Number(limitPrice) * Number(quantity) && orderType === OrderType.BUY) {
       setError('Insufficient funds')
     } else if (primaryAccount === null) {
       setError('Could not find your account. Is your wallet connected?')
@@ -167,7 +167,7 @@ const TradeForm = () => {
                   : 0}
               </div>
               <div className="text-sm text-gray-500">
-                expiring on {getDateAtInterval(Number(expiryHours), Number(expiryMinutes))}
+                expiring on {getDateAtInterval(Number(expiryHours), Number(expiryMinutes)).toUTCString()}
               </div>
             </div>
             <div className="col-span-3 sm:col-span-1">

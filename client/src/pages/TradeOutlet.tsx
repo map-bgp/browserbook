@@ -15,20 +15,18 @@ import { useEffect } from 'react'
 
 enum ActiveSection {
   Trade = 'Trade',
-  Balance = 'Balance',
-  MyOrders = 'My Orders',
   Transfer = 'Transfer',
   MyTokens = 'Tokens',
-  MyDividends = 'Dividends',
+  MyOrders = 'My Orders',
+  Balance = 'Balance',
 }
 
 const navigation = [
   { name: ActiveSection.Trade, url: 'trade', icon: GlobeAltIcon },
-  { name: ActiveSection.Balance, url: 'balance', icon: ScaleIcon },
-  { name: ActiveSection.MyOrders, url: 'orders', icon: CollectionIcon },
   { name: ActiveSection.Transfer, url: 'transfer', icon: ChevronDoubleRightIcon },
   { name: ActiveSection.MyTokens, url: 'tokens', icon: BookOpenIcon },
-  { name: ActiveSection.MyDividends, url: 'dividends', icon: BriefcaseIcon },
+  { name: ActiveSection.MyOrders, url: 'orders', icon: CollectionIcon },
+  { name: ActiveSection.Balance, url: 'balance', icon: ScaleIcon },
 ]
 
 const TradeOutlet = () => {

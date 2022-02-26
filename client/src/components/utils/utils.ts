@@ -18,8 +18,6 @@ export const getCurrent = (location: Location, navigation: NavRecord) => {
 }
 
 export const getDateAtInterval = (hours: number, minutes: number) => {
-  const date = new Date()
-  date.setHours(date.getHours() + hours)
-  date.setMinutes(date.getMinutes() + minutes)
-  return `${date.getDay()}-${date.getMonth()}-${date.getFullYear()} at ${date.getUTCHours()}:${date.getUTCMinutes()} UTC`
+  const date = new Date(new Date().getTime() + hours * 60 * 60000 + minutes * 60000)
+  return date
 }

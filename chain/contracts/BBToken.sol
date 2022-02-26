@@ -182,6 +182,8 @@ contract BBToken is ERC1155 {
       "TRIED_TO_PROVIDE_DIVIDEND_FOR_NON_FUNGIBLE_TOKEN"
     );
 
+    require(amountPerToken * tokenSupply[id] <= msg.value, "INSUFICIENT_FUNDS");
+
     uint256 dividendPool = msg.value;
 
     address account;
