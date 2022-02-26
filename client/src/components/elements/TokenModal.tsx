@@ -1,11 +1,11 @@
 import { Fragment, useEffect, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { selectTokenById } from '../../app/store/slices/TokensSlice'
-import { store } from '../../app/store/Store'
 import { Token } from '../../app/Types'
 import { queryDividendClaim } from '../../app/oms/Queries'
-import { useAppSelector } from '../../app/Hooks'
-import { selectAccountData } from '../../app/store/slices/EthersSlice'
+import { useAppDispatch, useAppSelector } from '../../app/Hooks'
+import { selectAccountData, selectTokenStatus } from '../../app/store/slices/EthersSlice'
+import { claimDividendThunk } from '../../app/store/slices/PeerSlice'
+import { Spinner } from './Spinner'
 
 type TokenModalProps = {
   token: Token | null
@@ -55,25 +55,35 @@ const TokenModal = (props: TokenModalProps) => {
 }
 
 const TokenModalContent = (props: TokenModalProps) => {
-  const { primaryAccount } = useAppSelector(selectAccountData)
+  const dispatch = useAppDispatch()
+
   const token = props.token
+  const { primaryAccount } = useAppSelector(selectAccountData)
+  const status = useAppSelector(selectTokenStatus)
+
   const [dividendClaimAmount, setDividendClaimAmount] = useState<string>('')
 
   useEffect(() => {
     const getDividendClaimAmount = async () => {
       if (!!primaryAccount && !!token) {
         console.log('Requesting')
-        const dividendLoad = await queryDividendClaim(token.contract.address, token.id, primaryAccount)
-        console.log('Dividend Load', dividendLoad)
-        setDividendClaimAmount(dividendLoad)
+        const dividendClaim = await queryDividendClaim(token.contract.address, token.id, primaryAccount)
+        console.log('Dividend Load', dividendClaim)
+        setDividendClaimAmount(dividendClaim)
       }
     }
 
     getDividendClaimAmount()
   }, [primaryAccount, token])
 
+  const claimDividend = () => {
+    if (!!token) {
+      dispatch(claimDividendThunk({ contractAddress: token.contract.address, tokenId: token.id }))
+    }
+  }
+
   return (
-    <form className="space-y-8 divide-y divide-gray-200">
+    <div className="space-y-8 divide-y divide-gray-200">
       <div className="w-11/12 space-y-8 divide-y divide-gray-200">
         <div>
           <h3 className="text-xl font-semibold leading-6 text-gray-700">Token Information</h3>
@@ -114,6 +124,20 @@ const TokenModalContent = (props: TokenModalProps) => {
 
       <div className="pt-5">
         <div className="flex justify-end">
+          {status == 'loading' && (
+            <div className="w-full">
+              <div className="mx-4 flex items-center">
+                <div className="flex-shrink-0">
+                  <Spinner />
+                </div>
+                <div className="ml-1">
+                  <h3 className="text-xs font-medium text-blue-800">
+                    Processing. Please wait and confirm any prompted transactions
+                  </h3>
+                </div>
+              </div>
+            </div>
+          )}
           <button
             type="button"
             onClick={() => props.setOpen(false)}
@@ -121,15 +145,16 @@ const TokenModalContent = (props: TokenModalProps) => {
           >
             Close
           </button>
-          {/* <button
+          <button
             type="submit"
-            className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+            onClick={() => claimDividend()}
+            className="ml-3 inline-flex justify-center rounded-md border border-transparent bg-orange-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
           >
-            Submit
-          </button> */}
+            Claim Dividend
+          </button>
         </div>
       </div>
-    </form>
+    </div>
   )
 }
 
