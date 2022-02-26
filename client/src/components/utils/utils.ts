@@ -18,6 +18,5 @@ export const getCurrent = (location: Location, navigation: NavRecord) => {
 }
 
 export const getDateAtInterval = (hours: number, minutes: number) => {
-  const date = new Date(new Date().getTime() + hours * 60 * 60000 + minutes * 60000)
-  return date
+  return new Date(new Date().getTime() + hours * 60 * 60000 + minutes * 60000)
 }
