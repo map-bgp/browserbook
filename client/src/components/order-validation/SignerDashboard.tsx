@@ -11,7 +11,7 @@ type SignerDashboardProps = {
   encryptedSignerKey: string
   signerBalance: string
   commissionBalance: string
-  transactionsPerSecond: string
+  tps: string
 }
 
 const Slider = (props: {
@@ -119,7 +119,7 @@ const SignerDashboard = (props: SignerDashboardProps) => {
         </div>
         <div className="flex items-center justify-between px-6 py-5">
           <span className="truncate text-sm font-medium text-gray-500">Transactions per Second</span>{' '}
-          <span className="text-xl font-medium text-gray-900">{props.transactionsPerSecond}</span>
+          <span className="text-xl font-medium text-gray-900">{props.tps}</span>
         </div>
       </div>
     </div>

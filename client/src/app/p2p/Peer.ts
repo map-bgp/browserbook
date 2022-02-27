@@ -5,6 +5,7 @@ import { Order, Match } from './protocol_buffers/gossip_schema'
 import { IToken, P2PDB } from './db'
 import { OrderStatus, Token } from '../Types'
 import { selectAccountData } from '../store/slices/EthersSlice'
+import { pushTps } from '../store/slices/ValidatorSlice'
 
 const dispatch = store.dispatch
 
@@ -19,11 +20,19 @@ export class Peer {
   node: Libp2p | null = null
   isValidator: boolean = false
   signerAddress: string | null = null
+  chalk: number = 0
 
   constructor(config: Libp2pOptions) {
     this.config = config
 
     worker.onmessage = (e: MessageEvent) => {
+      const now = Date.now()
+      const elapsedSeconds = (now - this.chalk) / 1000
+      const currentTps = 1 / elapsedSeconds
+      this.chalk = now
+
+      dispatch(pushTps(currentTps))
+
       if (this.isValidator && !!this.signerAddress) {
         if (e.data[0] === 'order-match') {
           const match = {
@@ -204,6 +213,7 @@ export class Peer {
   }
 
   startValidation(signerAddress: string, decryptedSignerKey: string) {
+    this.chalk = Date.now()
     this.isValidator = true
     this.signerAddress = signerAddress
     worker.postMessage(['start', signerAddress, decryptedSignerKey])

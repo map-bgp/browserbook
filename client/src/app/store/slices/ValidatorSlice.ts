@@ -10,6 +10,7 @@ type SignerState = {
   encryptedSignerKey: string | null
   signerBalance: string | null
   signerCommissionBalance: string | null
+  tps: Array<number>
 }
 
 const initialState: SignerState = {
@@ -18,6 +19,7 @@ const initialState: SignerState = {
   encryptedSignerKey: null,
   signerBalance: null,
   signerCommissionBalance: null,
+  tps: [],
 }
 
 export const initializeSigner = createAsyncThunk(
@@ -61,6 +63,9 @@ export const signerSlice = createSlice({
     setEncryptedSignerKey: (state, action: PayloadAction<string>) => {
       state.encryptedSignerKey = action.payload
     },
+    pushTps: (state, action: PayloadAction<number>) => {
+      state.tps.push(action.payload)
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -86,7 +91,7 @@ export const signerSlice = createSlice({
   },
 })
 
-export const { setSignerAddress, setEncryptedSignerKey } = signerSlice.actions
+export const { setSignerAddress, setEncryptedSignerKey, pushTps } = signerSlice.actions
 
 export const selectValidatorStatus = (state: RootState) => state.validator.status
 
@@ -95,12 +100,17 @@ export const selectEncryptedSignerKey = (state: RootState) => state.validator.en
 export const selectSignerBalance = (state: RootState) => state.validator.signerBalance
 export const selectSignerCommissionBalance = (state: RootState) =>
   state.validator.signerCommissionBalance
+export const selectTps = (state: RootState): number =>
+  state.validator.tps.length > 0
+    ? Number((state.validator.tps.reduce((a, b) => a + b) / state.validator.tps.length).toFixed(2))
+    : 0
 
 export const selectSignerData = (state: RootState) => ({
   signerAddress: selectSignerAddress(state),
   encryptedSignerKey: selectEncryptedSignerKey(state),
   signerBalance: selectSignerBalance(state),
   signerCommissionBalance: selectSignerCommissionBalance(state),
+  tps: selectTps(state),
 })
 
 export default signerSlice.reducer
