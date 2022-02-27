@@ -124,7 +124,7 @@ const Balance = () => {
           <button
             onClick={() => handleWithdrawSubmit()}
             className={
-              'mr-2 block flex items-end rounded-md border border-orange-600 bg-white px-4 py-2 text-sm font-medium text-orange-600 shadow-sm hover:bg-orange-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 active:bg-orange-900'
+              'mr-4 flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50'
             }
           >
             Withdraw All

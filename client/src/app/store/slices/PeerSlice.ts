@@ -3,8 +3,9 @@ import { ethers as ethersLib } from 'ethers'
 import { claimDividend, depositDividend, depositEther, withdrawEther } from '../../oms/Chain'
 import { queryBalance, queryDividendLoad, queryOrders } from '../../oms/Queries'
 import { Order } from '../../p2p/protocol_buffers/gossip_schema'
-import { OrderStatus, WithStatus } from '../../Types'
+import { OrderStatus, TokenType, WithStatus } from '../../Types'
 import type { RootState } from '../Store'
+import { selectTokenById } from './TokensSlice'
 
 // Define a type for the slice state
 type PeerState = {
@@ -172,10 +173,31 @@ export const peerSlice = createSlice({
 
 export const { setPeerId, incrementPeers, decrementPeers, setOrderStatus } = peerSlice.actions
 
-// Other code such as selectors can use the imported `RootState` type
 export const selectPeerId = (state: RootState) => state.peer.peerID
 export const selectNumPeers = (state: RootState) => state.peer.numPeers
 export const selectOrders = (state: RootState) => state.peer.orders
 export const selectBalance = (state: RootState) => state.peer.balance
+
+export const selectOrdersWithTokenData = (
+  state: RootState,
+): Array<WithStatus<Order & { tokenName: string; tokenType: TokenType; tokenMetadataUri: string }>> => {
+  const orders = state.peer.orders
+
+  const ordersWithTokens = orders.map((order) => {
+    const token = selectTokenById(state, order.tokenAddress, order.tokenId)
+    if (!!token) {
+      return {
+        ...order,
+        tokenName: token.name,
+        tokenType: token.type,
+        tokenMetadataUri: token.metadataURI,
+      }
+    } else {
+      return { ...order, tokenName: '', tokenType: TokenType.Fungible, tokenMetadataUri: '' }
+    }
+  })
+
+  return ordersWithTokens
+}
 
 export default peerSlice.reducer

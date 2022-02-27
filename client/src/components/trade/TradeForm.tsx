@@ -11,6 +11,8 @@ import { Token, TokenType } from '../../app/Types'
 import { classNames, getDateAtInterval } from '../utils/utils'
 import TokenSelect from '../elements/TokenSelect'
 import { selectBalance } from '../../app/store/slices/PeerSlice'
+import { Link } from 'react-router-dom'
+import { NavKey } from '../utils/constants'
 
 const InfoPanel = (props: { message: string; link: string }) => {
   return (
@@ -22,9 +24,12 @@ const InfoPanel = (props: { message: string; link: string }) => {
         <div className="ml-3 flex-1 md:flex md:justify-between">
           <p className="text-sm text-blue-700">{props.message}</p>
           <p className="mt-3 text-sm md:mt-0 md:ml-6">
-            <a href="#" className="whitespace-nowrap font-medium text-blue-700 hover:text-blue-600">
+            <Link
+              to={props.link}
+              className="whitespace-nowrap font-medium text-blue-700 hover:text-blue-600"
+            >
               Details <span aria-hidden="true">&rarr;</span>
-            </a>
+            </Link>
           </p>
         </div>
       </div>
@@ -102,7 +107,10 @@ const TradeForm = () => {
         <div className="space-y-6 bg-white py-6 px-4 sm:p-6">
           <div>
             <h3 className="mb-4 text-lg font-medium leading-6 text-gray-900">Submit New Trade</h3>
-            <InfoPanel message='Please be sure to read the "How it Works" before trading' link="" />
+            <InfoPanel
+              message='Please be sure to read the "How it Works" before trading'
+              link={`/${NavKey.HOW_IT_WORKS}`}
+            />
           </div>
 
           <div className="grid grid-cols-3 gap-6">

@@ -4,8 +4,7 @@ import {
   ScaleIcon,
   GlobeAltIcon,
   CollectionIcon,
-  BookOpenIcon,
-  BriefcaseIcon,
+  PlusCircleIcon,
 } from '@heroicons/react/outline'
 import { classNames } from '../components/utils/utils'
 import { useAppDispatch, useAppSelector, useTokenFactoryFilter, useTokenFilter } from '../app/Hooks'
@@ -24,7 +23,7 @@ enum ActiveSection {
 const navigation = [
   { name: ActiveSection.Trade, url: 'trade', icon: GlobeAltIcon },
   { name: ActiveSection.Transfer, url: 'transfer', icon: ChevronDoubleRightIcon },
-  { name: ActiveSection.MyTokens, url: 'tokens', icon: BookOpenIcon },
+  { name: ActiveSection.MyTokens, url: 'tokens', icon: PlusCircleIcon },
   { name: ActiveSection.MyOrders, url: 'orders', icon: CollectionIcon },
   { name: ActiveSection.Balance, url: 'balance', icon: ScaleIcon },
 ]
@@ -39,7 +38,6 @@ const TradeOutlet = () => {
   useTokenFactoryFilter(primaryAccount)
   useTokenFilter(primaryAccount, tokenContractAddress)
 
-  // TODO async ui
   useEffect(() => {
     if (primaryAccount) {
       dispatch(getTokens())

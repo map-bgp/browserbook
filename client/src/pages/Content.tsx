@@ -12,6 +12,7 @@ import Tokens from '../components/trade/Tokens'
 import Orders from '../components/trade/Orders'
 import OrderValidation from './OrderValidation'
 import Balance from '../components/trade/Balance'
+import HowItWorks from './HowItWorks'
 
 type ContentProps = {
   current: NavPage
@@ -42,7 +43,7 @@ const Content = (props: ContentProps) => {
           </Route>
           <Route path={NavKey.ORDER_BOOK} element={<OrderBook />} />
           <Route path={NavKey.ORDER_VALIDATION} element={<OrderValidation />} />
-          <Route path={NavKey.HOW_IT_WORKS} element={<></>} />
+          <Route path={NavKey.HOW_IT_WORKS} element={<HowItWorks />} />
         </Routes>
       </main>
     </div>

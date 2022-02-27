@@ -9,6 +9,7 @@ import { depositDividendThunk } from '../../app/store/slices/PeerSlice'
 import { queryDividendLoad } from '../../app/oms/Queries'
 
 type TokenModalProps = {
+  tokenAddress: string | null
   tokenId: string | null
   open: boolean
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
@@ -46,7 +47,12 @@ const TokenInputModal = (props: TokenModalProps) => {
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <div className="inline-block transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6 sm:align-middle">
-              <TokenForm tokenId={props.tokenId} open={props.open} setOpen={props.setOpen} />
+              <TokenForm
+                tokenAddress={props.tokenAddress}
+                tokenId={props.tokenId}
+                open={props.open}
+                setOpen={props.setOpen}
+              />
             </div>
           </Transition.Child>
         </div>
@@ -57,7 +63,10 @@ const TokenInputModal = (props: TokenModalProps) => {
 
 const TokenForm = (props: TokenModalProps) => {
   const dispatch = useAppDispatch()
-  const token = props.tokenId !== null ? selectTokenById(store.getState(), props.tokenId) : null
+  const token =
+    props.tokenAddress && props.tokenId !== null
+      ? selectTokenById(store.getState(), props.tokenAddress, props.tokenId)
+      : null
 
   const [dividendLoad, setDividendLoad] = useState<string>('')
   const [dividend, setDividend] = useState<string>('')

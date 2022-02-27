@@ -123,8 +123,14 @@ export const selectOwnTokens = (state: RootState): Array<Token> =>
   state.tokens.tokens.filter((token) => token.own === true)
 
 // This needs to be refactored immediately, as returns third party tokens as well
-export const selectTokenById = (state: RootState, tokenId: string): Token | null => {
-  const token = state.tokens.tokens.find((token) => token.id === tokenId)
+export const selectTokenById = (
+  state: RootState,
+  tokenAddress: string,
+  tokenId: string,
+): Token | null => {
+  const token = state.tokens.tokens.find(
+    (token) => token.contract.address === tokenAddress && token.id === tokenId,
+  )
   if (token === undefined) {
     return null
   }
