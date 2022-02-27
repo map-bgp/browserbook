@@ -21,7 +21,6 @@
     "dexie": "^3.2.0",
     "dexie-react-hooks": "^1.1.1",
     "ethers": "^5.5.3",
-    "heapify": "^0.6.0",
     "libp2p": "^0.36.2",
     "libp2p-bootstrap": "^0.14.0",
     "libp2p-gossipsub": "^0.13.0",
