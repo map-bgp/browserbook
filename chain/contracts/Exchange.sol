@@ -21,6 +21,7 @@ contract Exchange {
   mapping(address => uint256) public balances;
   mapping(address => address) public signerAddresses;
   mapping(address => string) public encryptedSignerKeys;
+  mapping(address => uint256) public signerCommissionBalances;
   mapping(bytes => bool) private usedSignatures;
 
   enum OrderType {
@@ -84,6 +85,19 @@ contract Exchange {
     pure
     returns (bool)
   {}
+
+  function collectCommission(
+    Order memory bidOrder,
+    Order memory askOrder,
+    uint256 price,
+    uint256 quantity,
+    address signerAddress
+  ) private {
+    uint256 commission = ((price / 1 ether) * quantity) / 100;
+
+    balances[bidOrder.from] -= commission;
+    signerCommissionBalances[signerAddress] += commission;
+  }
 
   function exchangeTokens(
     Order memory bidOrder,
@@ -170,6 +184,7 @@ contract Exchange {
     require(verifySignatureNotUsed(bidOrder.signature), "SIGNATURE_USED: BID");
     require(verifySignatureNotUsed(askOrder.signature), "SIGNATURE_USED: ASK");
 
+    collectCommission(bidOrder, askOrder, price, quantity, msg.sender);
     exchangeTokens(bidOrder, askOrder, price, quantity, data);
   }
 
@@ -220,7 +235,9 @@ contract Exchange {
     uint256 quantity
   ) private view returns (bool) {
     // Both quantity and price are in wei terms from the client
-    return balances[buyer] >= ((price / 1 ether) * quantity);
+    return
+      balances[buyer] >=
+      ((price / 1 ether) * quantity) + (((price / 1 ether) * quantity) / 100);
   }
 
   function verifySellerLiquidity(

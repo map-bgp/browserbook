@@ -13,7 +13,8 @@ const OrderValidation = (props: OrderValidationPros) => {
   const { peer } = useContext(AppContext)
 
   const { primaryAccount } = useAppSelector(selectAccountData)
-  const { signerAddress, encryptedSignerKey, signerBalance } = useAppSelector(selectSignerData)
+  const { signerAddress, encryptedSignerKey, signerBalance, signerCommissionBalance } =
+    useAppSelector(selectSignerData)
 
   useEffect(() => {
     if (!!primaryAccount) {
@@ -52,7 +53,7 @@ const OrderValidation = (props: OrderValidationPros) => {
                 signerAddress={signerAddress}
                 encryptedSignerKey={encryptedSignerKey}
                 signerBalance={signerBalance !== null ? signerBalance : ''}
-                commissionBalance={'0'}
+                commissionBalance={signerCommissionBalance !== null ? signerCommissionBalance : ''}
                 transactionsPerSecond={'0'}
               />
             </>

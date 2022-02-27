@@ -9,6 +9,7 @@ type SignerState = {
   signerAddress: string | null
   encryptedSignerKey: string | null
   signerBalance: string | null
+  signerCommissionBalance: string | null
 }
 
 const initialState: SignerState = {
@@ -16,6 +17,7 @@ const initialState: SignerState = {
   signerAddress: null,
   encryptedSignerKey: null,
   signerBalance: null,
+  signerCommissionBalance: null,
 }
 
 export const initializeSigner = createAsyncThunk(
@@ -34,11 +36,17 @@ export const getValidatorSigner = createAsyncThunk(
     signerAddress: string | null
     encryptedSignerKey: string | null
     signerBalance: string | null
+    signerCommissionBalance: string | null
   }> => {
     if (!!primaryAccount) {
       return queryValidatorSigner(primaryAccount)
     } else {
-      return { signerAddress: null, encryptedSignerKey: null, signerBalance: null }
+      return {
+        signerAddress: null,
+        encryptedSignerKey: null,
+        signerBalance: null,
+        signerCommissionBalance: null,
+      }
     }
   },
 )
@@ -64,6 +72,7 @@ export const signerSlice = createSlice({
         state.encryptedSignerKey =
           action.payload.encryptedSignerKey !== '' ? action.payload.encryptedSignerKey : null
         state.signerBalance = action.payload.signerBalance
+        state.signerCommissionBalance = action.payload.signerCommissionBalance
       })
       .addCase(initializeSigner.pending, (state) => {
         state.status = 'loading'
@@ -84,11 +93,14 @@ export const selectValidatorStatus = (state: RootState) => state.validator.statu
 export const selectSignerAddress = (state: RootState) => state.validator.signerAddress
 export const selectEncryptedSignerKey = (state: RootState) => state.validator.encryptedSignerKey
 export const selectSignerBalance = (state: RootState) => state.validator.signerBalance
+export const selectSignerCommissionBalance = (state: RootState) =>
+  state.validator.signerCommissionBalance
 
 export const selectSignerData = (state: RootState) => ({
   signerAddress: selectSignerAddress(state),
   encryptedSignerKey: selectEncryptedSignerKey(state),
   signerBalance: selectSignerBalance(state),
+  signerCommissionBalance: selectSignerCommissionBalance(state),
 })
 
 export default signerSlice.reducer

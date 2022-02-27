@@ -201,7 +201,7 @@ const validMatch = (bidOrder: Order, askOrder: Order): MatchValidity => {
     console.log('Unvalid case 1: same origin')
     return MatchValidity.BidAndAskUnvalid
   }
-  if (Number(bidOrder.limitPrice) < Number(askOrder.limitPrice)) {
+  if (Number(bidOrder.limitPrice) < Number(askOrder.price)) {
     console.log('Unvalid case 2: pricing invalid')
     return MatchValidity.AskUnvalid // Favors buyers
   }
@@ -222,6 +222,21 @@ const validMatch = (bidOrder: Order, askOrder: Order): MatchValidity => {
     return MatchValidity.AskUnvalid
   }
 
+  const bidQ = ethers.BigNumber.from(bidOrder.quantity)
+  const askQ = ethers.BigNumber.from(askOrder.quantity)
+
+  if (bidQ > askQ) {
+    if (askQ.div(bidQ) < ethers.BigNumber.from(0.8)) {
+      return MatchValidity.BidUnvalid
+    }
+  }
+
+  if (askQ > bidQ) {
+    if (bidQ.div(askQ) < ethers.BigNumber.from(0.8)) {
+      return MatchValidity.AskUnvalid
+    }
+  }
+
   return MatchValidity.Valid
 }
 
@@ -240,6 +255,18 @@ const peerOrderToChainOrder = (order: Order): ChainOrder => {
   }
 }
 
+const determinePrice = (bidOrder: ChainOrder, askOrder: ChainOrder): ethers.BigNumber => {
+  return askOrder.price
+}
+
+const determineQuantity = (bidOrder: ChainOrder, askOrder: ChainOrder): ethers.BigNumber => {
+  if (bidOrder.quantity.lte(askOrder.quantity)) {
+    return bidOrder.quantity
+  } else {
+    return askOrder.quantity
+  }
+}
+
 const matchOrder = async (
   delegatedExchangeContract: ethers.Contract,
   bidOrder: Order,
@@ -251,12 +278,15 @@ const matchOrder = async (
   const nonce = oms.signerNonce
   oms.signerNonce += 1
 
+  const price = determinePrice(bidContractOrder, askContractOrder)
+  const quantity = determineQuantity(bidContractOrder, askContractOrder)
+
   try {
     const tx = await delegatedExchangeContract.executeOrder(
       bidContractOrder,
       askContractOrder,
-      bidContractOrder.price,
-      bidContractOrder.quantity,
+      price,
+      quantity,
       ethers.utils.randomBytes(32),
       {
         nonce: nonce,
@@ -275,6 +305,7 @@ const sendToOverflow = (order: Order): void => {
   oms.overflow.push(order)
 }
 
+// Need better logic for determining rejected orders
 const resetOverflow = () => {
   for (const order of oms.overflow) {
     const tokenIdentifier = getTokenIdentifier(order)
@@ -293,7 +324,7 @@ const resetOverflow = () => {
 // Get the initial Orders [X]
 // Organize by token id [X]
 // Sort and then match up queues [X]
-// Prune the orderbook upon receiving a match message from 'another' validator [ ]
+// Prune the orderbook upon receiving a match message from 'another' validator [X]
 // Determine if orders are a valid match [X]
 // If they are, match them [X]
 // If they aren't send one/both to an overflow buffer where they can be temporarily stored [X]

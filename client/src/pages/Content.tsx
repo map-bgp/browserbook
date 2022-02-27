@@ -1,6 +1,6 @@
 import { Routes, Route, Outlet } from 'react-router-dom'
 
-import { NavPage } from '../components/utils/constants'
+import { NavKey, NavPage } from '../components/utils/constants'
 import Dashboard from './Dashboard'
 import TokenAdministration from './TokenAdministration'
 import OrderBook from './OrderBook'
@@ -28,11 +28,11 @@ const Content = (props: ContentProps) => {
       <main>
         <Routes>
           <Route path="/" element={<Dashboard />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="token-administration" element={<Outlet />}>
+          <Route path={NavKey.DASHBOARD} element={<Dashboard />} />
+          <Route path={NavKey.TOKEN_ADMINISTRATION} element={<Outlet />}>
             <Route index element={<TokenAdministration />} />
           </Route>
-          <Route path="trade" element={<TradeOutlet />}>
+          <Route path={NavKey.TRADE} element={<TradeOutlet />}>
             <Route index element={<TradeForm />} />
             <Route path="trade" element={<TradeForm />} />
             <Route path="balance" element={<Balance />} />
@@ -40,9 +40,9 @@ const Content = (props: ContentProps) => {
             <Route path="transfer" element={<TransferForm />} />
             <Route path="tokens" element={<Tokens />} />
           </Route>
-          <Route path="order-book" element={<OrderBook />} />
-          <Route path="order-validation" element={<OrderValidation />} />
-          <Route path="control-panel" element={<ControlPanel />} />
+          <Route path={NavKey.ORDER_BOOK} element={<OrderBook />} />
+          <Route path={NavKey.ORDER_VALIDATION} element={<OrderValidation />} />
+          <Route path={NavKey.HOW_IT_WORKS} element={<></>} />
         </Routes>
       </main>
     </div>

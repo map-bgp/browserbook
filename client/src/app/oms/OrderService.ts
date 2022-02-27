@@ -53,6 +53,10 @@ export const submitOrder = async (
 ) => {
   const signer = ethers.getSigner()
 
+  if (orderType === OrderType.SELL && Number(price) !== Number(limitPrice)) {
+    throw new Error('Limit price must be equal to price for SELL order')
+  }
+
   if (orderType === OrderType.SELL) {
     await setExchangeApprovalForTokenContract(fromAddress, token.contract.address)
   }

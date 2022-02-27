@@ -55,6 +55,13 @@ const TradeForm = () => {
     }
   }, [selected])
 
+  // Sellers make orders
+  useEffect(() => {
+    if (orderType === OrderType.SELL) {
+      setLimitPrice(price)
+    }
+  }, [orderType, price])
+
   const handleSubmit = () => {
     setError('')
 
@@ -209,8 +216,12 @@ const TradeForm = () => {
                   step="0.000000001"
                   value={limitPrice}
                   onChange={(e) => setLimitPrice(e.target.value)}
-                  className="block w-full rounded-md border-gray-300 pl-7 pr-3 focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
+                  className={classNames(
+                    orderType === OrderType.SELL ? 'cursor-not-allowed bg-gray-50 ' : '',
+                    'block w-full rounded-md border-gray-300 pl-7 pr-3 focus:border-orange-500 focus:ring-orange-500 sm:text-sm',
+                  )}
                   placeholder="0.00"
+                  disabled={orderType === OrderType.SELL}
                 />
               </div>
             </div>

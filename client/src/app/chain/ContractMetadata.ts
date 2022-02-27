@@ -1194,6 +1194,25 @@ const Exchange: Contract = {
       type: 'function',
     },
     {
+      inputs: [
+        {
+          internalType: 'address',
+          name: '',
+          type: 'address',
+        },
+      ],
+      name: 'signerCommissionBalances',
+      outputs: [
+        {
+          internalType: 'uint256',
+          name: '',
+          type: 'uint256',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
       inputs: [],
       name: 'testOrder',
       outputs: [
