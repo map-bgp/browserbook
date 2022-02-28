@@ -3,30 +3,37 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"os"
 	"os/signal"
+	"sync"
+	"time"
+
 	"syscall"
 
 	"github.com/libp2p/go-libp2p"
-	"github.com/libp2p/go-libp2p-core/host"
-	peerstore "github.com/libp2p/go-libp2p-core/peer"
-	"github.com/libp2p/go-libp2p-core/routing"
-	kaddht "github.com/libp2p/go-libp2p-kad-dht"
+	peer "github.com/libp2p/go-libp2p-core/peer"
+	dht "github.com/libp2p/go-libp2p-kad-dht"
+	"github.com/multiformats/go-multiaddr"
+
+	discovery "github.com/libp2p/go-libp2p-discovery"
 	mplex "github.com/libp2p/go-libp2p-mplex"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	tls "github.com/libp2p/go-libp2p-tls"
 	yamux "github.com/libp2p/go-libp2p-yamux"
 	"github.com/libp2p/go-tcp-transport"
 	ws "github.com/libp2p/go-ws-transport"
-	"github.com/multiformats/go-multiaddr"
 )
 
-// ChatRoomBufSize is the number of incoming messages to buffer for each topic.
+// TopicStreamBufSize is the number of incoming messages to buffer for each topic.
 const TopicStreamBufSize = 128
 
-// ChatRoom represents a subscription to a single PubSub topic. Messages
-// can be published to the topic with ChatRoom.Publish, and received
+// Boolean Flag
+var publish = false
+
+// TopicStream represents a subscription to a single PubSub topic. Messages
+// can be published to the topic with TopicStream.Publish, and received
 // messages are pushed to the Messages channel.
 type TopicStream struct {
 	// Messages is a channel of messages received from other peers in the chat room
@@ -36,18 +43,18 @@ type TopicStream struct {
 	ps    *pubsub.PubSub
 	topic *pubsub.Topic
 	sub   *pubsub.Subscription
-	self  peerstore.ID
+	self  peer.ID
 }
 
-// ChatMessage gets converted to/from JSON and sent in the body of pubsub messages.
+// TopicMessage gets converted to/from JSON and sent in the body of pubsub messages.
 type TopicMessage struct {
 	Message  string
 	SenderID string
 }
 
-// JoinChatRoom tries to subscribe to the PubSub topic for the room name, returning
-// a ChatRoom on success.
-func JoinTopic(ctx context.Context, ps *pubsub.PubSub, selfID peerstore.ID, topicName string) (*TopicStream, error) {
+// JoinTopic tries to subscribe to the PubSub topic for the room name, returning
+// a TopicStream on success.
+func JoinTopic(ctx context.Context, ps *pubsub.PubSub, selfID peer.ID, topicName string) (*TopicStream, error) {
 	// join the pubsub topic
 	topic, err := ps.Join(topicName)
 	if err != nil {
@@ -95,9 +102,9 @@ func (ts *TopicStream) readLoop() {
 			return
 		}
 		// only forward messages delivered by others
-		// if msg.ReceivedFrom == ts.self {
-		// 	continue
-		// }
+		if msg.ReceivedFrom == ts.self {
+			continue
+		}
 		tm := new(TopicMessage)
 		err = json.Unmarshal(msg.Data, tm)
 		if err != nil {
@@ -118,6 +125,9 @@ func (ts *TopicStream) handleEvents() {
 }
 
 func main() {
+	flag.BoolVar(&publish, "publish", false, "Node should test publish functionality")
+	flag.Parse()
+
 	ctx := context.Background()
 
 	transports := libp2p.ChainOptions(
@@ -137,34 +147,41 @@ func main() {
 		"/ip4/0.0.0.0/tcp/0/ws",
 	)
 
-	var dht *kaddht.IpfsDHT
-	newDHT := func(h host.Host) (routing.PeerRouting, error) {
-		var err error
-		dht, err = kaddht.New(ctx, h)
-		return dht, err
-	}
-	routing := libp2p.Routing(newDHT)
-
 	// start a libp2p node that listens on a random local TCP port,
-	node, err := libp2p.New(transports, listenAddrs, muxers, security, routing)
+	node, err := libp2p.New(transports, listenAddrs, muxers, security)
 	if err != nil {
 		panic(err)
 	}
 
-	// bootstrap1, err := multiaddr.NewMultiaddr("/dnsaddr/bootstrap.libp2p.io/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN")
-	// if err != nil {
-	// 	panic(err)
-	// }
+	kdht, err := dht.New(ctx, node)
+	if err != nil {
+		panic(err)
+	}
 
-	// bootstrap2, err := multiaddr.NewMultiaddr("/dns4/simpleweb3.ch/tcp/443/wss/p2p-webrtc-star")
-	// if err != nil {
-	// 	panic(err)
-	// }
+	if err = kdht.Bootstrap(ctx); err != nil {
+		panic(err)
+	}
 
-	// bootstrapPeers := []multiaddr.Multiaddr{bootstrap1}
-	// ConnectToBootstrapPeers(ctx, node, bootstrapPeers)
+	// /dns4/simpleweb3.ch/tcp/443/wss/p2p-webrtc-star
+	bootstrap1, err := multiaddr.NewMultiaddr("/dnsaddr/bootstrap.libp2p.io/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN")
+	bootstrapPeers := []multiaddr.Multiaddr{bootstrap1}
 
-	ps, err := pubsub.NewGossipSub(ctx, node)
+	var wg sync.WaitGroup
+	for _, peerAddr := range bootstrapPeers {
+		peerinfo, _ := peer.AddrInfoFromP2pAddr(peerAddr)
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			if err := node.Connect(ctx, *peerinfo); err != nil {
+				fmt.Println(err)
+			} else {
+				fmt.Println("Connection established with bootstrap node:", *peerinfo)
+			}
+		}()
+	}
+	wg.Wait()
+
+	ps, err := pubsub.NewGossipSub(ctx, node, pubsub.WithDiscovery(discovery.NewRoutingDiscovery(kdht)))
 	if err != nil {
 		panic(err)
 	}
@@ -175,30 +192,19 @@ func main() {
 		panic(err)
 	}
 
-	targetAddr, err := multiaddr.NewMultiaddr("/dns4/wrtc-star2.sjc.dwebops.pub/tcp/443/wss/p2p-webrtc-star")
-	if err != nil {
-		panic(err)
+	if publish {
+		wg.Add(1)
+		func() {
+			defer wg.Done()
+			for i := 1; i < 10; i++ {
+				msg := "Hello World"
+				fmt.Println("Publishing:", msg)
+				ts.Publish(msg)
+				time.Sleep(10 * time.Second)
+			}
+		}()
+		wg.Wait()
 	}
-
-	targetInfo, err := peerstore.AddrInfoFromP2pAddr(targetAddr)
-	if err != nil {
-		panic(err)
-	}
-
-	err = node.Connect(ctx, *targetInfo)
-	if err != nil {
-		panic(err)
-	}
-
-	err = dht.Bootstrap(ctx)
-	if err != nil {
-		panic(err)
-	}
-
-	msg := "Hello World"
-
-	fmt.Println("Publishing:", msg)
-	ts.Publish(msg)
 
 	ch := make(chan os.Signal, 1)
 	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
