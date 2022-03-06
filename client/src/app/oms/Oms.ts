@@ -19,6 +19,7 @@ type OMS = {
   overflow: Array<Order>
   stale: Set<string>
   signerNonce: number
+  stats: { startTime: number; endTime: number; success: number; fail: number }
 }
 
 const hasOwnProperty = <X extends {}, Y extends PropertyKey>(
@@ -44,6 +45,7 @@ const oms: OMS = {
   overflow: [],
   stale: new Set(),
   signerNonce: 0,
+  stats: { startTime: 0, endTime: 0, success: 0, fail: 0 },
 }
 
 onmessage = (e: MessageEvent) => {
@@ -69,6 +71,7 @@ onmessage = (e: MessageEvent) => {
 
 const start = async (signerAddress: string, decryptedSignerKey: string) => {
   oms.setRunning(true)
+  oms.stats.startTime = Date.now()
 
   const provider = ethers.getDefaultProvider('http://localhost:8545')
   const signer = new ethers.Wallet(decryptedSignerKey, provider)
@@ -86,17 +89,18 @@ const start = async (signerAddress: string, decryptedSignerKey: string) => {
 
   await syncOrderBook()
 
-  setInterval(() => {
-    if (oms.running) {
-      matchOrders(delegatedExchangeContract)
-    }
-  }, 10)
+  matchOrders(delegatedExchangeContract)
+  // setInterval(() => {
+  //   if (oms.running) {
+  //     matchOrders(delegatedExchangeContract)
+  //   }
+  // }, 10)
 
-  setInterval(() => {
-    if (oms.running) {
-      resetOverflow()
-    }
-  }, 30000)
+  // setInterval(() => {
+  //   if (oms.running) {
+  //     resetOverflow()
+  //   }
+  // }, 30000)
 }
 
 const syncOrderBook = async () => {
@@ -173,26 +177,33 @@ const removeOrder = async (orderId: string) => {
 }
 
 const matchOrders = async (delegatedExchangeContract: ethers.Contract) => {
-  for (const [tokenIdentifier, { bid, ask }] of oms.orderbook) {
-    if (bid.peek() === undefined || ask.peek() === undefined) {
-      // console.log('No liquidity') // Send message to client
-      oms.running = false
-      continue
+  for (const [_, { bid, ask }] of oms.orderbook) {
+    while (bid.peek() !== undefined && ask.peek() !== undefined) {
+      const highestBid = bid.peek() as Order // Safe as we check the undefined case above
+      const lowestAsk = ask.peek() as Order
+
+      if (validMatch(highestBid, lowestAsk) === MatchValidity.Valid) {
+        console.log('Matching Order')
+        await matchOrder(delegatedExchangeContract, bid.dequeue() as Order, ask.dequeue() as Order) // Changed to dequeue when necessary
+      } else if (validMatch(highestBid, lowestAsk) === MatchValidity.BidUnvalid) {
+        sendToOverflow(bid.dequeue() as Order)
+      } else if (validMatch(highestBid, lowestAsk) === MatchValidity.AskUnvalid) {
+        sendToOverflow(ask.dequeue() as Order)
+      } else if (validMatch(highestBid, lowestAsk) === MatchValidity.BidAndAskUnvalid) {
+        sendToOverflow(bid.dequeue() as Order)
+        sendToOverflow(ask.dequeue() as Order)
+      }
     }
 
-    const highestBid = bid.peek() as Order // Safe as we check the undefined case above
-    const lowestAsk = ask.peek() as Order
-
-    if (validMatch(highestBid, lowestAsk) === MatchValidity.Valid) {
-      await matchOrder(delegatedExchangeContract, bid.dequeue() as Order, ask.dequeue() as Order) // Changed to dequeue when necessary
-    } else if (validMatch(highestBid, lowestAsk) === MatchValidity.BidUnvalid) {
-      sendToOverflow(bid.dequeue() as Order)
-    } else if (validMatch(highestBid, lowestAsk) === MatchValidity.AskUnvalid) {
-      sendToOverflow(ask.dequeue() as Order)
-    } else if (validMatch(highestBid, lowestAsk) === MatchValidity.BidAndAskUnvalid) {
-      sendToOverflow(bid.dequeue() as Order)
-      sendToOverflow(ask.dequeue() as Order)
-    }
+    oms.running = false
+    oms.stats.endTime = Date.now()
+    console.log(
+      `Processed ${oms.stats.success + oms.stats.fail} orders in ${
+        oms.stats.endTime - oms.stats.startTime
+      } ms. ${oms.stats.success} were successful, ${oms.stats.fail} failed. TPS: ${
+        (oms.stats.success + oms.stats.fail) / ((oms.stats.endTime - oms.stats.startTime) / 1000)
+      }`,
+    )
   }
 }
 
@@ -294,10 +305,12 @@ const matchOrder = async (
     )
     await tx.wait()
     postMessage(['order-match', bidOrder.id, askOrder.id])
+    oms.stats.success += 1
   } catch (error) {
     oms.stale.add(bidOrder.id)
     oms.stale.add(askOrder.id)
     postMessage(['order-rejection', bidOrder.id, askOrder.id])
+    oms.stats.fail += 1
   }
 }
 
@@ -320,15 +333,3 @@ const resetOverflow = () => {
     }
   }
 }
-
-// Get the initial Orders [X]
-// Organize by token id [X]
-// Sort and then match up queues [X]
-// Prune the orderbook upon receiving a match message from 'another' validator [X]
-// Determine if orders are a valid match [X]
-// If they are, match them [X]
-// If they aren't send one/both to an overflow buffer where they can be temporarily stored [X]
-// If there is a match, send it to the chain [X]
-// Send a message to the peer that a match has been achieved [X]
-// Periodically re-incorporate overflow buffer orders [X]
-// Check signature validity [ ]

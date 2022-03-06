@@ -1,8 +1,13 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Switch } from '@headlessui/react'
 import { classNames } from '../utils/utils'
 import { Peer } from '../../app/p2p/Peer'
 import { EtherContractWrapper } from '../../app/chain/EtherStore'
+import { useAppDispatch, useAppSelector, useTokenFactoryFilter, useTokenFilter } from '../../app/Hooks'
+import { getTokens, selectTokenContractAddress, selectTokens } from '../../app/store/slices/TokensSlice'
+import { fillOrderBook, submitTestOrder } from '../../app/oms/OrderService'
+import { OrderType } from '../../app/p2p/protocol_buffers/gossip_schema'
+import { selectAccountData } from '../../app/store/slices/EthersSlice'
 
 type SignerDashboardProps = {
   peer: Peer
@@ -72,8 +77,20 @@ const Slider = (props: {
 }
 
 const SignerDashboard = (props: SignerDashboardProps) => {
-  const [enabled, setEnabled] = useState<boolean>(false)
+  const dispatch = useAppDispatch()
+  const { primaryAccount } = useAppSelector(selectAccountData)
+  const tokenContractAddress = useAppSelector(selectTokenContractAddress)
+  const tokens = useAppSelector(selectTokens)
+  useTokenFactoryFilter(primaryAccount)
+  useTokenFilter(primaryAccount, tokenContractAddress)
 
+  useEffect(() => {
+    if (primaryAccount) {
+      dispatch(getTokens())
+    }
+  }, [primaryAccount])
+
+  const [enabled, setEnabled] = useState<boolean>(false)
   const actionValidation = async (on: boolean) => {
     if (on) {
       const decryptedSignerKey = await new EtherContractWrapper().decrypt(
@@ -86,43 +103,75 @@ const SignerDashboard = (props: SignerDashboardProps) => {
     }
   }
 
+  const startPerformanceTest = async () => {
+    if (!!tokens && tokens.length > 0) {
+      const token = tokens[0]
+      fillOrderBook(token, 1000)
+    } else {
+      console.log('Cannot submit test order with token array', tokens)
+    }
+  }
+
   return (
-    <div className="overflow-hidden rounded-lg bg-white shadow">
-      <h2 className="sr-only" id="profile-overview-title">
-        Profile Overview
-      </h2>
-      <div className="bg-white p-6">
-        <div className="sm:flex sm:items-center sm:justify-between">
-          <div className="sm:flex sm:space-x-5">
-            <div className="mt-4 text-center sm:mt-0 sm:pt-1 sm:text-left">
-              <p className="text-xl font-bold text-gray-900 sm:text-2xl">
-                Signer is {enabled ? 'ON' : 'OFF'}
-              </p>
-              <p className="text-sm font-medium text-gray-600">
-                To start validating orders, toggle the switch to the right
-              </p>
+    <>
+      <div className="overflow-hidden rounded-lg bg-white shadow">
+        <div className="bg-white p-6">
+          <div className="sm:flex sm:items-center sm:justify-between">
+            <div className="sm:flex sm:space-x-5">
+              <div className="mt-4 text-center sm:mt-0 sm:pt-1 sm:text-left">
+                <p className="text-xl font-bold text-gray-900 sm:text-2xl">
+                  Signer is {enabled ? 'ON' : 'OFF'}
+                </p>
+                <p className="text-sm font-medium text-gray-600">
+                  To start validating orders, toggle the switch to the right
+                </p>
+              </div>
+            </div>
+            <div className="mt-5 flex justify-center sm:mt-0">
+              <Slider action={actionValidation} enabled={enabled} setEnabled={setEnabled} />
             </div>
           </div>
-          <div className="mt-5 flex justify-center sm:mt-0">
-            <Slider action={actionValidation} enabled={enabled} setEnabled={setEnabled} />
+        </div>
+        <div className="grid grid-cols-1 divide-y divide-gray-200 border-t border-gray-200 bg-gray-50 sm:grid-cols-3 sm:divide-y-0 sm:divide-x">
+          <div className="flex items-center justify-between px-6 py-5">
+            <span className="truncate text-sm font-medium text-gray-500">Signer Balance</span>{' '}
+            <span className="text-xl font-medium text-gray-900">Ξ {props.signerBalance}</span>
+          </div>
+          <div className="flex items-center justify-between px-6 py-5">
+            <span className="truncate text-sm font-medium text-gray-500">Commission Balance</span>{' '}
+            <span className="text-xl font-medium text-gray-900">Ξ {props.commissionBalance}</span>
+          </div>
+          <div className="flex items-center justify-between px-6 py-5">
+            <span className="truncate text-sm font-medium text-gray-500">Transactions per Second</span>{' '}
+            <span className="text-xl font-medium text-gray-900">{props.tps}</span>
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-1 divide-y divide-gray-200 border-t border-gray-200 bg-gray-50 sm:grid-cols-3 sm:divide-y-0 sm:divide-x">
-        <div className="flex items-center justify-between px-6 py-5">
-          <span className="truncate text-sm font-medium text-gray-500">Signer Balance</span>{' '}
-          <span className="text-xl font-medium text-gray-900">Ξ {props.signerBalance}</span>
-        </div>
-        <div className="flex items-center justify-between px-6 py-5">
-          <span className="truncate text-sm font-medium text-gray-500">Commission Balance</span>{' '}
-          <span className="text-xl font-medium text-gray-900">Ξ {props.commissionBalance}</span>
-        </div>
-        <div className="flex items-center justify-between px-6 py-5">
-          <span className="truncate text-sm font-medium text-gray-500">Transactions per Second</span>{' '}
-          <span className="text-xl font-medium text-gray-900">{props.tps}</span>
+      <div className="mt-6 overflow-hidden rounded-lg bg-white shadow">
+        <div className="bg-white p-6">
+          <div className="sm:flex sm:items-center sm:justify-between">
+            <div className="sm:flex sm:space-x-5">
+              <div className="mt-4 text-center sm:mt-0 sm:pt-1 sm:text-left">
+                <p className="text-xl font-bold text-gray-900 sm:text-2xl">Run a Performance Test</p>
+                <p className="text-sm font-medium text-gray-600">
+                  To test performance, click the button to the right
+                </p>
+              </div>
+            </div>
+            <div className="mt-5 flex justify-center sm:mt-0">
+              <button
+                onClick={() => startPerformanceTest()}
+                className={
+                  'mr-4 flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50'
+                }
+              >
+                Start Test
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 

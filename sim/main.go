@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"crypto/rand"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -14,15 +13,17 @@ import (
 	"syscall"
 
 	"github.com/libp2p/go-libp2p"
-	"github.com/libp2p/go-libp2p-core/crypto"
 	peer "github.com/libp2p/go-libp2p-core/peer"
-	"github.com/libp2p/go-libp2p-peerstore/pstoremem"
-	star "github.com/mtojek/go-libp2p-webrtc-star"
+	dht "github.com/libp2p/go-libp2p-kad-dht"
 	"github.com/multiformats/go-multiaddr"
-	"github.com/pion/webrtc/v2"
 
+	discovery "github.com/libp2p/go-libp2p-discovery"
+	mplex "github.com/libp2p/go-libp2p-mplex"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
+	tls "github.com/libp2p/go-libp2p-tls"
 	yamux "github.com/libp2p/go-libp2p-yamux"
+	"github.com/libp2p/go-tcp-transport"
+	ws "github.com/libp2p/go-ws-transport"
 )
 
 // TopicStreamBufSize is the number of incoming messages to buffer for each topic.
@@ -129,90 +130,58 @@ func main() {
 
 	ctx := context.Background()
 
-	// transports := libp2p.ChainOptions(
-	// 	libp2p.Transport(tcp.NewTCPTransport),
-	// 	libp2p.Transport(ws.New),
-	// )
+	transports := libp2p.ChainOptions(
+		libp2p.Transport(tcp.NewTCPTransport),
+		libp2p.Transport(ws.New),
+	)
 
-	// muxers := libp2p.ChainOptions(
-	// 	libp2p.Muxer("/yamux/1.0.0", yamux.DefaultTransport),
-	// 	libp2p.Muxer("/mplex/6.7.0", mplex.DefaultTransport),
-	// )
+	muxers := libp2p.ChainOptions(
+		libp2p.Muxer("/yamux/1.0.0", yamux.DefaultTransport),
+		libp2p.Muxer("/mplex/6.7.0", mplex.DefaultTransport),
+	)
 
-	// security := libp2p.Security(tls.ID, tls.New)
+	security := libp2p.Security(tls.ID, tls.New)
 
-	// listenAddrs := libp2p.ListenAddrStrings(
-	// 	"/ip4/0.0.0.0/tcp/0",
-	// 	"/ip4/0.0.0.0/tcp/0/ws",
-	// )
-
-	starMultiaddr, err := multiaddr.NewMultiaddr("/dns4/localhost/tcp/9090/ws/p2p-webrtc-star")
-	privateKey, _, err := crypto.GenerateKeyPairWithReader(crypto.RSA, 2048, rand.Reader)
-	identity, err := peer.IDFromPublicKey(privateKey.GetPublic())
-	peerstore, err := pstoremem.NewPeerstore()
-	muxer := yamux.DefaultTransport
-
-	starTransport := star.New(identity, peerstore, muxer).
-		WithSignalConfiguration(star.SignalConfiguration{
-			URLPath: "/dns4/wrtc-star2.sjc.dwebops.pub/tcp/443/wss/p2p-webrtc-star",
-		}).
-		WithWebRTCConfiguration(webrtc.Configuration{
-			ICEServers: []webrtc.ICEServer{
-				{
-					URLs: []string{
-						"stun:stun.l.google.com:19302",
-						"stun:stun1.l.google.com:19302",
-						"stun:stun2.l.google.com:19302",
-						"stun:stun3.l.google.com:19302",
-						"stun:stun4.l.google.com:19302",
-					},
-				},
-			},
-		})
-
-	node, err := libp2p.New(
-		libp2p.Identity(privateKey),
-		libp2p.ListenAddrs(starMultiaddr),
-		libp2p.Peerstore(peerstore),
-		libp2p.Transport(starTransport),
-		libp2p.Muxer("/yamux/1.0.0", muxer))
+	listenAddrs := libp2p.ListenAddrStrings(
+		"/ip4/0.0.0.0/tcp/0",
+		"/ip4/0.0.0.0/tcp/0/ws",
+	)
 
 	// start a libp2p node that listens on a random local TCP port,
-	// node, err := libp2p.New(transports, listenAddrs, muxers, security)
-	// if err != nil {
-	// 	panic(err)
-	// }
+	node, err := libp2p.New(transports, listenAddrs, muxers, security)
+	if err != nil {
+		panic(err)
+	}
 
-	// kdht, err := dht.New(ctx, node)
-	// if err != nil {
-	// 	panic(err)
-	// }
+	kdht, err := dht.New(ctx, node)
+	if err != nil {
+		panic(err)
+	}
 
-	// if err = kdht.Bootstrap(ctx); err != nil {
-	// 	panic(err)
-	// }
+	if err = kdht.Bootstrap(ctx); err != nil {
+		panic(err)
+	}
 
-	// // /dns4/simpleweb3.ch/tcp/443/wss/p2p-webrtc-star
-	// bootstrap1, err := multiaddr.NewMultiaddr("/dnsaddr/bootstrap.libp2p.io/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN")
-	// bootstrapPeers := []multiaddr.Multiaddr{bootstrap1}
+	// /dns4/simpleweb3.ch/tcp/443/wss/p2p-webrtc-star
+	bootstrap1, err := multiaddr.NewMultiaddr("/dnsaddr/bootstrap.libp2p.io/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN")
+	bootstrapPeers := []multiaddr.Multiaddr{bootstrap1}
 
 	var wg sync.WaitGroup
-	// for _, peerAddr := range bootstrapPeers {
-	// 	peerinfo, _ := peer.AddrInfoFromP2pAddr(peerAddr)
-	// 	wg.Add(1)
-	// 	go func() {
-	// 		defer wg.Done()
-	// 		if err := node.Connect(ctx, *peerinfo); err != nil {
-	// 			fmt.Println(err)
-	// 		} else {
-	// 			fmt.Println("Connection established with bootstrap node:", *peerinfo)
-	// 		}
-	// 	}()
-	// }
-	// wg.Wait()
+	for _, peerAddr := range bootstrapPeers {
+		peerinfo, _ := peer.AddrInfoFromP2pAddr(peerAddr)
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			if err := node.Connect(ctx, *peerinfo); err != nil {
+				fmt.Println(err)
+			} else {
+				fmt.Println("Connection established with bootstrap node:", *peerinfo)
+			}
+		}()
+	}
+	wg.Wait()
 
-	ps, err := pubsub.NewGossipSub(ctx, node)
-	// ps, err := pubsub.NewGossipSub(ctx, node, pubsub.WithDiscovery(discovery.NewRoutingDiscovery(kdht)))
+	ps, err := pubsub.NewGossipSub(ctx, node, pubsub.WithDiscovery(discovery.NewRoutingDiscovery(kdht)))
 	if err != nil {
 		panic(err)
 	}
@@ -222,6 +191,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	fmt.Println("Listening for events")
 
 	if publish {
 		wg.Add(1)

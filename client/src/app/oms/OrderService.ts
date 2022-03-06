@@ -41,6 +41,20 @@ const getDateExpiryInMs = (expiryHours: string, expiryMinutes: string) => {
   ).valueOf()
 }
 
+const chainOrderToPeerOrder = (chainOrder: Omit<ChainOrder, 'signature'>): Omit<Order, 'signature'> => {
+  return {
+    id: chainOrder.id,
+    from: chainOrder.from,
+    tokenAddress: chainOrder.tokenAddress,
+    tokenId: chainOrder.tokenId.toString(),
+    orderType: chainOrder.orderType === 0 ? OrderType.BUY : OrderType.SELL,
+    price: chainOrder.price.toString(),
+    limitPrice: chainOrder.limitPrice.toString(),
+    quantity: chainOrder.quantity.toString(),
+    expiry: chainOrder.expiry.toString(),
+  }
+}
+
 export const submitOrder = async (
   fromAddress: string,
   token: Token,
@@ -78,16 +92,64 @@ export const submitOrder = async (
   await peer.publishOrder(signedOrder)
 }
 
-const chainOrderToPeerOrder = (chainOrder: Omit<ChainOrder, 'signature'>): Omit<Order, 'signature'> => {
-  return {
-    id: chainOrder.id,
-    from: chainOrder.from,
-    tokenAddress: chainOrder.tokenAddress,
-    tokenId: chainOrder.tokenId.toString(),
-    orderType: chainOrder.orderType === 0 ? OrderType.BUY : OrderType.SELL,
-    price: chainOrder.price.toString(),
-    limitPrice: chainOrder.limitPrice.toString(),
-    quantity: chainOrder.quantity.toString(),
-    expiry: chainOrder.expiry.toString(),
+export const submitTestOrder = async (
+  token: Token,
+  orderType: OrderType,
+  privateKey: string,
+  checkApproval: boolean = true,
+) => {
+  const wallet = new ethersLib.Wallet(privateKey)
+  const fromAddress = wallet.address
+  const price = '0.0001'
+  const limitPrice = price
+  const quantity = '0.0001'
+
+  const expiryHours = '1'
+  const expiryMinutes = '30'
+
+  if (orderType === OrderType.SELL && Number(price) !== Number(limitPrice)) {
+    throw new Error('Limit price must be equal to price for SELL order')
   }
+
+  if (orderType === OrderType.SELL && checkApproval) {
+    await setExchangeApprovalForTokenContract(fromAddress, token.contract.address)
+  }
+
+  const unsignedOrder: Omit<ChainOrder, 'signature'> = {
+    id: (~~(Math.random() * 1e9)).toString(36) + Date.now(),
+    from: fromAddress,
+    tokenAddress: token.contract.address,
+    tokenId: ethersLib.BigNumber.from(token.id),
+    orderType: orderType === OrderType.BUY ? 0 : 1,
+    price: ethersLib.utils.parseEther(price),
+    limitPrice: ethersLib.utils.parseEther(limitPrice),
+    quantity: ethersLib.utils.parseEther(quantity),
+    expiry: ethersLib.BigNumber.from(getDateExpiryInMs(expiryHours, expiryMinutes)),
+  }
+
+  const signature = await wallet?._signTypedData(OrderDomain, OrderTypes, unsignedOrder)
+  const signedOrder: Order = { ...chainOrderToPeerOrder(unsignedOrder), signature }
+  await peer.addOrder(signedOrder)
+}
+
+export const fillOrderBook = async (token: Token, testSize: number) => {
+  const PRIVATE_KEY_BUY = '0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d'
+  for (let i = 0; i < testSize; i++) {
+    if (i % 100 === 0 && i !== 0) {
+      console.log(`${i} BUY orders commited to orderbook`)
+    }
+    submitTestOrder(token, OrderType.BUY, PRIVATE_KEY_BUY)
+  }
+
+  const PRIVATE_KEY_SELL = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
+  submitTestOrder(token, OrderType.SELL, PRIVATE_KEY_SELL)
+
+  for (let i = 1; i < testSize; i++) {
+    if (i % 100 === 0 && i !== 0) {
+      console.log(`${i} SELL orders commited to orderbook`)
+    }
+    submitTestOrder(token, OrderType.SELL, PRIVATE_KEY_SELL, false)
+  }
+
+  console.log('Orderbook filled')
 }

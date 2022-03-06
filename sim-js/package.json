@@ -1,0 +1,23 @@
+{
+  "name": "sim",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@chainsafe/libp2p-noise": "^5.0.2",
+    "@libp2p/mplex": "^1.0.1",
+    "libp2p": "^0.36.2",
+    "libp2p-bootstrap": "^0.14.0",
+    "libp2p-gossipsub": "^0.13.0",
+    "libp2p-kad-dht": "^0.28.6",
+    "libp2p-mplex": "^1.0.0",
+    "libp2p-tcp": "^0.17.2",
+    "libp2p-webrtc-star": "^0.25.0",
+    "libp2p-websockets": "^0.16.2"
+  }
+}
