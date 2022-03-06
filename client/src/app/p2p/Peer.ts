@@ -66,8 +66,6 @@ export class Peer {
     this.node = await Libp2p.create(this.config)
     dispatch(setPeerId(this.node.peerId.toB58String()))
 
-    // this.node.on('peer:discovery', (peerId) => {})
-
     this.node.connectionManager.on('peer:connect', async (connection: any) => {
       dispatch(incrementPeers())
       await this.addPeer(connection.id)
