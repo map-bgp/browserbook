@@ -1,8 +1,10 @@
-import { useContext, useEffect } from 'react'
+import { PlusCircleIcon } from '@heroicons/react/outline'
+import { useContext, useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../app/Hooks'
 import { selectAccountData } from '../app/store/slices/EthersSlice'
 import { getValidatorSigner, selectSignerData } from '../app/store/slices/ValidatorSlice'
 import { AppContext } from '../components/AppContext'
+import SignerModal from '../components/elements/SignerBalanceModal'
 import CreateAndLoadSigner from '../components/order-validation/CreateAndLoadSinger'
 import SignerDashboard from '../components/order-validation/SignerDashboard'
 
@@ -47,6 +49,8 @@ const OrderValidation = (props: OrderValidationPros) => {
         <div className="md:col-span-2">
           {!!primaryAccount && !!signerAddress && !!encryptedSignerKey ? (
             <>
+              <div className="mb-4 flex items-center justify-between"></div>
+
               <SignerDashboard
                 peer={peer}
                 primaryAccount={primaryAccount}

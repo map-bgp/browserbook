@@ -25,16 +25,20 @@ const initialState: PeerState = {
   balance: '0',
 }
 
-export const getAllOrders = createAsyncThunk(
-  'peer/getAllOrders',
-  async (): Promise<Array<WithStatus<Order>>> => {
+// Excludes own orders
+export const getAllPendingOrders = createAsyncThunk(
+  'peer/getAllPendingOrders',
+  async (filterAddress: string): Promise<Array<WithStatus<Order>>> => {
     const orders = await queryOrders()
-    return orders.map((order) => ({
-      ...order,
-      price: ethersLib.utils.formatEther(order.price),
-      limitPrice: ethersLib.utils.formatEther(order.limitPrice),
-      quantity: ethersLib.utils.formatEther(order.quantity),
-    }))
+    return orders
+      .filter((order) => order.status === OrderStatus.Pending)
+      .filter((order) => order.from !== filterAddress)
+      .map((order) => ({
+        ...order,
+        price: ethersLib.utils.formatEther(order.price),
+        limitPrice: ethersLib.utils.formatEther(order.limitPrice),
+        quantity: ethersLib.utils.formatEther(order.quantity),
+      }))
   },
 )
 
@@ -131,10 +135,10 @@ export const peerSlice = createSlice({
         state.status = 'idle'
         state.orders = action.payload
       })
-      .addCase(getAllOrders.pending, (state) => {
+      .addCase(getAllPendingOrders.pending, (state) => {
         state.status = 'loading'
       })
-      .addCase(getAllOrders.fulfilled, (state, action) => {
+      .addCase(getAllPendingOrders.fulfilled, (state, action) => {
         state.status = 'idle'
         state.orders = action.payload
       })

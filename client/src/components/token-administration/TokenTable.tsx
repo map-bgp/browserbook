@@ -7,12 +7,18 @@ export type TokenTableProps = {
 }
 
 export const TokenTable = (props: TokenTableProps) => {
+  const [activeTokenAddress, setActiveTokenAddress] = useState<string | null>(null)
   const [activeTokenId, setActiveTokenId] = useState<string | null>(null)
   const [modalOpen, setModalOpen] = useState<boolean>(false)
 
   return (
     <>
-      <TokenInputModal tokenId={activeTokenId} open={modalOpen} setOpen={setModalOpen} />
+      <TokenInputModal
+        tokenAddress={activeTokenAddress}
+        tokenId={activeTokenId}
+        open={modalOpen}
+        setOpen={setModalOpen}
+      />
       {props.tokens.length !== 0 && (
         <div className="flex flex-col">
           <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -72,6 +78,7 @@ export const TokenTable = (props: TokenTableProps) => {
                           <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                             <div
                               onClick={() => {
+                                setActiveTokenAddress(token.contract.address)
                                 setActiveTokenId(token.id)
                                 setModalOpen(true)
                               }}

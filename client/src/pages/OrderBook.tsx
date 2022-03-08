@@ -1,20 +1,32 @@
-import { useEffect } from 'react'
-import { useAppDispatch, useAppSelector } from '../app/Hooks'
-import { OrderType } from '../app/p2p/protocol_buffers/gossip_schema'
+import { useEffect, useState } from 'react'
+import { useAppDispatch, useAppSelector, useTokenFactoryFilter, useTokenFilter } from '../app/Hooks'
+import { Order, OrderType } from '../app/p2p/protocol_buffers/gossip_schema'
 import { selectAccountData } from '../app/store/slices/EthersSlice'
-import { getAllOrders, selectOrdersWithTokenData } from '../app/store/slices/PeerSlice'
-import { getTokens } from '../app/store/slices/TokensSlice'
-import { OrderStatus } from '../app/Types'
+import { getAllPendingOrders, selectOrdersWithTokenData } from '../app/store/slices/PeerSlice'
+import {
+  getTokens,
+  selectTokenContractAddress,
+  selectTokensFromCurrentOrders,
+} from '../app/store/slices/TokensSlice'
+import { OrderStatus, Token, WithStatus } from '../app/Types'
+import OrderModal from '../components/elements/OrderModal'
 import { classNames } from '../components/utils/utils'
 
 const OrderBook = () => {
   const dispatch = useAppDispatch()
   const { primaryAccount } = useAppSelector(selectAccountData)
-  const orders = useAppSelector(selectOrdersWithTokenData)
+  const tokenContractAddress = useAppSelector(selectTokenContractAddress)
 
-  useEffect(() => {
-    dispatch(getAllOrders())
-  }, [])
+  const orders = useAppSelector(selectOrdersWithTokenData)
+  const orderToTokenMap = useAppSelector(selectTokensFromCurrentOrders)
+
+  const [activeOrder, setActiveOrder] = useState<WithStatus<Order> | null>(null)
+  const [activeOrderToken, setActiveOrderToken] = useState<Token | null>(null)
+  const [modalOpen, setModalOpen] = useState<boolean>(false)
+
+  // For getting own tokens
+  useTokenFactoryFilter(primaryAccount)
+  useTokenFilter(primaryAccount, tokenContractAddress)
 
   useEffect(() => {
     if (primaryAccount) {
@@ -22,14 +34,21 @@ const OrderBook = () => {
     }
   }, [primaryAccount])
 
+  // Filters out own orders
+  useEffect(() => {
+    if (primaryAccount) {
+      dispatch(getAllPendingOrders(primaryAccount))
+    }
+  }, [primaryAccount])
+
   return (
     <div className="mx-auto max-w-7xl py-8 px-8">
-      {/* <OrderModal
-            order={activeOrder}
-            orderToken={activeOrderToken}
-            open={orderModalOpen}
-            setOpen={setOrderModalOpen}
-          /> */}
+      <OrderModal
+        order={activeOrder}
+        orderToken={activeOrderToken}
+        open={modalOpen}
+        setOpen={setModalOpen}
+      />
       <div className="flex flex-col">
         <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
@@ -81,6 +100,7 @@ const OrderBook = () => {
                   </thead>
                   <tbody>
                     {orders.slice(0, 100).map((order, orderIdx) => {
+                      const orderToken = orderToTokenMap.get(order.id)
                       return (
                         <tr
                           key={`${order.id}`}
@@ -125,16 +145,18 @@ const OrderBook = () => {
                             )}
                           </td>
                           <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                            <div
-                              onClick={() => {
-                                // setActiveOrder(order)
-                                // setActiveOrderToken(!!orderToken ? orderToken : null)
-                                // setOrderModalOpen(true)
-                              }}
-                              className="cursor-pointer text-orange-600 hover:text-orange-900"
-                            >
-                              Fill
-                            </div>
+                            {order.status === OrderStatus.Pending && (
+                              <div
+                                onClick={() => {
+                                  setActiveOrder(order)
+                                  setActiveOrderToken(!!orderToken ? orderToken : null)
+                                  setModalOpen(true)
+                                }}
+                                className="cursor-pointer text-orange-600 hover:text-orange-900"
+                              >
+                                View
+                              </div>
+                            )}
                           </td>
                         </tr>
                       )
@@ -143,7 +165,7 @@ const OrderBook = () => {
                 </table>
               </div>
             ) : (
-              <div>It seems you don't have any orders</div>
+              <div>It seems there are no third-party orders found</div>
             )}
           </div>
         </div>

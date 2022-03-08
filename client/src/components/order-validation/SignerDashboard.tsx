@@ -8,6 +8,8 @@ import { getTokens, selectTokenContractAddress, selectTokens } from '../../app/s
 import { fillOrderBook, submitTestOrder } from '../../app/oms/OrderService'
 import { OrderType } from '../../app/p2p/protocol_buffers/gossip_schema'
 import { selectAccountData } from '../../app/store/slices/EthersSlice'
+import { PlusCircleIcon } from '@heroicons/react/outline'
+import SignerModal from '../elements/SignerBalanceModal'
 
 type SignerDashboardProps = {
   peer: Peer
@@ -79,8 +81,10 @@ const Slider = (props: {
 const SignerDashboard = (props: SignerDashboardProps) => {
   const dispatch = useAppDispatch()
   const { primaryAccount } = useAppSelector(selectAccountData)
+
   const tokenContractAddress = useAppSelector(selectTokenContractAddress)
   const tokens = useAppSelector(selectTokens)
+
   useTokenFactoryFilter(primaryAccount)
   useTokenFilter(primaryAccount, tokenContractAddress)
 
@@ -89,6 +93,8 @@ const SignerDashboard = (props: SignerDashboardProps) => {
       dispatch(getTokens())
     }
   }, [primaryAccount])
+
+  const [signerModalOpen, setSignerModalOpen] = useState<boolean>(false)
 
   const [enabled, setEnabled] = useState<boolean>(false)
   const actionValidation = async (on: boolean) => {
@@ -114,7 +120,18 @@ const SignerDashboard = (props: SignerDashboardProps) => {
 
   return (
     <>
+      <div className="group flex  cursor-pointer items-center justify-end py-2 px-2">
+        <div
+          onClick={() => {
+            setSignerModalOpen(true)
+          }}
+          className="mr-1 whitespace-nowrap text-right text-sm font-medium text-gray-500 group-hover:text-orange-600"
+        >
+          Open Signer Menu
+        </div>
+      </div>
       <div className="overflow-hidden rounded-lg bg-white shadow">
+        <SignerModal open={signerModalOpen} setOpen={setSignerModalOpen} />
         <div className="bg-white p-6">
           <div className="sm:flex sm:items-center sm:justify-between">
             <div className="sm:flex sm:space-x-5">

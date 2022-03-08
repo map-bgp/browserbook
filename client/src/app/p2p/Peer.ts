@@ -174,32 +174,17 @@ export class Peer {
     await Peer.DB.orders.add({ ...order, status: OrderStatus.Pending })
   }
 
-  private async getMatchingOrder(match: Match) {
-    const { primaryAccount } = selectAccountData(store.getState())
-    if (primaryAccount === null) {
-      throw new Error('Cannot query matching orders when ethers account is undefined')
-    }
-
+  private async updateMatchingOrders(match: Match) {
     const matchedMakerOrder = await Peer.DB.orders.get({
-      from: primaryAccount,
       id: match.makerId,
     })
 
     const matchedTakerOrder = await Peer.DB.orders.get({
-      from: primaryAccount,
       id: match.takerId,
     })
 
-    return matchedMakerOrder !== undefined ? matchedMakerOrder : matchedTakerOrder
-  }
-
-  async addMatch(match: Match) {
-    await Peer.DB.matches.add(match)
-    const orderToUpdate = await this.getMatchingOrder(match)
-
-    if (!!orderToUpdate) {
-      const { id, from } = orderToUpdate
-
+    if (!!matchedMakerOrder) {
+      const { id, from } = matchedMakerOrder
       if (match.status === 'Matched') {
         await Peer.DB.orders.update(id, { status: OrderStatus.Matched })
         dispatch(setOrderStatus({ id, from, status: OrderStatus.Matched }))
@@ -208,6 +193,23 @@ export class Peer {
         dispatch(setOrderStatus({ id, from, status: OrderStatus.Rejected }))
       }
     }
+
+    if (!!matchedTakerOrder) {
+      const { id, from } = matchedTakerOrder
+      if (match.status === 'Matched') {
+        await Peer.DB.orders.update(id, { status: OrderStatus.Matched })
+        dispatch(setOrderStatus({ id, from, status: OrderStatus.Matched }))
+      } else if (match.status === 'Rejected') {
+        await Peer.DB.orders.update(id, { status: OrderStatus.Rejected })
+        dispatch(setOrderStatus({ id, from, status: OrderStatus.Rejected }))
+      }
+    }
+  }
+
+  async addMatch(match: Match) {
+    console.log('Adding match', match)
+    await Peer.DB.matches.add(match)
+    const orderToUpdate = await this.updateMatchingOrders(match)
   }
 
   startValidation(signerAddress: string, decryptedSignerKey: string) {

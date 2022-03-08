@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { ethers as ethersLib } from 'ethers'
+import { withdrawCommissions } from '../../oms/Chain'
 import { queryValidatorSigner } from '../../oms/Queries'
 import { createAndLoadEncryptedSigner } from '../../oms/ValidatorService'
 import type { RootState } from '../Store'
@@ -27,6 +28,21 @@ export const initializeSigner = createAsyncThunk(
   async (options: { primaryAccount: string; etherDeposit: string }, thunkAPI: any): Promise<void> => {
     await createAndLoadEncryptedSigner(options.primaryAccount, options.etherDeposit)
     await thunkAPI.dispatch(getValidatorSigner(options.primaryAccount))
+  },
+)
+
+export const depositIntoSigner = createAsyncThunk(
+  'validator/depositIntoSigner',
+  async (options: { primaryAccount: string; etherDeposit: string }, thunkAPI: any): Promise<void> => {
+    await createAndLoadEncryptedSigner(options.primaryAccount, options.etherDeposit)
+    await thunkAPI.dispatch(getValidatorSigner(options.primaryAccount))
+  },
+)
+
+export const withdrawCommissionsThunk = createAsyncThunk(
+  'validator/withdrawCommissions',
+  async (primaryAccount: string, thunkAPI: any): Promise<void> => {
+    await withdrawCommissions(primaryAccount)
   },
 )
 

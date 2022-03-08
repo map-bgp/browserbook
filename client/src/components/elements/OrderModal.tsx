@@ -2,6 +2,8 @@ import { Fragment, useEffect } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { Order, OrderType } from '../../app/p2p/protocol_buffers/gossip_schema'
 import { Token, WithStatus } from '../../app/Types'
+import { useAppSelector } from '../../app/Hooks'
+import { selectAccountData } from '../../app/store/slices/EthersSlice'
 
 type OrderModalProps = {
   order: WithStatus<Order> | null
@@ -57,12 +59,20 @@ const OrderModal = (props: OrderModalProps) => {
 }
 
 const TokenModalContent = (props: OrderModalProps) => {
+  const { primaryAccount } = useAppSelector(selectAccountData)
+
   return (
     <form className="space-y-8 divide-y divide-gray-200">
       <div className="w-11/12 space-y-8 divide-y divide-gray-200">
         <div>
           <h3 className="text-xl font-semibold leading-6 text-gray-700">Order Information</h3>
           <dl className="mt-4 -mb-8 sm:divide-y sm:divide-gray-200">
+            <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
+              <dt className="text-sm font-medium text-gray-500">From</dt>
+              <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                {props.order?.from === primaryAccount ? 'Me' : `${props.order?.from}`}
+              </dd>
+            </div>
             <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
               <dt className="text-sm font-medium text-gray-500">Asset</dt>
               <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">

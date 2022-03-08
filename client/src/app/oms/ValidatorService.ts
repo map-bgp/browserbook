@@ -36,3 +36,25 @@ export const createAndLoadEncryptedSigner = async (
   })
   await transfer.wait()
 }
+
+export const depositIntoEncryptedSigner = async (
+  primaryAccount: string | null,
+  etherDeposit: string,
+) => {
+  if (primaryAccount === null) {
+    throw new Error('Cannot retrieve signer address from empty account')
+  }
+  const wrapper = new EtherContractWrapper()
+  const signer = wrapper.signer
+
+  const contractName = ContractName.Exchange
+  const contract = await wrapper.getContract(contractName)
+
+  const currentSigner = await contract.signerAddresses(primaryAccount)
+
+  const transfer = await signer.sendTransaction({
+    to: currentSigner,
+    value: ethersLib.utils.parseEther(etherDeposit),
+  })
+  await transfer.wait()
+}

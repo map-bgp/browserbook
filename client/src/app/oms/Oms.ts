@@ -14,7 +14,7 @@ enum MatchValidity {
 
 type OMS = {
   running: boolean
-  setRunning: (running: boolean) => void
+  waiting: boolean
   orderbook: Map<string, { bid: PriorityQueue<Order>; ask: PriorityQueue<Order> }>
   overflow: Array<Order>
   stale: Set<string>
@@ -40,7 +40,7 @@ const askComparator = (a: Order, b: Order) => (a.price < b.price ? -1 : 1)
 
 const oms: OMS = {
   running: false,
-  setRunning: (running: boolean) => (oms.running = running),
+  waiting: true,
   orderbook: new Map(),
   overflow: [],
   stale: new Set(),
@@ -70,7 +70,7 @@ onmessage = (e: MessageEvent) => {
 }
 
 const start = async (signerAddress: string, decryptedSignerKey: string) => {
-  oms.setRunning(true)
+  oms.running = true
   oms.stats.startTime = Date.now()
 
   const provider = ethers.getDefaultProvider('http://localhost:8545')
@@ -89,18 +89,27 @@ const start = async (signerAddress: string, decryptedSignerKey: string) => {
 
   await syncOrderBook()
 
-  matchOrders(delegatedExchangeContract)
-  // setInterval(() => {
-  //   if (oms.running) {
-  //     matchOrders(delegatedExchangeContract)
-  //   }
-  // }, 10)
+  setInterval(() => {
+    if (oms.running && oms.waiting) {
+      matchOrders(delegatedExchangeContract)
+    }
+  }, 10)
 
-  // setInterval(() => {
-  //   if (oms.running) {
-  //     resetOverflow()
-  //   }
-  // }, 30000)
+  setInterval(() => {
+    if (oms.running) {
+      resetOverflow()
+    }
+  }, 30000)
+}
+
+const logStats = () => {
+  console.log(
+    `Processed ${oms.stats.success + oms.stats.fail} orders in ${
+      oms.stats.endTime - oms.stats.startTime
+    } ms. ${oms.stats.success} were successful, ${oms.stats.fail} failed. TPS: ${
+      (oms.stats.success + oms.stats.fail) / ((oms.stats.endTime - oms.stats.startTime) / 1000)
+    }`,
+  )
 }
 
 const syncOrderBook = async () => {
@@ -177,33 +186,43 @@ const removeOrder = async (orderId: string) => {
 }
 
 const matchOrders = async (delegatedExchangeContract: ethers.Contract) => {
+  oms.waiting = false
   for (const [_, { bid, ask }] of oms.orderbook) {
-    while (bid.peek() !== undefined && ask.peek() !== undefined) {
-      const highestBid = bid.peek() as Order // Safe as we check the undefined case above
-      const lowestAsk = ask.peek() as Order
+    for (let i = 0; i < 100; i++) {
+      // Match 100 orders
+      if (bid.peek() !== undefined && ask.peek() !== undefined) {
+        const highestBid = bid.peek() as Order // Safe as we check the undefined case above
+        const lowestAsk = ask.peek() as Order
 
-      if (validMatch(highestBid, lowestAsk) === MatchValidity.Valid) {
-        console.log('Matching Order')
-        await matchOrder(delegatedExchangeContract, bid.dequeue() as Order, ask.dequeue() as Order) // Changed to dequeue when necessary
-      } else if (validMatch(highestBid, lowestAsk) === MatchValidity.BidUnvalid) {
-        sendToOverflow(bid.dequeue() as Order)
-      } else if (validMatch(highestBid, lowestAsk) === MatchValidity.AskUnvalid) {
-        sendToOverflow(ask.dequeue() as Order)
-      } else if (validMatch(highestBid, lowestAsk) === MatchValidity.BidAndAskUnvalid) {
-        sendToOverflow(bid.dequeue() as Order)
-        sendToOverflow(ask.dequeue() as Order)
+        if (validMatch(highestBid, lowestAsk) === MatchValidity.Valid) {
+          console.log('Matching Order')
+          await matchOrder(delegatedExchangeContract, bid.dequeue() as Order, ask.dequeue() as Order) // Changed to dequeue when necessary
+        } else if (validMatch(highestBid, lowestAsk) === MatchValidity.BidUnvalid) {
+          sendToOverflow(bid.dequeue() as Order)
+        } else if (validMatch(highestBid, lowestAsk) === MatchValidity.AskUnvalid) {
+          sendToOverflow(ask.dequeue() as Order)
+        } else if (validMatch(highestBid, lowestAsk) === MatchValidity.BidAndAskUnvalid) {
+          sendToOverflow(bid.dequeue() as Order)
+          sendToOverflow(ask.dequeue() as Order)
+        }
       }
     }
+  }
 
-    oms.running = false
+  let shouldContinue = false
+
+  for (const [_, { bid, ask }] of oms.orderbook) {
+    if (bid.peek() !== undefined && ask.peek() !== undefined) {
+      shouldContinue = true
+    }
+  }
+
+  oms.running = shouldContinue
+  oms.waiting = true
+
+  if (!oms.running) {
     oms.stats.endTime = Date.now()
-    console.log(
-      `Processed ${oms.stats.success + oms.stats.fail} orders in ${
-        oms.stats.endTime - oms.stats.startTime
-      } ms. ${oms.stats.success} were successful, ${oms.stats.fail} failed. TPS: ${
-        (oms.stats.success + oms.stats.fail) / ((oms.stats.endTime - oms.stats.startTime) / 1000)
-      }`,
-    )
+    logStats()
   }
 }
 
@@ -293,17 +312,17 @@ const matchOrder = async (
   const quantity = determineQuantity(bidContractOrder, askContractOrder)
 
   try {
-    const tx = await delegatedExchangeContract.executeOrder(
-      bidContractOrder,
-      askContractOrder,
-      price,
-      quantity,
-      ethers.utils.randomBytes(32),
-      {
-        nonce: nonce,
-      },
-    )
-    await tx.wait()
+    // const tx = await delegatedExchangeContract.executeOrder(
+    //   bidContractOrder,
+    //   askContractOrder,
+    //   price,
+    //   quantity,
+    //   ethers.utils.randomBytes(32),
+    //   {
+    //     nonce: nonce,
+    //   },
+    // )
+    // await tx.wait()
     postMessage(['order-match', bidOrder.id, askOrder.id])
     oms.stats.success += 1
   } catch (error) {
@@ -318,7 +337,6 @@ const sendToOverflow = (order: Order): void => {
   oms.overflow.push(order)
 }
 
-// Need better logic for determining rejected orders
 const resetOverflow = () => {
   for (const order of oms.overflow) {
     const tokenIdentifier = getTokenIdentifier(order)

@@ -6,13 +6,11 @@ import {
   ReceiptRefundIcon,
   UsersIcon,
 } from '@heroicons/react/outline'
-import { StarIcon } from '@heroicons/react/solid'
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../app/Hooks'
-import { OrderType } from '../app/p2p/protocol_buffers/gossip_schema'
 import { selectAccountData } from '../app/store/slices/EthersSlice'
-import { getAllOrders, selectOrdersWithTokenData } from '../app/store/slices/PeerSlice'
+import { getAllPendingOrders, selectOrdersWithTokenData } from '../app/store/slices/PeerSlice'
 import { getTokens } from '../app/store/slices/TokensSlice'
 import { TokenType } from '../app/Types'
 import { NavKey } from '../components/utils/constants'
@@ -76,7 +74,7 @@ const Dashboard = () => {
   const orders = useAppSelector(selectOrdersWithTokenData)
 
   useEffect(() => {
-    dispatch(getAllOrders())
+    dispatch(getAllPendingOrders())
   }, [])
 
   useEffect(() => {
@@ -98,20 +96,32 @@ const Dashboard = () => {
                       <div className="sm:flex sm:items-center sm:justify-between">
                         <div className="sm:flex sm:space-x-5">
                           <div className="mt-4 text-center sm:mt-0 sm:pt-1 sm:text-left">
-                            <p className="text-sm font-medium text-gray-600">Welcome back,</p>
-                            <p className="sm:text-md text-sm font-bold text-gray-900">
-                              {primaryAccount}
-                            </p>
+                            {!!primaryAccount ? (
+                              <>
+                                <p className="text-sm font-medium text-gray-600">Welcome back,</p>
+                                <p className="sm:text-md text-sm font-bold text-gray-900">
+                                  {primaryAccount}
+                                </p>
+                              </>
+                            ) : (
+                              <>
+                                <p className="text-sm font-medium text-gray-600">
+                                  Please connect your wallet above to proceed
+                                </p>
+                              </>
+                            )}
                           </div>
                         </div>
-                        <div className="mt-5 flex justify-center sm:mt-0">
-                          <Link
-                            to={`/${NavKey.TRADE}/orders`}
-                            className="flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
-                          >
-                            View your orders
-                          </Link>
-                        </div>
+                        {!!primaryAccount && (
+                          <div className="mt-5 flex justify-center sm:mt-0">
+                            <Link
+                              to={`/${NavKey.TRADE}/orders`}
+                              className="flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+                            >
+                              View your orders
+                            </Link>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
