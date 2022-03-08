@@ -72,6 +72,7 @@ const SignerModalContent = (props: SignerModalProps) => {
       const options = { primaryAccount, etherDeposit }
       dispatch(depositIntoSigner(options))
     }
+    props.setOpen(false)
   }
 
   return (
