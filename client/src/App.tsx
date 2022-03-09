@@ -22,7 +22,7 @@ const AppError = () => (
 
 const App = () => {
   const location: Location = useLocation()
-  const { peer } = useContext(AppContext)
+  const { peer, db } = useContext(AppContext)
   const [animating, setAnimating] = useState<boolean>(false)
 
   // Have to call this somewhere in the app to initialize ethers connection
@@ -33,6 +33,7 @@ const App = () => {
     const setup = async () => {
       await peer.init()
       peer.join()
+      db.expireOrders()
     }
 
     setup()

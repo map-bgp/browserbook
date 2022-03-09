@@ -1,5 +1,5 @@
 import Dexie from 'dexie'
-import { WithStatus } from '../Types'
+import { OrderStatus, WithStatus } from '../Types'
 import { Match, Order } from './protocol_buffers/gossip_schema'
 
 export interface IPeer {
@@ -44,6 +44,21 @@ export class P2PDB extends Dexie {
     } else {
       this.instance = new P2PDB()
       return this.instance
+    }
+  }
+
+  async expireOrders() {
+    if (P2PDB.instance) {
+      console.log('Expiring Orders')
+      const now = Date.now()
+      const expiredOrders = (await P2PDB.instance.orders.toArray()).filter((order) => {
+        Number(order.expiry) < now
+      })
+      const expiredOrderIds = expiredOrders.map((order) => order.id)
+
+      for (const expiredOrderId in expiredOrderIds) {
+        P2PDB.instance.orders.update(expiredOrderId, { status: OrderStatus.Expired })
+      }
     }
   }
 }
