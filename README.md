@@ -90,7 +90,7 @@ Be sure to note the deployment addresses as they are used to successfully build 
 
 ### Building and Running the Client Application
 
-In order to interact with smart contracts, we need to build and run the client application. Once again the first thing to do is install required dependencies by navigating to `./client` and running yarn.
+In order to interact with the smart contracts, we need to build and run the client application. Once again the first thing to do is install required dependencies by navigating to `./client` and running yarn.
 
 ```
 cd client && yarn
