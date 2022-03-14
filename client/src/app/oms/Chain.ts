@@ -140,12 +140,12 @@ export const withdrawEther = async (amount: string) => {
   await tx.wait()
 }
 
-export const withdrawCommissions = async (primaryAccount: string) => {
+export const withdrawCommissions = async () => {
   const wrapper = new EtherContractWrapper()
 
   const contractName = ContractName.Exchange
   const contract = await wrapper.getContract(contractName)
 
-  const tx = await contract.withdrawCommissions()
+  const tx = await contract.withdrawCommission()
   await tx.wait()
 }

@@ -40,8 +40,8 @@ export const depositIntoSigner = createAsyncThunk(
 
 export const withdrawCommissionsThunk = createAsyncThunk(
   'validator/withdrawCommissions',
-  async (primaryAccount: string, thunkAPI: any): Promise<void> => {
-    await withdrawCommissions(primaryAccount)
+  async (): Promise<void> => {
+    await withdrawCommissions()
   },
 )
 

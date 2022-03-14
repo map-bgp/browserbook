@@ -62,7 +62,7 @@ const SignerModalContent = (props: SignerModalProps) => {
   const withdraw = async () => {
     setError('')
     if (!!primaryAccount) {
-      dispatch(withdrawCommissionsThunk(primaryAccount))
+      dispatch(withdrawCommissionsThunk())
     }
   }
 
@@ -125,7 +125,7 @@ const SignerModalContent = (props: SignerModalProps) => {
           <button
             type="submit"
             onClick={() => withdraw()}
-            className="inline-flex justify-center rounded-md border border-transparent bg-orange-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+            className="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring focus:ring-gray-500 focus:ring-offset-2"
           >
             Withdraw Commissions
           </button>

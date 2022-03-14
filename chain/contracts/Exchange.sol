@@ -44,8 +44,6 @@ contract Exchange {
 
   event TokensExchangedAt(address indexed, address indexed, uint256, uint256);
 
-  Order public testOrder;
-
   constructor() {
     uint256 chainId = 31337;
     DOMAIN_SEPARATOR = keccak256(
@@ -59,8 +57,10 @@ contract Exchange {
     );
   }
 
-  // TODO this is insecure and needs to be protected so it cannot be "spoofed"
-  // with a signature from the signer itself (signs it's own address)
+  // Academic Software: WORK IN PROGRESS
+  // In a production setting this function would need to be modified verify that the sender
+  // uploading the signerAddress indeed possesses the actual signerKey via a signature
+  // Otherwise anybody can claim a signer address as their own and claim the commissions accordingly
   function setSigner(address signerAddress, string calldata encryptedSignerKey)
     public
   {
@@ -80,11 +80,13 @@ contract Exchange {
     balances[msg.sender] = 0;
   }
 
-  function verifyOrderSignatures(Order memory bidOrder, Order memory askOrder)
-    private
-    pure
-    returns (bool)
-  {}
+  function withdrawCommission() public {
+    (bool sent, bytes memory data) = msg.sender.call{
+      value: signerCommissionBalances[signerAddresses[msg.sender]]
+    }("");
+    require(sent, "Failed to send Ether");
+    signerCommissionBalances[signerAddresses[msg.sender]] = 0;
+  }
 
   function collectCommission(
     Order memory bidOrder,

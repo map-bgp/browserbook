@@ -11,18 +11,17 @@ pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "./helpers/IterableMapping.sol";
 
 contract BBToken is ERC1155 {
   using SafeMath for uint256;
-  using IterableMapping for itmap;
 
-  // address of owner of the token contract
+  // Token contract owner address (Token Set Owner)
   address private _contractOwner;
   string public contractURI;
 
-  // token variables
+  // Keep track of unique token identifiers
   uint256 public tokenNonce;
+  // Token variables
   mapping(uint256 => string) public tokenNames;
   mapping(uint256 => uint256) public tokenSupply;
   mapping(uint256 => string) public tokenMetadata;
@@ -32,12 +31,11 @@ contract BBToken is ERC1155 {
   address[] public fungibleHolders;
   mapping(address => bool) public isHolder;
 
+  // State variables for tracking dividend amounts
+  // tokenId => address => amount
   mapping(uint256 => mapping(address => uint256)) public fungibleHolderAmount;
   mapping(uint256 => mapping(address => uint256))
     public fungibleHolderDividendClaim;
-
-  // mapping(uint256 => itmap) private _fungibleHolderAmount;
-  // mapping(uint256 => itmap) private _fungibleClaims;
 
   // Constants receiver callbacks
   bytes4 public constant ERC1155_RECEIVED = 0xf23a6e61;

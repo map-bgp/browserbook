@@ -1213,64 +1213,6 @@ const Exchange: Contract = {
       type: 'function',
     },
     {
-      inputs: [],
-      name: 'testOrder',
-      outputs: [
-        {
-          internalType: 'string',
-          name: 'id',
-          type: 'string',
-        },
-        {
-          internalType: 'address',
-          name: 'from',
-          type: 'address',
-        },
-        {
-          internalType: 'address',
-          name: 'tokenAddress',
-          type: 'address',
-        },
-        {
-          internalType: 'uint256',
-          name: 'tokenId',
-          type: 'uint256',
-        },
-        {
-          internalType: 'enum Exchange.OrderType',
-          name: 'orderType',
-          type: 'uint8',
-        },
-        {
-          internalType: 'uint256',
-          name: 'price',
-          type: 'uint256',
-        },
-        {
-          internalType: 'uint256',
-          name: 'limitPrice',
-          type: 'uint256',
-        },
-        {
-          internalType: 'uint256',
-          name: 'quantity',
-          type: 'uint256',
-        },
-        {
-          internalType: 'uint256',
-          name: 'expiry',
-          type: 'uint256',
-        },
-        {
-          internalType: 'bytes',
-          name: 'signature',
-          type: 'bytes',
-        },
-      ],
-      stateMutability: 'view',
-      type: 'function',
-    },
-    {
       inputs: [
         {
           components: [
@@ -1339,6 +1281,13 @@ const Exchange: Contract = {
         },
       ],
       stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      inputs: [],
+      name: 'withdrawCommission',
+      outputs: [],
+      stateMutability: 'nonpayable',
       type: 'function',
     },
     {

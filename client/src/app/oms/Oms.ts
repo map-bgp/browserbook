@@ -73,6 +73,7 @@ const start = async (signerAddress: string, decryptedSignerKey: string) => {
   oms.running = true
   oms.stats.startTime = Date.now()
 
+  // Change to our node !!
   const provider = ethers.getDefaultProvider('http://localhost:8545')
   const signer = new ethers.Wallet(decryptedSignerKey, provider)
   oms.signerNonce = await provider.getTransactionCount(signerAddress)
@@ -196,7 +197,7 @@ const matchOrders = async (delegatedExchangeContract: ethers.Contract) => {
 
         if (validMatch(highestBid, lowestAsk) === MatchValidity.Valid) {
           console.log('Matching Order')
-          await matchOrder(delegatedExchangeContract, bid.dequeue() as Order, ask.dequeue() as Order) // Changed to dequeue when necessary
+          await matchOrder(delegatedExchangeContract, bid.dequeue() as Order, ask.dequeue() as Order)
         } else if (validMatch(highestBid, lowestAsk) === MatchValidity.BidUnvalid) {
           sendToOverflow(bid.dequeue() as Order)
         } else if (validMatch(highestBid, lowestAsk) === MatchValidity.AskUnvalid) {
@@ -312,17 +313,17 @@ const matchOrder = async (
   const quantity = determineQuantity(bidContractOrder, askContractOrder)
 
   try {
-    // const tx = await delegatedExchangeContract.executeOrder(
-    //   bidContractOrder,
-    //   askContractOrder,
-    //   price,
-    //   quantity,
-    //   ethers.utils.randomBytes(32),
-    //   {
-    //     nonce: nonce,
-    //   },
-    // )
-    // await tx.wait()
+    const tx = await delegatedExchangeContract.executeOrder(
+      bidContractOrder,
+      askContractOrder,
+      price,
+      quantity,
+      ethers.utils.randomBytes(32),
+      {
+        nonce: nonce,
+      },
+    )
+    await tx.wait()
     postMessage(['order-match', bidOrder.id, askOrder.id])
     oms.stats.success += 1
   } catch (error) {

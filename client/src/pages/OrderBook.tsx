@@ -9,6 +9,7 @@ import {
   selectTokensFromCurrentOrders,
 } from '../app/store/slices/TokensSlice'
 import { OrderStatus, Token, WithStatus } from '../app/Types'
+import { Chart } from '../components/elements/Chart'
 import OrderModal from '../components/elements/OrderModal'
 import { classNames } from '../components/utils/utils'
 
@@ -52,6 +53,17 @@ const OrderBook = () => {
       <div className="flex flex-col">
         <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+            {/* <div className="mb-8 flex flex-wrap justify-between overflow-hidden border-b border-gray-200 bg-gray-50 shadow sm:rounded-lg">
+              <div className="w-1/2">
+                <Chart />
+                <div className="text-center">Title</div>
+              </div>
+              <div className="w-1/2">
+                <Chart />
+                <div className="text-center">Title</div>
+              </div>
+              <div className="flex w-full justify-center py-8">Controls</div>
+            </div> */}
             {orders.length !== 0 ? (
               <div className="overflow-hidden border-b border-gray-200 shadow sm:rounded-lg">
                 <table className="min-w-full divide-y divide-gray-200">

@@ -171,7 +171,7 @@ const SignerDashboard = (props: SignerDashboardProps) => {
               <div className="mt-4 text-center sm:mt-0 sm:pt-1 sm:text-left">
                 <p className="text-xl font-bold text-gray-900 sm:text-2xl">Run a Performance Test</p>
                 <p className="text-sm font-medium text-gray-600">
-                  To test performance, click the button to the right
+                  To test performance, click the button to the right (local only)
                 </p>
               </div>
             </div>
