@@ -65,8 +65,8 @@ cp env.example .env
 
 You should see the following variables. 
 
-`ETHERSCAN_API_KEY=`
-`PRIVATE_KEY=`
+- `ETHERSCAN_API_KEY=`
+- `PRIVATE_KEY=`
 
 The Etherscan API Key is optional; the private key variable must be set and is the private key of the account with which you would like to deploy the contracts to the Mumbai testnet. Note that this account must have a sufficient balance of MATIC to cover the deployment gas fees. 
 
@@ -104,16 +104,15 @@ cp env.example .env
 
 You will need to set the following environment variables in order to sucessfully build the application:
 
-`TOKEN_FACTORY_ADDRESS=` Use the deployment address output from the console above
-`EXCHANGE_ADDRESS=` Use the deployment address output from the console above
-`SIGNER_RPC_URL='http://34.134.45.184:8545'` Use the url provided here, this is our private RPC node available for users of this project during its release
-
-`PERF_TEST_KEY_BUY='0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d'`
-`PERF_TEST_KEY_SELL='0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'`
+- `TOKEN_FACTORY_ADDRESS=` Use the deployment address output from the console above
+- `EXCHANGE_ADDRESS=` Use the deployment address output from the console above
+- `SIGNER_RPC_URL='http://34.134.45.184:8545'` Use the url provided here, this is our private RPC node available for users of this project during its release
+- `PERF_TEST_KEY_BUY='0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d'`
+- `PERF_TEST_KEY_SELL='0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'`
 
 We use the above private keys to perform dummy transactions in the performance test. The private keys above are known private keys provided by the local Hardhat node, so they are safe to distribute here. When running the Hardhat node, they have an initial balance of 10000 Ether on the local network, so they are well suited for running the performance test. (Never send live Ether to the addresses associated with these private keys) If you want to use different private keys for a performance test (say you are running on a different network), you can change them here. There are some additional steps to get up in running with performance testing detailed on the applications's "How it Works" page.
 
-**Note** If you are running the application to talk to the Mumbai testnet, we need to similarly make one manual change to the codebase. Navigate to `./client/src/app/oms/OrderService.ts` and change the `chainId` on line 22 from `31337` to `80001`. 
+**Note**: If you are running the application to talk to the Mumbai testnet, we need to similarly make one manual change to the codebase. Navigate to `./client/src/app/oms/OrderService.ts` and change the `chainId` on line 22 from `31337` to `80001`. 
 
 After optionally performing the above and setting the appropriate environment variables, we are ready to run the application. 
 
