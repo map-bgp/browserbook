@@ -1,9 +1,8 @@
 import { ethers as ethersLib } from 'ethers'
-import { fromJSON } from 'postcss'
 import { ContractMetadata, ContractName } from '../chain/ContractMetadata'
 import { EtherContractWrapper } from '../chain/EtherStore'
 import { hasOwnProperty } from '../chain/helpers'
-import { CreateTokenOptions, Token, TokenType, TransferTokenOptions } from '../Types'
+import { CreateTokenOptions, TokenType, TransferTokenOptions } from '../Types'
 
 export const createTokenContract = async (uri: string) => {
   const wrapper = new EtherContractWrapper()

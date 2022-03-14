@@ -74,12 +74,9 @@ const Dashboard = () => {
   const orders = useAppSelector(selectOrdersWithTokenData)
 
   useEffect(() => {
-    dispatch(getAllPendingOrders())
-  }, [])
-
-  useEffect(() => {
     if (primaryAccount) {
       dispatch(getTokens())
+      dispatch(getAllPendingOrders(primaryAccount))
     }
   }, [primaryAccount])
 

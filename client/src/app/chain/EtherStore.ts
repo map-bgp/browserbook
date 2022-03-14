@@ -1,8 +1,7 @@
 import { ethers } from 'ethers'
 
 import { store } from '../store/Store'
-import { ethersSlice, selectEncryptionKey, setAccounts, setEncryptionKey } from '../store/slices/EthersSlice'
-import { setEncryptedSignerKey } from '../store/slices/ValidatorSlice'
+import { selectEncryptionKey, setAccounts, setEncryptionKey } from '../store/slices/EthersSlice'
 import { ContractName, ContractMetadata } from './ContractMetadata'
 import { encrypt } from './Encryption'
 
@@ -76,9 +75,12 @@ export class EtherContractWrapper {
   }
 
   decrypt = async (cipherText: string, address: string) =>
-  await this.provider.send('eth_decrypt', [cipherText, address])
+    await this.provider.send('eth_decrypt', [cipherText, address])
 
-  getDelegatedExchangeSigner = async (account: string, encryptedSignerKey: string): Promise<ethers.Contract> => {
+  getDelegatedExchangeSigner = async (
+    account: string,
+    encryptedSignerKey: string,
+  ): Promise<ethers.Contract> => {
     if (account === '') {
       throw new Error('Malformed account')
     }
@@ -89,7 +91,7 @@ export class EtherContractWrapper {
 
     const signer = new ethers.Wallet(await this.decrypt(encryptedSignerKey, account))
     const contractMetadata = ContractMetadata[ContractName.Exchange]
-    
+
     if (hasOwnProperty(contractMetadata, 'address')) {
       const address = contractMetadata.address
       const contractABI = contractMetadata.abi

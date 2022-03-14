@@ -4,7 +4,6 @@ import { decrementPeers, incrementPeers, setOrderStatus, setPeerId } from '../st
 import { Order, Match } from './protocol_buffers/gossip_schema'
 import { IToken, P2PDB } from './db'
 import { OrderStatus, Token } from '../Types'
-import { selectAccountData } from '../store/slices/EthersSlice'
 import { pushTps } from '../store/slices/ValidatorSlice'
 
 const dispatch = store.dispatch

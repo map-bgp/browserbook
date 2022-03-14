@@ -1,4 +1,4 @@
-import { ethers, ethers as ethersLib } from 'ethers'
+import { ethers as ethersLib } from 'ethers'
 import { Token, TokenType } from '../Types'
 import { ContractName } from '../chain/ContractMetadata'
 import { EtherContractWrapper, EtherStore } from '../chain/EtherStore'

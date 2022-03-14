@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, useEffect, useState } from 'react'
+import { Fragment, useContext, useEffect, useState } from 'react'
 import { Location, useLocation } from 'react-router-dom'
 import { withErrorBoundary } from 'react-error-boundary'
 import Lottie from 'lottie-react'

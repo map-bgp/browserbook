@@ -5,10 +5,8 @@ import { Peer } from '../../app/p2p/Peer'
 import { EtherContractWrapper } from '../../app/chain/EtherStore'
 import { useAppDispatch, useAppSelector, useTokenFactoryFilter, useTokenFilter } from '../../app/Hooks'
 import { getTokens, selectTokenContractAddress, selectTokens } from '../../app/store/slices/TokensSlice'
-import { fillOrderBook, submitTestOrder } from '../../app/oms/OrderService'
-import { OrderType } from '../../app/p2p/protocol_buffers/gossip_schema'
+import { fillOrderBook } from '../../app/oms/OrderService'
 import { selectAccountData } from '../../app/store/slices/EthersSlice'
-import { PlusCircleIcon } from '@heroicons/react/outline'
 import SignerModal from '../elements/SignerBalanceModal'
 
 type SignerDashboardProps = {

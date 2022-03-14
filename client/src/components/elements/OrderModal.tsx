@@ -1,4 +1,4 @@
-import { Fragment, useEffect } from 'react'
+import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { Order, OrderType } from '../../app/p2p/protocol_buffers/gossip_schema'
 import { Token, WithStatus } from '../../app/Types'
