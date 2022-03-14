@@ -12,7 +12,7 @@ Once at the application, navigate to the "How it Works" page for an overview on 
 
 Alternatively, you can build the application locally.
 
-## Building and running a local copy of the Application
+## Building and Running a Local Copy of the Application
 
 In order to build the system locally, the following requirements must be met:
 
@@ -31,7 +31,7 @@ The first thing to do is to navigate to the chain directory and install all depe
 cd chain && yarn
 ```
 
-#### Building for Hardhat (locally)
+#### Option A: Building for Hardhat (locally)
 
 We use Hardhat as a development environment for compiling, building, testing, and deploying the Smart Contracts. Using Hardhat simplifies the deployment of the contracts to a local Ethereum node or any EVM-based Network. For local deployments, Hardhat mimics a public blockchain on your private machine for development. In the `./chain` directory, run the following command: 
 
@@ -45,7 +45,7 @@ to start a local node. You are now running a local blockchain and can deploy Bro
 yarn hardhat run ./scripts/deploy.ts --network localhost
 ```
 
-Hardhat will compile the contracts and deploy them to your local node. Be sure to note the console output which should deploy something like the following:
+Hardhat will compile the contracts and deploy them to your local node. Be sure to note the console output which should display something like the following:
 
 ```
 TokenFactory deployed to: 0x5FbDB2315678afecb367f032d93F642f64180aa3
@@ -55,7 +55,7 @@ Exchange deployed to: 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
 
 Note that in your output the provided addresses may differ.
 
-#### Building for Mumbai (Testnet)
+#### Option B: Building for Mumbai (Testnet)
 
 Before deploying to Mumbai, a few environment variables must be set. Copy the `env.example` file to `.env` via 
 
