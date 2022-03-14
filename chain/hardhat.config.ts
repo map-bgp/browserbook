@@ -1,11 +1,14 @@
 import * as dotenv from "dotenv";
 
 import { HardhatUserConfig, task } from "hardhat/config";
+
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
+import "hardhat-deploy";
+import "hardhat-deploy-ethers";
 
 dotenv.config();
 
@@ -25,11 +28,19 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 const config: HardhatUserConfig = {
   solidity: "0.8.4",
   networks: {
-    ropsten: {
-      url: process.env.ROPSTEN_URL || "",
+    arbitrum: {
+      url: "https://rinkeby.arbitrum.io/rpc",
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
+    mumbai: {
+      url: "https://rpc-mumbai.matic.today",
+      accounts:
+        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+    },
+  },
+  namedAccounts: {
+    deployer: 0,
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
