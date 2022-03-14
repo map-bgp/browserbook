@@ -110,7 +110,7 @@ You will need to set the following environment variables in order to sucessfully
 - `PERF_TEST_KEY_BUY='0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d'`
 - `PERF_TEST_KEY_SELL='0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'`
 
-We use the above private keys to perform dummy transactions in the performance test. The private keys above are known private keys provided by the local Hardhat node, so they are safe to distribute here. When running the Hardhat node, they have an initial balance of 10000 Ether on the local network, so they are well suited for running the performance test. (Never send live Ether to the addresses associated with these private keys) If you want to use different private keys for a performance test (say you are running on a different network), you can change them here. There are some additional steps to get up in running with performance testing detailed on the applications's "How it Works" page.
+We use the above private keys to perform dummy transactions in the performance test. The private keys above are known private keys provided by the local Hardhat node, so they are safe to distribute here. When running the Hardhat node, they have an initial balance of 10000 Ether on the local network, so they are well suited for running the performance test. (Never send live Ether to the addresses associated with these private keys) If you want to use different private keys for a performance test (say you are running on a different network), you can change them here. There are some additional steps to get up and running with performance testing as detailed on the application's "How it Works" page.
 
 **Note**: If you are running the application to talk to the Mumbai testnet, we need to similarly make one manual change to the codebase. Navigate to `./client/src/app/oms/OrderService.ts` and change the `chainId` on line 22 from `31337` to `80001`. 
 
@@ -131,3 +131,5 @@ yarn build
 ```
 
 This will create a `./dist` directory with a production build which is deployable to any sort of static file hosting, including IPFS. **Note:** Because of a particularity in the way that static file servers (including IPFS) handle our build tools output, it is necessary to make a small change to the `./dist/index.html` file before hosting in order to ensure that nested routes/content are properly referenced. Navigate to the `./dist/index.html` file and replace all root paths such as `<script src="/index.96e2502d.js" defer=""></script>` to be *relative* paths i.e. `<script src="./index.96e2502d.js" defer=""></script>` We recommend performing this manually as there should only be three such instances to change in your output. Once complete the files are ready for upload to a hosting provider. 
+
+For any questions related to these instructions the project maintainers are always available.
