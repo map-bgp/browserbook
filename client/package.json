@@ -3,11 +3,8 @@
   "version": "0.0.0",
   "source": "index.html",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "parcel": "parcel --port 3000",
-    "parcel build": "parcel build"
+    "dev": "yarn parcel --port 3000",
+    "build": "yarn parcel build"
   },
   "dependencies": {
     "@chainsafe/libp2p-noise": "^5.0.2",

@@ -73,8 +73,7 @@ const start = async (signerAddress: string, decryptedSignerKey: string) => {
   oms.running = true
   oms.stats.startTime = Date.now()
 
-  // Change to our node !!
-  const provider = ethers.getDefaultProvider('http://localhost:8545')
+  const provider = ethers.getDefaultProvider(process.env.SIGNER_RPC_URL as string)
   const signer = new ethers.Wallet(decryptedSignerKey, provider)
   oms.signerNonce = await provider.getTransactionCount(signerAddress)
 

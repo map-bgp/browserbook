@@ -8,7 +8,7 @@ type VariableContract = {
 }
 
 const TokenFactory: Contract = {
-  address: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+  address: process.env.TOKEN_FACTORY_ADDRESS as string,
   abi: [
     {
       anonymous: false,
@@ -897,7 +897,7 @@ const Token: VariableContract = {
 }
 
 const Exchange: Contract = {
-  address: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
+  address: process.env.EXCHANGE_ADDRESS as string,
   abi: [
     {
       inputs: [],

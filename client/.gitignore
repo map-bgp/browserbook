@@ -6,3 +6,4 @@ dist-ssr
 /old/
 /yarn-error.log
 .parcel-cache
+.env
