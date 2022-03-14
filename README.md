@@ -1,6 +1,6 @@
 # Browserbook
 
-Browserbook is a prototypical implementation of a peer-to-peer decentralised token exchange. (DEX) Browserbook was developed by Corey Bothwell, Ankan Gosh, and Saiteja Pottanigari at the University of Zurich in 2022. 
+Browserbook is a prototypical implementation of a peer-to-peer decentralised token exchange (DEX). Browserbook was developed by Corey Bothwell, Ankan Gosh, and Saiteja Pottanigari at the University of Zurich in 2022. 
 
 ## Using the Application
 
@@ -70,7 +70,7 @@ You should see the following variables.
 
 The Etherscan API Key is optional; the private key variable must be set and is the private key of the account with which you would like to deploy the contracts to the Mumbai testnet. Note that this account must have a sufficient balance of MATIC to cover the deployment gas fees. 
 
-We need to make one manual adjustment to our contract in order to ensure it is compatible with the Mumbai testnet. Navigate to `./chain/contracts/Exchange.sol` and change the `chainId` on line 48 from `31337` to `80001`. (We optimised for users deploying to Hardhat. 31337 is the chainId for the local Hardhat node, while 80001 is the chainId for Mumbai) Be sure to save the file.
+We need to make one manual adjustment to our contract in order to ensure it is compatible with the Mumbai testnet. Navigate to `./chain/contracts/Exchange.sol` and change the `chainId` on line 48 from `31337` to `80001` (We optimised for users deploying to Hardhat. 31337 is the chainId for the local Hardhat node, while 80001 is the chainId for Mumbai). Be sure to save the file.
 
 Once the above is complete, run the following command from `./chain`:
 
