@@ -8,7 +8,7 @@ Our application is deployed to IPFS. To use the application, simply navigate to 
 Alternatively, you can navigate to the application by requesting the following content hash from IPFS: 
 Once at the application, navigate to the "How it Works" page for an overview on how to use the system.
 
-**Note**: You will need to have metamask installed in order to access the application.
+**Note**: You will need to have Metamask installed in order to access the application.
 
 Alternatively, you can build the application locally.
 
@@ -21,7 +21,7 @@ In order to build the system locally, the following requirements must be met:
 - Any browser supporting MetaMask Eg: Firefox, Brave, Chrome, etc.
 - Install the Metamask browser extensions in the browser of choice
 
-After cloning the repository, please follow the steps below
+After cloning the repository, please follow the steps below.
 
 ### Compiling and Deploying the Smart Contracts
 
