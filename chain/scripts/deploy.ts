@@ -19,12 +19,32 @@ async function main() {
   const TokenFactory = await ethers.getContractFactory("TokenFactory");
   const tokenFactory = await TokenFactory.deploy();
   await tokenFactory.deployed();
-  console.log("TokenFactory deployed to:", tokenFactory.address);
+  console.log(
+    "TokenFactory deployed to:",
+    tokenFactory.address,
+    "TokenFactory deployment transaction hash",
+    tokenFactory.deployTransaction.hash
+  );
 
   const Exchange = await ethers.getContractFactory("Exchange");
   const exchange = await Exchange.deploy();
   await exchange.deployed();
-  console.log("Exchange deployed to:", exchange.address);
+  console.log(
+    "Exchange deployed to:",
+    exchange.address,
+    "Exchange deployment transaction hash",
+    exchange.deployTransaction.hash
+  );
+
+  const Encrypt = await ethers.getContractFactory("Encrypt");
+  const encrypt = await Encrypt.deploy();
+  await encrypt.deployed();
+  console.log(
+    "encrypt deployed to:",
+    encrypt.address,
+    "Encrypt deployment transaction hash",
+    encrypt.deployTransaction.hash
+  );
 }
 
 // We recommend this pattern to be able to use async/await everywhere
