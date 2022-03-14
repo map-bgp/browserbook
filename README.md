@@ -55,7 +55,7 @@ Exchange deployed to: 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
 
 Note that in your output the provided addresses may differ.
 
-#### Building for Mumbai (testnet)
+#### Building for Mumbai (Testnet)
 
 Before deploying to Mumbai, a few environment variables must be set. Copy the `env.example` file to `.env` via 
 
