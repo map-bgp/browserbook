@@ -23,7 +23,7 @@ const AppError = () => (
 const App = () => {
   const location: Location = useLocation()
   const { peer, db } = useContext(AppContext)
-  const [animating, setAnimating] = useState<boolean>(false)
+  const [animating, setAnimating] = useState<boolean>(true)
 
   // Have to call this somewhere in the app to initialize ethers connection
   // Could write an initialize hook
