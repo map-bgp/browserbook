@@ -6,6 +6,8 @@ import { OrderType, Order } from '../p2p/protocol_buffers/gossip_schema'
 import { setExchangeApprovalForTokenContract } from './Chain'
 import { ContractMetadata, ContractName } from '../chain/ContractMetadata'
 import { hasOwnProperty } from '../chain/helpers'
+import { store } from '../store/Store'
+import { setStatus } from '../store/slices/TokensSlice'
 
 const exchangeContract = ContractMetadata[ContractName.Exchange]
 
@@ -17,7 +19,7 @@ if (hasOwnProperty(exchangeContract, 'address')) {
 const OrderDomain = {
   name: 'BrowserBook',
   version: '1',
-  chainId: 31337,
+  chainId: 80001,
   verifyingContract: exchangeAddress,
 }
 
@@ -65,6 +67,7 @@ export const submitOrder = async (
   expiryHours: string,
   expiryMinutes: string,
 ) => {
+  store.dispatch(setStatus('loading'))
   const signer = ethers.getSigner()
 
   if (orderType === OrderType.SELL && Number(price) !== Number(limitPrice)) {
@@ -90,6 +93,7 @@ export const submitOrder = async (
   const signature = await signer?._signTypedData(OrderDomain, OrderTypes, unsignedOrder)
   const signedOrder: Order = { ...chainOrderToPeerOrder(unsignedOrder), signature }
   await peer.publishOrder(signedOrder)
+  store.dispatch(setStatus('idle'))
 }
 
 export const submitTestOrder = async (
@@ -100,9 +104,9 @@ export const submitTestOrder = async (
 ) => {
   const wallet = new ethersLib.Wallet(privateKey)
   const fromAddress = wallet.address
-  const price = '0.0001'
+  const price = '0.00001'
   const limitPrice = price
-  const quantity = '0.0001'
+  const quantity = '0.00001'
 
   const expiryHours = '1'
   const expiryMinutes = '30'
@@ -133,7 +137,7 @@ export const submitTestOrder = async (
 }
 
 export const fillOrderBook = async (token: Token, testSize: number) => {
-  const PRIVATE_KEY_BUY = '0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d'
+  const PRIVATE_KEY_BUY = process.env.PERF_TEST_KEY_BUY as string
   for (let i = 0; i < testSize; i++) {
     if (i % 100 === 0 && i !== 0) {
       console.log(`${i} BUY orders commited to orderbook`)
@@ -141,7 +145,7 @@ export const fillOrderBook = async (token: Token, testSize: number) => {
     submitTestOrder(token, OrderType.BUY, PRIVATE_KEY_BUY)
   }
 
-  const PRIVATE_KEY_SELL = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
+  const PRIVATE_KEY_SELL = process.env.PERF_TEST_KEY_SELL as string
   submitTestOrder(token, OrderType.SELL, PRIVATE_KEY_SELL)
 
   for (let i = 1; i < testSize; i++) {

@@ -112,7 +112,7 @@ const SignerDashboard = (props: SignerDashboardProps) => {
   const startPerformanceTest = async () => {
     if (!!tokens && tokens.length > 0) {
       const token = tokens[0]
-      fillOrderBook(token, 1000)
+      fillOrderBook(token, 20)
     } else {
       console.log('Cannot submit test order with token array', tokens)
     }

@@ -71,6 +71,9 @@ export const tokensSlice = createSlice({
     setTokens: (state, action: PayloadAction<Array<Token>>) => {
       state.tokens = action.payload
     },
+    setStatus: (state, action: PayloadAction<'idle' | 'loading' | 'failed'>) => {
+      state.status = action.payload
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -110,7 +113,7 @@ export const tokensSlice = createSlice({
   },
 })
 
-export const { setTokenContract, setTokens } = tokensSlice.actions
+export const { setTokenContract, setTokens, setStatus } = tokensSlice.actions
 
 export const selectTokenContract = (state: RootState): TokenContract | null => state.tokens.tokenContract
 export const selectTokenContractAddress = (state: RootState): string | null =>

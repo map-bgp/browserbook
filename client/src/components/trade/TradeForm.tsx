@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { useAppSelector } from '../../app/Hooks'
 import { submitOrder } from '../../app/oms/OrderService'
 import { Order, OrderType } from '../../app/p2p/protocol_buffers/gossip_schema'
-import { selectAccountData } from '../../app/store/slices/EthersSlice'
+import { selectAccountData, selectTokenStatus } from '../../app/store/slices/EthersSlice'
 import { selectTokens } from '../../app/store/slices/TokensSlice'
 import { Token, TokenType } from '../../app/Types'
 import { classNames, getDateAtInterval } from '../utils/utils'
@@ -13,6 +13,7 @@ import TokenSelect from '../elements/TokenSelect'
 import { selectBalance } from '../../app/store/slices/PeerSlice'
 import { Link } from 'react-router-dom'
 import { NavKey } from '../utils/constants'
+import { Spinner } from '../elements/Spinner'
 
 const InfoPanel = (props: { message: string; link: string }) => {
   return (
@@ -39,6 +40,7 @@ const InfoPanel = (props: { message: string; link: string }) => {
 
 const TradeForm = () => {
   const { primaryAccount } = useAppSelector(selectAccountData)
+  const status = useAppSelector(selectTokenStatus)
   const tokens = useAppSelector(selectTokens)
   const balance = useAppSelector(selectBalance)
   const [selected, setSelected] = useState<Token>(tokens[0])
@@ -287,6 +289,20 @@ const TradeForm = () => {
           </div>
         </div>
         <div className="flex items-center justify-end bg-gray-50 px-4 py-3 text-right sm:px-6">
+          {status == 'loading' && (
+            <div className="w-full">
+              <div className="mx-4 flex items-center">
+                <div className="flex-shrink-0">
+                  <Spinner />
+                </div>
+                <div className="ml-1">
+                  <h3 className="text-xs font-medium text-blue-800">
+                    Processing. Please wait and confirm any prompted transactions
+                  </h3>
+                </div>
+              </div>
+            </div>
+          )}
           {error && (
             <div className="w-full">
               <div className="mx-4 flex items-center">
