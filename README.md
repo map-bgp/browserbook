@@ -16,10 +16,10 @@ Alternatively, you can build the application locally.
 
 In order to build the system locally, the following requirements must be met:
 
-• Node.js 16.3.2 or equivalent version
-• Node Package Manager (NPM) 8.1.2 or Yarn 1.22.17 (or equivalent versions)
-• Any browser supporting MetaMask Eg: Firefox, Brave, Chrome, etc.
-• Install the Metamask browser extensions in the browser of choice
+- Node.js 16.3.2 or equivalent version
+- Node Package Manager (NPM) 8.1.2 or Yarn 1.22.17 (or equivalent versions)
+- Any browser supporting MetaMask Eg: Firefox, Brave, Chrome, etc.
+- Install the Metamask browser extensions in the browser of choice
 
 After cloning the repository, please follow the steps below
 
