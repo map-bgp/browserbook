@@ -27,7 +27,7 @@ const Content = (props: ContentProps) => {
       </header>
       <main>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
+          <Route index element={<Dashboard />} />
           <Route path={NavKey.DASHBOARD} element={<Dashboard />} />
           <Route path={NavKey.TOKEN_ADMINISTRATION} element={<Outlet />}>
             <Route index element={<TokenAdministration />} />
