@@ -19,7 +19,7 @@ if (hasOwnProperty(exchangeContract, 'address')) {
 const OrderDomain = {
   name: 'BrowserBook',
   version: '1',
-  chainId: 80001, // 80001 for testnet deployment to Mumbai
+  chainId: 31337, // 80001 for testnet deployment to Mumbai
   verifyingContract: exchangeAddress,
 }
 
