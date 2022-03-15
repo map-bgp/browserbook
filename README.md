@@ -8,7 +8,7 @@ Our application is deployed to IPFS. To use the application, simply navigate to 
 Alternatively, you can navigate to the application by requesting the following content hash from IPFS: 
 Once at the application, navigate to the "How it Works" page for an overview on how to use the system.
 
-**Note**: You will need to have metamask installed in order to access the application.
+**Note**: You will need to have Metamask installed in order to access the application.
 
 Alternatively, you can build the application locally.
 
@@ -21,7 +21,7 @@ In order to build the system locally, the following requirements must be met:
 - Any browser supporting MetaMask Eg: Firefox, Brave, Chrome, etc.
 - Install the Metamask browser extensions in the browser of choice
 
-After cloning the repository, please follow the steps below
+After cloning the repository, please follow the steps below.
 
 ### Compiling and Deploying the Smart Contracts
 
@@ -133,3 +133,10 @@ yarn build
 This will create a `./dist` directory with a production build which is deployable to any sort of static file hosting, including IPFS. **Note:** Because of a particularity in the way that static file servers (including IPFS) handle our build tools output, it is necessary to make a small change to the `./dist/index.html` file before hosting in order to ensure that nested routes/content are properly referenced. Navigate to the `./dist/index.html` file and replace all root paths such as `<script src="/index.96e2502d.js" defer=""></script>` to be *relative* paths i.e. `<script src="./index.96e2502d.js" defer=""></script>` We recommend performing this manually as there should only be three such instances to change in your output. Once complete the files are ready for upload to a hosting provider. 
 
 For any questions related to these instructions the project maintainers are always available.
+
+## Running Your own Bootstrap Server
+
+In order to run a bootstrap server, ensure that Docker is installed and that port 9090 is free. Execute the following two lines of code. The application is
+started on the network details which are consoled out.
+
+```DOMAIN=${DOMAIN_NAME} docker -compose up```
