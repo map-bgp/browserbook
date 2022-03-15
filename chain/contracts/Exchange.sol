@@ -45,7 +45,7 @@ contract Exchange {
   event TokensExchangedAt(address indexed, address indexed, uint256, uint256);
 
   constructor() {
-    uint256 chainId = 31337; // 80001
+    uint256 chainId = 80001; // 80001
     DOMAIN_SEPARATOR = keccak256(
       abi.encode(
         EIP712DOMAIN_TYPEHASH,
