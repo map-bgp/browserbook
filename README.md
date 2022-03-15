@@ -4,8 +4,9 @@ Browserbook is a prototypical implementation of a peer-to-peer decentralised tok
 
 ## Using the Application
 
-Our application is deployed to IPFS. To use the application, simply navigate to the following url: PLACE_URL_HERE
-Alternatively, you can navigate to the application by requesting the following content hash from IPFS: 
+Our application is deployed to IPFS. To use the application, simply navigate to the following url: https://ipfs.thresholdholdings.com/ipfs/QmYszj7GyMvKLJPzZWaop9szx4caZTeuHgip45sa2uV3yn/
+
+Alternatively, you can navigate to the application by requesting the following content hash from IPFS: QmYszj7GyMvKLJPzZWaop9szx4caZTeuHgip45sa2uV3yn 
 Once at the application, navigate to the "How it Works" page for an overview on how to use the system.
 
 **Note**: You will need to have Metamask installed in order to access the application.
