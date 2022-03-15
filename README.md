@@ -10,7 +10,10 @@ Our application is deployed to IPFS. To use the application, simply navigate to 
 
 Note that due to a peculiarity with the way browser handles nested routes with a Single-Page-Application, you will need to click "Dashboard" upon loading the first page of the site. Thereafter the the site will function normally. Note that to do a full refresh, it is necessary to re-input the full link above from above into the browser's address bar. 
 
-Alternatively, you can navigate to the application by requesting the following content hash from IPFS: QmYszj7GyMvKLJPzZWaop9szx4caZTeuHgip45sa2uV3yn 
+Alternatively, you can navigate to the application by requesting the following content hash from IPFS: 
+
+**QmYszj7GyMvKLJPzZWaop9szx4caZTeuHgip45sa2uV3yn**
+
 Once at the application, navigate to the "How it Works" page for an overview on how to use the system.
 
 **Note**: You will need to have Metamask installed in order to access the application.
