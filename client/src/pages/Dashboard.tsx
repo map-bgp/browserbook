@@ -239,7 +239,11 @@ const Dashboard = () => {
               <div className="block sm:inline">Browserbook v1.0.0</div>{' '}
               <div>
                 Link to contracts:{' '}
-                <a href="#" className="block hover:underline sm:inline">
+                <a
+                  href="https://mumbai.polygonscan.com/address/0x2C2f55d81825D9aad5990eD4778F7F0c93Eff705#code"
+                  target="_blank"
+                  className="block hover:underline sm:inline"
+                >
                   etherscan
                 </a>
               </div>
